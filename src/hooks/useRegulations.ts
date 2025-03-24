@@ -60,7 +60,7 @@ export function useRegulationDetails(id: string | undefined) {
 
 export function useRegulationSearch(searchTerm: string, filters: Record<string, string | null>) {
   return useQuery({
-    queryKey: ['regulations', 'search', searchTerm, filters],
+    queryKey: ['regulations', 'search', searchTerm, JSON.stringify(filters)],
     queryFn: async () => {
       let query = supabase
         .from('regulations')
@@ -71,7 +71,7 @@ export function useRegulationSearch(searchTerm: string, filters: Record<string, 
         query = query.textSearch('search_text', searchTerm);
       }
       
-      // Apply filters without type recursion issue
+      // Apply each filter only if it has a value
       Object.entries(filters).forEach(([key, value]) => {
         if (value) {
           query = query.eq(key, value);

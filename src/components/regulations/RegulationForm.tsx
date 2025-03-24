@@ -44,6 +44,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
+  document_type: string; // Added missing property
 }
 
 interface RegulationFormProps {
