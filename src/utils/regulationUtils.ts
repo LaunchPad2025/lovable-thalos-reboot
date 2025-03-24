@@ -83,7 +83,9 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
         .limit(1);
       
       if (error) throw error;
-      if (data && data.length > 0) {
+      
+      // Use explicit type checking and conversion
+      if (data && Array.isArray(data) && data.length > 0) {
         return true;
       }
     }
@@ -96,7 +98,9 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
       .limit(1);
     
     if (error) throw error;
-    return Boolean(data && data.length > 0);
+    
+    // Use explicit type checking and conversion
+    return Boolean(data && Array.isArray(data) && data.length > 0);
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;
