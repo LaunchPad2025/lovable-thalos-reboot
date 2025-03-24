@@ -57,5 +57,9 @@ export interface Plan {
   description: string;
   price: number;
   features: string[];
-  stripe_price_id: string;
+  stripe_price_id: {
+    monthly: string;
+    annual: string;
+  };
+  popular?: boolean;
 }

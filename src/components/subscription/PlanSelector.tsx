@@ -3,25 +3,43 @@ import React, { useState } from 'react';
 import { Check, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { Plan } from '@/types/models';
+import { useToast } from '@/hooks/use-toast';
 
-interface Plan {
+interface PlanFeature {
+  text: string;
+  included: boolean;
+}
+
+interface PlanData {
   id: string;
   name: string;
-  price: string;
   description: string;
-  features: {
-    text: string;
-    included: boolean;
-  }[];
+  features: PlanFeature[];
+  pricing: {
+    monthly: number;
+    annual: number;
+  };
+  stripe_price_id: {
+    monthly: string;
+    annual: string;
+  };
   popular?: boolean;
 }
 
-const plans: Plan[] = [
+const plans: PlanData[] = [
   {
     id: 'basic',
     name: 'Basic',
-    price: '$29',
     description: 'For small teams getting started with safety management',
+    pricing: {
+      monthly: 99,
+      annual: 1009.80,
+    },
+    stripe_price_id: {
+      monthly: 'price_1R4YqoGCrRkrgEFrxnYFNfd8',
+      annual: 'price_1R4YsZGCrRkrgEFruQgqFdUi',
+    },
     features: [
       { text: 'Up to 10 users', included: true },
       { text: 'Basic incident reporting', included: true },
@@ -35,8 +53,15 @@ const plans: Plan[] = [
   {
     id: 'pro',
     name: 'Professional',
-    price: '$79',
     description: 'For growing organizations with advanced needs',
+    pricing: {
+      monthly: 149,
+      annual: 1519.80,
+    },
+    stripe_price_id: {
+      monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
+      annual: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
+    },
     features: [
       { text: 'Up to 50 users', included: true },
       { text: 'Advanced incident reporting', included: true },
@@ -51,8 +76,15 @@ const plans: Plan[] = [
   {
     id: 'enterprise',
     name: 'Enterprise',
-    price: '$149',
     description: 'For large organizations requiring full compliance',
+    pricing: {
+      monthly: 350,
+      annual: 3570.00,
+    },
+    stripe_price_id: {
+      monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
+      annual: 'price_1R4Yw3GCrRkrgEFrredMrTtQ',
+    },
     features: [
       { text: 'Unlimited users', included: true },
       { text: 'Enterprise incident reporting', included: true },
@@ -65,8 +97,36 @@ const plans: Plan[] = [
   },
 ];
 
-const PlanSelector = () => {
+interface PlanSelectorProps {
+  billingCycle: 'monthly' | 'annual';
+}
+
+const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   const [selectedPlan, setSelectedPlan] = useState<string>('pro');
+  const { toast } = useToast();
+  
+  const handleSubscribe = () => {
+    const plan = plans.find(p => p.id === selectedPlan);
+    if (!plan) return;
+    
+    toast({
+      title: "Subscription in progress",
+      description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
+    });
+    
+    // Here you would redirect to a Stripe checkout session
+    console.log('Selected plan:', plan.name);
+    console.log('Billing cycle:', billingCycle);
+    console.log('Stripe price ID:', plan.stripe_price_id[billingCycle]);
+  };
+  
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+    }).format(price);
+  };
   
   return (
     <div className="py-8">
@@ -97,8 +157,12 @@ const PlanSelector = () => {
               <div className="p-6">
                 <h3 className="text-xl font-bold text-gray-900 mb-1">{plan.name}</h3>
                 <div className="flex items-baseline mb-2">
-                  <span className="text-3xl font-extrabold text-gray-900">{plan.price}</span>
-                  <span className="text-gray-500 text-sm font-medium ml-1">/month</span>
+                  <span className="text-3xl font-extrabold text-gray-900">
+                    {formatPrice(plan.pricing[billingCycle])}
+                  </span>
+                  <span className="text-gray-500 text-sm font-medium ml-1">
+                    {billingCycle === 'monthly' ? '/month' : '/year'}
+                  </span>
                 </div>
                 <p className="text-sm text-gray-500 mb-4">{plan.description}</p>
                 
@@ -137,7 +201,10 @@ const PlanSelector = () => {
         </div>
         
         <div className="text-center">
-          <Button className="bg-thalos-blue hover:bg-blue-600 px-8 py-2 text-lg">
+          <Button 
+            className="bg-thalos-blue hover:bg-blue-600 px-8 py-2 text-lg"
+            onClick={handleSubscribe}
+          >
             Subscribe Now
           </Button>
           <p className="mt-4 text-sm text-gray-500">

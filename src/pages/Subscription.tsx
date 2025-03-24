@@ -1,11 +1,13 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PlanSelector from '@/components/subscription/PlanSelector';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
 
 const Subscription = () => {
+  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+
   return (
     <PageContainer>
       <div className="w-full max-w-7xl mx-auto">
@@ -67,16 +69,24 @@ const Subscription = () => {
         
         <div className="flex justify-center mb-12">
           <div className="inline-flex bg-gray-900 p-1 rounded-full">
-            <Button variant="ghost" className="bg-indigo-600 text-white px-8 rounded-full">
+            <Button 
+              variant="ghost" 
+              className={`px-8 rounded-full ${billingCycle === 'monthly' ? 'bg-indigo-600 text-white' : 'text-gray-300'}`}
+              onClick={() => setBillingCycle('monthly')}
+            >
               Monthly
             </Button>
-            <Button variant="ghost" className="text-gray-300 px-8 rounded-full">
+            <Button 
+              variant="ghost" 
+              className={`px-8 rounded-full ${billingCycle === 'annual' ? 'bg-indigo-600 text-white' : 'text-gray-300'}`}
+              onClick={() => setBillingCycle('annual')}
+            >
               Yearly <span className="text-gray-500 text-xs ml-1">Save 15%</span>
             </Button>
           </div>
         </div>
         
-        <PlanSelector />
+        <PlanSelector billingCycle={billingCycle} />
         
         <div className="mt-16 bg-[#101418] border border-gray-800 rounded-lg p-6">
           <div className="flex items-start gap-4">
