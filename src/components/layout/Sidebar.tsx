@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -112,8 +113,8 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
             <div className="flex flex-col h-full">
               <div className="px-4 py-6">
                 <h1 className="text-2xl font-bold">Thalos</h1>
-                <p className="text-sm text-muted-foreground">
-                  Safety Compliance Platform
+                <p className="text-sm text-gray-400">
+                  powered by Steel Toe
                 </p>
               </div>
               <nav className="flex-1">
@@ -152,8 +153,8 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
           <div className="flex flex-col h-full">
             <div className="px-4 py-6">
               <h1 className="text-2xl font-bold">Thalos</h1>
-              <p className="text-sm text-muted-foreground">
-                Safety Compliance Platform
+              <p className="text-sm text-gray-400">
+                powered by Steel Toe
               </p>
             </div>
             <nav className="flex-1">

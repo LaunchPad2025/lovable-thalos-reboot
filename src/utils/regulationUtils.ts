@@ -86,8 +86,7 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
         throw error;
       }
       
-      // Explicit check if data exists and has entries
-      if (data && Array.isArray(data) && data.length > 0) {
+      if (data && data.length > 0) {
         return true;
       }
     }
@@ -103,8 +102,7 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
       throw error;
     }
     
-    // Return a boolean directly without using Boolean()
-    return (data && Array.isArray(data) && data.length > 0) ? true : false;
+    return data && data.length > 0 ? true : false;
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;
