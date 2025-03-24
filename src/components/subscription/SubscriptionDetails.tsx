@@ -105,8 +105,10 @@ const SubscriptionDetails = () => {
           <div>
             <h3 className="text-sm font-medium text-gray-500">Billing Period</h3>
             <p className="mt-1">
-              {subscription.current_period_start && subscription.current_period_end ? (
-                `${formatDate(subscription.current_period_start)} to ${formatDate(subscription.current_period_end)}`
+              {subscription.current_period_end ? (
+                subscription.current_period_start 
+                  ? `${formatDate(subscription.current_period_start)} to ${formatDate(subscription.current_period_end)}`
+                  : `Until ${formatDate(subscription.current_period_end)}`
               ) : (
                 'Unknown billing period'
               )}

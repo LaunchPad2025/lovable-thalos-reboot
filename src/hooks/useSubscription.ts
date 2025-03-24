@@ -32,7 +32,20 @@ export const useSubscription = () => {
         throw error;
       }
       
-      return data;
+      // Ensure the status is one of the allowed types
+      if (data && (data.status === 'active' || data.status === 'canceled' || data.status === 'past_due')) {
+        return data as Subscription;
+      }
+      
+      // If we get an unexpected status, default to a safe value
+      if (data) {
+        return {
+          ...data,
+          status: 'past_due' // Default to past_due as a fallback
+        } as Subscription;
+      }
+      
+      return null;
     },
     enabled: !!user,
   });
