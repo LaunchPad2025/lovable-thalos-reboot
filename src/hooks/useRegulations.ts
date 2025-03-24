@@ -58,15 +58,25 @@ export function useRegulationDetails(id: string | undefined) {
   });
 }
 
-export function useRegulationSearch(searchTerm: string, filters: Record<string, string | null>) {
-  // Create a stable array of primitive values for the query key
-  const filterEntries = Object.entries(filters)
-    .filter(([_, value]) => value !== null)
-    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-    .map(([key, value]) => `${key}:${value}`);
+type FilterKey = string;
+type FilterValue = string | null;
+
+export function useRegulationSearch(searchTerm: string, filters: Record<FilterKey, FilterValue>) {
+  // Create a stable query key that won't cause infinite type recursion
+  const filterParams: string[] = [];
+  
+  // Extract filter keys and values in a way that produces a stable array
+  Object.keys(filters)
+    .sort() // Sort keys for consistency
+    .forEach(key => {
+      const value = filters[key];
+      if (value !== null) {
+        filterParams.push(`${key}:${value}`);
+      }
+    });
   
   return useQuery({
-    queryKey: ['regulations', 'search', searchTerm, ...filterEntries],
+    queryKey: ['regulations', 'search', searchTerm, ...filterParams],
     queryFn: async () => {
       let query = supabase
         .from('regulations')
