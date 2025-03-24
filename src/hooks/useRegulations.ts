@@ -58,25 +58,28 @@ export function useRegulationDetails(id: string | undefined) {
   });
 }
 
-type FilterKey = string;
-type FilterValue = string | null;
+// Define simple primitive types for filters to avoid deep nesting
+interface SearchFilters {
+  industry?: string | null;
+  jurisdiction?: string | null;
+  status?: string | null;
+  document_type?: string | null;
+}
 
-export function useRegulationSearch(searchTerm: string, filters: Record<FilterKey, FilterValue>) {
-  // Create a stable query key that won't cause infinite type recursion
-  const filterParams: string[] = [];
-  
-  // Extract filter keys and values in a way that produces a stable array
-  Object.keys(filters)
-    .sort() // Sort keys for consistency
-    .forEach(key => {
-      const value = filters[key];
-      if (value !== null) {
-        filterParams.push(`${key}:${value}`);
-      }
-    });
+export function useRegulationSearch(searchTerm: string, filters: SearchFilters) {
+  // Create a stable query key using primitive values and a structured approach
+  const queryKey = [
+    'regulations', 
+    'search', 
+    searchTerm,
+    filters.industry || 'null',
+    filters.jurisdiction || 'null',
+    filters.status || 'null',
+    filters.document_type || 'null'
+  ];
   
   return useQuery({
-    queryKey: ['regulations', 'search', searchTerm, ...filterParams],
+    queryKey,
     queryFn: async () => {
       let query = supabase
         .from('regulations')
@@ -88,11 +91,21 @@ export function useRegulationSearch(searchTerm: string, filters: Record<FilterKe
       }
       
       // Apply each filter only if it has a value
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value) {
-          query = query.eq(key, value);
-        }
-      });
+      if (filters.industry) {
+        query = query.eq('industry', filters.industry);
+      }
+      
+      if (filters.jurisdiction) {
+        query = query.eq('jurisdiction', filters.jurisdiction);
+      }
+      
+      if (filters.status) {
+        query = query.eq('status', filters.status);
+      }
+      
+      if (filters.document_type) {
+        query = query.eq('document_type', filters.document_type);
+      }
       
       const { data, error } = await query.order('created_at', { ascending: false });
       
