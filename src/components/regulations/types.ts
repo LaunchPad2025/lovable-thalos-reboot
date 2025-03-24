@@ -19,6 +19,7 @@ export interface RegulationProps {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
+  reference_number: string | null; // Added to match Regulation interface
 }
 
 export interface ViolationProps {

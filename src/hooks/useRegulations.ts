@@ -22,7 +22,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
-  reference_number: string | null; // Added for storing regulatory reference numbers
+  reference_number: string | null; // Made optional with null
 }
 
 export function useRegulations() {
@@ -70,14 +70,20 @@ export interface SearchFilters {
 
 export function useRegulationSearch(searchTerm: string, filters: SearchFilters) {
   // Create stable primitive values for the query key
+  const filterKeys: string[] = [];
+  
+  // Only add filters that have values
+  if (filters.industry) filterKeys.push(`industry:${filters.industry}`);
+  if (filters.jurisdiction) filterKeys.push(`jurisdiction:${filters.jurisdiction}`);
+  if (filters.status) filterKeys.push(`status:${filters.status}`);
+  if (filters.document_type) filterKeys.push(`document_type:${filters.document_type}`);
+  if (filters.authority) filterKeys.push(`authority:${filters.authority}`);
+  
   const queryKey = [
     'regulations', 
     'search', 
     searchTerm || '',
-    ...(Object.entries(filters)
-      .filter(([_, value]) => value !== undefined && value !== null)
-      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
-      .map(([key, value]) => `${key}:${value}`))
+    ...filterKeys
   ];
   
   return useQuery({
