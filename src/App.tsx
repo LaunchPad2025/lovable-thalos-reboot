@@ -5,6 +5,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
+import { AuthProvider } from "@/context/AuthContext";
+import ProtectedRoute from "@/components/auth/ProtectedRoute";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -15,6 +17,7 @@ import Subscription from "./pages/Subscription";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
+import Auth from "./pages/Auth";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -26,28 +29,43 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <div className="flex h-screen w-full">
-            <Sidebar userRole={userRole} />
-            <div className="flex-1 overflow-hidden">
-              <Routes>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/violations" element={<Violations />} />
-                <Route path="/violations/:id" element={<Violations />} />
-                <Route path="/tasks" element={<Tasks />} />
-                <Route path="/chatbot" element={<Chatbot />} />
-                <Route path="/subscription" element={<Subscription />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/coming-soon" element={<ComingSoon />} />
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </div>
-          </div>
-        </BrowserRouter>
-      </TooltipProvider>
+      <AuthProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public route */}
+              <Route path="/auth" element={<Auth />} />
+
+              {/* Protected routes with sidebar layout */}
+              <Route element={<ProtectedRoute />}>
+                <Route
+                  path="/*"
+                  element={
+                    <div className="flex h-screen w-full">
+                      <Sidebar userRole={userRole} />
+                      <div className="flex-1 overflow-hidden">
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/violations" element={<Violations />} />
+                          <Route path="/violations/:id" element={<Violations />} />
+                          <Route path="/tasks" element={<Tasks />} />
+                          <Route path="/chatbot" element={<Chatbot />} />
+                          <Route path="/subscription" element={<Subscription />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/coming-soon" element={<ComingSoon />} />
+                          <Route path="*" element={<NotFound />} />
+                        </Routes>
+                      </div>
+                    </div>
+                  }
+                />
+              </Route>
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </AuthProvider>
     </QueryClientProvider>
   );
 };
