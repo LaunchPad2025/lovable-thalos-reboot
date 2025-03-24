@@ -4,8 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/models';
 import { Button } from '@/components/ui/button';
-import StatusBadge from '../ui/StatusBadge';
-import { PlusCircle, Calendar } from 'lucide-react';
+import { PlusCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 interface TasksForViolationProps {
@@ -15,81 +14,35 @@ interface TasksForViolationProps {
 const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
   const navigate = useNavigate();
   
-  const { data: tasks, isLoading, isError } = useQuery({
-    queryKey: ['tasks', violationId],
+  const { data: tasks, isLoading } = useQuery({
+    queryKey: ['tasks-for-violation', violationId],
     queryFn: async () => {
-      // Search in the violation_tasks junction table first
-      const { data: taskRelations, error: relationError } = await supabase
-        .from('violation_tasks')
-        .select('task_id')
-        .eq('violation_id', violationId);
-      
-      if (relationError) throw relationError;
-      
-      if (taskRelations && taskRelations.length > 0) {
-        // Get the tasks associated with this violation
-        const taskIds = taskRelations.map(relation => relation.task_id);
-        const { data, error } = await supabase
-          .from('tasks')
-          .select('*')
-          .in('id', taskIds)
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        return data as Task[];
-      }
-      
-      // Fallback to checking for tasks with the violation_id field
-      // (This is for backward compatibility)
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
-        .eq('violation_id', violationId)
-        .order('created_at', { ascending: false });
+        .eq('violation_id', violationId);
       
       if (error) throw error;
+      // Cast to Task[] type - this is safe as we've updated our Task model
       return data as Task[];
     }
   });
-
+  
   if (isLoading) {
-    return (
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-medium text-white">Remediation Tasks</h3>
-        </div>
-        <div className="p-8 text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-thalos-blue mx-auto"></div>
-          <p className="mt-2 text-gray-400">Loading tasks...</p>
-        </div>
-      </div>
-    );
+    return <div>Loading tasks...</div>;
   }
-
-  if (isError) {
-    return (
-      <div className="mt-6">
-        <div className="flex justify-between items-center mb-3">
-          <h3 className="text-lg font-medium text-white">Remediation Tasks</h3>
-        </div>
-        <div className="p-4 bg-red-900/20 border border-red-700/30 rounded-md text-center">
-          <p className="text-red-300">Failed to load tasks</p>
-        </div>
-      </div>
-    );
-  }
-
+  
   return (
     <div className="mt-6">
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-medium text-white">Remediation Tasks</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-medium text-white">Related Tasks</h3>
         <Button 
           size="sm" 
           className="bg-thalos-blue hover:bg-blue-600"
           onClick={() => navigate(`/tasks?violation=${violationId}`)}
         >
           <PlusCircle size={16} className="mr-1" />
-          New Task
+          Add Task
         </Button>
       </div>
       
@@ -98,33 +51,37 @@ const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
           {tasks.map(task => (
             <div 
               key={task.id} 
-              className="p-4 bg-[#1a1f29] rounded-md border border-gray-700 hover:border-gray-600 cursor-pointer transition-all"
+              className="p-3 bg-[#1a1f29] rounded-md border border-gray-800 cursor-pointer hover:bg-[#212836] transition-colors"
               onClick={() => navigate(`/tasks/${task.id}`)}
             >
-              <div className="flex justify-between items-start mb-2">
-                <h4 className="font-medium text-white">{task.title}</h4>
-                <StatusBadge status={task.status} />
+              <div className="flex justify-between">
+                <p className="font-medium text-white">{task.title}</p>
+                <span className={`text-xs px-2 py-1 rounded-full ${
+                  task.priority === 'high' ? 'bg-red-900/30 text-red-400' :
+                  task.priority === 'medium' ? 'bg-amber-900/30 text-amber-400' :
+                  'bg-green-900/30 text-green-400'
+                }`}>
+                  {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                </span>
               </div>
-              <p className="text-sm text-gray-400 mb-3 line-clamp-2">{task.description}</p>
-              <div className="flex justify-between items-center text-xs">
-                <div className="flex items-center text-gray-400">
-                  <Calendar size={14} className="mr-1" />
-                  Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}
-                </div>
-                <span className="text-gray-400">Assigned to: {task.assignee_id || 'Unassigned'}</span>
-              </div>
+              <p className="text-sm text-gray-400 mt-1">{
+                task.due_date 
+                  ? `Due: ${new Date(task.due_date).toLocaleDateString()}`
+                  : 'No due date'
+              }</p>
             </div>
           ))}
         </div>
       ) : (
-        <div className="p-6 text-center bg-[#1a1f29] rounded-md border border-gray-700">
-          <p className="text-gray-400 mb-3">No remediation tasks have been created for this violation yet.</p>
+        <div className="text-center py-6 bg-[#1a1f29] rounded-md border border-gray-800">
+          <p className="text-gray-400">No tasks have been assigned to this violation yet</p>
           <Button 
-            className="bg-thalos-blue hover:bg-blue-600"
+            variant="outline" 
+            size="sm"
+            className="mt-2 bg-transparent border-gray-700 text-gray-300 hover:bg-gray-800"
             onClick={() => navigate(`/tasks?violation=${violationId}`)}
           >
-            <PlusCircle size={16} className="mr-2" />
-            Create First Task
+            Create Task
           </Button>
         </div>
       )}

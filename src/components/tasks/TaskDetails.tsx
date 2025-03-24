@@ -1,15 +1,11 @@
 
-import React, { useState } from 'react';
-import { Calendar, Clock, User, AlertCircle, Link2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import React from 'react';
+import { Task } from '@/types/models';
 import StatusBadge from '../ui/StatusBadge';
-import { Task, Violation } from '@/types/models';
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/context/AuthContext';
+import TaskMetadata from './metadata/TaskMetadata';
+import TaskStatusControl from './status/TaskStatusControl';
+import TaskComments from './comments/TaskComments';
+import { useTaskViolation } from '@/hooks/useTaskViolation';
 
 interface TaskDetailsProps {
   task: Task | null;
@@ -17,29 +13,8 @@ interface TaskDetailsProps {
 }
 
 const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-  const { user } = useAuth();
-  const [newComment, setNewComment] = useState('');
-  const [submittingComment, setSubmittingComment] = useState(false);
-  
   // If the task has a violation_id, we'll try to fetch the related violation
-  const { data: violationDetails } = useQuery({
-    queryKey: ['violation-for-task', task?.violation_id],
-    queryFn: async () => {
-      if (!task?.violation_id) return null;
-      
-      const { data, error } = await supabase
-        .from('violations')
-        .select('id, violation')
-        .eq('id', task.violation_id)
-        .single();
-      
-      if (error) throw error;
-      return data as Violation;
-    },
-    enabled: !!task?.violation_id
-  });
+  const { data: violationDetails } = useTaskViolation(task?.violation_id);
   
   if (!task) {
     return (
@@ -52,34 +27,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
     );
   }
   
-  const handleSubmitComment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newComment.trim()) return;
-    
-    setSubmittingComment(true);
-    
-    try {
-      // In a real app, we would store comments in a separate table with relation to tasks
-      // For now, we'll just show a toast
-      toast({
-        title: "Comment added",
-        description: "Your comment has been added to the task.",
-      });
-      setNewComment('');
-    } catch (error) {
-      console.error("Error adding comment:", error);
-      toast({
-        title: "Failed to add comment",
-        description: "There was an error adding your comment. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setSubmittingComment(false);
-    }
-  };
-
   // Get assignee name from the assignee_id (for display purposes)
-  // In a real app, we would join with the profiles table to get the actual name
   const assigneeName = task.assignee_id || "Unassigned";
   
   const formattedDueDate = task.due_date 
@@ -106,108 +54,23 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
           <p className="text-sm text-white">{task.description || "No description provided"}</p>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div className="flex items-center">
-            <Calendar size={16} className="text-gray-400 mr-2" />
-            <div>
-              <p className="text-xs text-gray-500">Due Date</p>
-              <p className="text-sm font-medium text-gray-300">{formattedDueDate}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center">
-            <User size={16} className="text-gray-400 mr-2" />
-            <div>
-              <p className="text-xs text-gray-500">Assigned To</p>
-              <p className="text-sm font-medium text-gray-300">{assigneeName}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center">
-            <Clock size={16} className="text-gray-400 mr-2" />
-            <div>
-              <p className="text-xs text-gray-500">Status</p>
-              <p className="text-sm font-medium text-gray-300">{task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('-', ' ')}</p>
-            </div>
-          </div>
-          
-          <div className="flex items-center">
-            <AlertCircle size={16} className="text-gray-400 mr-2" />
-            <div>
-              <p className="text-xs text-gray-500">Priority</p>
-              <p className="text-sm font-medium text-gray-300">{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</p>
-            </div>
-          </div>
-        </div>
+        <TaskMetadata
+          dueDate={formattedDueDate}
+          assigneeName={assigneeName}
+          status={task.status}
+          priority={task.priority}
+          violationDetails={violationDetails}
+        />
         
-        {violationDetails && (
-          <div className="mb-6 p-3 bg-[#131920] border border-gray-800 rounded-md">
-            <div className="flex items-center">
-              <Link2 size={16} className="text-thalos-blue mr-2" />
-              <div>
-                <p className="text-xs text-gray-500">Related Violation</p>
-                <Button 
-                  variant="link" 
-                  className="p-0 h-auto text-sm font-medium text-thalos-blue hover:text-blue-400"
-                  onClick={() => navigate(`/violations/${violationDetails.id}`)}
-                >
-                  {violationDetails.violation}
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+        <TaskStatusControl 
+          status={task.status} 
+          onStatusChange={onStatusChange} 
+        />
         
-        <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Update Status</h3>
-          <div className="flex space-x-2">
-            {['open', 'in-progress', 'completed', 'overdue'].map((status) => (
-              <Button
-                key={status}
-                variant={task.status === status ? "default" : "outline"}
-                size="sm"
-                onClick={() => onStatusChange?.(status as Task['status'])}
-                className={
-                  task.status === status
-                    ? "bg-thalos-blue hover:bg-blue-600"
-                    : "bg-[#1a1f29] border-gray-700 text-gray-300 hover:bg-gray-800"
-                }
-              >
-                {status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')}
-              </Button>
-            ))}
-          </div>
-        </div>
-        
-        <div>
-          <h3 className="text-sm font-medium text-gray-300 mb-3">Comments</h3>
-          <div className="space-y-4 mb-4">
-            <div className="p-3 bg-[#1a1f29] rounded-md border border-gray-700">
-              <div className="flex justify-between items-start">
-                <p className="text-xs font-medium text-gray-300">System</p>
-                <span className="text-xs text-gray-500">Today</span>
-              </div>
-              <p className="text-sm mt-1 text-gray-300">Task created and assigned to {assigneeName}.</p>
-            </div>
-          </div>
-          
-          <form onSubmit={handleSubmitComment}>
-            <Textarea
-              placeholder="Add a comment..."
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              className="mb-2 bg-[#1a1f29] border-gray-700 text-white"
-              rows={3}
-            />
-            <Button 
-              type="submit" 
-              className="bg-thalos-blue hover:bg-blue-600"
-              disabled={submittingComment || !newComment.trim()}
-            >
-              {submittingComment ? 'Adding...' : 'Add Comment'}
-            </Button>
-          </form>
-        </div>
+        <TaskComments 
+          taskId={task.id}
+          assigneeName={assigneeName}
+        />
       </div>
     </div>
   );

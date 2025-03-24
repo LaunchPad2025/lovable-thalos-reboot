@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useTasks } from '@/hooks/useTasks';
 import { useTaskDetails } from '@/hooks/useTaskDetails';
 import { TaskCreation } from '@/components/tasks/TaskCreation';
-import { formatTasksForList, FormattedTask } from '@/utils/taskFormatters';
+import { formatTasksForList } from '@/utils/taskFormatters';
 import { Task } from '@/types/models';
 
 const Tasks = () => {
