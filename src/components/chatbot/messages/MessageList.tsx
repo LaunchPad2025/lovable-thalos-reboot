@@ -30,7 +30,6 @@ const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
         <MessageBubble 
           key={message.id}
           message={message}
-          isSelf={message.sender === 'user'}
         />
       ))}
       

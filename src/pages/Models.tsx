@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +12,7 @@ import ModelForm from "@/components/models/ModelForm";
 import ModelDetails from "@/components/models/ModelDetails";
 import TestModelForm from "@/components/models/TestModelForm";
 import { Brain, BrainCircuit, ChevronRight, Gauge, Server } from "lucide-react";
+import { toast } from "sonner";
 
 const Models = () => {
   const { data: models = [], isLoading } = useMLModels();
@@ -24,6 +26,10 @@ const Models = () => {
     : models.filter(m => m.industry === activeTab);
   
   const selectedModelData = models.find(m => m.id === selectedModel);
+  
+  const handleModelSuccess = () => {
+    toast.success("Model added successfully");
+  };
   
   return (
     <PageContainer 
@@ -118,7 +124,7 @@ const Models = () => {
                       Register a new model for safety violation detection
                     </DrawerDescription>
                   </DrawerHeader>
-                  <ModelForm />
+                  <ModelForm onSuccess={handleModelSuccess} />
                 </DrawerContent>
               </Drawer>
             </div>
