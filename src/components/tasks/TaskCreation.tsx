@@ -42,13 +42,9 @@ export function TaskCreation({ violationId }: TaskCreationProps) {
         created_by: user.id,
         organization_id: newTask.organization_id,
         worksite_id: newTask.worksite_id,
+        violation_id: newTask.violation_id,
         updated_at: new Date().toISOString()
       };
-
-      // If there's a violation ID, add it to the task
-      if (newTask.violation_id) {
-        taskToInsert.violation_id = newTask.violation_id;
-      }
 
       const { data, error } = await supabase
         .from('tasks')

@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { useTasks } from '@/hooks/useTasks';
 import { useTaskDetails } from '@/hooks/useTaskDetails';
 import { TaskCreation } from '@/components/tasks/TaskCreation';
-import { formatTasksForList } from '@/utils/taskFormatters';
+import { formatTasksForList, FormattedTask } from '@/utils/taskFormatters';
 import { Task } from '@/types/models';
 
 const Tasks = () => {
@@ -24,6 +24,9 @@ const Tasks = () => {
   
   // Fetch single task details if an ID is provided
   const { taskDetails, isLoading: isLoadingDetails } = useTaskDetails(id);
+
+  // Format tasks for display in the list
+  const formattedTasks = formatTasksForList(tasks);
 
   useEffect(() => {
     if (id && taskDetails) {
@@ -61,7 +64,7 @@ const Tasks = () => {
         ) : (
           <>
             <TasksList 
-              tasks={formatTasksForList(tasks)} 
+              tasks={formattedTasks} 
               onTaskSelect={(task) => navigate(`/tasks/${task.id}`)}
               selectedTaskId={selectedTask?.id}
               onAddNewTask={() => navigate('/tasks?newTask=true')}
