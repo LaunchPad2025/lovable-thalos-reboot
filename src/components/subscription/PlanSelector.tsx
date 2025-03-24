@@ -1,10 +1,12 @@
 
-import React, { useState } from 'react';
-import { Check, X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Check, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { Plan } from '@/types/models';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/lib/supabase';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface PlanFeature {
   text: string;
@@ -103,21 +105,91 @@ interface PlanSelectorProps {
 
 const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   const [selectedPlan, setSelectedPlan] = useState<string>('pro');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  const handleSubscribe = () => {
-    const plan = plans.find(p => p.id === selectedPlan);
-    if (!plan) return;
+  // Check for Stripe success or canceled status
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const success = searchParams.get('success');
+    const canceled = searchParams.get('canceled');
+    const sessionId = searchParams.get('session_id');
     
-    toast({
-      title: "Subscription in progress",
-      description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
-    });
-    
-    // Here you would redirect to a Stripe checkout session
-    console.log('Selected plan:', plan.name);
-    console.log('Billing cycle:', billingCycle);
-    console.log('Stripe price ID:', plan.stripe_price_id[billingCycle]);
+    if (success === 'true' && sessionId) {
+      toast({
+        title: "Subscription successful!",
+        description: "Thank you for subscribing to Thalos. Your account has been upgraded.",
+        duration: 5000,
+      });
+      
+      // Clean up the URL by removing query parameters
+      navigate('/subscription', { replace: true });
+    } else if (canceled === 'true') {
+      toast({
+        title: "Subscription canceled",
+        description: "You've canceled the checkout process. No charges were made.",
+        duration: 5000,
+      });
+      
+      // Clean up the URL by removing query parameters
+      navigate('/subscription', { replace: true });
+    }
+  }, [location.search, toast, navigate]);
+  
+  const handleSubscribe = async () => {
+    try {
+      setIsLoading(true);
+      const plan = plans.find(p => p.id === selectedPlan);
+      if (!plan) return;
+      
+      // Check if user is logged in
+      const { data: session } = await supabase.auth.getSession();
+      if (!session.session) {
+        toast({
+          title: "Authentication required",
+          description: "Please sign in to subscribe to a plan.",
+          variant: "destructive",
+        });
+        navigate('/auth');
+        return;
+      }
+      
+      toast({
+        title: "Subscription in progress",
+        description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
+      });
+      
+      // Call our Supabase Edge Function to create a checkout session
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          priceId: plan.stripe_price_id[billingCycle],
+          billingCycle,
+          planName: plan.name,
+        },
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
+      
+      // Redirect to Stripe checkout
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL returned');
+      }
+    } catch (error) {
+      console.error('Error creating checkout session:', error);
+      toast({
+        title: "Checkout failed",
+        description: error.message || "An error occurred during checkout. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
   
   const formatPrice = (price: number) => {
@@ -204,8 +276,16 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
           <Button 
             className="bg-thalos-blue hover:bg-blue-600 px-8 py-2 text-lg"
             onClick={handleSubscribe}
+            disabled={isLoading}
           >
-            Subscribe Now
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              'Subscribe Now'
+            )}
           </Button>
           <p className="mt-4 text-sm text-gray-500">
             Secure payment processing by Stripe. Cancel anytime.
