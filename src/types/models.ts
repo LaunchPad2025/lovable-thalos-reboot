@@ -34,7 +34,7 @@ export interface Task {
   organization_id: string; // Added to match the database
   created_by: string; // Added to match the database
   worksite_id?: string; // Added to match the database
-  violation_id?: string; // Maintained for backward compatibility
+  violation_id?: string; // Added to keep compatibility with existing code
   created_at: string;
   updated_at: string;
 }
