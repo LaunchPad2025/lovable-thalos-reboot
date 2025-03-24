@@ -19,7 +19,7 @@ const featureInfo = {
   default: {
     title: 'Coming Soon',
     description: 'This feature is currently under development.',
-    details: 'We're working hard to bring you new capabilities. Check back soon!'
+    details: "We're working hard to bring you new capabilities. Check back soon!"
   }
 };
 
