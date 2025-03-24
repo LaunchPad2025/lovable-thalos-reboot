@@ -74,26 +74,25 @@ export async function ingestRegulation(data: RegulationData) {
  */
 export async function checkRegulationExists(title: string, referenceNumber?: string): Promise<boolean> {
   try {
-    // Use a simpler approach without complex type inference
+    // First check by reference number if provided
     if (referenceNumber) {
-      const { data } = await supabase
+      const { count: refCount } = await supabase
         .from('regulations')
-        .select('id')
-        .eq('reference_number', referenceNumber)
-        .limit(1);
+        .select('*', { count: 'exact', head: true })
+        .eq('reference_number', referenceNumber);
       
-      if (data && data.length > 0) {
+      if (refCount && refCount > 0) {
         return true;
       }
     }
     
-    const { data } = await supabase
+    // Then check by title
+    const { count: titleCount } = await supabase
       .from('regulations')
-      .select('id')
-      .eq('title', title)
-      .limit(1);
+      .select('*', { count: 'exact', head: true })
+      .eq('title', title);
     
-    return data !== null && data.length > 0;
+    return Boolean(titleCount && titleCount > 0);
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;
