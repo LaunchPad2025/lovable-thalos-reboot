@@ -22,7 +22,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
-  reference_number: string | null; // Made optional with null
+  reference_number: string | null; // Optional with null to match database structure
 }
 
 export function useRegulations() {
@@ -35,7 +35,8 @@ export function useRegulations() {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Regulation[];
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation[];
     }
   });
 }
@@ -53,7 +54,8 @@ export function useRegulationDetails(id: string | undefined) {
         .single();
       
       if (error) throw error;
-      return data as Regulation;
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation;
     },
     enabled: !!id
   });
@@ -122,7 +124,8 @@ export function useRegulationSearch(searchTerm: string, filters: SearchFilters) 
       const { data, error } = await query.order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Regulation[];
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation[];
     }
   });
 }
@@ -142,7 +145,8 @@ export function useRegulationNeedsUpdate(days: number = 90) {
         .or(`last_reviewed_date.is.null`);
       
       if (error) throw error;
-      return data as Regulation[];
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation[];
     }
   });
 }

@@ -57,23 +57,14 @@ export async function ingestRegulation(data: RegulationData) {
  */
 export async function checkRegulationExists(title: string, referenceNumber?: string) {
   try {
-    // Define the query parameters explicitly to avoid deep type instantiation
-    const options: {
-      column: string;
-      value: string;
-    }[] = referenceNumber 
-      ? [{ column: 'reference_number', value: referenceNumber }]
-      : [{ column: 'title', value: title }];
+    // Simplified approach to avoid deep type instantiation
+    let query = supabase.from('regulations').select('id, title, reference_number');
     
-    let query = supabase
-      .from('regulations')
-      .select('id, title, reference_number');
-    
-    // Apply the filter based on which parameter is provided
-    if (options[0].column === 'reference_number') {
-      query = query.eq('reference_number', options[0].value);
+    // Apply filter based on available parameters
+    if (referenceNumber) {
+      query = query.eq('reference_number', referenceNumber);
     } else {
-      query = query.eq('title', options[0].value);
+      query = query.eq('title', title);
     }
     
     const { data, error } = await query;
