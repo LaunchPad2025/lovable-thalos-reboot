@@ -44,8 +44,15 @@ const NewViolationModal = ({ isOpen, onClose, onSubmit }: NewViolationModalProps
   });
 
   const handleFormSubmit = async (data: ViolationFormData) => {
+    // Ensure all fields are explicitly passed to match the expected type
     await onSubmit({
-      ...data,
+      title: data.title,
+      description: data.description,
+      location: data.location,
+      reported_by: data.reported_by,
+      severity: data.severity,
+      assignee: data.assignee,
+      status: data.status,
       date: new Date().toISOString(),
       notes: [],
     });
