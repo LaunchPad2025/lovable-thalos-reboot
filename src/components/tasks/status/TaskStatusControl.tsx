@@ -9,16 +9,18 @@ interface TaskStatusControlProps {
 }
 
 const TaskStatusControl = ({ status, onStatusChange }: TaskStatusControlProps) => {
+  const statusOptions: Task['status'][] = ['open', 'in-progress', 'completed', 'overdue', 'pending'];
+  
   return (
     <div className="mb-6">
       <h3 className="text-sm font-medium text-gray-300 mb-3">Update Status</h3>
-      <div className="flex space-x-2">
-        {['open', 'in-progress', 'completed', 'overdue'].map((statusOption) => (
+      <div className="flex flex-wrap gap-2">
+        {statusOptions.map((statusOption) => (
           <Button
             key={statusOption}
             variant={status === statusOption ? "default" : "outline"}
             size="sm"
-            onClick={() => onStatusChange?.(statusOption as Task['status'])}
+            onClick={() => onStatusChange?.(statusOption)}
             className={
               status === statusOption
                 ? "bg-thalos-blue hover:bg-blue-600"

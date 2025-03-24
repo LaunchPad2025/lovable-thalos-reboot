@@ -13,7 +13,7 @@ import {
   AssigneeField, 
   PriorityField,
   ViolationField 
-} from './FormFields/FormFields';
+} from './FormFields';
 import { taskSchema, TaskFormData } from './schemas/taskFormSchema';
 import { useViolationsSelect } from '@/hooks/useViolationsSelect';
 
