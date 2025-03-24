@@ -1,51 +1,46 @@
 
-import React, { useRef, useEffect } from 'react';
-import { Loader2 } from 'lucide-react';
+import React from 'react';
+import { Message } from '@/components/chatbot/types';
 import MessageBubble from './MessageBubble';
-import { Message } from '../types';
 
 interface MessageListProps {
   messages: Message[];
   isLoading: boolean;
 }
 
-const MessageList = ({ messages, isLoading }: MessageListProps) => {
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-  
-  const scrollToBottom = () => {
+const MessageList: React.FC<MessageListProps> = ({ messages, isLoading }) => {
+  const messagesEndRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
+  }, [messages]);
+
+  if (messages.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full text-center text-gray-400 p-6">
+        <p className="mb-2">No messages yet</p>
+        <p className="text-sm">Ask Paulie a question about workplace safety</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 overflow-y-auto p-4 bg-gray-50">
-      <div className="space-y-4">
-        {messages.map((message) => (
-          <MessageBubble key={message.id} message={message} />
-        ))}
-        
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-white text-gray-800 shadow-sm rounded-lg rounded-tl-none max-w-[75%] px-4 py-3">
-              <div className="flex items-center space-x-2 mb-1">
-                <Bot size={16} className="text-thalos-blue" />
-                <span className="text-xs opacity-75">
-                  Paulie • {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                </span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Loader2 size={16} className="animate-spin" />
-                <p className="text-sm">Analyzing input...</p>
-              </div>
-            </div>
-          </div>
-        )}
-        
-        <div ref={messagesEndRef} />
-      </div>
+    <div className="flex flex-col space-y-4 p-4 overflow-y-auto">
+      {messages.map((message) => (
+        <MessageBubble 
+          key={message.id}
+          message={message}
+          isSelf={message.sender === 'user'}
+        />
+      ))}
+      
+      {isLoading && (
+        <div className="flex items-start max-w-[80%] rounded-lg p-3 bg-gray-700 text-white self-start animate-pulse">
+          <div className="h-4 w-20 bg-gray-600 rounded"></div>
+        </div>
+      )}
+      
+      <div ref={messagesEndRef} />
     </div>
   );
 };
