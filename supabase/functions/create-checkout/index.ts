@@ -16,7 +16,7 @@ serve(async (req) => {
   }
   
   try {
-    const { priceId, billingCycle, planName } = await req.json();
+    const { priceId, billingCycle, planName, userId } = await req.json();
     
     if (!priceId) {
       return new Response(
@@ -56,6 +56,7 @@ serve(async (req) => {
         billingCycle,
         planName,
       },
+      client_reference_id: userId, // Add the user ID to identify the customer
     });
 
     return new Response(

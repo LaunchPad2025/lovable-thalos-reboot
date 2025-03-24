@@ -28,6 +28,9 @@ export const useCheckout = () => {
         return;
       }
       
+      // Get the user ID from the session
+      const userId = session.session.user.id;
+      
       toast({
         title: "Subscription in progress",
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
@@ -39,6 +42,7 @@ export const useCheckout = () => {
           priceId: plan.stripe_price_id[billingCycle],
           billingCycle,
           planName: plan.name,
+          userId, // Pass the user ID to the edge function
         },
       });
       
