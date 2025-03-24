@@ -22,6 +22,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
+  reference_number: string | null; // Added for storing regulatory reference numbers
 }
 
 export function useRegulations() {
@@ -59,23 +60,24 @@ export function useRegulationDetails(id: string | undefined) {
 }
 
 // Define simple primitive types for filters to avoid deep nesting
-interface SearchFilters {
+export interface SearchFilters {
   industry?: string | null;
   jurisdiction?: string | null;
   status?: string | null;
   document_type?: string | null;
+  authority?: string | null;
 }
 
 export function useRegulationSearch(searchTerm: string, filters: SearchFilters) {
-  // Create a stable query key using primitive values and a structured approach
+  // Create stable primitive values for the query key
   const queryKey = [
     'regulations', 
     'search', 
-    searchTerm,
-    filters.industry || 'null',
-    filters.jurisdiction || 'null',
-    filters.status || 'null',
-    filters.document_type || 'null'
+    searchTerm || '',
+    ...(Object.entries(filters)
+      .filter(([_, value]) => value !== undefined && value !== null)
+      .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+      .map(([key, value]) => `${key}:${value}`))
   ];
   
   return useQuery({
@@ -107,7 +109,31 @@ export function useRegulationSearch(searchTerm: string, filters: SearchFilters) 
         query = query.eq('document_type', filters.document_type);
       }
       
+      if (filters.authority) {
+        query = query.eq('authority', filters.authority);
+      }
+      
       const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Regulation[];
+    }
+  });
+}
+
+// Add a hook for checking if a regulation needs updating based on last review date
+export function useRegulationNeedsUpdate(days: number = 90) {
+  return useQuery({
+    queryKey: ['regulations', 'needs-update', days],
+    queryFn: async () => {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - days);
+      
+      const { data, error } = await supabase
+        .from('regulations')
+        .select('*')
+        .lt('last_reviewed_date', cutoffDate.toISOString())
+        .or(`last_reviewed_date.is.null`);
       
       if (error) throw error;
       return data as Regulation[];
