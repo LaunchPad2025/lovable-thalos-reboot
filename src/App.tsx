@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState } from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
+import Navbar from "@/components/layout/Navbar";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -20,6 +21,7 @@ import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
 import Regulations from "./pages/Regulations";
 import Models from "./pages/Models";
+import Legal from "./pages/Legal";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -39,6 +41,7 @@ const App = () => {
             <Routes>
               {/* Public route */}
               <Route path="/auth" element={<Auth />} />
+              <Route path="/legal" element={<Legal />} />
 
               {/* Protected routes with sidebar layout */}
               <Route element={<ProtectedRoute />}>
@@ -47,7 +50,8 @@ const App = () => {
                   element={
                     <div className="flex h-screen w-full">
                       <Sidebar userRole={userRole} />
-                      <div className="flex-1 overflow-hidden">
+                      <div className="flex-1 overflow-hidden flex flex-col">
+                        <Navbar />
                         <Routes>
                           <Route path="/" element={<Dashboard />} />
                           <Route path="/violations" element={<Violations />} />
@@ -60,6 +64,7 @@ const App = () => {
                           <Route path="/regulations/:id" element={<Regulations />} />
                           <Route path="/models" element={<Models />} />
                           <Route path="/coming-soon" element={<ComingSoon />} />
+                          <Route path="/legal" element={<Legal />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </div>
