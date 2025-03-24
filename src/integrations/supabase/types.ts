@@ -219,8 +219,85 @@ export type Database = {
         }
         Relationships: []
       }
+      regulation_amendments: {
+        Row: {
+          amendment_date: string
+          amendment_description: string
+          created_at: string | null
+          id: string
+          previous_version: string | null
+          regulation_id: string
+        }
+        Insert: {
+          amendment_date: string
+          amendment_description: string
+          created_at?: string | null
+          id?: string
+          previous_version?: string | null
+          regulation_id: string
+        }
+        Update: {
+          amendment_date?: string
+          amendment_description?: string
+          created_at?: string | null
+          id?: string
+          previous_version?: string | null
+          regulation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulation_amendments_regulation_id_fkey"
+            columns: ["regulation_id"]
+            isOneToOne: false
+            referencedRelation: "regulations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      regulation_citations: {
+        Row: {
+          citation_context: string | null
+          cited_regulation_id: string
+          created_at: string | null
+          id: string
+          source_regulation_id: string
+        }
+        Insert: {
+          citation_context?: string | null
+          cited_regulation_id: string
+          created_at?: string | null
+          id?: string
+          source_regulation_id: string
+        }
+        Update: {
+          citation_context?: string | null
+          cited_regulation_id?: string
+          created_at?: string | null
+          id?: string
+          source_regulation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "regulation_citations_cited_regulation_id_fkey"
+            columns: ["cited_regulation_id"]
+            isOneToOne: false
+            referencedRelation: "regulations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "regulation_citations_source_regulation_id_fkey"
+            columns: ["source_regulation_id"]
+            isOneToOne: false
+            referencedRelation: "regulations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       regulations: {
         Row: {
+          applicable_to: string[] | null
+          authority: string | null
+          category: string | null
           created_at: string | null
           description: string | null
           document_type: string
@@ -230,11 +307,20 @@ export type Database = {
           file_type: string | null
           id: string
           industry: string | null
+          jurisdiction: string | null
+          keywords: string[] | null
+          last_reviewed_date: string | null
+          search_text: unknown | null
+          source_url: string | null
+          status: string | null
           title: string
           updated_at: string | null
           version: string | null
         }
         Insert: {
+          applicable_to?: string[] | null
+          authority?: string | null
+          category?: string | null
           created_at?: string | null
           description?: string | null
           document_type: string
@@ -244,11 +330,20 @@ export type Database = {
           file_type?: string | null
           id?: string
           industry?: string | null
+          jurisdiction?: string | null
+          keywords?: string[] | null
+          last_reviewed_date?: string | null
+          search_text?: unknown | null
+          source_url?: string | null
+          status?: string | null
           title: string
           updated_at?: string | null
           version?: string | null
         }
         Update: {
+          applicable_to?: string[] | null
+          authority?: string | null
+          category?: string | null
           created_at?: string | null
           description?: string | null
           document_type?: string
@@ -258,6 +353,12 @@ export type Database = {
           file_type?: string | null
           id?: string
           industry?: string | null
+          jurisdiction?: string | null
+          keywords?: string[] | null
+          last_reviewed_date?: string | null
+          search_text?: unknown | null
+          source_url?: string | null
+          status?: string | null
           title?: string
           updated_at?: string | null
           version?: string | null

@@ -13,6 +13,15 @@ interface Regulation {
   version: string | null;
   effective_date: string | null;
   created_at: string;
+  // New fields
+  jurisdiction: string | null;
+  authority: string | null;
+  keywords: string[] | null;
+  source_url: string | null;
+  status: string | null;
+  category: string | null;
+  applicable_to: string[] | null;
+  last_reviewed_date: string | null;
 }
 
 export function useRegulations() {
@@ -46,5 +55,33 @@ export function useRegulationDetails(id: string | undefined) {
       return data as Regulation;
     },
     enabled: !!id
+  });
+}
+
+export function useRegulationSearch(searchTerm: string, filters: Record<string, string | null>) {
+  return useQuery({
+    queryKey: ['regulations', 'search', searchTerm, filters],
+    queryFn: async () => {
+      let query = supabase
+        .from('regulations')
+        .select('*');
+      
+      // Apply text search if provided
+      if (searchTerm) {
+        query = query.textSearch('search_text', searchTerm);
+      }
+      
+      // Apply filters
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) {
+          query = query.eq(key, value);
+        }
+      });
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Regulation[];
+    }
   });
 }
