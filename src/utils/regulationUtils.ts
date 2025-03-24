@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -56,27 +57,24 @@ export async function ingestRegulation(data: RegulationData) {
  */
 export async function checkRegulationExists(title: string, referenceNumber?: string): Promise<boolean> {
   try {
-    // Completely simplified approach to avoid the deep type instantiation issue
-    let query;
-    
     if (referenceNumber) {
-      // If reference number provided, search by that
-      const { data, error } = await supabase
+      // First approach: Check by reference number
+      const { count, error } = await supabase
         .from('regulations')
-        .select('id')
+        .select('*', { count: 'exact', head: true })
         .eq('reference_number', referenceNumber);
       
       if (error) throw error;
-      return (data?.length || 0) > 0;
+      return (count || 0) > 0;
     } else {
-      // Otherwise search by title
-      const { data, error } = await supabase
+      // Second approach: Check by title
+      const { count, error } = await supabase
         .from('regulations')
-        .select('id')
+        .select('*', { count: 'exact', head: true })
         .eq('title', title);
       
       if (error) throw error;
-      return (data?.length || 0) > 0;
+      return (count || 0) > 0;
     }
   } catch (error) {
     console.error('Error checking regulation existence:', error);
