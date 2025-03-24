@@ -14,6 +14,7 @@ import Chatbot from "./pages/Chatbot";
 import Subscription from "./pages/Subscription";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
+import Settings from "./pages/Settings";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -39,6 +40,7 @@ const App = () => {
                 <Route path="/tasks" element={<Tasks />} />
                 <Route path="/chatbot" element={<Chatbot />} />
                 <Route path="/subscription" element={<Subscription />} />
+                <Route path="/settings" element={<Settings />} />
                 <Route path="/coming-soon" element={<ComingSoon />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
