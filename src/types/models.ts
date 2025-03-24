@@ -11,11 +11,11 @@ export interface User {
 export interface Violation {
   id: string;
   violation: string; // Changed from 'title' to match the database
-  description?: string; // Not in the DB schema, but keeping for backward compatibility
+  description?: string; 
   location?: string;
-  detected_at: string; // Changed from 'date' to match the database
-  organization_id: string; // Added to match the database
-  status?: 'open' | 'in-progress' | 'resolved' | 'pending'; // Not in DB schema directly
+  detected_at: string;
+  organization_id: string;
+  status?: 'open' | 'in-progress' | 'resolved' | 'pending';
   severity: string;
   regulation?: string;
   confidence?: number;
@@ -28,13 +28,15 @@ export interface Task {
   title: string;
   description?: string;
   due_date?: string;
+  dueDate?: string; // Added for formatted display
   status: 'open' | 'in-progress' | 'completed' | 'overdue' | 'pending';
-  assignee_id?: string; // Changed from 'assignee' to match the database
+  assignee_id?: string;
+  assignee?: string; // Added for formatted display
   priority: 'low' | 'medium' | 'high';
-  organization_id: string; // Added to match the database
-  created_by: string; // Added to match the database
-  worksite_id?: string; // Added to match the database
-  violation_id?: string; // Added to keep compatibility with existing code
+  organization_id: string;
+  created_by: string;
+  worksite_id?: string;
+  violation_id?: string;
   created_at: string;
   updated_at: string;
 }

@@ -1,194 +1,124 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { Violation } from '@/types/models';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-
-const violationSchema = z.object({
-  title: z.string().min(3, 'Title must be at least 3 characters'),
-  description: z.string().min(10, 'Description must be at least 10 characters'),
-  location: z.string().min(3, 'Location must be at least 3 characters'),
-  reported_by: z.string().min(3, 'Reporter name must be at least 3 characters'),
-  severity: z.enum(['low', 'medium', 'high', 'critical']),
-  assignee: z.string().min(3, 'Assignee name must be at least 3 characters'),
-  status: z.enum(['open', 'in-progress', 'resolved', 'pending']).default('open'),
-});
-
-type ViolationFormData = z.infer<typeof violationSchema>;
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Violation } from '@/types/models';
 
 interface NewViolationModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<Violation, 'id' | 'created_at' | 'updated_at'>) => void;
+  onSubmit: (data: Omit<Violation, "id" | "created_at">) => Promise<void>;
 }
 
-const NewViolationModal = ({ isOpen, onClose, onSubmit }: NewViolationModalProps) => {
-  const { control, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<ViolationFormData>({
-    resolver: zodResolver(violationSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      location: '',
-      reported_by: '',
-      severity: 'medium',
-      assignee: '',
-      status: 'open',
-    },
-  });
+const NewViolationModal: React.FC<NewViolationModalProps> = ({ isOpen, onClose, onSubmit }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [violation, setViolation] = useState('');
+  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState('');
+  const [severity, setSeverity] = useState<string>('medium');
+  const [regulation, setRegulation] = useState('');
 
-  const handleFormSubmit = async (data: ViolationFormData) => {
-    // Ensure all fields are explicitly passed to match the expected type
-    await onSubmit({
-      title: data.title,
-      description: data.description,
-      location: data.location,
-      reported_by: data.reported_by,
-      severity: data.severity,
-      assignee: data.assignee,
-      status: data.status,
-      date: new Date().toISOString(),
-      notes: [],
-    });
-    reset();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    
+    try {
+      await onSubmit({
+        violation: violation,
+        description,
+        location,
+        severity,
+        regulation,
+        detected_at: new Date().toISOString(),
+        organization_id: '00000000-0000-0000-0000-000000000000',
+      });
+      
+      // Reset form
+      setViolation('');
+      setDescription('');
+      setLocation('');
+      setSeverity('medium');
+      setRegulation('');
+      
+      onClose();
+    } catch (error) {
+      console.error('Error submitting violation:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[600px] bg-[#0f1419] border border-gray-800 text-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-white">Report New Safety Violation</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-white">Report New Violation</DialogTitle>
         </DialogHeader>
         
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4 pt-4">
+        <form onSubmit={handleSubmit} className="space-y-4 pt-4">
           <div className="space-y-2">
-            <Label htmlFor="title" className="text-gray-300">Title</Label>
-            <Controller
-              name="title"
-              control={control}
-              render={({ field }) => (
-                <Input
-                  id="title"
-                  placeholder="Brief description of the violation"
-                  className="bg-[#1a1f29] border-gray-700 text-white"
-                  {...field}
-                />
-              )}
+            <Label htmlFor="violation" className="text-gray-300">Violation Type</Label>
+            <Input
+              id="violation"
+              value={violation}
+              onChange={(e) => setViolation(e.target.value)}
+              placeholder="e.g. Missing guardrail"
+              className="bg-[#1a1f29] border-gray-700 text-white"
+              required
             />
-            {errors.title && (
-              <p className="text-sm text-red-500">{errors.title.message}</p>
-            )}
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="description" className="text-gray-300">Detailed Description</Label>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field }) => (
-                <Textarea
-                  id="description"
-                  placeholder="Provide a detailed description of the safety violation"
-                  className="bg-[#1a1f29] border-gray-700 text-white"
-                  rows={4}
-                  {...field}
-                />
-              )}
+            <Label htmlFor="description" className="text-gray-300">Description</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Provide details about the violation"
+              className="bg-[#1a1f29] border-gray-700 text-white min-h-[100px]"
             />
-            {errors.description && (
-              <p className="text-sm text-red-500">{errors.description.message}</p>
-            )}
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="location" className="text-gray-300">Location</Label>
-              <Controller
-                name="location"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="location"
-                    placeholder="Building, floor, area, etc."
-                    className="bg-[#1a1f29] border-gray-700 text-white"
-                    {...field}
-                  />
-                )}
+              <Input
+                id="location"
+                value={location}
+                onChange={(e) => setLocation(e.target.value)}
+                placeholder="e.g. Building A, Floor 3"
+                className="bg-[#1a1f29] border-gray-700 text-white"
               />
-              {errors.location && (
-                <p className="text-sm text-red-500">{errors.location.message}</p>
-              )}
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="reported_by" className="text-gray-300">Reported By</Label>
-              <Controller
-                name="reported_by"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="reported_by"
-                    placeholder="Your name"
-                    className="bg-[#1a1f29] border-gray-700 text-white"
-                    {...field}
-                  />
-                )}
-              />
-              {errors.reported_by && (
-                <p className="text-sm text-red-500">{errors.reported_by.message}</p>
-              )}
+              <Label htmlFor="severity" className="text-gray-300">Severity</Label>
+              <Select value={severity} onValueChange={setSeverity}>
+                <SelectTrigger className="bg-[#1a1f29] border-gray-700 text-white">
+                  <SelectValue placeholder="Select severity" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#1a1f29] border-gray-700 text-white">
+                  <SelectItem value="low">Low</SelectItem>
+                  <SelectItem value="medium">Medium</SelectItem>
+                  <SelectItem value="high">High</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="severity" className="text-gray-300">Severity</Label>
-              <Controller
-                name="severity"
-                control={control}
-                render={({ field }) => (
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <SelectTrigger id="severity" className="bg-[#1a1f29] border-gray-700 text-white">
-                      <SelectValue placeholder="Select severity" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-[#1a1f29] border-gray-700 text-white">
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-              {errors.severity && (
-                <p className="text-sm text-red-500">{errors.severity.message}</p>
-              )}
-            </div>
-            
-            <div className="space-y-2">
-              <Label htmlFor="assignee" className="text-gray-300">Assign To</Label>
-              <Controller
-                name="assignee"
-                control={control}
-                render={({ field }) => (
-                  <Input
-                    id="assignee"
-                    placeholder="Person responsible for addressing this"
-                    className="bg-[#1a1f29] border-gray-700 text-white"
-                    {...field}
-                  />
-                )}
-              />
-              {errors.assignee && (
-                <p className="text-sm text-red-500">{errors.assignee.message}</p>
-              )}
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="regulation" className="text-gray-300">Related Regulation</Label>
+            <Input
+              id="regulation"
+              value={regulation}
+              onChange={(e) => setRegulation(e.target.value)}
+              placeholder="e.g. OSHA 1926.501"
+              className="bg-[#1a1f29] border-gray-700 text-white"
+            />
           </div>
           
           <DialogFooter>
@@ -196,7 +126,7 @@ const NewViolationModal = ({ isOpen, onClose, onSubmit }: NewViolationModalProps
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting} className="bg-thalos-blue hover:bg-blue-600">
-              {isSubmitting ? 'Submitting...' : 'Submit Violation'}
+              {isSubmitting ? 'Submitting...' : 'Submit Report'}
             </Button>
           </DialogFooter>
         </form>
