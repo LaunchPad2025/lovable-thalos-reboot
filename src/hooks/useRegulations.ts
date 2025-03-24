@@ -59,12 +59,14 @@ export function useRegulationDetails(id: string | undefined) {
 }
 
 export function useRegulationSearch(searchTerm: string, filters: Record<string, string | null>) {
-  // Extract the filter values for the query key instead of using the entire object
-  const filterKeys = Object.keys(filters).sort();
-  const filterValues = filterKeys.map(key => `${key}:${filters[key]}`);
+  // Create a stable array of primitive values for the query key
+  const filterEntries = Object.entries(filters)
+    .filter(([_, value]) => value !== null)
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    .map(([key, value]) => `${key}:${value}`);
   
   return useQuery({
-    queryKey: ['regulations', 'search', searchTerm, ...filterValues],
+    queryKey: ['regulations', 'search', searchTerm, ...filterEntries],
     queryFn: async () => {
       let query = supabase
         .from('regulations')
