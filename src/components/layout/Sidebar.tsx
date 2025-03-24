@@ -1,163 +1,188 @@
-
-import React, { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  ChevronLeft, 
-  Home, 
-  AlertTriangle, 
-  ClipboardList, 
+import { useState, useEffect } from "react";
+import { useLocation, Link } from "react-router-dom";
+import { cn } from "@/lib/utils";
+import { useMobile } from "@/hooks/useMobile";
+import {
+  LayoutDashboard,
+  AlertTriangle,
+  ListTodo,
   FileText,
-  Bell,
-  BarChart2,
+  MessageSquare,
+  CreditCard,
   Settings,
-  HelpCircle,
-  Menu,
-  Gauge,
-  LogIn
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+  BrainCircuit,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
-type NavItem = {
-  name: string;
-  href: string;
-  icon: React.ElementType;
-  adminOnly?: boolean;
-  authRequired?: boolean;
-};
-
-const navItems: NavItem[] = [
-  { name: 'Dashboard', href: '/', icon: Gauge, authRequired: true },
-  { name: 'Violations', href: '/violations', icon: AlertTriangle, authRequired: true },
-  { name: 'Tasks', href: '/tasks', icon: ClipboardList, authRequired: true },
-  { name: 'Risk Assessment', href: '/coming-soon?feature=risk-assessment', icon: BarChart2, authRequired: true },
-  { name: 'Documents', href: '/coming-soon?feature=documents', icon: FileText, authRequired: true },
-  { name: 'Notifications', href: '/coming-soon?feature=notifications', icon: Bell, authRequired: true },
-  { name: 'Audits', href: '/coming-soon?feature=audits', icon: BarChart2, authRequired: true },
-  { name: 'Reports', href: '/coming-soon?feature=reports', icon: FileText, authRequired: true },
-  { name: 'Training', href: '/coming-soon?feature=training', icon: HelpCircle, authRequired: true },
-  { name: 'Admin', href: '/settings', icon: Settings, adminOnly: true, authRequired: true },
-  { name: 'Sign In', href: '/auth', icon: LogIn, authRequired: false },
-];
-
-interface SidebarProps {
-  userRole?: 'admin' | 'user';
+interface NavItem {
+  title: string;
+  path: string;
+  icon: any;
+  roles: ("admin" | "user")[];
 }
 
-const Sidebar = ({ userRole = 'admin' }: SidebarProps) => {
-  const [collapsed, setCollapsed] = useState(false);
+const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
   const location = useLocation();
-  const { user, signOut } = useAuth();
-  const navigate = useNavigate();
+  const isMobile = useMobile();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setCollapsed(!collapsed);
+  // The initial state is expanded on desktop, closed on mobile
+  const [expanded, setExpanded] = useState(!isMobile);
+
+  // Update expanded state when screen size changes
+  useEffect(() => {
+    setExpanded(!isMobile);
+  }, [isMobile]);
+
+  const toggleMobileSidebar = () => {
+    setMobileOpen(!mobileOpen);
   };
 
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
-  };
+  // Close mobile sidebar when location changes
+  useEffect(() => {
+    if (mobileOpen) setMobileOpen(false);
+  }, [location.pathname]);
 
-  // Filter items based on authentication status
-  const filteredNavItems = navItems.filter(item => {
-    // If item requires auth and user is not logged in, don't show
-    if (item.authRequired && !user) return false;
-    // If item is admin only and user is not admin, don't show
-    if (item.adminOnly && userRole !== 'admin') return false;
-    // If item is the login item and user is logged in, don't show
-    if (item.name === 'Sign In' && user) return false;
-    
-    return true;
-  });
+  // Items for the sidebar navigation
+  const navItems = [
+    {
+      title: "Dashboard",
+      path: "/",
+      icon: LayoutDashboard,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "Violations",
+      path: "/violations",
+      icon: AlertTriangle,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "Tasks",
+      path: "/tasks",
+      icon: ListTodo,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "Regulations",
+      path: "/regulations",
+      icon: FileText,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "ML Models",
+      path: "/models",
+      icon: BrainCircuit,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "AI Assistant",
+      path: "/chatbot",
+      icon: MessageSquare,
+      roles: ["admin", "user"],
+    },
+    {
+      title: "Subscription",
+      path: "/subscription",
+      icon: CreditCard,
+      roles: ["admin"],
+    },
+    {
+      title: "Settings",
+      path: "/settings",
+      icon: Settings,
+      roles: ["admin", "user"],
+    },
+  ];
 
   return (
-    <div 
-      className={cn(
-        "h-screen bg-[#0b0f14] border-r border-gray-800 flex flex-col transition-all duration-300 ease-in-out z-10",
-        collapsed ? "w-20" : "w-64"
-      )}
-    >
-      <div className="flex items-center justify-between p-4 border-b border-gray-800">
-        {!collapsed && (
-          <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl text-blue-500">Thalos</span>
-          </Link>
-        )}
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={toggleSidebar}
-          className="ml-auto text-gray-400 hover:text-white hover:bg-gray-800"
-        >
-          {collapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
-        </Button>
-      </div>
-      
-      <div className="flex-1 overflow-y-auto py-4">
-        <nav className="px-2 space-y-1">
-          {filteredNavItems.map((item) => {
-            const isActive = location.pathname === item.href || 
-                             (item.href !== '/' && location.pathname.startsWith(item.href));
-            
-            return (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={cn(
-                  "flex items-center px-3 py-3 rounded-md transition-colors duration-200",
-                  isActive 
-                    ? "bg-blue-600 text-white" 
-                    : "text-gray-400 hover:bg-gray-800 hover:text-white",
-                  collapsed ? "justify-center" : "justify-start"
-                )}
-              >
-                <item.icon size={20} className={cn("flex-shrink-0", collapsed ? "" : "mr-3")} />
-                {!collapsed && <span>{item.name}</span>}
-              </Link>
-            );
-          })}
-        </nav>
-      </div>
-      
-      {user && (
-        <div className="p-4 border-t border-gray-800">
-          <div className={cn(
-            "flex items-center",
-            collapsed ? "justify-center" : "space-x-3"
-          )}>
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
-              {user?.email?.charAt(0).toUpperCase() || 'A'}
-            </div>
-            {!collapsed && (
-              <div className="text-white">
-                <p className="text-sm font-medium">{user?.user_metadata?.name || user?.email?.split('@')[0] || 'User'}</p>
-                <p className="text-xs text-gray-400">{userRole === 'admin' ? 'Administrator' : 'User'}</p>
+    <>
+      {isMobile ? (
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <Button variant="outline" onClick={toggleMobileSidebar}>
+              Open Menu
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            className="w-full sm:w-64 bg-sidebar text-sidebar-foreground"
+            side="left"
+          >
+            <div className="flex flex-col h-full">
+              <div className="px-4 py-6">
+                <h1 className="text-2xl font-bold">Thalos</h1>
+                <p className="text-sm text-muted-foreground">
+                  Safety Compliance Platform
+                </p>
               </div>
-            )}
+              <nav className="flex-1">
+                <ul className="space-y-1 px-2">
+                  {navItems.map(
+                    (item) =>
+                      item.roles.includes(userRole) && (
+                        <li key={item.title}>
+                          <Link
+                            to={item.path}
+                            className={cn(
+                              "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                              location.pathname === item.path
+                                ? "bg-accent text-accent-foreground"
+                                : "text-muted-foreground"
+                            )}
+                          >
+                            <item.icon className="mr-2 h-4 w-4" />
+                            <span>{item.title}</span>
+                          </Link>
+                        </li>
+                      )
+                  )}
+                </ul>
+              </nav>
+            </div>
+          </SheetContent>
+        </Sheet>
+      ) : (
+        <aside
+          className={cn(
+            "bg-sidebar text-sidebar-foreground w-64 flex-shrink-0 transition-all duration-300 ease-in-out",
+            expanded ? "block" : "hidden"
+          )}
+        >
+          <div className="flex flex-col h-full">
+            <div className="px-4 py-6">
+              <h1 className="text-2xl font-bold">Thalos</h1>
+              <p className="text-sm text-muted-foreground">
+                Safety Compliance Platform
+              </p>
+            </div>
+            <nav className="flex-1">
+              <ul className="space-y-1 px-2">
+                {navItems.map(
+                  (item) =>
+                    item.roles.includes(userRole) && (
+                      <li key={item.title}>
+                        <Link
+                          to={item.path}
+                          className={cn(
+                            "group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground",
+                            location.pathname === item.path
+                              ? "bg-accent text-accent-foreground"
+                              : "text-muted-foreground"
+                          )}
+                        >
+                          <item.icon className="mr-2 h-4 w-4" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </li>
+                    )
+                )}
+              </ul>
+            </nav>
           </div>
-        </div>
+        </aside>
       )}
-
-      {user && (
-        <div className="p-4 border-t border-gray-800">
-          <div className={cn(
-            "flex items-center",
-            collapsed ? "justify-center" : "justify-between"
-          )}>
-            {!collapsed ? (
-              <>
-                <span className="text-xs text-gray-400">Chatbot</span>
-                <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">1</span>
-              </>
-            ) : (
-              <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">1</span>
-            )}
-          </div>
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 

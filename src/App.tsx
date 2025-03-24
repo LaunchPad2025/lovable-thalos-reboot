@@ -18,6 +18,8 @@ import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
 import Auth from "./pages/Auth";
+import Regulations from "./pages/Regulations";
+import Models from "./pages/Models";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -54,6 +56,9 @@ const App = () => {
                           <Route path="/chatbot" element={<Chatbot />} />
                           <Route path="/subscription" element={<Subscription />} />
                           <Route path="/settings" element={<Settings />} />
+                          <Route path="/regulations" element={<Regulations />} />
+                          <Route path="/regulations/:id" element={<Regulations />} />
+                          <Route path="/models" element={<Models />} />
                           <Route path="/coming-soon" element={<ComingSoon />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
