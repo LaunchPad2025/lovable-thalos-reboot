@@ -1,3 +1,4 @@
+
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -73,24 +74,27 @@ export async function ingestRegulation(data: RegulationData) {
  */
 export async function checkRegulationExists(title: string, referenceNumber?: string): Promise<boolean> {
   try {
-    // Completely different approach to avoid TypeScript recursion issues
+    let exists = false;
+    
+    // Check by reference number if provided
     if (referenceNumber) {
-      const { data } = await supabase
+      const { count, error } = await supabase
         .from('regulations')
-        .select('id')
-        .eq('reference_number', referenceNumber)
-        .limit(1);
+        .select('*', { count: 'exact', head: true })
+        .eq('reference_number', referenceNumber);
       
-      return Array.isArray(data) && data.length > 0;
+      if (error) throw error;
+      if (count && count > 0) return true;
     }
     
-    const { data } = await supabase
+    // Check by title
+    const { count, error } = await supabase
       .from('regulations')
-      .select('id')
-      .eq('title', title)
-      .limit(1);
+      .select('*', { count: 'exact', head: true })
+      .eq('title', title);
     
-    return Array.isArray(data) && data.length > 0;
+    if (error) throw error;
+    return !!count && count > 0;
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;
