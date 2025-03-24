@@ -10,6 +10,7 @@ const Subscription = () => {
       <PageTitle 
         title="Subscription"
         subtitle="Manage your Thalos subscription"
+        className="text-white"
       />
       
       <PlanSelector />

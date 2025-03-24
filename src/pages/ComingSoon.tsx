@@ -36,14 +36,14 @@ const ComingSoon = () => {
   return (
     <PageContainer>
       <div className="flex justify-center items-center min-h-[calc(100vh-12rem)]">
-        <div className="text-center max-w-xl p-8">
-          <div className="h-20 w-20 bg-blue-100 rounded-full flex justify-center items-center mx-auto mb-6">
+        <div className="bg-[#0d1117] border border-gray-800 rounded-lg shadow-lg text-center max-w-xl p-8">
+          <div className="h-20 w-20 bg-blue-900/30 rounded-full flex justify-center items-center mx-auto mb-6">
             <Clock size={40} className="text-thalos-blue" />
           </div>
           
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">{title}</h1>
-          <p className="text-lg text-gray-600 mb-4">{description}</p>
-          <p className="text-gray-500 mb-8">{details}</p>
+          <h1 className="text-3xl font-bold text-white mb-3">{title}</h1>
+          <p className="text-lg text-gray-300 mb-4">{description}</p>
+          <p className="text-gray-400 mb-8">{details}</p>
           
           <Link to="/">
             <Button className="bg-thalos-blue hover:bg-blue-600">
