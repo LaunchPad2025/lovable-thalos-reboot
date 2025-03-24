@@ -7,8 +7,8 @@ import { Input } from '@/components/ui/input';
 const Navbar = () => {
   return (
     <header className="bg-[#0d1117] border-b border-gray-800 sticky top-0 z-10">
-      <div className="h-16 px-6 flex items-center justify-between">
-        <div className="flex items-center bg-[#161b22] rounded-md w-96 px-3 py-2">
+      <div className="h-16 px-4 md:px-6 flex items-center justify-between">
+        <div className="flex items-center bg-[#161b22] rounded-md w-full max-w-sm px-3 py-2">
           <Search size={18} className="text-gray-400 mr-2" />
           <Input 
             type="search" 
