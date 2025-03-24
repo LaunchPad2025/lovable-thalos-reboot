@@ -75,6 +75,45 @@ export type Database = {
           },
         ]
       }
+      ml_models: {
+        Row: {
+          accuracy: number | null
+          active: boolean | null
+          created_at: string | null
+          description: string | null
+          id: string
+          industry: string
+          model_type: string
+          name: string
+          updated_at: string | null
+          version: string
+        }
+        Insert: {
+          accuracy?: number | null
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          industry: string
+          model_type: string
+          name: string
+          updated_at?: string | null
+          version: string
+        }
+        Update: {
+          accuracy?: number | null
+          active?: boolean | null
+          created_at?: string | null
+          description?: string | null
+          id?: string
+          industry?: string
+          model_type?: string
+          name?: string
+          updated_at?: string | null
+          version?: string
+        }
+        Relationships: []
+      }
       organization_members: {
         Row: {
           created_at: string
@@ -177,6 +216,51 @@ export type Database = {
           role?: string
           updated_at?: string
           website_url?: string | null
+        }
+        Relationships: []
+      }
+      regulations: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          document_type: string
+          effective_date: string | null
+          file_path: string | null
+          file_size: number | null
+          file_type: string | null
+          id: string
+          industry: string | null
+          title: string
+          updated_at: string | null
+          version: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          document_type: string
+          effective_date?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          industry?: string | null
+          title: string
+          updated_at?: string | null
+          version?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          document_type?: string
+          effective_date?: string | null
+          file_path?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          industry?: string | null
+          title?: string
+          updated_at?: string | null
+          version?: string | null
         }
         Relationships: []
       }
@@ -356,6 +440,45 @@ export type Database = {
           },
         ]
       }
+      violation_regulations: {
+        Row: {
+          created_at: string | null
+          id: string
+          regulation_id: string
+          relevance_score: number | null
+          violation_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          regulation_id: string
+          relevance_score?: number | null
+          violation_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          regulation_id?: string
+          relevance_score?: number | null
+          violation_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "violation_regulations_regulation_id_fkey"
+            columns: ["regulation_id"]
+            isOneToOne: false
+            referencedRelation: "regulations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "violation_regulations_violation_id_fkey"
+            columns: ["violation_id"]
+            isOneToOne: false
+            referencedRelation: "violations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       violation_tasks: {
         Row: {
           created_at: string
@@ -393,36 +516,42 @@ export type Database = {
         Row: {
           confidence: number | null
           created_at: string
+          description: string | null
           detected_at: string
           id: string
           location: string | null
           organization_id: string
           regulation: string | null
           severity: string
+          status: string | null
           violation: string
           worksite_id: string | null
         }
         Insert: {
           confidence?: number | null
           created_at?: string
+          description?: string | null
           detected_at?: string
           id?: string
           location?: string | null
           organization_id: string
           regulation?: string | null
           severity: string
+          status?: string | null
           violation: string
           worksite_id?: string | null
         }
         Update: {
           confidence?: number | null
           created_at?: string
+          description?: string | null
           detected_at?: string
           id?: string
           location?: string | null
           organization_id?: string
           regulation?: string | null
           severity?: string
+          status?: string | null
           violation?: string
           worksite_id?: string | null
         }

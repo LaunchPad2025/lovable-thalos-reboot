@@ -22,7 +22,7 @@ export function useAuthForm() {
       setIsSubmitting(true);
       await signIn(values.email, values.password);
       navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Login error:", error);
       setAuthError(
         error.message || 
@@ -39,7 +39,7 @@ export function useAuthForm() {
       setIsSubmitting(true);
       await signUp(values.email, values.password, values.name);
       setAuthError("Registration successful! Please check your email to confirm your account.");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Signup error:", error);
       if (error.message?.includes("already registered")) {
         setAuthError("This email is already registered. Please try signing in instead.");
