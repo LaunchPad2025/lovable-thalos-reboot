@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -78,6 +77,7 @@ const formSchema = z.object({
   category: z.string().nullable().optional(),
   applicable_to: z.string().nullable().optional(),
   last_reviewed_date: z.date().nullable().optional(),
+  document_type: z.string().default("standard"), // Added to match database schema requirement
 });
 
 const RegulationForm: React.FC<RegulationFormProps> = ({ onSuccess, editingRegulation }) => {
@@ -100,6 +100,7 @@ const RegulationForm: React.FC<RegulationFormProps> = ({ onSuccess, editingRegul
       category: editingRegulation?.category || null,
       applicable_to: editingRegulation?.applicable_to ? editingRegulation.applicable_to.join(", ") : null,
       last_reviewed_date: editingRegulation?.last_reviewed_date ? new Date(editingRegulation.last_reviewed_date) : null,
+      document_type: editingRegulation?.document_type || "standard", // Default value for document_type
     },
   });
 
@@ -113,16 +114,24 @@ const RegulationForm: React.FC<RegulationFormProps> = ({ onSuccess, editingRegul
       
       // Convert Date objects to ISO string format for the database
       const formattedValues = {
-        ...values,
+        title: values.title,
+        description: values.description,
+        document_type: values.document_type,
         effective_date: values.effective_date instanceof Date 
           ? values.effective_date.toISOString()
           : values.effective_date,
         last_reviewed_date: values.last_reviewed_date instanceof Date 
           ? values.last_reviewed_date.toISOString()
           : values.last_reviewed_date,
+        file_path: values.file_url, // Map file_url to file_path in database
         file_size: Number(values.file_size) || 0, // Convert to number
         keywords,
         applicable_to,
+        jurisdiction: values.jurisdiction,
+        authority: values.authority,
+        source_url: values.source_url,
+        status: values.status,
+        category: values.category
       };
       
       if (editingRegulation) {
@@ -211,6 +220,20 @@ const RegulationForm: React.FC<RegulationFormProps> = ({ onSuccess, editingRegul
                   <FormLabel>File Size (KB)</FormLabel>
                   <FormControl>
                     <Input placeholder="Regulation File Size in KB" type="number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="document_type"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Document Type</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Type of document" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

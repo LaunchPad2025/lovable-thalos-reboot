@@ -24,6 +24,10 @@ interface Regulation {
   last_reviewed_date: string | null;
 }
 
+type FilterProps = {
+  [key: string]: string | null;
+};
+
 export function useRegulations() {
   return useQuery({
     queryKey: ['regulations'],
@@ -71,7 +75,7 @@ export function useRegulationSearch(searchTerm: string, filters: Record<string, 
         query = query.textSearch('search_text', searchTerm);
       }
       
-      // Apply filters
+      // Apply filters - fixed to avoid infinite type instantiation
       Object.entries(filters).forEach(([key, value]) => {
         if (value) {
           query = query.eq(key, value);
