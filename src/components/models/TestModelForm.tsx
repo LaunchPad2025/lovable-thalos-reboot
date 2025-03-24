@@ -10,7 +10,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { MLModel } from '@/hooks/useMLModels';
+import { Card } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const testModelSchema = z.object({
   model_id: z.string().min(1, 'Model is required'),
@@ -19,15 +22,6 @@ const testModelSchema = z.object({
 });
 
 type TestModelFormValues = z.infer<typeof testModelSchema>;
-
-interface MLModel {
-  id: string;
-  name: string;
-  industry: string;
-  model_type: string;
-  version: string;
-  active: boolean;
-}
 
 interface TestModelFormProps {
   models: MLModel[];
@@ -40,12 +34,14 @@ interface TestResult {
   severity: 'low' | 'medium' | 'high' | 'critical';
   status: 'pending' | 'open' | 'in-progress' | 'resolved';
   description: string;
+  detections?: any[];
 }
 
 const TestModelForm = ({ models }: TestModelFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [image, setImage] = useState<File | null>(null);
   const [testResult, setTestResult] = useState<TestResult | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   
   const activeModels = models.filter(m => m.active);
   
@@ -65,18 +61,26 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
   const onModelChange = (modelId: string) => {
     const model = models.find(m => m.id === modelId);
     if (model) {
-      form.setValue('industry', model.industry);
+      form.setValue('industry', model.industry === 'All' ? 'Construction' : model.industry);
     }
   };
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setImage(e.target.files[0]);
+      const file = e.target.files[0];
+      setImage(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
   
   const onSubmit = async (values: TestModelFormValues) => {
-    if (!values.violation_text && !image) {
+    if (!values.violation_text && !image && selectedModel?.model_type !== 'Multimodal (Image + Text)') {
       toast.error('Please provide either text or an image');
       return;
     }
@@ -89,12 +93,13 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
       const requestData: any = {
         violationText: values.violation_text || undefined,
         industry: values.industry,
-        modelId: values.model_id
+        modelId: selectedModel?.name.toLowerCase().split(' ')[0].replace(/\+/g, '') || 'yolov8'
       };
       
       // If there's an image, we'd handle it here
-      // For now, we'll just simulate with the image name
       if (image) {
+        // In a production app, you would upload the image to storage first
+        // For now, we'll just simulate with the image name
         requestData.violationImageUrl = `mock_url_for_${image.name}`;
       }
       
@@ -125,6 +130,21 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
     }
   };
   
+  const getModelTypeDescription = (type: string) => {
+    if (!type) return '';
+    
+    if (type.includes('Object Detection')) 
+      return 'This model detects objects like missing PPE or safety equipment.';
+    if (type.includes('Pose Estimation')) 
+      return 'This model analyzes worker posture to identify unsafe positions.';
+    if (type.includes('Semantic Segmentation')) 
+      return 'This model identifies hazardous areas in the environment.';
+    if (type.includes('Multimodal')) 
+      return 'This model understands both images and text to provide comprehensive analysis.';
+    
+    return '';
+  };
+  
   return (
     <div className="space-y-6">
       <Form {...form}>
@@ -153,7 +173,7 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
                     ) : (
                       activeModels.map(model => (
                         <SelectItem key={model.id} value={model.id}>
-                          {model.name} ({model.model_type}, {model.version})
+                          {model.name} ({model.model_type})
                         </SelectItem>
                       ))
                     )}
@@ -164,6 +184,23 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
             )}
           />
           
+          {selectedModel && (
+            <div className="text-sm text-muted-foreground mb-4">
+              <p>{selectedModel.description}</p>
+              <p className="mt-2">{getModelTypeDescription(selectedModel.model_type)}</p>
+              {selectedModel.model_url && (
+                <a 
+                  href={selectedModel.model_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-thalos-blue hover:underline mt-2 inline-block"
+                >
+                  View on HuggingFace
+                </a>
+              )}
+            </div>
+          )}
+          
           <FormField
             control={form.control}
             name="industry"
@@ -173,7 +210,7 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
                 <Select 
                   onValueChange={field.onChange}
                   value={field.value}
-                  disabled={!!selectedModel}
+                  disabled={!!selectedModel && selectedModel.industry !== 'All'}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -189,6 +226,8 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
                     <SelectItem value="Agriculture">Agriculture</SelectItem>
                     <SelectItem value="Food Processing">Food Processing</SelectItem>
                     <SelectItem value="Mining">Mining</SelectItem>
+                    <SelectItem value="Warehousing">Warehousing</SelectItem>
+                    <SelectItem value="Industrial">Industrial</SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -196,7 +235,7 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
             )}
           />
           
-          {selectedModel?.model_type === 'Text' && (
+          {(selectedModel?.model_type.includes('Text') || selectedModel?.model_type.includes('Multimodal')) && (
             <FormField
               control={form.control}
               name="violation_text"
@@ -216,7 +255,7 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
             />
           )}
           
-          {(selectedModel?.model_type === 'Image' || selectedModel?.model_type === 'Multimodal') && (
+          {(selectedModel?.model_type.includes('Image') || selectedModel?.model_type.includes('Multimodal')) && (
             <div className="space-y-2">
               <FormLabel>Upload Image</FormLabel>
               <Input 
@@ -224,10 +263,19 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
                 accept="image/*"
                 onChange={handleImageChange}
               />
-              {image && (
-                <p className="text-sm text-muted-foreground">
-                  Selected: {image.name} ({(image.size / 1024).toFixed(1)} KB)
-                </p>
+              {imagePreview && (
+                <div className="mt-3">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Preview:
+                  </p>
+                  <div className="relative max-w-md mx-auto">
+                    <img 
+                      src={imagePreview} 
+                      alt="Upload preview" 
+                      className="rounded-md border object-cover max-h-[300px] w-full" 
+                    />
+                  </div>
+                </div>
               )}
             </div>
           )}
@@ -250,8 +298,8 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
       </Form>
       
       {testResult && (
-        <div className="mt-6 rounded-md border p-4">
-          <h3 className="text-sm font-semibold mb-2">Analysis Results</h3>
+        <Card className="mt-6 p-4">
+          <h3 className="text-lg font-semibold mb-4">Analysis Results</h3>
           
           <div className="space-y-4">
             <div className="flex items-center gap-2">
@@ -261,9 +309,9 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
             
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium">Severity:</span>
-              <span className={`rounded-full px-2 py-1 text-xs font-medium ${renderSeverityClass(testResult.severity)}`}>
+              <Badge className={renderSeverityClass(testResult.severity)}>
                 {testResult.severity.charAt(0).toUpperCase() + testResult.severity.slice(1)}
-              </span>
+              </Badge>
             </div>
             
             <div className="space-y-2">
@@ -271,9 +319,31 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
               <p className="text-sm text-muted-foreground">{testResult.description}</p>
             </div>
             
+            {testResult.detections && testResult.detections.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-sm font-medium">Detections:</p>
+                <ul className="list-disc pl-5 space-y-1">
+                  {testResult.detections.map((detection, idx) => (
+                    <li key={idx} className="text-sm">
+                      {detection.label ? (
+                        <>
+                          <span className="font-medium">{detection.label.replace('_', ' ')}</span>
+                          {detection.confidence && (
+                            <span className="text-muted-foreground"> (Confidence: {(detection.confidence * 100).toFixed(1)}%)</span>
+                          )}
+                        </>
+                      ) : (
+                        <span className="text-muted-foreground">See analysis in description</span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
             <div className="space-y-2">
               <p className="text-sm font-medium">Related Regulations:</p>
-              {testResult.regulationIds.length > 0 ? (
+              {testResult.regulationIds && testResult.regulationIds.length > 0 ? (
                 <ul className="list-disc pl-5 space-y-1">
                   {testResult.regulationIds.map((id, index) => (
                     <li key={id} className="text-sm">
@@ -286,8 +356,19 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
                 <p className="text-sm text-muted-foreground">No regulations matched</p>
               )}
             </div>
+            
+            <div className="pt-3 border-t flex justify-between items-center">
+              <div className="flex items-center gap-2 text-sm">
+                <AlertTriangle size={16} className="text-yellow-500" />
+                <span className="text-muted-foreground">AI model results are approximations and should be reviewed by safety experts.</span>
+              </div>
+              
+              <Button variant="outline" size="sm" onClick={() => setTestResult(null)}>
+                Reset
+              </Button>
+            </div>
           </div>
-        </div>
+        </Card>
       )}
     </div>
   );
