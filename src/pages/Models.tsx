@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +17,6 @@ const Models = () => {
   const [selectedModel, setSelectedModel] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<string>("all");
   
-  // Group models by industry for filtering
   const industries = [...new Set(models.filter(m => m.industry).map(m => m.industry))];
   
   const filteredModels = activeTab === "all" 
@@ -29,8 +27,7 @@ const Models = () => {
   
   return (
     <PageContainer 
-      title="ML Models" 
-      description="Configure and test your safety violation detection models"
+      title="ML Models"
     >
       <div className="grid gap-4 md:grid-cols-7">
         <div className="grid grid-cols-1 gap-4 md:col-span-7 md:grid-cols-3">

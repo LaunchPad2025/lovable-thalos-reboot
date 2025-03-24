@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -20,12 +19,10 @@ const Regulations = () => {
   const { data: relatedViolations } = useRegulationViolations(id);
   const [activeTab, setActiveTab] = useState<string>("all");
 
-  // Reset to the "all" tab when no regulation is selected
   useEffect(() => {
     if (!id) setActiveTab("all");
   }, [id]);
 
-  // Group regulations by industry for filtering
   const industries = regulations 
     ? [...new Set(regulations.filter(r => r.industry).map(r => r.industry))]
     : [];
@@ -37,10 +34,7 @@ const Regulations = () => {
     : [];
 
   return (
-    <PageContainer 
-      title="Regulations & Standards" 
-      description="Manage your safety regulations, rulebooks, and standards documents"
-    >
+    <PageContainer title="Safety Regulations">
       <div className="grid gap-4 md:grid-cols-7">
         <Card className="md:col-span-7">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

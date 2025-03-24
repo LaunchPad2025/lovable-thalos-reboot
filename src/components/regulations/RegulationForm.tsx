@@ -1,263 +1,245 @@
-
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Button } from '@/components/ui/button';
-import { toast } from 'sonner';
+import React, { useState, useEffect } from 'react';
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Calendar } from "@/components/ui/calendar"
+import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import { CalendarIcon } from "lucide-react"
+import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/lib/supabase';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
-const regulationSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string().optional(),
-  industry: z.string().optional(),
-  document_type: z.string().min(1, 'Document type is required'),
-  version: z.string().optional(),
-  effective_date: z.string().optional(),
-});
+interface RegulationFormProps {
+  isEditing?: boolean;
+  regulationId?: string;
+  onSuccess?: () => void;
+  initialData?: any;
+}
 
-type RegulationFormValues = z.infer<typeof regulationSchema>;
-
-// Document types for the dropdown
-const documentTypes = [
-  'Regulation',
-  'Standard',
-  'Code',
-  'Guideline',
-  'Policy',
-  'Rulebook',
-  'Specification'
-];
-
-// Industry types for the dropdown
-const industries = [
-  'Construction',
-  'Manufacturing',
-  'Healthcare',
-  'Energy',
-  'Transportation',
-  'Agriculture',
-  'Food Processing',
-  'Mining',
-  'General'
-];
-
-const RegulationForm = () => {
+const RegulationForm = ({ isEditing = false, regulationId, onSuccess, initialData }: RegulationFormProps) => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [industry, setIndustry] = useState('All');
+  const [documentType, setDocumentType] = useState('');
+  const [version, setVersion] = useState('');
+  const [effectiveDate, setEffectiveDate] = useState<Date | undefined>(undefined);
+  const [filePath, setFilePath] = useState('');
+  const [fileType, setFileType] = useState('');
+  const [fileSize, setFileSize] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
-
-  const form = useForm<RegulationFormValues>({
-    resolver: zodResolver(regulationSchema),
-    defaultValues: {
-      title: '',
-      description: '',
-      industry: '',
-      document_type: '',
-      version: '',
-      effective_date: '',
-    },
-  });
-
-  const onSubmit = async (values: RegulationFormValues) => {
+  const { toast } = useToast();
+  
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title || '');
+      setDescription(initialData.description || '');
+      setIndustry(initialData.industry || 'All');
+      setDocumentType(initialData.document_type || '');
+      setVersion(initialData.version || '');
+      setEffectiveDate(initialData.effective_date ? new Date(initialData.effective_date) : undefined);
+      setFilePath(initialData.file_path || '');
+      setFileType(initialData.file_type || '');
+      setFileSize(initialData.file_size || '');
+    }
+  }, [initialData]);
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!title.trim() || !documentType) {
+      toast({
+        title: "Required fields missing",
+        description: "Please fill out all required fields",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
+    
     try {
-      let filePath = null;
-      let fileType = null;
-      let fileSize = null;
-
-      // If a file was selected, upload it to storage
-      if (file) {
-        const fileName = `${Date.now()}_${file.name}`;
-        fileType = file.type;
-        fileSize = file.size;
+      const documentData = {
+        title: title,
+        description: description,
+        industry: industry,
+        document_type: documentType, // Ensure this is provided
+        version: version,
+        effective_date: effectiveDate,
+        file_path: filePath,
+        file_type: fileType,
+        file_size: fileSize,
+      };
+      
+      if (isEditing && regulationId) {
+        const { error } = await supabase
+          .from('regulations')
+          .update(documentData)
+          .eq('id', regulationId);
         
-        // Upload file to Supabase Storage (you'd need to create a storage bucket for this)
-        // This is just a placeholder - you'll need to implement actual file storage
-        // const { data, error } = await supabase.storage
-        //  .from('regulations')
-        //  .upload(fileName, file);
-        // 
-        // if (error) throw error;
-        // filePath = data?.path;
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from('regulations')
+          .insert([documentData]);
+        
+        if (error) throw error;
       }
-
-      // Insert the regulation record
-      const { data, error } = await supabase
-        .from('regulations')
-        .insert({
-          ...values,
-          file_path: filePath,
-          file_type: fileType,
-          file_size: fileSize,
-          effective_date: values.effective_date || null,
-        })
-        .select();
-
-      if (error) throw error;
-
-      toast.success('Regulation added successfully');
-      form.reset();
-      setFile(null);
-    } catch (error: any) {
-      console.error('Error adding regulation:', error);
-      toast.error(error.message || 'Failed to add regulation');
+      
+      toast({
+        title: `Regulation ${isEditing ? 'updated' : 'created'} successfully`,
+        description: `The regulation "${title}" has been ${isEditing ? 'updated' : 'created'}.`,
+      });
+      
+      if (onSuccess) onSuccess();
+    } catch (error) {
+      console.error('Error submitting regulation:', error);
+      toast({
+        title: 'Error',
+        description: `Failed to ${isEditing ? 'update' : 'create'} regulation. Please try again.`,
+        variant: 'destructive',
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-    }
-  };
-
+  
   return (
-    <div className="p-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <FormField
-            control={form.control}
-            name="title"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Title</FormLabel>
-                <FormControl>
-                  <Input placeholder="Regulation title" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="document_type"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Document Type</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select document type" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {documentTypes.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="industry"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Industry</FormLabel>
-                <Select 
-                  onValueChange={field.onChange} 
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select industry" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {industries.map(industry => (
-                      <SelectItem key={industry} value={industry}>{industry}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="grid grid-cols-2 gap-4">
-            <FormField
-              control={form.control}
-              name="version"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Version</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., 1.0" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+    <form onSubmit={handleSubmit} className="w-full space-y-4">
+      <div>
+        <Label htmlFor="title">Title</Label>
+        <Input
+          type="text"
+          id="title"
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          placeholder="Enter regulation title"
+          required
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="description">Description</Label>
+        <Textarea
+          id="description"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Enter regulation description"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="industry">Industry</Label>
+        <Select value={industry} onValueChange={setIndustry}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select an industry" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="All">All</SelectItem>
+            <SelectItem value="Construction">Construction</SelectItem>
+            <SelectItem value="Manufacturing">Manufacturing</SelectItem>
+            <SelectItem value="Warehousing">Warehousing</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      
+      <div>
+        <Label htmlFor="documentType">Document Type</Label>
+        <Input
+          type="text"
+          id="documentType"
+          value={documentType}
+          onChange={(e) => setDocumentType(e.target.value)}
+          placeholder="Enter document type"
+          required
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="version">Version</Label>
+        <Input
+          type="text"
+          id="version"
+          value={version}
+          onChange={(e) => setVersion(e.target.value)}
+          placeholder="Enter version"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="effectiveDate">Effective Date</Label>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={"outline"}
+              className={cn(
+                "w-[240px] justify-start text-left font-normal",
+                !effectiveDate && "text-muted-foreground"
               )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {effectiveDate ? format(effectiveDate, "PPP") : <span>Pick a date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="start">
+            <Calendar
+              mode="single"
+              selected={effectiveDate}
+              onSelect={setEffectiveDate}
+              disabled={(date) =>
+                date > new Date()
+              }
+              initialFocus
             />
-
-            <FormField
-              control={form.control}
-              name="effective_date"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Effective Date</FormLabel>
-                  <FormControl>
-                    <Input type="date" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea 
-                    placeholder="Brief description of the regulation"
-                    className="min-h-[120px]"
-                    {...field} 
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <div className="space-y-2">
-            <FormLabel>Document File (Optional)</FormLabel>
-            <Input 
-              type="file" 
-              onChange={handleFileChange}
-              accept=".pdf,.doc,.docx,.txt"
-            />
-            {file && (
-              <div className="text-sm text-muted-foreground">
-                Selected: {file.name} ({(file.size / 1024).toFixed(1)} KB)
-              </div>
-            )}
-          </div>
-
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? 'Adding Regulation...' : 'Add Regulation'}
-          </Button>
-        </form>
-      </Form>
-    </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      
+      <div>
+        <Label htmlFor="filePath">File Path</Label>
+        <Input
+          type="text"
+          id="filePath"
+          value={filePath}
+          onChange={(e) => setFilePath(e.target.value)}
+          placeholder="Enter file path"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="fileType">File Type</Label>
+        <Input
+          type="text"
+          id="fileType"
+          value={fileType}
+          onChange={(e) => setFileType(e.target.value)}
+          placeholder="Enter file type"
+        />
+      </div>
+      
+      <div>
+        <Label htmlFor="fileSize">File Size</Label>
+        <Input
+          type="text"
+          id="fileSize"
+          value={fileSize}
+          onChange={(e) => setFileSize(e.target.value)}
+          placeholder="Enter file size"
+        />
+      </div>
+      
+      <Button type="submit" disabled={isSubmitting}>
+        {isSubmitting ? 'Submitting...' : (isEditing ? 'Update Regulation' : 'Create Regulation')}
+      </Button>
+    </form>
   );
 };
 
