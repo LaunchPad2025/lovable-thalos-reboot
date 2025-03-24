@@ -82,9 +82,7 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
         .eq('reference_number', referenceNumber)
         .limit(1);
       
-      if (refError) {
-        throw refError;
-      }
+      if (refError) throw refError;
       
       // If found by reference, return early
       if (refData && refData.length > 0) {
@@ -99,12 +97,10 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
       .eq('title', title)
       .limit(1);
     
-    if (titleError) {
-      throw titleError;
-    }
+    if (titleError) throw titleError;
     
-    // Return boolean result 
-    return titleData && titleData.length > 0;
+    // Return boolean result
+    return titleData && titleData.length > 0 ? true : false;
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;

@@ -54,9 +54,10 @@ const Navbar = () => {
             variant="outline" 
             size="sm" 
             className="border-gray-700 text-gray-300 hover:bg-gray-800 hidden md:flex"
+            onClick={() => navigate('/legal')}
           >
             <Info size={16} className="mr-1" />
-            Start Tour
+            Legal Docs
           </Button>
           
           <Button variant="ghost" size="icon" className="relative text-gray-300 hover:text-white hover:bg-[#1f2937]">
@@ -86,6 +87,13 @@ const Navbar = () => {
               >
                 <Settings className="mr-2 h-4 w-4" />
                 <span>Settings</span>
+              </DropdownMenuItem>
+              <DropdownMenuItem 
+                className="cursor-pointer hover:bg-gray-700"
+                onClick={() => navigate('/legal')}
+              >
+                <Info className="mr-2 h-4 w-4" />
+                <span>Legal & Privacy</span>
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="cursor-pointer hover:bg-gray-700"
