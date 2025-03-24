@@ -1,7 +1,19 @@
 
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { ChevronLeft, Home, AlertTriangle, ClipboardList, MessageSquare, CreditCard, Settings, BarChart2, HelpCircle, Menu } from 'lucide-react';
+import { 
+  ChevronLeft, 
+  Home, 
+  AlertTriangle, 
+  ClipboardList, 
+  FileText,
+  Bell,
+  BarChart2,
+  Settings,
+  HelpCircle,
+  Menu,
+  Gauge
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -13,14 +25,16 @@ type NavItem = {
 };
 
 const navItems: NavItem[] = [
-  { name: 'Dashboard', href: '/', icon: Home },
+  { name: 'Dashboard', href: '/', icon: Gauge },
   { name: 'Violations', href: '/violations', icon: AlertTriangle },
   { name: 'Tasks', href: '/tasks', icon: ClipboardList },
-  { name: 'Ask Paulie', href: '/chatbot', icon: MessageSquare },
-  { name: 'Subscription', href: '/subscription', icon: CreditCard },
-  { name: 'Settings', href: '/settings', icon: Settings, adminOnly: true },
-  { name: 'Analytics', href: '/coming-soon?feature=analytics', icon: BarChart2 },
-  { name: 'Help', href: '/coming-soon?feature=help', icon: HelpCircle },
+  { name: 'Risk Assessment', href: '/coming-soon?feature=risk-assessment', icon: BarChart2 },
+  { name: 'Documents', href: '/coming-soon?feature=documents', icon: FileText },
+  { name: 'Notifications', href: '/coming-soon?feature=notifications', icon: Bell },
+  { name: 'Audits', href: '/coming-soon?feature=audits', icon: BarChart2 },
+  { name: 'Reports', href: '/coming-soon?feature=reports', icon: FileText },
+  { name: 'Training', href: '/coming-soon?feature=training', icon: HelpCircle },
+  { name: 'Admin', href: '/settings', icon: Settings, adminOnly: true },
 ];
 
 interface SidebarProps {
@@ -38,21 +52,21 @@ const Sidebar = ({ userRole = 'admin' }: SidebarProps) => {
   return (
     <div 
       className={cn(
-        "h-screen bg-white border-r border-gray-200 flex flex-col transition-all duration-300 ease-in-out z-10",
+        "h-screen bg-[#0b0f14] border-r border-gray-800 flex flex-col transition-all duration-300 ease-in-out z-10",
         collapsed ? "w-20" : "w-64"
       )}
     >
-      <div className="flex items-center justify-between p-4 border-b border-gray-200">
+      <div className="flex items-center justify-between p-4 border-b border-gray-800">
         {!collapsed && (
           <Link to="/" className="flex items-center space-x-2">
-            <span className="font-bold text-xl text-thalos-blue">Thalos</span>
+            <span className="font-bold text-xl text-blue-500">Thalos</span>
           </Link>
         )}
         <Button 
           variant="ghost" 
           size="icon" 
           onClick={toggleSidebar}
-          className="ml-auto"
+          className="ml-auto text-gray-400 hover:text-white hover:bg-gray-800"
         >
           {collapsed ? <Menu size={20} /> : <ChevronLeft size={20} />}
         </Button>
@@ -73,8 +87,8 @@ const Sidebar = ({ userRole = 'admin' }: SidebarProps) => {
                   className={cn(
                     "flex items-center px-3 py-3 rounded-md transition-colors duration-200",
                     isActive 
-                      ? "bg-thalos-blue text-white" 
-                      : "text-gray-700 hover:bg-gray-100",
+                      ? "bg-blue-600 text-white" 
+                      : "text-gray-400 hover:bg-gray-800 hover:text-white",
                     collapsed ? "justify-center" : "justify-start"
                   )}
                 >
@@ -86,19 +100,35 @@ const Sidebar = ({ userRole = 'admin' }: SidebarProps) => {
         </nav>
       </div>
       
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-800">
         <div className={cn(
           "flex items-center",
           collapsed ? "justify-center" : "space-x-3"
         )}>
-          <div className="w-8 h-8 rounded-full bg-thalos-blue text-white flex items-center justify-center font-semibold">
-            J
+          <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold">
+            A
           </div>
           {!collapsed && (
-            <div>
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-gray-500">{userRole === 'admin' ? 'Administrator' : 'User'}</p>
+            <div className="text-white">
+              <p className="text-sm font-medium">Annie Esar</p>
+              <p className="text-xs text-gray-400">{userRole === 'admin' ? 'Administrator' : 'User'}</p>
             </div>
+          )}
+        </div>
+      </div>
+
+      <div className="p-4 border-t border-gray-800">
+        <div className={cn(
+          "flex items-center",
+          collapsed ? "justify-center" : "justify-between"
+        )}>
+          {!collapsed ? (
+            <>
+              <span className="text-xs text-gray-400">Chatbot</span>
+              <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">1</span>
+            </>
+          ) : (
+            <span className="bg-blue-600 text-white text-xs rounded-full px-2 py-0.5">1</span>
           )}
         </div>
       </div>

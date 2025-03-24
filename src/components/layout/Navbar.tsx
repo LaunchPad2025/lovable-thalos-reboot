@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Search } from 'lucide-react';
+import { Bell, Search, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
@@ -18,6 +18,23 @@ const Navbar = () => {
         </div>
         
         <div className="flex items-center space-x-4">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-blue-600 hover:bg-blue-700 text-white border-none hidden md:flex"
+          >
+            Upgrade Plan
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border-gray-700 text-gray-300 hover:bg-gray-800 hidden md:flex"
+          >
+            <Info size={16} className="mr-1" />
+            Start Tour
+          </Button>
+          
           <Button variant="ghost" size="icon" className="relative text-gray-300 hover:text-white hover:bg-[#1f2937]">
             <Bell size={20} />
             <span className="absolute top-0 right-0 h-3 w-3 rounded-full bg-red-500 border-2 border-[#0d1117]"></span>
