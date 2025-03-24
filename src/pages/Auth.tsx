@@ -1,59 +1,21 @@
 
-import { useState } from "react";
+import { Navigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Navigate, useNavigate } from "react-router-dom";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { AuthMessage } from "@/components/auth/AuthMessage";
-import { LoginFormValues, SignupFormValues } from "@/components/auth/schemas";
+import { useAuthForm } from "@/hooks/useAuthForm";
 
 export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [authError, setAuthError] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { user, signIn, signUp } = useAuth();
-  const navigate = useNavigate();
-
-  const onLoginSubmit = async (values: LoginFormValues) => {
-    try {
-      setAuthError(null);
-      setIsSubmitting(true);
-      await signIn(values.email, values.password);
-      navigate("/");
-    } catch (error) {
-      console.error("Login error:", error);
-      // Properly extract error messages
-      setAuthError(
-        error.message || 
-        "Unable to sign in. Please check your credentials and try again."
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const onSignupSubmit = async (values: SignupFormValues) => {
-    try {
-      setAuthError(null);
-      setIsSubmitting(true);
-      await signUp(values.email, values.password, values.name);
-      // Set success message for email confirmation
-      setAuthError("Registration successful! Please check your email to confirm your account.");
-    } catch (error) {
-      console.error("Signup error:", error);
-      // Handle specific error cases
-      if (error.message?.includes("already registered")) {
-        setAuthError("This email is already registered. Please try signing in instead.");
-      } else {
-        setAuthError(
-          error.message || 
-          "Unable to create account. Please try again later."
-        );
-      }
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+  const { user } = useAuth();
+  const {
+    isLogin,
+    authError,
+    isSubmitting,
+    toggleAuthMode,
+    onLoginSubmit,
+    onSignupSubmit
+  } = useAuthForm();
 
   // Redirect if user is already logged in
   if (user) {
@@ -84,10 +46,7 @@ export default function Auth() {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => {
-              setIsLogin(!isLogin);
-              setAuthError(null);
-            }}
+            onClick={toggleAuthMode}
             className="text-sm text-blue-500 hover:text-blue-400"
           >
             {isLogin
