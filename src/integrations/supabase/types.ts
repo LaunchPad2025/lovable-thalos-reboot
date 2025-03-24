@@ -307,12 +307,15 @@ export type Database = {
           file_type: string | null
           id: string
           industry: string | null
+          industry_group: string | null
           jurisdiction: string | null
           keywords: string[] | null
           last_reviewed_date: string | null
           search_text: unknown | null
+          severity_level: string | null
           source_url: string | null
           status: string | null
+          tags: string[] | null
           title: string
           updated_at: string | null
           version: string | null
@@ -330,12 +333,15 @@ export type Database = {
           file_type?: string | null
           id?: string
           industry?: string | null
+          industry_group?: string | null
           jurisdiction?: string | null
           keywords?: string[] | null
           last_reviewed_date?: string | null
           search_text?: unknown | null
+          severity_level?: string | null
           source_url?: string | null
           status?: string | null
+          tags?: string[] | null
           title: string
           updated_at?: string | null
           version?: string | null
@@ -353,12 +359,15 @@ export type Database = {
           file_type?: string | null
           id?: string
           industry?: string | null
+          industry_group?: string | null
           jurisdiction?: string | null
           keywords?: string[] | null
           last_reviewed_date?: string | null
           search_text?: unknown | null
+          severity_level?: string | null
           source_url?: string | null
           status?: string | null
+          tags?: string[] | null
           title?: string
           updated_at?: string | null
           version?: string | null

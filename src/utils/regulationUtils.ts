@@ -12,6 +12,11 @@ interface RegulationData {
   keywords?: string[];
   document_type?: string;
   jurisdiction?: string;
+  // New fields
+  severity_level?: string;
+  industry_group?: string;
+  tags?: string[];
+  applicable_to?: string[];
 }
 
 /**
@@ -19,6 +24,13 @@ interface RegulationData {
  */
 export async function ingestRegulation(data: RegulationData) {
   try {
+    // Check if regulation already exists
+    const exists = await checkRegulationExists(data.title, data.reference_number);
+    if (exists) {
+      toast.warning(`Regulation "${data.title}" already exists`);
+      return null;
+    }
+
     // Format the data for database insertion
     const regulationData = {
       title: data.title,
@@ -32,7 +44,12 @@ export async function ingestRegulation(data: RegulationData) {
       jurisdiction: data.jurisdiction || null,
       status: 'active',
       created_at: new Date().toISOString(),
-      last_reviewed_date: new Date().toISOString()
+      last_reviewed_date: new Date().toISOString(),
+      // New fields
+      severity_level: data.severity_level || null,
+      industry_group: data.industry_group || null,
+      tags: data.tags || null,
+      applicable_to: data.applicable_to || null
     };
 
     const { data: result, error } = await supabase
@@ -111,4 +128,52 @@ export async function updateRegulation(id: string, updates: Partial<RegulationDa
     toast.error(`Failed to update regulation: ${error.message}`);
     throw error;
   }
+}
+
+/**
+ * Ingests multiple regulations from structured data
+ * @param regulations Array of regulation data to ingest
+ */
+export async function batchIngestRegulations(regulations: RegulationData[]) {
+  const results = {
+    success: 0,
+    failed: 0,
+    skipped: 0,
+    errors: [] as any[]
+  };
+
+  for (const regulation of regulations) {
+    try {
+      // Check if already exists
+      const exists = await checkRegulationExists(regulation.title, regulation.reference_number);
+      
+      if (exists) {
+        results.skipped++;
+        continue;
+      }
+      
+      await ingestRegulation(regulation);
+      results.success++;
+    } catch (error) {
+      results.failed++;
+      results.errors.push({
+        regulation: regulation.title,
+        error
+      });
+    }
+  }
+
+  if (results.success > 0) {
+    toast.success(`Successfully ingested ${results.success} regulations`);
+  }
+  
+  if (results.skipped > 0) {
+    toast.info(`Skipped ${results.skipped} existing regulations`);
+  }
+  
+  if (results.failed > 0) {
+    toast.error(`Failed to ingest ${results.failed} regulations`);
+  }
+
+  return results;
 }
