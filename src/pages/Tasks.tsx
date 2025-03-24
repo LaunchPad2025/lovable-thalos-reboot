@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
@@ -13,13 +14,130 @@ import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
 
 const Tasks = () => {
-  const [selectedTask, setSelectedTask] = useState<Task | undefined>(undefined);
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { id } = useParams();
+  const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const violationId = searchParams.get('violation');
   const navigate = useNavigate();
+  const { toast } = useToast();
   const queryClient = useQueryClient();
-  const toast = useToast();
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(!!violationId);
+  
+  const {
+    data: tasks,
+    isLoading,
+    isError,
+    refetch
+  } = useQuery({
+    queryKey: ['tasks'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      return data as Task[];
+    }
+  });
+
+  const {
+    data: taskDetails,
+    isLoading: isLoadingDetails,
+  } = useQuery({
+    queryKey: ['task', id],
+    queryFn: async () => {
+      if (!id) return null;
+      
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('id', id)
+        .single();
+      
+      if (error) throw error;
+      return data as Task;
+    },
+    enabled: !!id
+  });
+
+  useEffect(() => {
+    if (id && taskDetails) {
+      setSelectedTask(taskDetails);
+    } else if (!id) {
+      setSelectedTask(null);
+    }
+  }, [id, taskDetails]);
+
+  const handleCreateTask = async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert([{
+          ...newTask,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }])
+        .select();
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Task created",
+        description: "The task has been successfully created.",
+      });
+      
+      await queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      if (newTask.violation_id) {
+        await queryClient.invalidateQueries({ queryKey: ['tasks', newTask.violation_id] });
+      }
+      
+      setIsModalOpen(false);
+      
+      // Navigate to the new task
+      if (data && data[0]) {
+        navigate(`/tasks/${data[0].id}`);
+      }
+    } catch (error) {
+      console.error("Error creating task:", error);
+      toast({
+        title: "Failed to create task",
+        description: "There was an error creating the task. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleUpdateTaskStatus = async (taskId: string, newStatus: Task['status']) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ 
+          status: newStatus,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', taskId);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Status updated",
+        description: `Task status changed to ${newStatus.replace('-', ' ')}.`,
+      });
+      
+      setSelectedTask(prev => prev ? {...prev, status: newStatus} : null);
+      
+      // Refresh tasks list
+      refetch();
+    } catch (error) {
+      console.error("Error updating task status:", error);
+      toast({
+        title: "Failed to update status",
+        description: "There was an error updating the status. Please try again.",
+        variant: "destructive",
+      });
+    }
+  };
 
   const formatTasksForList = (data: Task[] | undefined): TaskItem[] => {
     if (!data) return [];
@@ -34,64 +152,70 @@ const Tasks = () => {
       priority: item.priority
     }));
   };
-
-  const handleTaskSelect = (task: Task) => {
-    setSelectedTask(task);
-  };
-
-  const handleAddNewTask = () => {
-    console.log('Add new task');
-    // In a real app, this would open a modal or navigate to a new task form
-  };
-
-  const handleStatusChange = (newStatus: Task['status']) => {
-    if (!selectedTask) return;
-    
-    const updatedTasks = tasks.map(task => 
-      task.id === selectedTask.id ? { ...task, status: newStatus } : task
+  
+  if (isError) {
+    return (
+      <PageContainer>
+        <div className="p-6 text-center text-white">
+          <h2 className="text-xl font-bold mb-2">Failed to load tasks</h2>
+          <p className="mb-4">There was an error loading the tasks. Please try again later.</p>
+          <Button onClick={() => refetch()}>Retry</Button>
+        </div>
+      </PageContainer>
     );
-    
-    setTasks(updatedTasks);
-    setSelectedTask({ ...selectedTask, status: newStatus });
-  };
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      const { data, error } = await supabase
-        .from('tasks')
-        .select('*')
-        .order('due_date', { ascending: true });
-
-      if (error) {
-        toast.error('Failed to fetch tasks');
-        return;
-      }
-
-      setTasks(formatTasksForList(data));
-    };
-
-    fetchTasks();
-  }, [queryClient]);
-
+  }
+  
   return (
     <PageContainer>
       <PageTitle 
         title="Tasks"
-        subtitle="Manage and track safety tasks"
+        subtitle="Manage and track safety remediation tasks"
+        action={
+          <Button className="bg-thalos-blue hover:bg-blue-600" onClick={() => setIsModalOpen(true)}>
+            <PlusCircle size={16} className="mr-2" />
+            New Task
+          </Button>
+        }
       />
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-[calc(100vh-12rem)]">
-        <TasksList 
-          tasks={tasks} 
-          onTaskSelect={handleTaskSelect} 
-          selectedTaskId={selectedTask?.id}
-          onAddNewTask={handleAddNewTask}
-        />
-        <TaskDetails 
-          task={selectedTask}
-          onStatusChange={handleStatusChange}
-        />
+        {isLoading ? (
+          <div className="col-span-2 flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-thalos-blue"></div>
+          </div>
+        ) : (
+          <>
+            <TasksList 
+              tasks={formatTasksForList(tasks)} 
+              onTaskSelect={(task) => navigate(`/tasks/${task.id}`)}
+              selectedTaskId={selectedTask?.id}
+              onAddNewTask={() => setIsModalOpen(true)}
+            />
+            
+            {isLoadingDetails && id ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-thalos-blue"></div>
+              </div>
+            ) : (
+              <TaskDetails 
+                task={selectedTask}
+                onStatusChange={(newStatus) => {
+                  if (selectedTask) {
+                    handleUpdateTaskStatus(selectedTask.id, newStatus);
+                  }
+                }}
+              />
+            )}
+          </>
+        )}
       </div>
+      
+      <NewTaskModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateTask}
+        violationId={violationId || undefined}
+      />
     </PageContainer>
   );
 };

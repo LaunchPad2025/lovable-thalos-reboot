@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Calendar, Clock, User, AlertCircle, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,23 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
   const [newComment, setNewComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   
+  const { data: violationDetails } = useQuery({
+    queryKey: ['violation-for-task', task?.violation_id],
+    queryFn: async () => {
+      if (!task?.violation_id) return null;
+      
+      const { data, error } = await supabase
+        .from('violations')
+        .select('id, title')
+        .eq('id', task.violation_id)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!task?.violation_id
+  });
+  
   if (!task) {
     return (
       <div className="h-full border border-gray-800 bg-[#0f1419] rounded-lg shadow-sm flex items-center justify-center p-6">
@@ -38,6 +56,8 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
     setSubmittingComment(true);
     
     try {
+      // In a real app, we would store comments in a separate table with relation to tasks
+      // For now, we'll just show a toast
       toast({
         title: "Comment added",
         description: "Your comment has been added to the task.",
@@ -74,7 +94,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
       <div className="flex-1 overflow-y-auto p-4">
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-300 mb-2">Description</h3>
-          <p className="text-sm text-gray-300">{task.description}</p>
+          <p className="text-sm text-white">{task.description}</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -82,7 +102,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
             <Calendar size={16} className="text-gray-400 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Due Date</p>
-              <p className="text-sm font-medium">{formattedDueDate}</p>
+              <p className="text-sm font-medium text-gray-300">{formattedDueDate}</p>
             </div>
           </div>
           
@@ -90,7 +110,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
             <User size={16} className="text-gray-400 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Assigned To</p>
-              <p className="text-sm font-medium">{task.assignee}</p>
+              <p className="text-sm font-medium text-gray-300">{task.assignee}</p>
             </div>
           </div>
           
@@ -98,7 +118,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
             <Clock size={16} className="text-gray-400 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Status</p>
-              <p className="text-sm font-medium">{task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('-', ' ')}</p>
+              <p className="text-sm font-medium text-gray-300">{task.status.charAt(0).toUpperCase() + task.status.slice(1).replace('-', ' ')}</p>
             </div>
           </div>
           
@@ -106,10 +126,28 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
             <AlertCircle size={16} className="text-gray-400 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Priority</p>
-              <p className="text-sm font-medium">{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</p>
+              <p className="text-sm font-medium text-gray-300">{task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</p>
             </div>
           </div>
         </div>
+        
+        {violationDetails && (
+          <div className="mb-6 p-3 bg-[#131920] border border-gray-800 rounded-md">
+            <div className="flex items-center">
+              <Link2 size={16} className="text-thalos-blue mr-2" />
+              <div>
+                <p className="text-xs text-gray-500">Related Violation</p>
+                <Button 
+                  variant="link" 
+                  className="p-0 h-auto text-sm font-medium text-thalos-blue hover:text-blue-400"
+                  onClick={() => navigate(`/violations/${violationDetails.id}`)}
+                >
+                  {violationDetails.title}
+                </Button>
+              </div>
+            </div>
+          </div>
+        )}
         
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-300 mb-3">Update Status</h3>
