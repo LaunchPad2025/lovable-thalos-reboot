@@ -33,7 +33,12 @@ function getModelRepo(modelId: string): string | null {
     "detectron2": "facebook/detectron2",
     "hrnet": "openmmlab/hrnet-w32-human-pose-estimation",
     "deeplabv3": "nvidia/segformer-b0-finetuned-ade-512-512",
-    "blip2": "Salesforce/blip2-flan-t5-xl"
+    "blip2": "Salesforce/blip2-flan-t5-xl",
+    // Add the new models
+    "samvit": "facebook/sam-vit-huge",
+    "owlvit": "google/owlvit-base-patch32",
+    "openpose": "spaces/akhaliq/openpose",
+    "i3d": "deepmind/kinetics-i3d"
   };
   
   return modelRepos[modelId] || null;
@@ -53,12 +58,21 @@ function determineSeverity(detections: any[], modelType: string): 'low' | 'mediu
       if (highConfidenceDetections.length > 0) return 'medium';
       return 'low';
       
-    case 'Pose Estimation': // HRNet
+    case 'Pose Estimation': // HRNet or OpenPose
       // Check if any harmful poses are detected with high confidence
       const unsafePoses = detections.filter(d => 
         d.label.includes('unsafe') && d.confidence > 0.6
       );
       if (unsafePoses.length > 0) return 'high';
+      return 'medium';
+      
+    case 'Instance Segmentation': // SAM ViT
+      // Check for precision in segmentation
+      const hazardSegments = detections.filter(d => 
+        d.label.includes('hazard') || d.label.includes('danger')
+      );
+      if (hazardSegments.length > 2) return 'critical';
+      if (hazardSegments.length > 0) return 'high';
       return 'medium';
       
     case 'Semantic Segmentation': // DeepLabv3+
@@ -71,7 +85,7 @@ function determineSeverity(detections: any[], modelType: string): 'low' | 'mediu
       if (hazardousAreaSize > 0) return 'medium';
       return 'low';
       
-    case 'Multimodal': // BLIP2
+    case 'Multimodal': // BLIP2 or OwlViT
       // Check for keywords in text analysis
       const text = detections[0]?.text || '';
       if (text.includes('danger') || text.includes('immediate') || text.includes('severe')) 
@@ -81,6 +95,17 @@ function determineSeverity(detections: any[], modelType: string): 'low' | 'mediu
       if (text.includes('caution') || text.includes('warning')) 
         return 'medium';
       return 'low';
+      
+    case 'Video':  // I3D
+      // Check for unsafe actions in video
+      const unsafeActions = detections.filter(d => 
+        d.label.includes('running') || 
+        d.label.includes('climbing') || 
+        d.label.includes('falling')
+      );
+      if (unsafeActions.length > 1) return 'critical';
+      if (unsafeActions.length > 0) return 'high';
+      return 'medium';
       
     default:
       return 'medium';
@@ -107,6 +132,17 @@ function generateDescription(detections: any[], modelType: string, industry: str
       description += 'This may indicate ergonomic risks that could lead to musculoskeletal injuries.';
       break;
       
+    case 'Instance Segmentation':
+      description = `Precisely segmented hazardous elements in ${industry} environment: `;
+      if (detections.some(d => d.label.includes('spill')))
+        description += 'liquid spills on the floor, ';
+      if (detections.some(d => d.label.includes('tool')))
+        description += 'improperly placed tools, ';
+      if (detections.some(d => d.label.includes('gear')))
+        description += 'damaged safety gear, ';
+      description += 'requiring immediate attention.';
+      break;
+      
     case 'Semantic Segmentation':
       description = `Identified hazardous areas in ${industry} environment including `;
       if (detections.some(d => d.label.includes('trench')))
@@ -119,9 +155,20 @@ function generateDescription(detections: any[], modelType: string, industry: str
       break;
       
     case 'Multimodal':
-      // For BLIP2, use the generated text directly
+      // For BLIP2 or OwlViT, use the generated text directly
       description = detections[0]?.text || 
         `Analysis of the scene in ${industry} environment indicates potential safety concerns.`;
+      break;
+      
+    case 'Video':
+      description = `Detected unsafe actions in ${industry} video feed: `;
+      if (detections.some(d => d.label.includes('running')))
+        description += 'personnel running near machinery, ';
+      if (detections.some(d => d.label.includes('climbing')))
+        description += 'unsafe climbing activity, ';
+      if (detections.some(d => d.label.includes('lifting')))
+        description += 'improper lifting technique, ';
+      description += 'which violates safety protocols.';
       break;
       
     default:
@@ -139,10 +186,33 @@ function mockModelPrediction(request: AnalyzeRequest): AnalysisResult {
   // Get the model ID from the request or use a default
   const modelId = request.modelId || "yolov8";
   
-  // Get relevant model info from the database (mock for now)
-  const modelType = modelId === "yolov8" || modelId === "detectron2" ? "Object Detection" :
-                    modelId === "hrnet" ? "Pose Estimation" :
-                    modelId === "deeplabv3" ? "Semantic Segmentation" : "Multimodal";
+  // Get relevant model info based on modelId
+  let modelType = "";
+  switch(modelId) {
+    case "yolov8":
+    case "detectron2": 
+      modelType = "Object Detection"; 
+      break;
+    case "hrnet":
+    case "openpose": 
+      modelType = "Pose Estimation"; 
+      break;
+    case "samvit": 
+      modelType = "Instance Segmentation"; 
+      break;
+    case "deeplabv3": 
+      modelType = "Semantic Segmentation"; 
+      break;
+    case "blip2":
+    case "owlvit": 
+      modelType = "Multimodal"; 
+      break;
+    case "i3d": 
+      modelType = "Video"; 
+      break;
+    default: 
+      modelType = "Object Detection";
+  }
   
   // Create mock detections based on model type
   let mockDetections = [];
@@ -171,6 +241,14 @@ function mockModelPrediction(request: AnalyzeRequest): AnalysisResult {
       ];
       break;
       
+    case "Instance Segmentation":
+      mockDetections = [
+        { label: "spilled_liquid", confidence: 0.94, area: 0.18, mask: "base64_encoded_mask_here" },
+        { label: "loose_tool", confidence: 0.91, area: 0.05, mask: "base64_encoded_mask_here" },
+        { label: "damaged_gear", confidence: 0.89, area: 0.07, mask: "base64_encoded_mask_here" }
+      ];
+      break;
+      
     case "Semantic Segmentation":
       mockDetections = [
         { label: "trench_hazard", confidence: 0.91, area: 0.15, mask: "base64_encoded_mask_here" },
@@ -179,10 +257,37 @@ function mockModelPrediction(request: AnalyzeRequest): AnalysisResult {
       break;
       
     case "Multimodal":
+      if (modelId === "owlvit") {
+        mockDetections = [
+          { 
+            text: `Worker is standing too close to the generator in ${request.industry} area. This creates a safety hazard due to potential electrical shock risk. Workers should maintain a safe distance of at least 3 feet from generators during operation.`,
+            confidence: 0.93,
+            bbox: [100, 120, 250, 380]
+          }
+        ];
+      } else {
+        mockDetections = [
+          { 
+            text: `Worker is near exposed wiring in ${request.industry} area. This represents a significant electrical hazard that requires immediate attention. The exposed wiring should be properly insulated and secured according to safety regulations.`,
+            confidence: 0.93
+          }
+        ];
+      }
+      break;
+      
+    case "Video":
       mockDetections = [
         { 
-          text: `Worker is near exposed wiring in ${request.industry} area. This represents a significant electrical hazard that requires immediate attention. The exposed wiring should be properly insulated and secured according to safety regulations.`,
-          confidence: 0.93
+          label: "running_near_machinery", 
+          confidence: 0.85,
+          frames: [10, 11, 12, 13],
+          bbox: [150, 200, 250, 350]
+        },
+        {
+          label: "unsafe_climbing",
+          confidence: 0.78,
+          frames: [24, 25, 26],
+          bbox: [300, 100, 400, 300]
         }
       ];
       break;

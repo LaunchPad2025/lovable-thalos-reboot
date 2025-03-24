@@ -1,5 +1,4 @@
 
-import { useState } from 'react';
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Control } from 'react-hook-form';
@@ -25,8 +24,12 @@ const ModelSelector = ({ control, models, onModelChange, selectedModel }: ModelS
       return 'This model analyzes worker posture to identify unsafe positions.';
     if (type.includes('Semantic Segmentation')) 
       return 'This model identifies hazardous areas in the environment.';
+    if (type.includes('Instance Segmentation')) 
+      return 'This model provides pixel-perfect segmentation for precise detection of hazards.';
     if (type.includes('Multimodal')) 
       return 'This model understands both images and text to provide comprehensive analysis.';
+    if (type.includes('Video')) 
+      return 'This model analyzes video streams to detect unsafe actions in real-time.';
     
     return '';
   };

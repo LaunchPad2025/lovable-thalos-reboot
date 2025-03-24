@@ -79,6 +79,47 @@ export function useMLModels() {
             accuracy: 96.7,
             active: true,
             model_url: "https://huggingface.co/Salesforce/blip2-flan-t5-xl"
+          },
+          // Add the new models
+          {
+            name: "SAM ViT",
+            description: "Super precise segmentation for fine-grained detection of zones, tools, and detailed gear",
+            industry: "Energy",
+            version: "Huge",
+            model_type: "Image (Instance Segmentation)",
+            accuracy: 97.2,
+            active: true,
+            model_url: "https://huggingface.co/facebook/sam-vit-huge"
+          },
+          {
+            name: "OwlViT",
+            description: "Natural language visual queries for interpreting safety situations in images",
+            industry: "All",
+            version: "Base-Patch32",
+            model_type: "Multimodal (Text + Image)",
+            accuracy: 92.8,
+            active: true,
+            model_url: "https://huggingface.co/google/owlvit-base-patch32"
+          },
+          {
+            name: "OpenPose",
+            description: "Lightweight alternative to HRNet; detects full-body posture for ergonomics, slips/falls, lifting safety",
+            industry: "Manufacturing",
+            version: "1.0",
+            model_type: "Image (Keypoint/Pose Estimation)",
+            accuracy: 88.5,
+            active: true,
+            model_url: "https://huggingface.co/spaces/akhaliq/openpose"
+          },
+          {
+            name: "I3D",
+            description: "Detects unsafe actions in video streams like running near machinery or unsafe climbing",
+            industry: "Construction",
+            version: "ConvNet",
+            model_type: "Video (Action Recognition)",
+            accuracy: 90.3,
+            active: true,
+            model_url: "https://github.com/deepmind/kinetics-i3d"
           }
         ];
         

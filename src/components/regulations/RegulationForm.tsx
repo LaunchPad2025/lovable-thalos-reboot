@@ -1,245 +1,223 @@
-import React, { useState, useEffect } from 'react';
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Calendar } from "@/components/ui/calendar"
-import { format } from 'date-fns';
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
-import { useToast } from '@/hooks/use-toast';
+import { cn } from "@/lib/utils"
+import { format } from "date-fns"
 import { supabase } from '@/lib/supabase';
+import { toast } from 'sonner';
 
-interface RegulationFormProps {
-  isEditing?: boolean;
-  regulationId?: string;
-  onSuccess?: () => void;
-  initialData?: any;
+interface Regulation {
+  id: string;
+  title: string;
+  description: string;
+  file_url: string;
+  file_size: number;
+  effective_date: string;
+  created_at: string;
 }
 
-const RegulationForm = ({ isEditing = false, regulationId, onSuccess, initialData }: RegulationFormProps) => {
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
-  const [industry, setIndustry] = useState('All');
-  const [documentType, setDocumentType] = useState('');
-  const [version, setVersion] = useState('');
-  const [effectiveDate, setEffectiveDate] = useState<Date | undefined>(undefined);
-  const [filePath, setFilePath] = useState('');
-  const [fileType, setFileType] = useState('');
-  const [fileSize, setFileSize] = useState('');
+interface RegulationFormProps {
+  onSuccess: () => void;
+  editingRegulation?: Regulation | null;
+}
+
+const formSchema = z.object({
+  title: z.string().min(2, {
+    message: "Title must be at least 2 characters.",
+  }),
+  description: z.string().min(10, {
+    message: "Description must be at least 10 characters.",
+  }),
+  file_url: z.string().url({
+    message: "Please enter a valid URL.",
+  }),
+  file_size: z.string().refine((value) => {
+    const num = Number(value);
+    return !isNaN(num) && num > 0;
+  }, {
+    message: "File size must be a positive number.",
+  }),
+  effective_date: z.date(),
+});
+
+const RegulationForm: React.FC<RegulationFormProps> = ({ onSuccess, editingRegulation }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
   
-  useEffect(() => {
-    if (initialData) {
-      setTitle(initialData.title || '');
-      setDescription(initialData.description || '');
-      setIndustry(initialData.industry || 'All');
-      setDocumentType(initialData.document_type || '');
-      setVersion(initialData.version || '');
-      setEffectiveDate(initialData.effective_date ? new Date(initialData.effective_date) : undefined);
-      setFilePath(initialData.file_path || '');
-      setFileType(initialData.file_type || '');
-      setFileSize(initialData.file_size || '');
-    }
-  }, [initialData]);
-  
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!title.trim() || !documentType) {
-      toast({
-        title: "Required fields missing",
-        description: "Please fill out all required fields",
-        variant: "destructive",
-      });
-      return;
-    }
-    
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      title: editingRegulation?.title || "",
+      description: editingRegulation?.description || "",
+      file_url: editingRegulation?.file_url || "",
+      file_size: editingRegulation?.file_size?.toString() || "",
+      effective_date: editingRegulation ? new Date(editingRegulation.effective_date) : new Date(),
+    },
+  });
+
+  const handleSubmit = async (values: z.infer<typeof formSchema>) => {
     setIsSubmitting(true);
     
     try {
-      const documentData = {
-        title: title,
-        description: description,
-        industry: industry,
-        document_type: documentType, // Ensure this is provided
-        version: version,
-        effective_date: effectiveDate,
-        file_path: filePath,
-        file_type: fileType,
-        file_size: fileSize,
+      // Convert Date object to ISO string format for the database
+      const formattedValues = {
+        ...values,
+        effective_date: values.effective_date instanceof Date 
+          ? values.effective_date.toISOString()
+          : values.effective_date,
+        file_size: Number(values.file_size) || 0, // Convert to number
       };
       
-      if (isEditing && regulationId) {
+      if (editingRegulation) {
         const { error } = await supabase
           .from('regulations')
-          .update(documentData)
-          .eq('id', regulationId);
-        
+          .update(formattedValues)
+          .eq('id', editingRegulation.id);
+          
         if (error) throw error;
+        onSuccess();
       } else {
         const { error } = await supabase
           .from('regulations')
-          .insert([documentData]);
-        
+          .insert([formattedValues]);
+          
         if (error) throw error;
+        onSuccess();
       }
       
-      toast({
-        title: `Regulation ${isEditing ? 'updated' : 'created'} successfully`,
-        description: `The regulation "${title}" has been ${isEditing ? 'updated' : 'created'}.`,
-      });
-      
-      if (onSuccess) onSuccess();
-    } catch (error) {
+      toast.success(`Regulation ${editingRegulation ? 'updated' : 'created'} successfully`);
+      form.reset();
+    } catch (error: any) {
       console.error('Error submitting regulation:', error);
-      toast({
-        title: 'Error',
-        description: `Failed to ${isEditing ? 'update' : 'create'} regulation. Please try again.`,
-        variant: 'destructive',
-      });
+      toast.error(error.message || 'Failed to submit regulation');
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   return (
-    <form onSubmit={handleSubmit} className="w-full space-y-4">
-      <div>
-        <Label htmlFor="title">Title</Label>
-        <Input
-          type="text"
-          id="title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Enter regulation title"
-          required
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-8">
+        <FormField
+          control={form.control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input placeholder="Regulation Title" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="description">Description</Label>
-        <Textarea
-          id="description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter regulation description"
+        <FormField
+          control={form.control}
+          name="description"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>
+                <Textarea
+                  placeholder="Regulation Description"
+                  className="resize-none"
+                  {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="industry">Industry</Label>
-        <Select value={industry} onValueChange={setIndustry}>
-          <SelectTrigger>
-            <SelectValue placeholder="Select an industry" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="All">All</SelectItem>
-            <SelectItem value="Construction">Construction</SelectItem>
-            <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-            <SelectItem value="Warehousing">Warehousing</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      
-      <div>
-        <Label htmlFor="documentType">Document Type</Label>
-        <Input
-          type="text"
-          id="documentType"
-          value={documentType}
-          onChange={(e) => setDocumentType(e.target.value)}
-          placeholder="Enter document type"
-          required
+        <FormField
+          control={form.control}
+          name="file_url"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>File URL</FormLabel>
+              <FormControl>
+                <Input placeholder="Regulation File URL" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="version">Version</Label>
-        <Input
-          type="text"
-          id="version"
-          value={version}
-          onChange={(e) => setVersion(e.target.value)}
-          placeholder="Enter version"
+        <FormField
+          control={form.control}
+          name="file_size"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>File Size (KB)</FormLabel>
+              <FormControl>
+                <Input placeholder="Regulation File Size in KB" type="number" {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="effectiveDate">Effective Date</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={"outline"}
-              className={cn(
-                "w-[240px] justify-start text-left font-normal",
-                !effectiveDate && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {effectiveDate ? format(effectiveDate, "PPP") : <span>Pick a date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start">
-            <Calendar
-              mode="single"
-              selected={effectiveDate}
-              onSelect={setEffectiveDate}
-              disabled={(date) =>
-                date > new Date()
-              }
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
-      </div>
-      
-      <div>
-        <Label htmlFor="filePath">File Path</Label>
-        <Input
-          type="text"
-          id="filePath"
-          value={filePath}
-          onChange={(e) => setFilePath(e.target.value)}
-          placeholder="Enter file path"
+        <FormField
+          control={form.control}
+          name="effective_date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Effective Date</FormLabel>
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                    >
+                      {field.value ? (
+                        format(field.value, "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date()
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
+              <FormMessage />
+            </FormItem>
+          )}
         />
-      </div>
-      
-      <div>
-        <Label htmlFor="fileType">File Type</Label>
-        <Input
-          type="text"
-          id="fileType"
-          value={fileType}
-          onChange={(e) => setFileType(e.target.value)}
-          placeholder="Enter file type"
-        />
-      </div>
-      
-      <div>
-        <Label htmlFor="fileSize">File Size</Label>
-        <Input
-          type="text"
-          id="fileSize"
-          value={fileSize}
-          onChange={(e) => setFileSize(e.target.value)}
-          placeholder="Enter file size"
-        />
-      </div>
-      
-      <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Submitting...' : (isEditing ? 'Update Regulation' : 'Create Regulation')}
-      </Button>
-    </form>
+        <Button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? "Submitting..." : editingRegulation ? "Update Regulation" : "Create Regulation"}
+        </Button>
+      </form>
+    </Form>
   );
 };
 

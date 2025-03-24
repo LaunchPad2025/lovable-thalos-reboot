@@ -39,6 +39,8 @@ const IndustrySelector = ({ control, selectedModel }: IndustrySelectorProps) => 
               <SelectItem value="Mining">Mining</SelectItem>
               <SelectItem value="Warehousing">Warehousing</SelectItem>
               <SelectItem value="Industrial">Industrial</SelectItem>
+              <SelectItem value="Retail">Retail</SelectItem>
+              <SelectItem value="Ports">Ports</SelectItem>
             </SelectContent>
           </Select>
           <FormMessage />
