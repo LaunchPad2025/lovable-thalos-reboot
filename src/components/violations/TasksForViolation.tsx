@@ -18,6 +18,29 @@ const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
   const { data: tasks, isLoading, isError } = useQuery({
     queryKey: ['tasks', violationId],
     queryFn: async () => {
+      // Search in the violation_tasks junction table first
+      const { data: taskRelations, error: relationError } = await supabase
+        .from('violation_tasks')
+        .select('task_id')
+        .eq('violation_id', violationId);
+      
+      if (relationError) throw relationError;
+      
+      if (taskRelations && taskRelations.length > 0) {
+        // Get the tasks associated with this violation
+        const taskIds = taskRelations.map(relation => relation.task_id);
+        const { data, error } = await supabase
+          .from('tasks')
+          .select('*')
+          .in('id', taskIds)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        return data as Task[];
+      }
+      
+      // Fallback to checking for tasks with the violation_id field
+      // (This is for backward compatibility)
       const { data, error } = await supabase
         .from('tasks')
         .select('*')
@@ -63,7 +86,7 @@ const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
         <Button 
           size="sm" 
           className="bg-thalos-blue hover:bg-blue-600"
-          onClick={() => navigate(`/tasks/new?violation=${violationId}`)}
+          onClick={() => navigate(`/tasks?violation=${violationId}`)}
         >
           <PlusCircle size={16} className="mr-1" />
           New Task
@@ -86,9 +109,9 @@ const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
               <div className="flex justify-between items-center text-xs">
                 <div className="flex items-center text-gray-400">
                   <Calendar size={14} className="mr-1" />
-                  Due: {new Date(task.due_date).toLocaleDateString()}
+                  Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}
                 </div>
-                <span className="text-gray-400">Assigned to: {task.assignee}</span>
+                <span className="text-gray-400">Assigned to: {task.assignee_id || 'Unassigned'}</span>
               </div>
             </div>
           ))}
@@ -98,7 +121,7 @@ const TasksForViolation = ({ violationId }: TasksForViolationProps) => {
           <p className="text-gray-400 mb-3">No remediation tasks have been created for this violation yet.</p>
           <Button 
             className="bg-thalos-blue hover:bg-blue-600"
-            onClick={() => navigate(`/tasks/new?violation=${violationId}`)}
+            onClick={() => navigate(`/tasks?violation=${violationId}`)}
           >
             <PlusCircle size={16} className="mr-2" />
             Create First Task

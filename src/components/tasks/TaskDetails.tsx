@@ -4,11 +4,12 @@ import { Calendar, Clock, User, AlertCircle, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import StatusBadge from '../ui/StatusBadge';
-import { Task } from '@/types/models';
+import { Task, Violation } from '@/types/models';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/context/AuthContext';
 
 interface TaskDetailsProps {
   task: Task | null;
@@ -18,9 +19,11 @@ interface TaskDetailsProps {
 const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { user } = useAuth();
   const [newComment, setNewComment] = useState('');
   const [submittingComment, setSubmittingComment] = useState(false);
   
+  // If the task has a violation_id, we'll try to fetch the related violation
   const { data: violationDetails } = useQuery({
     queryKey: ['violation-for-task', task?.violation_id],
     queryFn: async () => {
@@ -28,12 +31,12 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
       
       const { data, error } = await supabase
         .from('violations')
-        .select('id, title')
+        .select('id, violation')
         .eq('id', task.violation_id)
         .single();
       
       if (error) throw error;
-      return data;
+      return data as Violation;
     },
     enabled: !!task?.violation_id
   });
@@ -75,11 +78,17 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
     }
   };
 
-  const formattedDueDate = new Date(task.due_date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+  // Get assignee name from the assignee_id (for display purposes)
+  // In a real app, we would join with the profiles table to get the actual name
+  const assigneeName = task.assignee_id || "Unassigned";
+  
+  const formattedDueDate = task.due_date 
+    ? new Date(task.due_date).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      })
+    : "No due date";
   
   return (
     <div className="h-full border border-gray-800 bg-[#0f1419] rounded-lg shadow-sm overflow-hidden flex flex-col">
@@ -94,7 +103,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
       <div className="flex-1 overflow-y-auto p-4">
         <div className="mb-6">
           <h3 className="text-sm font-medium text-gray-300 mb-2">Description</h3>
-          <p className="text-sm text-white">{task.description}</p>
+          <p className="text-sm text-white">{task.description || "No description provided"}</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -110,7 +119,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
             <User size={16} className="text-gray-400 mr-2" />
             <div>
               <p className="text-xs text-gray-500">Assigned To</p>
-              <p className="text-sm font-medium text-gray-300">{task.assignee}</p>
+              <p className="text-sm font-medium text-gray-300">{assigneeName}</p>
             </div>
           </div>
           
@@ -142,7 +151,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
                   className="p-0 h-auto text-sm font-medium text-thalos-blue hover:text-blue-400"
                   onClick={() => navigate(`/violations/${violationDetails.id}`)}
                 >
-                  {violationDetails.title}
+                  {violationDetails.violation}
                 </Button>
               </div>
             </div>
@@ -178,7 +187,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
                 <p className="text-xs font-medium text-gray-300">System</p>
                 <span className="text-xs text-gray-500">Today</span>
               </div>
-              <p className="text-sm mt-1 text-gray-300">Task created and assigned to {task.assignee}.</p>
+              <p className="text-sm mt-1 text-gray-300">Task created and assigned to {assigneeName}.</p>
             </div>
           </div>
           

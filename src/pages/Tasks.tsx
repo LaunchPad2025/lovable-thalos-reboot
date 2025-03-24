@@ -12,6 +12,7 @@ import { Task } from '@/types/models';
 import NewTaskModal from '@/components/tasks/NewTaskModal';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
 
 const Tasks = () => {
   const { id } = useParams<{ id: string }>();
@@ -22,6 +23,7 @@ const Tasks = () => {
   const queryClient = useQueryClient();
   const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(!!violationId);
+  const { user } = useAuth();
   
   const {
     data: tasks,
@@ -37,7 +39,11 @@ const Tasks = () => {
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data as Task[];
+      // Convert the DB response to our Task type
+      return data.map(task => ({
+        ...task,
+        // Map any fields that need transformation
+      })) as Task[];
     }
   });
 
@@ -71,13 +77,35 @@ const Tasks = () => {
 
   const handleCreateTask = async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
     try {
+      if (!user) {
+        toast({
+          title: "Authentication required",
+          description: "You must be logged in to create tasks.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      const taskToInsert = {
+        title: newTask.title,
+        description: newTask.description,
+        due_date: newTask.due_date,
+        status: newTask.status,
+        priority: newTask.priority,
+        assignee_id: newTask.assignee_id,
+        created_by: user.id,
+        organization_id: newTask.organization_id,
+        worksite_id: newTask.worksite_id,
+        updated_at: new Date().toISOString()
+      };
+
+      if (newTask.violation_id) {
+        taskToInsert.violation_id = newTask.violation_id;
+      }
+
       const { data, error } = await supabase
         .from('tasks')
-        .insert([{
-          ...newTask,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
-        }])
+        .insert(taskToInsert)
         .select();
       
       if (error) throw error;
@@ -145,10 +173,10 @@ const Tasks = () => {
     return data.map(item => ({
       id: item.id,
       title: item.title,
-      description: item.description,
-      dueDate: new Date(item.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+      description: item.description || '',
+      dueDate: item.due_date ? new Date(item.due_date).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'No due date',
       status: item.status,
-      assignee: item.assignee,
+      assignee: item.assignee_id || 'Unassigned',
       priority: item.priority
     }));
   };

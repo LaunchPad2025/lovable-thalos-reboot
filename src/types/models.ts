@@ -10,28 +10,31 @@ export interface User {
 
 export interface Violation {
   id: string;
-  title: string;
-  description: string;
-  location: string;
-  date: string;
-  reported_by: string;
-  status: 'open' | 'in-progress' | 'resolved' | 'pending';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  assignee: string;
-  notes?: string[];
+  violation: string; // Changed from 'title' to match the database
+  description?: string; // Not in the DB schema, but keeping for backward compatibility
+  location?: string;
+  detected_at: string; // Changed from 'date' to match the database
+  organization_id: string; // Added to match the database
+  status?: 'open' | 'in-progress' | 'resolved' | 'pending'; // Not in DB schema directly
+  severity: string;
+  regulation?: string;
+  confidence?: number;
+  worksite_id?: string;
   created_at: string;
-  updated_at: string;
 }
 
 export interface Task {
   id: string;
   title: string;
-  description: string;
-  due_date: string;
-  status: 'open' | 'in-progress' | 'completed' | 'overdue';
-  assignee: string;
+  description?: string;
+  due_date?: string;
+  status: 'open' | 'in-progress' | 'completed' | 'overdue' | 'pending';
+  assignee_id?: string; // Changed from 'assignee' to match the database
   priority: 'low' | 'medium' | 'high';
-  violation_id?: string;
+  organization_id: string; // Added to match the database
+  created_by: string; // Added to match the database
+  worksite_id?: string; // Added to match the database
+  violation_id?: string; // Maintained for backward compatibility
   created_at: string;
   updated_at: string;
 }

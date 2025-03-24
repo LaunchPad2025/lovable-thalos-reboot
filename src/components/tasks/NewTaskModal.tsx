@@ -13,10 +13,11 @@ import { format } from 'date-fns';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { Task } from '@/types/models';
+import { Task, Violation } from '@/types/models';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/context/AuthContext';
 
 const taskSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -24,9 +25,9 @@ const taskSchema = z.object({
   due_date: z.date({
     required_error: "Due date is required",
   }),
-  assignee: z.string().min(3, 'Assignee name must be at least 3 characters'),
+  assignee_id: z.string().optional(), // changed to match DB schema
   priority: z.enum(['low', 'medium', 'high']),
-  status: z.enum(['open', 'in-progress', 'completed', 'overdue']).default('open'),
+  status: z.enum(['open', 'in-progress', 'completed', 'overdue', 'pending']).default('open'),
   violation_id: z.string().optional(),
 });
 
@@ -41,17 +42,18 @@ interface NewTaskModalProps {
 
 const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalProps) => {
   const [selectedViolationId, setSelectedViolationId] = useState<string | undefined>(violationId);
+  const { user } = useAuth();
   
   const { data: violations } = useQuery({
     queryKey: ['violations-select'],
     queryFn: async () => {
       const { data, error } = await supabase
         .from('violations')
-        .select('id, title')
+        .select('id, violation')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
-      return data;
+      return data as Violation[];
     }
   });
 
@@ -61,7 +63,7 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
       title: '',
       description: '',
       due_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 1 week from now
-      assignee: '',
+      assignee_id: '',
       priority: 'medium',
       status: 'open',
       violation_id: violationId,
@@ -76,15 +78,22 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
   }, [violationId, setValue, isOpen]);
 
   const handleFormSubmit = async (data: TaskFormData) => {
+    if (!user) {
+      return; // Handle unauthenticated state
+    }
+    
     // Convert the data to the right format for Task
     const taskData: Omit<Task, 'id' | 'created_at' | 'updated_at'> = {
       title: data.title,
       description: data.description,
       due_date: data.due_date.toISOString(),
-      assignee: data.assignee,
+      assignee_id: data.assignee_id,
       priority: data.priority,
       status: data.status,
-      violation_id: data.violation_id
+      violation_id: data.violation_id,
+      // Required fields for DB
+      created_by: user.id,
+      organization_id: '00000000-0000-0000-0000-000000000000', // Placeholder, should come from user's context
     };
     
     await onSubmit(taskData);
@@ -176,21 +185,21 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
             </div>
             
             <div className="space-y-2">
-              <Label htmlFor="assignee" className="text-gray-300">Assign To</Label>
+              <Label htmlFor="assignee_id" className="text-gray-300">Assign To</Label>
               <Controller
-                name="assignee"
+                name="assignee_id"
                 control={control}
                 render={({ field }) => (
                   <Input
-                    id="assignee"
+                    id="assignee_id"
                     placeholder="Person responsible for this task"
                     className="bg-[#1a1f29] border-gray-700 text-white"
                     {...field}
                   />
                 )}
               />
-              {errors.assignee && (
-                <p className="text-sm text-red-500">{errors.assignee.message}</p>
+              {errors.assignee_id && (
+                <p className="text-sm text-red-500">{errors.assignee_id.message}</p>
               )}
             </div>
           </div>
@@ -239,7 +248,7 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
                       <SelectItem value="">None</SelectItem>
                       {violations?.map(violation => (
                         <SelectItem key={violation.id} value={violation.id}>
-                          {violation.title}
+                          {violation.violation}
                         </SelectItem>
                       ))}
                     </SelectContent>
