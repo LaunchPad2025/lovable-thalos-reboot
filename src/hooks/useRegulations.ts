@@ -59,8 +59,11 @@ export function useRegulationDetails(id: string | undefined) {
 }
 
 export function useRegulationSearch(searchTerm: string, filters: Record<string, string | null>) {
+  // Use a stable stringified version of filters to prevent excessive recursion
+  const filtersKey = JSON.stringify(filters);
+  
   return useQuery({
-    queryKey: ['regulations', 'search', searchTerm, JSON.stringify(filters)],
+    queryKey: ['regulations', 'search', searchTerm, filtersKey],
     queryFn: async () => {
       let query = supabase
         .from('regulations')
