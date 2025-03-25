@@ -7,9 +7,10 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Download, Shield } from 'lucide-react';
+import { Download, Shield, CheckCircle } from 'lucide-react';
 import { getSeverityBadgeClass } from './utils/violationHelpers';
 import ViolationsList from './ViolationsList';
+import NoViolationsCard from './NoViolationsCard';
 
 export interface ViolationResult {
   id: string;
@@ -34,7 +35,7 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   useEffect(() => {
-    if (results.length > 0 && results[0].image_url && results[0].detections && canvasRef.current) {
+    if (results.length > 0 && results[0].image_url && results[0].detections && results[0].detections.length > 0 && canvasRef.current) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       
@@ -99,9 +100,9 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
         <CardContent className="p-6">
           <div className="flex flex-col items-center justify-center py-12 text-center">
             <Shield size={40} className="text-gray-500 mb-4" />
-            <h3 className="text-xl font-medium mb-2">No Violations Detected</h3>
+            <h3 className="text-xl font-medium mb-2">No Analysis Results</h3>
             <p className="text-gray-400 max-w-md mx-auto">
-              No safety violations were identified in the analyzed content. Continue monitoring and following safety protocols.
+              No safety violation analysis results are available. Please upload an image to analyze for safety violations.
             </p>
           </div>
         </CardContent>
@@ -111,6 +112,18 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
 
   const result = results[0];
   const violationsCount = result.detections?.length || 0;
+  
+  // If no violations were detected but we have an image, show the NoViolationsCard
+  if (violationsCount === 0 && result.image_url) {
+    return (
+      <NoViolationsCard 
+        imageUrl={result.image_url} 
+        industry={result.industry}
+        onSave={onSave}
+        onNewAnalysis={onSave}
+      />
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

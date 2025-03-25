@@ -35,12 +35,28 @@ serve(async (req) => {
     // If we have an image URL, try to analyze it with the model
     if (imageUrl) {
       try {
-        // Since we can't call a real model API in this demo, we'll simulate detection
-        // based on industry and the image content (which we assume contains construction hazards)
-        return new Response(
-          JSON.stringify(generateConstructionSiteViolations(industry)),
-          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+        // For development, randomly return either violations or no violations
+        const shouldShowViolations = Math.random() > 0.3; // 70% chance to show violations
+        
+        if (shouldShowViolations) {
+          // Return construction site violations
+          return new Response(
+            JSON.stringify(generateConstructionSiteViolations(industry)),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        } else {
+          // Return no violations
+          return new Response(
+            JSON.stringify({
+              detections: [],
+              severity: 'low',
+              confidence: 0.85,
+              description: `No safety violations detected in ${industry || 'construction'} environment. The site appears to be following safety protocols.`,
+              location: industry === 'Construction' ? 'Construction Site - Building Exterior' : 'Work Area'
+            }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
       } catch (modelError) {
         console.error("Error calling model:", modelError);
         // Continue to fallback detection if model fails

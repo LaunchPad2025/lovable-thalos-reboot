@@ -36,7 +36,7 @@ const ViolationResultsView = ({
       };
     }
     return detection;
-  });
+  }) || [];
   
   // Enhanced test results with location if not provided
   const enhancedResults = {
@@ -46,21 +46,19 @@ const ViolationResultsView = ({
   };
   
   // Convert testResults to the format expected by ViolationResults
-  const formattedResults: ViolationResult[] = enhancedResults?.detections?.length > 0 ? [
-    {
-      id: enhancedResults?.id || '1',
-      test_name: 'Safety Violation Analysis',
-      result: 'Violation Detected',
-      severity: enhancedResults?.severity || 'medium',
-      location: enhancedResults?.location || 'Work Area',
-      timestamp: new Date().toISOString(),
-      image_url: enhancedResults?.imagePreview || undefined,
-      description: enhancedResults?.description,
-      detections: enhancedResults?.detections,
-      regulationIds: enhancedResults?.regulationIds,
-      industry: enhancedResults?.industry
-    }
-  ] : [];
+  const formattedResults: ViolationResult[] = [{
+    id: enhancedResults?.id || '1',
+    test_name: 'Safety Violation Analysis',
+    result: 'Violation Detected',
+    severity: enhancedResults?.severity || 'medium',
+    location: enhancedResults?.location || 'Work Area',
+    timestamp: new Date().toISOString(),
+    image_url: enhancedResults?.imagePreview || undefined,
+    description: enhancedResults?.description,
+    detections: enhancedResults?.detections,
+    regulationIds: enhancedResults?.regulationIds,
+    industry: enhancedResults?.industry
+  }];
   
   // Check if we have actual violations detected
   const hasDetections = enhancedResults?.detections && enhancedResults.detections.length > 0;
@@ -140,6 +138,7 @@ const ViolationResultsView = ({
           imageUrl={enhancedResults?.imagePreview} 
           onNewAnalysis={onBackToUpload}
           industry={enhancedResults?.industry}
+          onCreateTask={handleSaveViolation}
         />
       )}
       

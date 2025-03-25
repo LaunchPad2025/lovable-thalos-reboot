@@ -65,6 +65,8 @@ const ChatInterface = ({ isPopup = false, onClose }: { isPopup?: boolean; onClos
       return "Personal Protective Equipment (PPE) requirements vary by job site. Common PPE includes hard hats, safety glasses, high-visibility clothing, gloves, and steel-toed boots. All PPE should meet ANSI standards.";
     } else if (message.includes('violation') || message.includes('report')) {
       return "To report a safety violation, document the issue with photos, note the location and time, and report it to your supervisor or safety officer. You can also submit violations through our system's 'Report Violation' feature.";
+    } else if (message.includes('no violations') || message.includes('safe site') || message.includes('compliance')) {
+      return "Even when no violations are detected, it's important to maintain vigilance. Continue regular inspections, ensure all workers are properly trained, and keep safety documentation up to date.";
     } else {
       return "I'm here to help with safety questions and concerns. Could you provide more details about your safety inquiry?";
     }

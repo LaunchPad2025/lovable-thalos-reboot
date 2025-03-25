@@ -64,14 +64,18 @@ export function useModelTest() {
       console.log("Analysis results:", data);
       
       // Add location to detections based on industry
-      let location = 'Work Area';
-      if (values.industry === 'Construction') {
-        location = 'Building A Construction Site';
-      } else if (values.industry === 'Manufacturing') {
-        location = 'Factory Floor, Section B';
-      } else if (values.industry === 'Warehouse') {
-        location = 'Warehouse Storage Area';
+      let location = data.location || 'Work Area';
+      if (!data.location) {
+        if (values.industry === 'Construction') {
+          location = 'Building A Construction Site';
+        } else if (values.industry === 'Manufacturing') {
+          location = 'Factory Floor, Section B';
+        } else if (values.industry === 'Warehouse') {
+          location = 'Warehouse Storage Area';
+        }
       }
+      
+      const hasDetections = data.detections && data.detections.length > 0;
       
       const enhancedResults: TestResult = {
         ...data,
@@ -79,12 +83,12 @@ export function useModelTest() {
         industry: values.industry,
         id: `v-${Date.now().toString(36)}`,
         location: location,
-        regulationIds: data.detections?.map((d: any) => {
+        regulationIds: hasDetections ? data.detections?.map((d: any) => {
           if (d.label?.includes('hardhat')) return '29 CFR 1926.100';
           if (d.label?.includes('vest')) return '29 CFR 1926.201';
           return '29 CFR 1926.20';
-        }) || [],
-        relevanceScores: data.detections?.map(() => Math.random() * 0.3 + 0.7) || []
+        }) : ['29 CFR 1926.20'],
+        relevanceScores: hasDetections ? data.detections?.map(() => Math.random() * 0.3 + 0.7) : [0.85]
       };
       
       console.log("Enhanced results:", enhancedResults);
