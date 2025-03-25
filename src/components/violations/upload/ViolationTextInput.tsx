@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 
 interface ViolationTextInputProps {
@@ -10,18 +9,19 @@ interface ViolationTextInputProps {
 }
 
 const ViolationTextInput = ({ value, onChange, hasImage }: ViolationTextInputProps) => {
-  const label = hasImage ? "Additional Context (Optional)" : "Violation Description (Optional)";
-  const placeholder = hasImage
-    ? "Add any additional context about the image..."
-    : "Describe the potential violation if you're not uploading an image...";
-
   return (
-    <div className="mb-4 text-left">
-      <Label htmlFor="violationText" className="mb-2 block text-sm font-medium">{label}</Label>
+    <div>
+      <label htmlFor="violation-text" className="block text-sm font-medium text-gray-200 mb-1 text-left">
+        {hasImage ? 'Additional Context' : 'Describe the Safety Concern'}
+      </label>
       <Textarea
-        id="violationText"
-        placeholder={placeholder}
-        className="bg-gray-800 border-gray-700 min-h-[80px]"
+        id="violation-text"
+        placeholder={
+          hasImage
+            ? "Provide additional context to help our AI (e.g., 'Check if workers are wearing proper PPE')"
+            : "Describe the safety violation or concern (e.g., 'Workers not wearing hard hats at construction site')"
+        }
+        className="bg-gray-800 text-gray-100 border-gray-700 min-h-[80px]"
         value={value}
         onChange={onChange}
       />
