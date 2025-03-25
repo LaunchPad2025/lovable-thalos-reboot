@@ -26,6 +26,7 @@ import Legal from "./pages/Legal";
 import SidebarExamples from "./pages/SidebarExamples";
 import RiskAssessment from "./pages/RiskAssessment";
 import Documents from "./pages/Documents";
+import Notifications from "./pages/Notifications";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -82,6 +83,7 @@ const App = () => {
                               <Route path="/risk-assessment" element={<RiskAssessment />} />
                               <Route path="/risk-assessment/:id" element={<RiskAssessment />} />
                               <Route path="/documents" element={<Documents />} />
+                              <Route path="/notifications" element={<Notifications />} />
                               <Route path="/chatbot" element={<Chatbot />} />
                               <Route path="/subscription" element={<Subscription />} />
                               <Route path="/settings" element={<Settings />} />
@@ -89,7 +91,6 @@ const App = () => {
                               <Route path="/regulations/:id" element={<Regulations />} />
                               <Route path="/models" element={<Models />} />
                               <Route path="/sidebar-examples" element={<SidebarExamples />} />
-                              <Route path="/notifications" element={<ComingSoon />} />
                               <Route path="/audits" element={<ComingSoon />} />
                               <Route path="/reports" element={<ComingSoon />} />
                               <Route path="/training" element={<ComingSoon />} />
