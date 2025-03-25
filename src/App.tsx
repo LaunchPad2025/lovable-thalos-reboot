@@ -10,7 +10,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
-import Violations from "./pages/Violations";
+import Violations from "./pages/violations";
 import Tasks from "./pages/Tasks";
 import Chatbot from "./pages/Chatbot";
 import Subscription from "./pages/Subscription";
