@@ -24,7 +24,7 @@ export default function Auth() {
     if (user?.user_metadata?.onboarded === false) {
       navigate("/onboarding");
     } else {
-      navigate("/");
+      navigate("/dashboard");
     }
   };
 

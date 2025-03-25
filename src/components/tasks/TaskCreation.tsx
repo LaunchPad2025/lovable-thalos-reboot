@@ -44,7 +44,7 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         title: newTask.title,
         description: newTask.description,
         due_date: newTask.due_date,
-        status: newTask.status,
+        status: newTask.status || 'open',
         priority: newTask.priority,
         assignee_id: newTask.assignee_id,
         created_by: user.id,
@@ -54,15 +54,24 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         updated_at: new Date().toISOString()
       };
 
+      console.log("Creating task with data:", taskToInsert);
+
       const { data, error } = await supabase
         .from('tasks')
         .insert(taskToInsert)
         .select();
       
-      if (error) throw error;
+      if (error) {
+        console.error("Error inserting task:", error);
+        throw error;
+      }
+      
+      console.log("Task created successfully:", data);
       
       // If successful, update the violation with the task ID if applicable
       if (data && data[0] && violationId) {
+        console.log("Linking task to violation:", violationId, data[0].id);
+        
         const { error: violationError } = await supabase
           .from('violation_tasks')
           .insert({
@@ -72,6 +81,8 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
           
         if (violationError) {
           console.error("Error linking task to violation:", violationError);
+        } else {
+          console.log("Successfully linked task to violation");
         }
       }
       
@@ -93,11 +104,11 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       if (data && data[0]) {
         navigate(`/tasks/${data[0].id}`);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating task:", error);
       toast({
         title: "Failed to create task",
-        description: "There was an error creating the task. Please try again.",
+        description: `There was an error creating the task: ${error.message}`,
         variant: "destructive",
       });
     }
