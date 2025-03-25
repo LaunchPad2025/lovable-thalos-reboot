@@ -10,6 +10,8 @@ interface NoViolationsCardProps {
   imageUrl?: string;
   industry?: string;
   onCreateTask?: () => void;
+  onReset?: () => void;
+  description?: string;
 }
 
 const NoViolationsCard = ({ 
@@ -17,7 +19,9 @@ const NoViolationsCard = ({
   onNewAnalysis, 
   imageUrl, 
   industry = 'Construction', 
-  onCreateTask 
+  onCreateTask,
+  onReset,
+  description
 }: NoViolationsCardProps) => {
   return (
     <Card className="border-green-800 bg-[#0d1117]">
@@ -48,7 +52,7 @@ const NoViolationsCard = ({
         </div>
         
         <p className="text-gray-400 mb-4">
-          The image was analyzed successfully, but no safety violations were detected by our AI system.
+          {description || "The image was analyzed successfully, but no safety violations were detected by our AI system."}
         </p>
 
         <div className="bg-blue-900/20 p-4 rounded-md border border-blue-800 mb-4">
@@ -70,16 +74,16 @@ const NoViolationsCard = ({
         </div>
         
         <div className="mt-4 flex justify-end space-x-3">
-          {onNewAnalysis && (
+          {onNewAnalysis || onReset ? (
             <Button 
               variant="outline" 
               className="border-gray-700 text-gray-300" 
-              onClick={onNewAnalysis}
+              onClick={onNewAnalysis || onReset}
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               New Analysis
             </Button>
-          )}
+          ) : null}
           {(onSave || onCreateTask) && (
             <Button 
               variant="default"
