@@ -32,6 +32,22 @@ import Audits from "./pages/Audits";
 import Admin from "./pages/Admin";
 import Index from "./pages/Index";
 
+// Documentation Pages
+import { 
+  Features, 
+  Pricing, 
+  Integrations, 
+  Updates, 
+  Blog, 
+  HelpCenter, 
+  Guides, 
+  ApiDocs, 
+  AboutUs, 
+  Careers, 
+  Contact,
+  Legal as LegalDocs
+} from "./pages/documentation";
+
 // Layout
 import Sidebar from "./components/layout/Sidebar";
 import Navbar from "./components/layout/Navbar";
@@ -71,6 +87,20 @@ function App() {
                   <Route path="/legal" element={<Legal />} />
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/" element={<Index />} />
+                  
+                  {/* Documentation routes */}
+                  <Route path="/documentation/features" element={<Features />} />
+                  <Route path="/documentation/pricing" element={<Pricing />} />
+                  <Route path="/documentation/integrations" element={<Integrations />} />
+                  <Route path="/documentation/updates" element={<Updates />} />
+                  <Route path="/documentation/blog" element={<Blog />} />
+                  <Route path="/documentation/help-center" element={<HelpCenter />} />
+                  <Route path="/documentation/guides" element={<Guides />} />
+                  <Route path="/documentation/api-docs" element={<ApiDocs />} />
+                  <Route path="/documentation/about-us" element={<AboutUs />} />
+                  <Route path="/documentation/careers" element={<Careers />} />
+                  <Route path="/documentation/contact" element={<Contact />} />
+                  <Route path="/documentation/legal" element={<LegalDocs />} />
 
                   {/* Protected routes with layout */}
                   <Route element={<ProtectedRoute />}>

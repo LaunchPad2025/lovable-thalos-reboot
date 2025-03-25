@@ -67,7 +67,7 @@ const Navbar = () => {
             variant="default" 
             size="sm" 
             className="hidden md:flex"
-            onClick={() => window.location.href = "https://cal.com/thalos-sales/30min"}
+            onClick={() => navigate('/documentation/pricing')}
           >
             Contact Sales
           </Button>
@@ -112,7 +112,7 @@ const Navbar = () => {
               </DropdownMenuItem>
               <DropdownMenuItem 
                 className="cursor-pointer"
-                onClick={() => navigate('/legal')}
+                onClick={() => navigate('/documentation/legal')}
               >
                 <Info className="mr-2 h-4 w-4" />
                 <span>Legal & Privacy</span>
