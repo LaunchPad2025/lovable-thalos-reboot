@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Table,
@@ -25,9 +26,10 @@ interface TestResult {
 
 interface ViolationResultsProps {
   results: TestResult[];
+  onSave?: () => void;
 }
 
-const ViolationResults: React.FC<ViolationResultsProps> = ({ results }) => {
+const ViolationResults: React.FC<ViolationResultsProps> = ({ results, onSave }) => {
   return (
     <Table>
       <TableCaption>Recent Compliance Test Results</TableCaption>

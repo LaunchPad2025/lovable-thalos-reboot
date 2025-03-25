@@ -14,6 +14,19 @@ const ViolationResultsView = ({
   onBackToUpload, 
   onViewViolationsList 
 }: ViolationResultsViewProps) => {
+  // Convert testResults to the format expected by ViolationResults
+  const formattedResults = Array.isArray(testResults) ? testResults : [
+    {
+      id: '1',
+      test_name: 'Safety Violation Analysis',
+      result: 'Violation Detected',
+      severity: testResults?.severity || 'medium',
+      location: testResults?.industry || 'Unknown',
+      timestamp: new Date().toISOString(),
+      image_url: testResults?.imagePreview || undefined
+    }
+  ];
+
   return (
     <>
       <div className="mb-6">
@@ -37,7 +50,7 @@ const ViolationResultsView = ({
       </div>
       
       <ViolationResults 
-        results={testResults} 
+        results={formattedResults} 
         onSave={() => {
           // In a real implementation, this would save the violation to the database
           onViewViolationsList();

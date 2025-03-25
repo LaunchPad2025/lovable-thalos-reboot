@@ -49,6 +49,19 @@ const Violations = () => {
   // Combine the real loading state with our override
   const isLoading = modelsLoading && isLoadingOverride;
   
+  // Convert single TestResult to array for ViolationResults component
+  const resultsArray = analysisResults ? [
+    {
+      id: '1',
+      test_name: 'Safety Violation Analysis',
+      result: 'Violation Detected',
+      severity: analysisResults.severity || 'medium',
+      location: analysisResults.industry || 'Unknown',
+      timestamp: new Date().toISOString(),
+      image_url: analysisResults.imagePreview || undefined
+    }
+  ] : [];
+  
   return (
     <PageContainer
       title="Safety Violations"
@@ -126,7 +139,7 @@ const Violations = () => {
               
               <TabsContent value="results">
                 {analysisResults && (
-                  <ViolationResults results={analysisResults} onSave={handleReset} />
+                  <ViolationResults results={resultsArray} onSave={handleReset} />
                 )}
               </TabsContent>
             </Tabs>
