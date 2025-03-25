@@ -8,6 +8,7 @@ import ImageUploader from './upload/ImageUploader';
 import ImagePreview from './upload/ImagePreview';
 import ViolationForm from './upload/ViolationForm';
 import AnalysisButtons from './upload/AnalysisButtons';
+import { Loader2 } from 'lucide-react';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;
@@ -35,7 +36,9 @@ const ViolationUpload = ({
   // Auto-select first model if none selected and models are available
   useEffect(() => {
     if (models?.length > 0 && !selectedModelId) {
-      setSelectedModelId(models[0].id);
+      // Find the YOLOv8 model or default to the first one
+      const yoloModel = models.find(m => m.name.toLowerCase().includes('yolo'));
+      setSelectedModelId(yoloModel?.id || models[0].id);
     }
   }, [models, selectedModelId]);
 
@@ -74,6 +77,19 @@ const ViolationUpload = ({
       toast.error('Failed to analyze image. Please try again.');
     }
   };
+  
+  if (modelsLoading) {
+    return (
+      <Card className="border border-dashed border-gray-700 bg-transparent">
+        <CardContent className="p-6 flex items-center justify-center h-64">
+          <div className="text-center">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-400 mx-auto mb-4" />
+            <p className="text-gray-400">Loading AI models...</p>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
   
   return (
     <Card className="border border-dashed border-gray-700 bg-transparent">
@@ -119,7 +135,12 @@ const ViolationUpload = ({
               </>
             ) : (
               <>
-                <ImagePreview imageUrl={imagePreview} />
+                <ImagePreview 
+                  imageUrl={imagePreview} 
+                  onRemove={() => {
+                    resetTest();
+                  }} 
+                />
                 
                 <ViolationForm
                   industry={industry}

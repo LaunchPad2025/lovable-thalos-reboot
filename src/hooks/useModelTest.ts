@@ -5,6 +5,13 @@ import { supabase } from '@/lib/supabase';
 import { MLModel } from '@/hooks/useMLModels';
 import { z } from 'zod';
 
+export interface Detection {
+  label?: string;
+  confidence?: number;
+  bbox?: [number, number, number, number];
+  text?: string;
+}
+
 export interface TestResult {
   regulationIds: string[];
   relevanceScores: number[];
@@ -12,9 +19,10 @@ export interface TestResult {
   severity: 'low' | 'medium' | 'high' | 'critical';
   status: 'pending' | 'open' | 'in-progress' | 'resolved';
   description: string;
-  detections?: any[];
+  detections?: Detection[];
   imagePreview?: string | null;
   industry?: string;
+  id?: string;
 }
 
 export const testModelSchema = z.object({
@@ -51,6 +59,19 @@ export function useModelTest() {
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
+      
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        toast.error('Please upload an image file');
+        return;
+      }
+      
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error('File size too large (max 5MB)');
+        return;
+      }
+      
       setImage(file);
       
       // Create preview
@@ -126,11 +147,22 @@ export function useModelTest() {
       
       if (error) throw error;
       
-      // Add the image preview to the result data
+      // If no detections or very low confidence, show a warning
+      if (!data.detections || data.detections.length === 0 || data.confidence < 0.3) {
+        toast.info('No significant safety violations detected', {
+          description: 'Our AI did not detect any clear safety violations in this image.'
+        });
+      }
+      
+      // Generate a unique ID for this result
+      const resultId = `v-${Date.now().toString(36)}`;
+      
+      // Add the image preview and additional data to the result
       const resultWithImage = {
         ...data,
         imagePreview: imagePreview,
-        industry: values.industry
+        industry: values.industry,
+        id: resultId
       };
       
       setTestResult(resultWithImage);

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { PlusCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NewTaskModal from '@/components/tasks/NewTaskModal';
@@ -12,14 +12,22 @@ import { useAuth } from '@/context/AuthContext';
 
 interface TaskCreationProps {
   violationId?: string;
+  autoOpen?: boolean;
 }
 
-export function TaskCreation({ violationId }: TaskCreationProps) {
-  const [isModalOpen, setIsModalOpen] = useState(!!violationId);
+export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProps) {
+  const [isModalOpen, setIsModalOpen] = useState(autoOpen || !!violationId);
   const navigate = useNavigate();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+
+  // Auto-open modal when violationId changes
+  useEffect(() => {
+    if (violationId) {
+      setIsModalOpen(true);
+    }
+  }, [violationId]);
 
   const handleCreateTask = async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
     try {
@@ -40,7 +48,7 @@ export function TaskCreation({ violationId }: TaskCreationProps) {
         priority: newTask.priority,
         assignee_id: newTask.assignee_id,
         created_by: user.id,
-        organization_id: newTask.organization_id,
+        organization_id: newTask.organization_id || user.user_metadata?.organization_id || '00000000-0000-0000-0000-000000000000',
         worksite_id: newTask.worksite_id,
         violation_id: newTask.violation_id,
         updated_at: new Date().toISOString()
@@ -53,14 +61,30 @@ export function TaskCreation({ violationId }: TaskCreationProps) {
       
       if (error) throw error;
       
+      // If successful, update the violation with the task ID if applicable
+      if (data && data[0] && violationId) {
+        const { error: violationError } = await supabase
+          .from('violation_tasks')
+          .insert({
+            violation_id: violationId,
+            task_id: data[0].id
+          });
+          
+        if (violationError) {
+          console.error("Error linking task to violation:", violationError);
+        }
+      }
+      
       toast({
         title: "Task created",
-        description: "The task has been successfully created.",
+        description: "The task has been successfully created from the safety violation.",
       });
       
+      // Invalidate relevant queries
       await queryClient.invalidateQueries({ queryKey: ['tasks'] });
       if (newTask.violation_id) {
         await queryClient.invalidateQueries({ queryKey: ['tasks', newTask.violation_id] });
+        await queryClient.invalidateQueries({ queryKey: ['violations'] });
       }
       
       setIsModalOpen(false);

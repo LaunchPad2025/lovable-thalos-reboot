@@ -1,77 +1,73 @@
 
 /**
- * Utility functions for generating remediation steps based on violation type
+ * Generates remediation steps for a safety violation
+ * @param violation The violation object with severity and description
+ * @returns Formatted remediation steps as string
  */
-
-interface ViolationDetails {
-  violation: string;
-  severity?: string;
-  [key: string]: any;
-}
-
-/**
- * Generates detailed remediation steps based on the type of violation
- * @param violation - The violation details object
- * @returns A formatted string with remediation steps tailored to the violation type
- */
-export const generateRemediationSteps = (violation: ViolationDetails): string => {
-  const baseText = `This task was automatically generated based on the detected violation: "${violation.violation}".
-
-Follow these remediation steps:
-
-1. Assess the situation - Review the violation details and understand the safety hazard involved.
-2. Document the current state - Take photos and notes about the current condition.
-3. Plan corrective actions - Determine what needs to be fixed and how.
-4. Implement safety measures - Make the necessary changes to address the violation.
-5. Verify compliance - Ensure the issue has been properly resolved.
-6. Document the resolution - Take photos and notes after remediation.
-7. Follow up - Schedule a follow-up inspection to ensure the issue doesn't recur.
-
-Additional guidance:`;
-
-  // Add specific guidance based on the type of violation
-  if (violation.violation.toLowerCase().includes('ppe') || violation.violation.toLowerCase().includes('protective equipment')) {
-    return `${baseText}
-
-- Check all PPE inventory and condition
-- Ensure proper PPE signage is clearly visible
-- Verify all staff have been trained on proper PPE usage
-- Replace any damaged or missing equipment immediately
-- Document compliance with OSHA Standard 1910.132`;
-  } 
-  else if (violation.violation.toLowerCase().includes('fire') || violation.violation.toLowerCase().includes('evacuation')) {
-    return `${baseText}
-
-- Ensure all fire exits are clearly marked and unobstructed
-- Verify fire extinguishers are properly mounted and inspected
-- Check that evacuation plans are posted in visible locations
-- Conduct a fire drill to test the evacuation procedure
-- Document compliance with NFPA 101 Life Safety Code`;
-  }
-  else if (violation.violation.toLowerCase().includes('chemical') || violation.violation.toLowerCase().includes('hazardous')) {
-    return `${baseText}
-
-- Verify all chemicals are properly labeled and stored
-- Ensure Safety Data Sheets (SDS) are up-to-date and accessible
-- Check that proper containment measures are in place
-- Verify staff are trained on chemical handling procedures
-- Document compliance with OSHA Hazard Communication Standard`;
-  }
-  else if (violation.violation.toLowerCase().includes('electrical') || violation.violation.toLowerCase().includes('wiring')) {
-    return `${baseText}
-
-- Disconnect power to affected area before inspection
-- Fix any exposed wiring with proper insulation
-- Ensure all electrical panels are properly labeled
-- Check that GFCI protection is installed where required
-- Document compliance with NEC (National Electrical Code)`;
+export const generateRemediationSteps = (violation: any): string => {
+  const { severity, description, detections } = violation;
+  let remediationSteps = '';
+  
+  // Create a title based on the severity
+  const severityText = {
+    'low': 'Minor Issue',
+    'medium': 'Moderate Risk',
+    'high': 'Serious Hazard',
+    'critical': 'Critical Safety Risk'
+  }[severity] || 'Safety Issue';
+  
+  remediationSteps += `# ${severityText}: ${description}\n\n`;
+  
+  // Add detected violations if available
+  if (detections && detections.length > 0) {
+    remediationSteps += `## Detected violations:\n`;
+    detections.forEach((detection: any, index: number) => {
+      if (detection.label) {
+        remediationSteps += `${index + 1}. ${detection.label.replace('_', ' ')}\n`;
+      }
+    });
+    remediationSteps += '\n';
   }
   
-  // Default guidance for other violations
-  return `${baseText}
-
-- Consult relevant safety standards and regulations
-- Engage safety specialists if needed
-- Document all steps taken to address the violation
-- Consider additional training for staff to prevent recurrence`;
+  // Generate recommended actions based on severity
+  remediationSteps += `## Recommended actions:\n`;
+  
+  // Standard steps for all severities
+  remediationSteps += `1. Document the violation with photos and written description\n`;
+  remediationSteps += `2. Identify all affected areas and personnel\n`;
+  
+  // Severity-specific steps
+  if (severity === 'critical' || severity === 'high') {
+    remediationSteps += `3. **URGENT**: Stop related work activities immediately\n`;
+    remediationSteps += `4. Evacuate personnel if necessary\n`;
+    remediationSteps += `5. Place warning signs and barriers around the area\n`;
+    remediationSteps += `6. Notify safety manager and site supervisor immediately\n`;
+    remediationSteps += `7. Implement corrective measures before work can resume\n`;
+    remediationSteps += `8. Conduct safety review with all affected personnel\n`;
+    remediationSteps += `9. Document all corrective actions with photos\n`;
+    remediationSteps += `10. Conduct follow-up inspection within 24 hours\n`;
+  } else if (severity === 'medium') {
+    remediationSteps += `3. Notify area supervisor\n`;
+    remediationSteps += `4. Place warning signs as needed\n`;
+    remediationSteps += `5. Implement temporary controls\n`;
+    remediationSteps += `6. Schedule permanent fix within 48 hours\n`;
+    remediationSteps += `7. Document corrective actions\n`;
+    remediationSteps += `8. Conduct follow-up inspection\n`;
+  } else {
+    remediationSteps += `3. Notify area supervisor\n`;
+    remediationSteps += `4. Schedule corrective action\n`;
+    remediationSteps += `5. Document when fixed\n`;
+    remediationSteps += `6. Add to safety review agenda\n`;
+  }
+  
+  // Add regulatory compliance section
+  if (violation.regulationIds && violation.regulationIds.length > 0) {
+    remediationSteps += `\n## Regulatory compliance:\n`;
+    remediationSteps += `This violation may be related to the following regulations:\n`;
+    violation.regulationIds.forEach((id: string, index: number) => {
+      remediationSteps += `- ${id}\n`;
+    });
+  }
+  
+  return remediationSteps;
 };

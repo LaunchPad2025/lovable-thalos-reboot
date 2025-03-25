@@ -16,8 +16,7 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ imagePreview, removeImage }
         <img 
           src={imagePreview} 
           alt="Upload preview" 
-          className="max-h-36 max-w-full object-contain mx-auto"
-          style={{ maxWidth: '100%' }}
+          className="w-full max-h-64 object-contain mx-auto"
         />
         <button
           onClick={removeImage}
