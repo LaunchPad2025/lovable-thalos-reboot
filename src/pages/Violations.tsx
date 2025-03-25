@@ -1,5 +1,5 @@
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageContainer from "@/components/layout/PageContainer";
@@ -8,7 +8,7 @@ import { useMLModels } from "@/hooks/ml-models";
 import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
 import { TestResult } from "@/hooks/model-testing/types";
-import ViolationResults, { ViolationResult } from "@/components/violations/ViolationResults";
+import ViolationResults from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/context/auth";
@@ -22,21 +22,31 @@ const Violations = () => {
   const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
   const { user } = useAuth();
   const [modelInitError, setModelInitError] = useState<string | null>(null);
-  const resultsRef = useRef<HTMLDivElement>(null);
   
   const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
+  
+  useEffect(() => {
+    // Initialize the storage bucket when the component mounts
+    const initBucket = async () => {
+      try {
+        await fetch('/api/supabase/functions/v1/create-storage-buckets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+      } catch (error) {
+        console.error("Error initializing storage bucket:", error);
+      }
+    };
+    
+    initBucket();
+  }, []);
   
   const handleUploadComplete = (results: TestResult) => {
     console.log("Upload complete with results:", results);
     setAnalysisResults(results);
     setActiveTab("results");
-    
-    // Scroll to results after a short delay to allow the tab to render
-    setTimeout(() => {
-      if (resultsRef.current) {
-        resultsRef.current.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 100);
     
     if (results.detections && results.detections.length > 0) {
       toast.success(`Detected ${results.detections.length} safety violation(s)`, {
@@ -85,7 +95,7 @@ const Violations = () => {
   
   const hasWorkingModels = models.length > 0 && !error;
   
-  const formattedResults: ViolationResult[] = analysisResults ? [
+  const formattedResults = analysisResults ? [
     {
       id: analysisResults.id || '1',
       test_name: 'Safety Violation Analysis',
@@ -180,7 +190,7 @@ const Violations = () => {
                 )}
               </TabsContent>
               
-              <TabsContent value="results" ref={resultsRef}>
+              <TabsContent value="results">
                 {analysisResults ? (
                   <ViolationResults 
                     results={formattedResults} 

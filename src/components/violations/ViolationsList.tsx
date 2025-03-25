@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clipboard, ClipboardCheck, AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
+import { AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
 import { Detection } from '@/hooks/model-testing/types';
 
 interface ViolationsListProps {
@@ -60,7 +60,7 @@ const ViolationsList = ({
         <div className="p-4 border-b border-gray-800">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-gray-300">Severity:</span>
-            <Badge className={getSeverityClass(severity)}>
+            <Badge className={getSeverityClass(severity)} variant="outline">
               {severity.charAt(0).toUpperCase() + severity.slice(1)}
             </Badge>
           </div>
@@ -126,7 +126,7 @@ const ViolationsList = ({
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
             disabled={violationsCount === 0}
           >
-            <Clipboard className="mr-2 h-4 w-4" />
+            <ArrowRight className="mr-2 h-4 w-4" />
             Create Remediation Task
           </Button>
         </div>

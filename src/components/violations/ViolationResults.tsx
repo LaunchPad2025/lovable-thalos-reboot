@@ -7,7 +7,7 @@ import {
   CardTitle 
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ClipboardList, Download, Shield } from 'lucide-react';
+import { Download, Shield } from 'lucide-react';
 import { getSeverityBadgeClass } from './utils/violationHelpers';
 import ViolationsList from './ViolationsList';
 
