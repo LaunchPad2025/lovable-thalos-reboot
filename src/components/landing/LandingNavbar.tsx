@@ -9,8 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import { LogIn } from "lucide-react";
+import { LogIn, HardHat } from "lucide-react";
 import IndustryItem from './IndustriesMenu';
 
 const LandingNavbar = () => {
@@ -27,8 +26,9 @@ const LandingNavbar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center">
-              <span className="text-2xl font-bold text-white">Thalos</span>
-              <span className="ml-1 text-blue-500">.</span>
+              <span className="text-2xl font-bold text-white mr-2">Thalos</span>
+              <span className="text-blue-500">.</span>
+              <HardHat size={20} className="text-blue-500 ml-1" />
             </Link>
             
             <NavigationMenu className="hidden md:flex">

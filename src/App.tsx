@@ -70,20 +70,20 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
 import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
-  console.log("App component rendering");
+  console.log("Thalos app rendering");
   const [appReady, setAppReady] = useState(false);
   
   // Ensure app is ready after a short delay
   useEffect(() => {
-    console.log("App mounting");
+    console.log("Thalos app mounting");
     const timer = setTimeout(() => {
-      console.log("App ready");
+      console.log("Thalos app ready");
       setAppReady(true);
     }, 200);
     
     return () => {
       clearTimeout(timer);
-      console.log("App unmounting");
+      console.log("Thalos app unmounting");
     };
   }, []);
   
@@ -168,7 +168,7 @@ function App() {
       
       {/* Add debug info to help troubleshoot */}
       <div className="fixed bottom-0 left-0 bg-black/70 text-white text-xs p-1 z-50 pointer-events-none">
-        Debug: App loaded {appReady ? '✓' : '...'} | Route: index
+        Debug: Thalos loaded {appReady ? '✓' : '...'} | Route: index
       </div>
     </div>
   );
