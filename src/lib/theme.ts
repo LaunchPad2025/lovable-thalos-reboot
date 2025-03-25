@@ -50,26 +50,62 @@ export const themeColors = {
       dark: '#111827',
     }
   },
-  // Dark mode specific colors
+  // Dark mode specific colors - enhanced for better contrast
   dark: {
     background: '#0b0f14',
     card: '#0d1117',
     border: '#1f2937',
     text: {
       primary: '#ffffff',
-      secondary: '#9ca3af',
-      muted: '#6b7280',
+      secondary: '#d1d5db', // Lightened for better contrast
+      muted: '#9ca3af',     // Lightened for better contrast
+    },
+    interactive: {
+      default: '#1f2937',
+      hover: '#374151',
+      disabled: '#111827',
+      focus: '#2563eb',
     }
   },
-  // Light mode specific colors
+  // Light mode specific colors - enhanced for better contrast
   light: {
     background: '#ffffff',
     card: '#f9fafb',
     border: '#e5e7eb',
     text: {
       primary: '#111827',
-      secondary: '#4b5563',
-      muted: '#9ca3af',
+      secondary: '#374151', // Darkened for better contrast
+      muted: '#6b7280',     // Darkened for better contrast
+    },
+    interactive: {
+      default: '#f3f4f6',
+      hover: '#e5e7eb',
+      disabled: '#f9fafb',
+      focus: '#3b82f6',
+    }
+  },
+  
+  // High contrast versions
+  highContrast: {
+    dark: {
+      background: '#000000',
+      card: '#0d1117',
+      border: '#374151',
+      text: {
+        primary: '#ffffff',
+        secondary: '#e5e7eb',
+        muted: '#d1d5db',
+      }
+    },
+    light: {
+      background: '#ffffff',
+      card: '#ffffff',
+      border: '#6b7280',
+      text: {
+        primary: '#000000',
+        secondary: '#1f2937',
+        muted: '#4b5563',
+      }
     }
   }
 };
@@ -115,6 +151,22 @@ export const themeSizing = {
       spacing: '1rem',
       fontSize: '1rem',
     },
+  },
+  mobile: {
+    fontSizes: {
+      xs: '0.75rem',
+      sm: '0.875rem',
+      base: '1rem',
+      lg: '1.125rem',
+      xl: '1.25rem',
+    },
+    spacing: {
+      xs: '0.25rem',
+      sm: '0.5rem',
+      md: '0.75rem',
+      lg: '1rem',
+      xl: '1.5rem',
+    }
   }
 };
 
@@ -132,12 +184,44 @@ export const themeShadows = {
   lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
   xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
   '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+  // Improved shadows for dark mode
+  dark: {
+    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.25)',
+    md: '0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.26)',
+    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25)',
+  }
 };
 
+// Helper function for getting theme-aware values
 export const getThemeValue = (
   mode: 'light' | 'dark',
   lightValue: string,
-  darkValue: string
+  darkValue: string,
+  highContrast: boolean = false
 ): string => {
+  if (highContrast) {
+    return mode === 'light' 
+      ? themeColors.highContrast.light.text.primary 
+      : themeColors.highContrast.dark.text.primary;
+  }
   return mode === 'light' ? lightValue : darkValue;
+};
+
+// Helper function for getting contrast-adaptive colors
+export const getContrastColor = (
+  bgColor: string,
+  mode: 'light' | 'dark'
+): string => {
+  // In a real implementation, this would calculate contrast based on the background
+  // For simplicity, we're just returning preset values
+  return mode === 'light' ? themeColors.light.text.primary : themeColors.dark.text.primary;
+};
+
+// Helper functions for responsive text sizes
+export const getResponsiveSize = (
+  baseSizePx: number,
+  deviceType: 'mobile' | 'tablet' | 'desktop'
+): string => {
+  const scaleFactor = deviceType === 'mobile' ? 0.85 : deviceType === 'tablet' ? 0.92 : 1;
+  return `${baseSizePx * scaleFactor}px`;
 };
