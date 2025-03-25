@@ -35,26 +35,59 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           // Draw the image
           ctx.drawImage(img, 0, 0, img.width, img.height);
           
-          // Draw bounding boxes for detections
-          results.detections.forEach((detection) => {
+          // Draw bounding boxes for detections with consistent styling
+          results.detections.forEach((detection, index) => {
             if (detection.bbox) {
               const [x, y, width, height] = detection.bbox;
               
-              // Draw the rectangle
+              // Draw the rectangle with consistent coloring based on violation type
+              const isCritical = detection.label?.includes('missing') || 
+                                detection.label?.includes('critical') || 
+                                detection.confidence > 0.85;
+              
               ctx.lineWidth = 3;
-              ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
+              ctx.strokeStyle = isCritical ? '#e11d48' : '#f59e0b'; // red for critical, amber for others
               ctx.strokeRect(x, y, width, height);
               
-              // Add label with try-catch to prevent rendering issues
-              try {
-                ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
-                ctx.fillRect(x, y - 25, detection.label ? Math.min(detection.label.length * 7, 150) : 80, 25);
+              // Create label background with consistent styling
+              ctx.fillStyle = isCritical ? 'rgba(225, 29, 72, 0.8)' : 'rgba(245, 158, 11, 0.8)';
+              
+              // Calculate text width to make background appropriate size
+              const labelText = detection.label ? 
+                detection.label.replace(/_/g, ' ') : 
+                `Violation ${index + 1}`;
+                
+              ctx.font = 'bold 14px Arial';
+              const textWidth = ctx.measureText(labelText).width;
+              
+              // Draw label background with consistent positioning
+              const labelHeight = 24;
+              const labelY = y > 30 ? y - labelHeight - 6 : y + height + 6;
+              ctx.fillRect(x, labelY, textWidth + 16, labelHeight);
+              
+              // Add label text
+              ctx.fillStyle = 'white';
+              ctx.fillText(labelText, x + 8, labelY + 17);
+              
+              // Add confidence percentage if available
+              if (detection.confidence) {
+                const confidenceText = `${(detection.confidence * 100).toFixed(0)}%`;
+                const confWidth = ctx.measureText(confidenceText).width;
+                
+                // Draw confidence badge
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillRect(x + width - confWidth - 16, y, confWidth + 16, 24);
+                
                 ctx.fillStyle = 'white';
-                ctx.font = '16px Arial';
-                ctx.fillText(detection.label?.replace(/_/g, ' ') || 'Violation', x + 5, y - 7);
-              } catch (e) {
-                console.error("Error drawing label:", e);
+                ctx.fillText(confidenceText, x + width - confWidth - 8, y + 17);
               }
+              
+              // Add ID number to make violations easier to reference
+              const idText = `#${index + 1}`;
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+              ctx.fillRect(x, y, 28, 24);
+              ctx.fillStyle = 'white';
+              ctx.fillText(idText, x + 6, y + 17);
             }
           });
         } catch (error) {
@@ -148,11 +181,17 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
               <h4 className="text-sm font-medium text-gray-300 mb-2">Detected Violations:</h4>
               <ul className="space-y-1">
                 {results.detections.map((detection, index) => (
-                  <li key={index} className="flex items-center text-sm">
-                    <span className="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
+                  <li key={index} className="flex items-start text-sm">
+                    <span className="flex items-center justify-center h-5 w-5 rounded-full bg-gray-800 text-white text-xs mr-2 mt-0.5">
+                      {index + 1}
+                    </span>
                     <span className="text-gray-300">
                       {detection.label ? detection.label.replace(/_/g, ' ') : 'Violation'} 
-                      {detection.confidence && ` (${(detection.confidence * 100).toFixed(0)}% confidence)`}
+                      {detection.confidence && 
+                        <span className="text-gray-500 ml-1">
+                          ({(detection.confidence * 100).toFixed(0)}% confidence)
+                        </span>
+                      }
                     </span>
                   </li>
                 ))}

@@ -26,7 +26,9 @@ export function useViolationRegulations(violationId: string | undefined) {
           *,
           regulation:regulation_id (
             title,
-            document_type
+            document_type,
+            jurisdiction,
+            authority
           )
         `)
         .eq('violation_id', violationId)
@@ -53,7 +55,10 @@ export function useRegulationViolations(regulationId: string | undefined) {
             id,
             violation,
             severity,
-            location
+            location,
+            status,
+            detected_at,
+            description
           )
         `)
         .eq('regulation_id', regulationId)
@@ -63,5 +68,37 @@ export function useRegulationViolations(regulationId: string | undefined) {
       return data;
     },
     enabled: !!regulationId
+  });
+}
+
+// New hook to get tasks associated with a violation
+export function useViolationTasks(violationId: string | undefined) {
+  return useQuery({
+    queryKey: ['violation-tasks', violationId],
+    queryFn: async () => {
+      if (!violationId) return [];
+      
+      const { data, error } = await supabase
+        .from('violation_tasks')
+        .select(`
+          *,
+          task:task_id (
+            id,
+            title,
+            description,
+            status,
+            priority,
+            due_date,
+            assignee_id
+          )
+        `)
+        .eq('violation_id', violationId);
+      
+      if (error) throw error;
+      
+      // Transform the data to make it easier to use
+      return data.map((item: any) => item.task);
+    },
+    enabled: !!violationId
   });
 }
