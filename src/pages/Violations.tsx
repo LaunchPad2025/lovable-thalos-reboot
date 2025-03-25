@@ -14,9 +14,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChatPopup from "@/components/chatbot/ChatPopup";
 
 const Violations = () => {
-  const { data: models = [], isLoading, error } = useMLModels();
+  const { data: models = [], isLoading: modelsLoading, error } = useMLModels();
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [analysisResults, setAnalysisResults] = useState<TestResult | null>(null);
+  const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
   
   const handleUploadComplete = (results: TestResult) => {
     setAnalysisResults(results);
@@ -30,7 +31,7 @@ const Violations = () => {
   
   // Mock data for models if they're still loading
   useEffect(() => {
-    if (isLoading && models.length === 0) {
+    if (modelsLoading && models.length === 0) {
       // If models are taking too long to load, provide mock data
       const mockModels = [
         {
@@ -44,8 +45,20 @@ const Violations = () => {
       
       // This is just a temporary solution to show something instead of the loading state
       console.log("Using mock models data for display");
+      
+      // After 3 seconds, allow the user to continue anyway even if models are still loading
+      const timer = setTimeout(() => {
+        setIsLoadingOverride(false);
+      }, 3000);
+      
+      return () => clearTimeout(timer);
+    } else {
+      setIsLoadingOverride(false);
     }
-  }, [isLoading, models]);
+  }, [modelsLoading, models]);
+  
+  // Combine the real loading state with our override
+  const isLoading = modelsLoading && isLoadingOverride;
   
   return (
     <PageContainer
@@ -87,7 +100,7 @@ const Violations = () => {
                           You can proceed with the upload. Our system will automatically select the best model for your analysis.
                         </p>
                         <Button 
-                          onClick={() => setIsLoading(false)} 
+                          onClick={() => setIsLoadingOverride(false)} 
                           variant="outline" 
                           className="mt-4"
                         >
