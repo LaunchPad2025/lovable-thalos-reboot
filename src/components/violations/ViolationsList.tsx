@@ -3,9 +3,10 @@ import React from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import ViolationsTabs from './ViolationsTabs';
 import { getSeverityBadgeClass } from './utils/violationHelpers';
+import { TestResult } from '@/hooks/model-testing/types';
 
 interface ViolationsListProps {
-  detections: any[];
+  detections: TestResult['detections'];
   violationsCount: number;
 }
 

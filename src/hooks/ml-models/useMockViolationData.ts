@@ -71,6 +71,22 @@ export function useMockViolationData() {
     const violationTypes = detections.map(d => d.label.replace(/_/g, ' ')).join(', ');
     const description = `Detected potential safety violations: ${violationTypes} in ${safeIndustry} environment.`;
     
+    // Determine location based on industry and violation types
+    let location = 'Work Area';
+    if (safeIndustry === 'construction') {
+      if (detections.some(d => d.label.includes('ladder'))) {
+        location = 'Building A, Elevated Work Zone';
+      } else if (detections.some(d => d.label.includes('electrical'))) {
+        location = 'Building B, Electrical Area';
+      } else {
+        location = 'Main Construction Site';
+      }
+    } else if (safeIndustry === 'manufacturing') {
+      location = 'Assembly Line Area';
+    } else if (safeIndustry === 'warehouse') {
+      location = 'Storage Area B5';
+    }
+    
     // Set severity based on the number and type of violations
     let severity: 'low' | 'medium' | 'high' | 'critical' = 'low';
     if (numViolations > 2) {
@@ -92,7 +108,8 @@ export function useMockViolationData() {
       industry: safeIndustry,
       id: `v-${Date.now().toString(36)}`,
       regulationIds: detections.flatMap(d => d.regulations?.map(r => r.id) || []),
-      relevanceScores: detections.flatMap(d => d.regulations?.map(r => r.relevance) || [])
+      relevanceScores: detections.flatMap(d => d.regulations?.map(r => r.relevance) || []),
+      location: location
     };
     
     return result;
@@ -117,7 +134,8 @@ export function useMockViolationData() {
       industry: 'construction',
       id: `v-fallback-${Date.now().toString(36)}`,
       regulationIds: ["OSHA-1926.100"],
-      relevanceScores: [0.95]
+      relevanceScores: [0.95],
+      location: 'Work Area'
     };
   };
   

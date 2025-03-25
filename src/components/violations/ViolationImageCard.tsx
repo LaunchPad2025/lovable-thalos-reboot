@@ -4,8 +4,9 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Download, Save, AlertCircle, HardHat, FlagTriangleLeft, Clock } from 'lucide-react';
-import { TestResult } from '@/hooks/useModelTest';
+import { TestResult } from '@/hooks/model-testing/types';
 import { getSeverityBadgeClass } from './utils/violationHelpers';
+import { generateRemediationSteps } from './utils/violationHelpers';
 
 interface ViolationImageCardProps {
   results: TestResult;
@@ -15,6 +16,17 @@ interface ViolationImageCardProps {
 
 const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImageCardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  // Add remediation steps to detections if needed
+  const enhancedDetections = results?.detections?.map(detection => {
+    if (!detection.remediationSteps && detection.label) {
+      return {
+        ...detection,
+        remediationSteps: generateRemediationSteps(detection.label)
+      };
+    }
+    return detection;
+  });
   
   // Draw violation annotations on the canvas
   useEffect(() => {
@@ -290,7 +302,7 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
                           )}
                         </div>
                         <p className="mt-2 text-gray-400 text-sm">
-                          {detection.remediationSteps || 'Remediation steps not available.'}
+                          {detection.remediationSteps || generateRemediationSteps(detection.label || '')}
                         </p>
                       </div>
                     </div>

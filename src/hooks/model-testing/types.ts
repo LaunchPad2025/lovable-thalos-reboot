@@ -6,6 +6,7 @@ export interface Detection {
   confidence?: number;
   bbox?: [number, number, number, number];
   text?: string;
+  remediationSteps?: string;
 }
 
 export interface TestResult {
@@ -19,6 +20,7 @@ export interface TestResult {
   imagePreview?: string | null;
   industry?: string;
   id?: string;
+  location?: string;
 }
 
 export const testModelSchema = z.object({

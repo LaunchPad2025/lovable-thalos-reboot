@@ -28,10 +28,21 @@ export function useMockAnalysis() {
       }
     ];
     
+    // Generate a random number of violations (1-3)
     const numViolations = Math.floor(Math.random() * 2) + 1;
     const detections = possibleViolations
       .sort(() => 0.5 - Math.random())
       .slice(0, numViolations);
+    
+    // Determine location based on industry
+    let location = 'Work Area';
+    if (industry === 'Construction') {
+      location = 'Building A Construction Site';
+    } else if (industry === 'Manufacturing') {
+      location = 'Factory Floor, Section B';
+    } else if (industry === 'Warehouse') {
+      location = 'Warehouse Storage Area';
+    }
     
     const result: TestResult = {
       regulationIds: ["29CFR1926.100", "29CFR1926.102"],
@@ -43,7 +54,8 @@ export function useMockAnalysis() {
       detections,
       imagePreview: imageUrl,
       industry,
-      id: `v-${Date.now().toString(36)}`
+      id: `v-${Date.now().toString(36)}`,
+      location: location
     };
     
     return result;

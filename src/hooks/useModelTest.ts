@@ -1,36 +1,17 @@
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
 import { MLModel } from '@/hooks/useMLModels';
 import { z } from 'zod';
+import { TestResult, Detection } from './model-testing/types';
+import { useMockAnalysis } from './model-testing/useMockAnalysis';
 
-export interface Detection {
-  label?: string;
-  confidence?: number;
-  bbox?: [number, number, number, number];
-  text?: string;
+export interface TestModelFormValues {
+  model_id: string;
+  violation_text?: string;
+  industry: string;
 }
-
-export interface TestResult {
-  regulationIds: string[];
-  relevanceScores: number[];
-  confidence: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  status: 'pending' | 'open' | 'in-progress' | 'resolved';
-  description: string;
-  detections?: Detection[];
-  imagePreview?: string | null;
-  industry?: string;
-  id?: string;
-}
-
-export const testModelSchema = z.object({
-  model_id: z.string(),
-  violation_text: z.string().optional(),
-  industry: z.string().min(1, 'Industry is required'),
-});
-
-export type TestModelFormValues = z.infer<typeof testModelSchema>;
 
 export function useModelTest() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,6 +19,8 @@ export function useModelTest() {
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  
+  const { generateMockAnalysis } = useMockAnalysis();
   
   const initializeStorageBucket = async () => {
     try {
@@ -148,11 +131,22 @@ export function useModelTest() {
         throw error;
       }
       
+      // Add location to detections based on industry
+      let location = 'Work Area';
+      if (values.industry === 'Construction') {
+        location = 'Building A Construction Site';
+      } else if (values.industry === 'Manufacturing') {
+        location = 'Factory Floor, Section B';
+      } else if (values.industry === 'Warehouse') {
+        location = 'Warehouse Storage Area';
+      }
+      
       const enhancedResults = {
         ...data,
         imagePreview: imagePreview,
         industry: values.industry,
         id: `v-${Date.now().toString(36)}`,
+        location: location,
         regulationIds: data.detections?.map((d: any) => {
           if (d.label?.includes('hardhat')) return '29 CFR 1926.100';
           if (d.label?.includes('vest')) return '29 CFR 1926.201';
@@ -177,54 +171,6 @@ export function useModelTest() {
       setIsSubmitting(false);
       setRetryCount(0);
     }
-  };
-  
-  const generateMockAnalysis = (imageUrl: string | null, industry: string): TestResult => {
-    console.log("Generating mock analysis for fallback");
-    
-    const possibleViolations = [
-      { 
-        label: "missing_hardhat", 
-        confidence: 0.89, 
-        bbox: [120, 80, 100, 120] as [number, number, number, number] 
-      },
-      { 
-        label: "missing_safety_vest", 
-        confidence: 0.75, 
-        bbox: [200, 150, 120, 200] as [number, number, number, number] 
-      },
-      { 
-        label: "unsafe_ladder_usage", 
-        confidence: 0.82, 
-        bbox: [280, 100, 150, 250] as [number, number, number, number]  
-      },
-      { 
-        label: "tripping_hazard", 
-        confidence: 0.68, 
-        bbox: [150, 350, 200, 80] as [number, number, number, number] 
-      }
-    ];
-    
-    const numViolations = Math.floor(Math.random() * 2) + 1;
-    const detections = possibleViolations
-      .sort(() => 0.5 - Math.random())
-      .slice(0, numViolations);
-    
-    const result: TestResult = {
-      regulationIds: ["29CFR1926.100", "29CFR1926.102"],
-      relevanceScores: [0.92, 0.78],
-      confidence: 0.85,
-      severity: "medium",
-      status: "open",
-      description: `Detected potential safety violations in ${industry} environment: ${detections.map(d => d.label.replace('_', ' ')).join(', ')}.`,
-      detections,
-      imagePreview: imageUrl,
-      industry,
-      id: `v-${Date.now().toString(36)}`
-    };
-    
-    setTestResult(result);
-    return result;
   };
   
   const resetTest = () => {
