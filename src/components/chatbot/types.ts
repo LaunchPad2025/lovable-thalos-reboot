@@ -2,7 +2,7 @@
 export interface Message {
   id: string;
   content: string;
-  sender: 'user' | 'bot';
-  timestamp: Date;
+  role: 'user' | 'assistant';
+  timestamp: string;
   imageUrl?: string;
 }

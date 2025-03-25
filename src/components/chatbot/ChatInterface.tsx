@@ -17,8 +17,8 @@ const ChatInterface = ({ isPopup = false, onClose }: { isPopup?: boolean; onClos
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSendMessage = async (content: string) => {
-    if (!content.trim()) return;
+  const handleSendMessage = async (content: string, imageFile?: File | null) => {
+    if (!content.trim() && !imageFile) return;
 
     // Add user message
     const userMessage: Message = {
@@ -26,6 +26,7 @@ const ChatInterface = ({ isPopup = false, onClose }: { isPopup?: boolean; onClos
       content,
       role: 'user',
       timestamp: new Date().toISOString(),
+      imageUrl: imageFile ? URL.createObjectURL(imageFile) : undefined
     };
     
     setMessages(prev => [...prev, userMessage]);
