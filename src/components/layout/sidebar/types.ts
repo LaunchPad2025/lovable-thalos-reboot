@@ -6,4 +6,5 @@ export interface NavItem {
   path: string;
   icon: LucideIcon;
   roles: ("admin" | "safety_officer" | "worker")[];
+  comingSoon?: boolean;
 }
