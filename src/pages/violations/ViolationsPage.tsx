@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon, ShieldAlert } from 'lucide-react';
 import ViolationsList from './components/ViolationsList';
 import ViolationDetails from '@/components/violations/ViolationDetails';
 import ViolationUploadView from './components/ViolationUploadView';
