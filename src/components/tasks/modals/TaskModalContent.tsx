@@ -79,7 +79,7 @@ const TaskModalContent: React.FC<TaskModalContentProps> = ({
           onClose={onClose}
           isLoading={isLoading}
           submitButtonText={submitButtonText}
-          showSubmitButton={!externalControl && onSubmit}
+          showSubmitButton={!!onSubmit}
         />
       </div>
     </div>

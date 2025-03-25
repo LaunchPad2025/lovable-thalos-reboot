@@ -6,12 +6,16 @@ import { taskSchema, TaskFormData } from '@/components/tasks/schemas/taskFormSch
 import { useAuth } from '@/context/AuthContext';
 import { Task } from '@/types/models';
 import { useTaskViolation } from '@/hooks/useTaskViolation';
+import { generateRemediationSteps } from '@/utils/remediationUtils';
 
 interface UseTaskFormProps {
   violationId?: string;
   onSubmit: (data: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => void;
 }
 
+/**
+ * Custom hook for managing task form state and handling form submission
+ */
 export function useTaskForm({ violationId, onSubmit }: UseTaskFormProps) {
   const [selectedViolationId, setSelectedViolationId] = useState<string | undefined>(violationId);
   const { user } = useAuth();
@@ -30,6 +34,7 @@ export function useTaskForm({ violationId, onSubmit }: UseTaskFormProps) {
     },
   });
 
+  // Set up violation-based form fields when violation details are available
   useEffect(() => {
     if (violationId) {
       setValue('violation_id', violationId);
@@ -37,88 +42,35 @@ export function useTaskForm({ violationId, onSubmit }: UseTaskFormProps) {
 
       // If we have violation details, pre-populate the form with relevant information
       if (violationDetails) {
-        // Create a title based on the violation
-        setValue('title', `Remediate: ${violationDetails.violation}`);
-        
-        // Create a detailed description with remediation steps
-        const remediationSteps = generateRemediationSteps(violationDetails);
-        setValue('description', remediationSteps);
-        
-        // Set priority based on violation severity
-        if (violationDetails.severity === 'critical' || violationDetails.severity === 'high') {
-          setValue('priority', 'high');
-        } else if (violationDetails.severity === 'medium') {
-          setValue('priority', 'medium');
-        } else {
-          setValue('priority', 'low');
-        }
+        populateFormWithViolationDetails(violationDetails, setValue);
       }
     }
   }, [violationId, violationDetails, setValue]);
 
-  // Helper function to generate detailed remediation steps based on violation type
-  const generateRemediationSteps = (violation: any) => {
-    const baseText = `This task was automatically generated based on the detected violation: "${violation.violation}".
-
-Follow these remediation steps:
-
-1. Assess the situation - Review the violation details and understand the safety hazard involved.
-2. Document the current state - Take photos and notes about the current condition.
-3. Plan corrective actions - Determine what needs to be fixed and how.
-4. Implement safety measures - Make the necessary changes to address the violation.
-5. Verify compliance - Ensure the issue has been properly resolved.
-6. Document the resolution - Take photos and notes after remediation.
-7. Follow up - Schedule a follow-up inspection to ensure the issue doesn't recur.
-
-Additional guidance:`;
-
-    // Add specific guidance based on the type of violation
-    if (violation.violation.toLowerCase().includes('ppe') || violation.violation.toLowerCase().includes('protective equipment')) {
-      return `${baseText}
-
-- Check all PPE inventory and condition
-- Ensure proper PPE signage is clearly visible
-- Verify all staff have been trained on proper PPE usage
-- Replace any damaged or missing equipment immediately
-- Document compliance with OSHA Standard 1910.132`;
-    } 
-    else if (violation.violation.toLowerCase().includes('fire') || violation.violation.toLowerCase().includes('evacuation')) {
-      return `${baseText}
-
-- Ensure all fire exits are clearly marked and unobstructed
-- Verify fire extinguishers are properly mounted and inspected
-- Check that evacuation plans are posted in visible locations
-- Conduct a fire drill to test the evacuation procedure
-- Document compliance with NFPA 101 Life Safety Code`;
-    }
-    else if (violation.violation.toLowerCase().includes('chemical') || violation.violation.toLowerCase().includes('hazardous')) {
-      return `${baseText}
-
-- Verify all chemicals are properly labeled and stored
-- Ensure Safety Data Sheets (SDS) are up-to-date and accessible
-- Check that proper containment measures are in place
-- Verify staff are trained on chemical handling procedures
-- Document compliance with OSHA Hazard Communication Standard`;
-    }
-    else if (violation.violation.toLowerCase().includes('electrical') || violation.violation.toLowerCase().includes('wiring')) {
-      return `${baseText}
-
-- Disconnect power to affected area before inspection
-- Fix any exposed wiring with proper insulation
-- Ensure all electrical panels are properly labeled
-- Check that GFCI protection is installed where required
-- Document compliance with NEC (National Electrical Code)`;
-    }
+  /**
+   * Populates form fields based on violation details
+   */
+  const populateFormWithViolationDetails = (violation: any, setValue: any) => {
+    // Create a title based on the violation
+    setValue('title', `Remediate: ${violation.violation}`);
     
-    // Default guidance for other violations
-    return `${baseText}
-
-- Consult relevant safety standards and regulations
-- Engage safety specialists if needed
-- Document all steps taken to address the violation
-- Consider additional training for staff to prevent recurrence`;
+    // Create a detailed description with remediation steps
+    const remediationSteps = generateRemediationSteps(violation);
+    setValue('description', remediationSteps);
+    
+    // Set priority based on violation severity
+    if (violation.severity === 'critical' || violation.severity === 'high') {
+      setValue('priority', 'high');
+    } else if (violation.severity === 'medium') {
+      setValue('priority', 'medium');
+    } else {
+      setValue('priority', 'low');
+    }
   };
 
+  /**
+   * Handles form submission and formats data for the API
+   */
   const handleFormSubmit = async (data: TaskFormData) => {
     if (!user) {
       return; // Handle unauthenticated state
