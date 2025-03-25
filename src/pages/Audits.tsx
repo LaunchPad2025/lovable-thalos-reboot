@@ -26,17 +26,20 @@ const Audits = () => {
           <AuditStatusCard 
             title="Upcoming Audits" 
             count={3} 
-            status="upcoming" 
+            description="Scheduled audits waiting to be conducted" 
+            variant="upcoming" 
           />
           <AuditStatusCard 
             title="In Progress" 
             count={2} 
-            status="in-progress" 
+            description="Audits currently being conducted" 
+            variant="in-progress" 
           />
           <AuditStatusCard 
             title="Completed" 
             count={12} 
-            status="completed" 
+            description="Successfully completed audits" 
+            variant="completed" 
           />
         </div>
 
