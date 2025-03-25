@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -70,10 +71,12 @@ const App = () => {
                           <div className="flex-1 flex flex-col overflow-hidden">
                             <Navbar />
                             <Routes>
-                              <Route path="/" element={<Dashboard />} />
+                              <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                              <Route path="/dashboard" element={<Dashboard />} />
                               <Route path="/violations" element={<Violations />} />
                               <Route path="/violations/:id" element={<Violations />} />
                               <Route path="/tasks" element={<Tasks />} />
+                              <Route path="/tasks/:id" element={<Tasks />} />
                               <Route path="/chatbot" element={<Chatbot />} />
                               <Route path="/subscription" element={<Subscription />} />
                               <Route path="/settings" element={<Settings />} />
@@ -81,6 +84,7 @@ const App = () => {
                               <Route path="/regulations/:id" element={<Regulations />} />
                               <Route path="/models" element={<Models />} />
                               <Route path="/sidebar-examples" element={<SidebarExamples />} />
+                              <Route path="/notifications" element={<ComingSoon />} />
                               <Route path="/coming-soon" element={<ComingSoon />} />
                               <Route path="/legal" element={<Legal />} />
                               <Route path="*" element={<NotFound />} />
