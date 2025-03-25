@@ -1,10 +1,9 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/context/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
@@ -73,6 +72,21 @@ import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
   console.log("App component rendering");
+  const [appReady, setAppReady] = useState(false);
+  
+  // Ensure app is ready after a short delay
+  useEffect(() => {
+    console.log("App mounting");
+    const timer = setTimeout(() => {
+      console.log("App ready");
+      setAppReady(true);
+    }, 200);
+    
+    return () => {
+      clearTimeout(timer);
+      console.log("App unmounting");
+    };
+  }, []);
   
   return (
     <div className="app">
@@ -84,11 +98,11 @@ function App() {
               <Sonner />
               <BrowserRouter>
                 <Routes>
-                  {/* Public routes */}
+                  {/* Public routes - ensure these are at the top */}
+                  <Route path="/" element={<Index />} />
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/legal" element={<Legal />} />
                   <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/" element={<Index />} />
                   
                   {/* Documentation routes */}
                   <Route path="/documentation/features" element={<Features />} />
@@ -156,7 +170,7 @@ function App() {
       
       {/* Add debug info to help troubleshoot */}
       <div className="fixed bottom-0 left-0 bg-black/70 text-white text-xs p-1 z-50 pointer-events-none">
-        Debug: App loaded
+        Debug: App loaded {appReady ? '✓' : '...'} | Route: index
       </div>
     </div>
   );
