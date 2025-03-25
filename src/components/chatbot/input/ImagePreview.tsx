@@ -16,12 +16,13 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ imagePreview, removeImage }
         <img 
           src={imagePreview} 
           alt="Upload preview" 
-          className="w-full max-h-64 object-contain mx-auto"
+          className="w-full max-h-[200px] object-contain mx-auto"
         />
         <button
           onClick={removeImage}
-          className="absolute top-1 right-1 p-1 bg-gray-900/80 rounded-full text-gray-300 hover:text-white"
+          className="absolute top-1 right-1 p-2 bg-gray-900/80 rounded-full text-gray-300 hover:text-white"
           type="button"
+          aria-label="Remove image"
         >
           <X size={16} />
         </button>

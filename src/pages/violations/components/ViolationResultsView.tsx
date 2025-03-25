@@ -1,13 +1,14 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import ViolationResults from '@/components/violations/ViolationResults';
+import ViolationResults, { ViolationResult } from '@/components/violations/ViolationResults';
 import ViolationImageCard from '@/components/violations/ViolationImageCard';
 import { Button } from '@/components/ui/button';
 import { TaskCreation } from '@/components/tasks/TaskCreation';
 import { toast } from 'sonner';
+import { TestResult } from '@/hooks/useModelTest';
 
 interface ViolationResultsViewProps {
-  testResults: any;
+  testResults: TestResult;
   onBackToUpload: () => void;
   onViewViolationsList: () => void;
 }
@@ -21,15 +22,19 @@ const ViolationResultsView = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // Convert testResults to the format expected by ViolationResults
-  const formattedResults = Array.isArray(testResults) ? testResults : [
+  const formattedResults: ViolationResult[] = [
     {
-      id: '1',
+      id: testResults?.id || '1',
       test_name: 'Safety Violation Analysis',
       result: 'Violation Detected',
       severity: testResults?.severity || 'medium',
       location: testResults?.industry || 'Unknown',
       timestamp: new Date().toISOString(),
-      image_url: testResults?.imagePreview || undefined
+      image_url: testResults?.imagePreview || undefined,
+      description: testResults?.description,
+      detections: testResults?.detections,
+      regulationIds: testResults?.regulationIds,
+      industry: testResults?.industry
     }
   ];
   
@@ -67,7 +72,7 @@ const ViolationResultsView = ({
             ctx.fillRect(x, y - 25, detection.label ? detection.label.length * 7 : 80, 25);
             ctx.fillStyle = 'white';
             ctx.font = '16px Arial';
-            ctx.fillText(detection.label?.replace('_', ' ') || 'Violation', x + 5, y - 7);
+            ctx.fillText(detection.label?.replace(/_/g, ' ') || 'Violation', x + 5, y - 7);
           }
         });
       };
@@ -124,11 +129,13 @@ const ViolationResultsView = ({
       
       {violationsCount > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <ViolationImageCard 
-            results={testResults} 
-            violationsCount={violationsCount} 
-            onSave={handleSaveViolation} 
-          />
+          <div className="md:col-span-2">
+            <ViolationImageCard 
+              results={testResults} 
+              violationsCount={violationsCount} 
+              onSave={handleSaveViolation} 
+            />
+          </div>
           
           <div className="md:col-span-1">
             <ViolationResults 
@@ -152,6 +159,7 @@ const ViolationResultsView = ({
       {showTaskModal && testResults && (
         <TaskCreation 
           violationId={testResults.id || "1"} 
+          autoOpen={true}
         />
       )}
       

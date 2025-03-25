@@ -8,7 +8,7 @@ import { useMLModels } from "@/hooks/useMLModels";
 import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
 import { TestResult } from "@/hooks/useModelTest";
-import ViolationResults from "@/components/violations/ViolationResults";
+import ViolationResults, { ViolationResult } from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/context/AuthContext";
@@ -50,15 +50,19 @@ const Violations = () => {
   const isLoading = modelsLoading && isLoadingOverride;
   
   // Convert single TestResult to array for ViolationResults component
-  const resultsArray = analysisResults ? [
+  const formattedResults: ViolationResult[] = analysisResults ? [
     {
-      id: '1',
+      id: analysisResults.id || '1',
       test_name: 'Safety Violation Analysis',
       result: 'Violation Detected',
       severity: analysisResults.severity || 'medium',
       location: analysisResults.industry || 'Unknown',
       timestamp: new Date().toISOString(),
-      image_url: analysisResults.imagePreview || undefined
+      image_url: analysisResults.imagePreview || undefined,
+      description: analysisResults.description,
+      detections: analysisResults.detections,
+      regulationIds: analysisResults.regulationIds,
+      industry: analysisResults.industry
     }
   ] : [];
   
@@ -139,7 +143,10 @@ const Violations = () => {
               
               <TabsContent value="results">
                 {analysisResults && (
-                  <ViolationResults results={resultsArray} onSave={handleReset} />
+                  <ViolationResults 
+                    results={formattedResults} 
+                    onSave={handleReset} 
+                  />
                 )}
               </TabsContent>
             </Tabs>

@@ -27,7 +27,7 @@ const ImagePreview = ({ imageUrl, onRemove }: ImagePreviewProps) => {
         </Button>
       </div>
       <p className="text-sm text-gray-400 mb-4">
-        Image ready for safety violation analysis. You can add a description below to help our AI models.
+        Image ready for safety violation analysis. You can add a description below to help our AI models detect violations more accurately.
       </p>
     </div>
   );
