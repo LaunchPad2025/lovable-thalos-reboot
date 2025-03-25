@@ -34,13 +34,7 @@ const Navbar = () => {
     <header className="bg-card border-b border-border sticky top-0 z-10">
       <div className="h-16 px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-center">
-          <div className="mr-4 hidden md:flex flex-col">
-            <h2 className="text-xl font-bold text-foreground">
-              Thalos
-              <span className="text-primary text-opacity-80">.</span>
-            </h2>
-            <p className="text-xs text-muted-foreground">powered by Steel Toe</p>
-          </div>
+          {/* Removed the Thalos text and logo from here */}
           <div className="flex items-center bg-muted rounded-md w-full max-w-sm px-3 py-2">
             <Search size={18} className="text-muted-foreground mr-2" />
             <Input 
