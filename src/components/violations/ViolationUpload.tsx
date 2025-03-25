@@ -13,12 +13,14 @@ import { Label } from '@/components/ui/label';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;
+  userIndustry?: string;
+  hideModelSelection?: boolean;
 }
 
-const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
+const ViolationUpload = ({ onUploadComplete, userIndustry = 'Construction', hideModelSelection = false }: ViolationUploadProps) => {
   const { data: models = [] } = useMLModels();
   const [selectedModelId, setSelectedModelId] = useState<string>('');
-  const [industry, setIndustry] = useState<string>('Construction');
+  const [industry, setIndustry] = useState<string>(userIndustry);
   const [violationText, setViolationText] = useState<string>('');
   const { 
     isSubmitting, 
@@ -89,7 +91,7 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                     Upload an image from your worksite to analyze for safety violations. Our AI will detect potential safety issues and regulatory non-compliance.
                   </p>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4 text-left">
+                  <div className={`grid grid-cols-1 ${!hideModelSelection ? 'md:grid-cols-2' : ''} gap-4 mb-4 text-left`}>
                     <div>
                       <Label htmlFor="industry" className="mb-2 block text-sm font-medium">Industry</Label>
                       <Select 
@@ -107,24 +109,26 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                       </Select>
                     </div>
                     
-                    <div>
-                      <Label htmlFor="model" className="mb-2 block text-sm font-medium">AI Model</Label>
-                      <Select 
-                        value={selectedModelId} 
-                        onValueChange={setSelectedModelId}
-                      >
-                        <SelectTrigger className="bg-gray-800 border-gray-700 w-full">
-                          <SelectValue placeholder="Auto-select best model" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-gray-800 border-gray-700">
-                          {models.map(model => (
-                            <SelectItem key={model.id} value={model.id}>
-                              {model.name} ({model.model_type})
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                    {!hideModelSelection && (
+                      <div>
+                        <Label htmlFor="model" className="mb-2 block text-sm font-medium">AI Model</Label>
+                        <Select 
+                          value={selectedModelId} 
+                          onValueChange={setSelectedModelId}
+                        >
+                          <SelectTrigger className="bg-gray-800 border-gray-700 w-full">
+                            <SelectValue placeholder="Auto-select best model" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-800 border-gray-700">
+                            {models.map(model => (
+                              <SelectItem key={model.id} value={model.id}>
+                                {model.name} ({model.model_type})
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
                   </div>
                   
                   <div className="mb-4 text-left">
@@ -184,7 +188,7 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                   className="max-h-[300px] rounded border border-gray-700 mx-auto"
                 />
                 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 text-left">
+                <div className={`grid grid-cols-1 ${!hideModelSelection ? 'md:grid-cols-2' : ''} gap-4 mt-4 text-left`}>
                   <div>
                     <Label htmlFor="industry" className="mb-2 block text-sm font-medium">Industry</Label>
                     <Select 
@@ -202,24 +206,26 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                     </Select>
                   </div>
                   
-                  <div>
-                    <Label htmlFor="model" className="mb-2 block text-sm font-medium">AI Model</Label>
-                    <Select 
-                      value={selectedModelId} 
-                      onValueChange={setSelectedModelId}
-                    >
-                      <SelectTrigger className="bg-gray-800 border-gray-700 w-full">
-                        <SelectValue placeholder="Auto-select best model" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-gray-800 border-gray-700">
-                        {models.map(model => (
-                          <SelectItem key={model.id} value={model.id}>
-                            {model.name} ({model.model_type})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                  {!hideModelSelection && (
+                    <div>
+                      <Label htmlFor="model" className="mb-2 block text-sm font-medium">AI Model</Label>
+                      <Select 
+                        value={selectedModelId} 
+                        onValueChange={setSelectedModelId}
+                      >
+                        <SelectTrigger className="bg-gray-800 border-gray-700 w-full">
+                          <SelectValue placeholder="Auto-select best model" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-800 border-gray-700">
+                          {models.map(model => (
+                            <SelectItem key={model.id} value={model.id}>
+                              {model.name} ({model.model_type})
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                 </div>
                 
                 <div className="mb-4 text-left mt-4">

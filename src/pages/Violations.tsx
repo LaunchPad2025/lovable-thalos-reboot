@@ -12,12 +12,17 @@ import ViolationResults from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import ChatPopup from "@/components/chatbot/ChatPopup";
+import { useAuth } from "@/context/AuthContext";
 
 const Violations = () => {
   const { data: models = [], isLoading: modelsLoading, error } = useMLModels();
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [analysisResults, setAnalysisResults] = useState<TestResult | null>(null);
   const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
+  const { user } = useAuth();
+  
+  // Get user's preferred industry from user metadata
+  const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
   
   const handleUploadComplete = (results: TestResult) => {
     setAnalysisResults(results);
@@ -29,24 +34,9 @@ const Violations = () => {
     setActiveTab("upload");
   };
   
-  // Mock data for models if they're still loading
+  // Auto-continue after 3 seconds if models are still loading
   useEffect(() => {
-    if (modelsLoading && models.length === 0) {
-      // If models are taking too long to load, provide mock data
-      const mockModels = [
-        {
-          id: "model1",
-          name: "Safety Violation Detector",
-          description: "Detects common safety violations in workplaces",
-          model_type: "Object Detection",
-          industry: "Construction"
-        }
-      ];
-      
-      // This is just a temporary solution to show something instead of the loading state
-      console.log("Using mock models data for display");
-      
-      // After 3 seconds, allow the user to continue anyway even if models are still loading
+    if (modelsLoading) {
       const timer = setTimeout(() => {
         setIsLoadingOverride(false);
       }, 3000);
@@ -55,7 +45,7 @@ const Violations = () => {
     } else {
       setIsLoadingOverride(false);
     }
-  }, [modelsLoading, models]);
+  }, [modelsLoading]);
   
   // Combine the real loading state with our override
   const isLoading = modelsLoading && isLoadingOverride;
@@ -85,10 +75,10 @@ const Violations = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <Tabs value={activeTab} onValueChange={setActiveTab}>
-                  <TabsList className="mb-4">
-                    <TabsTrigger value="upload">Upload</TabsTrigger>
-                    <TabsTrigger value="results" disabled={!analysisResults}>Results</TabsTrigger>
+                <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="mb-4 w-full">
+                    <TabsTrigger value="upload" className="flex-1">Upload</TabsTrigger>
+                    <TabsTrigger value="results" className="flex-1" disabled={!analysisResults}>Results</TabsTrigger>
                   </TabsList>
                   
                   <TabsContent value="upload">
@@ -108,7 +98,11 @@ const Violations = () => {
                         </Button>
                       </div>
                     ) : (
-                      <ViolationUpload onUploadComplete={handleUploadComplete} />
+                      <ViolationUpload 
+                        onUploadComplete={handleUploadComplete} 
+                        userIndustry={userIndustry}
+                        hideModelSelection={true}
+                      />
                     )}
                   </TabsContent>
                   
