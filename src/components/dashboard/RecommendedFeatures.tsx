@@ -2,8 +2,15 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const RecommendedFeatures = () => {
+  const navigate = useNavigate();
+  
+  const handleContactSales = () => {
+    navigate('/subscription');
+  };
+  
   return (
     <Card className="bg-[#0d1117] border-gray-800 shadow-none text-white">
       <CardContent className="p-6">
@@ -36,7 +43,7 @@ const RecommendedFeatures = () => {
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "https://cal.com/thalos-sales/30min"}>
+        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={handleContactSales}>
           Contact Sales
         </Button>
       </CardContent>

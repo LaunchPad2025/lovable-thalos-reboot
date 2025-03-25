@@ -45,10 +45,21 @@ const modules = [
   { id: "reports", label: "Reporting & Analytics" },
 ];
 
+const companySize = [
+  { value: "1-10", label: "1-10 employees" },
+  { value: "11-50", label: "11-50 employees" },
+  { value: "51-200", label: "51-200 employees" },
+  { value: "201-500", label: "201-500 employees" },
+  { value: "501-1000", label: "501-1000 employees" },
+  { value: "1000+", label: "1000+ employees" },
+];
+
 export function OnboardingFlow() {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<UserRole>("worker");
   const [organization, setOrganization] = useState<string>("");
+  const [companyEmail, setCompanyEmail] = useState<string>("");
+  const [size, setSize] = useState<string>("");
   const [createOrg, setCreateOrg] = useState<boolean>(false);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
@@ -101,7 +112,8 @@ export function OnboardingFlow() {
           .insert({
             name: organization,
             created_by: user.id,
-            industries: selectedIndustries
+            industries: selectedIndustries,
+            size: size || null,
           })
           .select();
           
@@ -120,10 +132,10 @@ export function OnboardingFlow() {
       
       toast({
         title: "Onboarding complete!",
-        description: "Your profile has been set up successfully.",
+        description: "Your profile has been set up successfully. You're now on a free trial.",
       });
       
-      navigate("/");
+      navigate("/dashboard");
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast({
@@ -178,15 +190,50 @@ export function OnboardingFlow() {
                 </div>
                 
                 {createOrg && (
-                  <div className="pt-2">
-                    <Label htmlFor="organization">Organization Name</Label>
-                    <Input
-                      id="organization"
-                      placeholder="Enter organization name"
-                      value={organization}
-                      onChange={(e) => setOrganization(e.target.value)}
-                      className="bg-[#1a2330] border-gray-700 mt-1"
-                    />
+                  <div className="space-y-4 pt-2">
+                    <div>
+                      <Label htmlFor="organization">Organization Name</Label>
+                      <Input
+                        id="organization"
+                        placeholder="Enter organization name"
+                        value={organization}
+                        onChange={(e) => setOrganization(e.target.value)}
+                        className="bg-[#1a2330] border-gray-700 mt-1"
+                      />
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="companyEmail">Company Email Domain</Label>
+                      <Input
+                        id="companyEmail"
+                        placeholder="company.com"
+                        value={companyEmail}
+                        onChange={(e) => setCompanyEmail(e.target.value)}
+                        className="bg-[#1a2330] border-gray-700 mt-1"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        Used for verifying new team members
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label htmlFor="size">Company Size</Label>
+                      <Select 
+                        onValueChange={setSize}
+                        value={size}
+                      >
+                        <SelectTrigger className="bg-[#1a2330] border-gray-700 mt-1">
+                          <SelectValue placeholder="Select company size" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#1a2330] border-gray-700">
+                          {companySize.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 )}
               </div>
@@ -226,6 +273,12 @@ export function OnboardingFlow() {
                   </div>
                 ))}
               </div>
+              <div className="pt-2">
+                <p className="text-sm text-gray-400">
+                  You'll be able to use all features during your trial. After your trial ends, 
+                  contact our sales team to continue using Thalos.
+                </p>
+              </div>
             </div>
           )}
         </CardContent>
@@ -252,7 +305,7 @@ export function OnboardingFlow() {
               disabled={isSubmitting}
               className="bg-thalos-blue hover:bg-blue-600 ml-auto"
             >
-              {isSubmitting ? "Saving..." : "Complete Setup"}
+              {isSubmitting ? "Saving..." : "Start Free Trial"}
             </Button>
           )}
         </CardFooter>

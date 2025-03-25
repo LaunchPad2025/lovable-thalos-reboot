@@ -3,11 +3,8 @@ import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 const Subscription = () => {
-  const navigate = useNavigate();
-  
   const handleContactSales = () => {
     window.location.href = "https://cal.com/thalos-sales/30min";
   };

@@ -13,7 +13,8 @@ import {
   Users,
   HelpCircle,
   MessageSquare,
-  ShieldCheck
+  ShieldCheck,
+  CreditCard
 } from "lucide-react";
 import { NavItem } from "./types";
 
@@ -58,8 +59,7 @@ export const getNavItems = (): NavItem[] => [
     title: "Audits",
     path: "/audits",
     icon: ClipboardList,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
+    roles: ["admin", "safety_officer", "worker"]
   },
   {
     title: "Reports",
@@ -72,15 +72,13 @@ export const getNavItems = (): NavItem[] => [
     title: "Training",
     path: "/training",
     icon: BookOpen,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
+    roles: ["admin", "safety_officer", "worker"]
   },
   {
     title: "Admin",
     path: "/admin",
     icon: ShieldCheck,
-    roles: ["admin"],
-    badge: "Soon"
+    roles: ["admin"]
   },
   {
     title: "Copilot",
@@ -88,6 +86,12 @@ export const getNavItems = (): NavItem[] => [
     icon: MessageSquare,
     roles: ["admin", "safety_officer", "worker"],
     badge: "AI"
+  },
+  {
+    title: "Subscription",
+    path: "/subscription",
+    icon: CreditCard,
+    roles: ["admin"]
   },
   {
     title: "Settings",
