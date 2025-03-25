@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMLModels } from "@/hooks/useMLModels";
 import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
-import { TestResult } from "@/hooks/useModelTest";
+import { TestResult } from "@/hooks/model-testing";
 import ViolationResults, { ViolationResult } from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";

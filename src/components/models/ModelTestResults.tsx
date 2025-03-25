@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Download } from 'lucide-react';
-import { TestResult } from '@/hooks/useModelTest';
+import { TestResult } from '@/hooks/model-testing';
 import { useRef, useEffect } from 'react';
 
 interface ModelTestResultsProps {

@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Loader2 } from 'lucide-react';
 import { MLModel } from '@/hooks/useMLModels';
-import { useModelTest, testModelSchema, TestModelFormValues } from '@/hooks/useModelTest';
+import { useModelTest, testModelSchema, TestModelFormValues } from '@/hooks/model-testing';
 import ModelSelector from './ModelSelector';
 import IndustrySelector from './IndustrySelector';
 import ModelTestInputs from './ModelTestInputs';

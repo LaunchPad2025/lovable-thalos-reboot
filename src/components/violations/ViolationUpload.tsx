@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useModelTest } from '@/hooks/useModelTest';
+import { useModelTest } from '@/hooks/model-testing';
 import { useMLModels } from '@/hooks/useMLModels';
 import { toast } from 'sonner';
 import ConnectionStatus from './upload/ConnectionStatus';
