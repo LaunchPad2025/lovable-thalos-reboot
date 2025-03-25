@@ -8,17 +8,22 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { 
   Search, 
   FileText, 
-  Video, 
   BookOpen, 
   HelpCircle, 
   Mail, 
   ArrowRight,
   MessageSquare,
   CheckCircle,
-  AlertTriangle
+  AlertTriangle,
+  BookOpenCheck,
+  ListChecks,
+  Shield,
+  FileBarChart,
+  Workflow
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import SupportTicketForm from '@/components/contact/SupportTicketForm';
 
 const HelpCenter = () => {
   return (
@@ -45,7 +50,7 @@ const HelpCenter = () => {
           </div>
         </div>
         
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader className="pb-3">
               <div className="mx-auto bg-blue-100 dark:bg-blue-900/30 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
@@ -54,21 +59,29 @@ const HelpCenter = () => {
               <CardTitle>Getting Started</CardTitle>
               <CardDescription>Guides to help you set up and use Thalos</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">View Guides</Button>
-            </CardContent>
-          </Card>
-          
-          <Card className="text-center">
-            <CardHeader className="pb-3">
-              <div className="mx-auto bg-green-100 dark:bg-green-900/30 p-3 rounded-full w-14 h-14 flex items-center justify-center mb-4">
-                <Video className="h-7 w-7 text-green-600 dark:text-green-400" />
+            <CardContent className="space-y-4">
+              <div className="text-left">
+                <h4 className="font-medium mb-2">Quick start guides:</h4>
+                <ul className="space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-center">
+                    <ArrowRight className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                    <span>Introduction to Thalos</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                    <span>Setting up your first account</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                    <span>Navigating the dashboard</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ArrowRight className="h-3.5 w-3.5 mr-2 text-blue-500" />
+                    <span>Conducting your first safety analysis</span>
+                  </li>
+                </ul>
               </div>
-              <CardTitle>Video Tutorials</CardTitle>
-              <CardDescription>Step-by-step video guides for Thalos features</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">Watch Tutorials</Button>
+              <Button variant="outline" className="w-full">View All Guides</Button>
             </CardContent>
           </Card>
           
@@ -80,7 +93,32 @@ const HelpCenter = () => {
               <CardTitle>Documentation</CardTitle>
               <CardDescription>Detailed documentation for all features</CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="space-y-4">
+              <div className="text-left">
+                <h4 className="font-medium mb-2">Popular topics:</h4>
+                <ul className="space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-center">
+                    <BookOpenCheck className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                    <span>AI-powered violation detection</span>
+                  </li>
+                  <li className="flex items-center">
+                    <ListChecks className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                    <span>Task management system</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Shield className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                    <span>Risk assessment tools</span>
+                  </li>
+                  <li className="flex items-center">
+                    <FileBarChart className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                    <span>Compliance reporting</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Workflow className="h-3.5 w-3.5 mr-2 text-amber-500" />
+                    <span>Integration options</span>
+                  </li>
+                </ul>
+              </div>
               <Button variant="outline" className="w-full">Open Documentation</Button>
             </CardContent>
           </Card>
@@ -93,8 +131,21 @@ const HelpCenter = () => {
               <CardTitle>Contact Support</CardTitle>
               <CardDescription>Get help from our support team</CardDescription>
             </CardHeader>
-            <CardContent>
-              <Button variant="outline" className="w-full">Contact Us</Button>
+            <CardContent className="space-y-4">
+              <div className="text-left">
+                <h4 className="font-medium mb-2">Support options:</h4>
+                <ul className="space-y-1.5 text-sm text-muted-foreground">
+                  <li className="flex items-center">
+                    <MessageSquare className="h-3.5 w-3.5 mr-2 text-purple-500" />
+                    <span>Chat with Paulie AI assistant</span>
+                  </li>
+                  <li className="flex items-center">
+                    <Mail className="h-3.5 w-3.5 mr-2 text-purple-500" />
+                    <span>Email: contact@steeltoetech.io</span>
+                  </li>
+                </ul>
+              </div>
+              <Button onClick={() => document.getElementById('support-form')?.scrollIntoView({ behavior: 'smooth' })} className="w-full">Contact Us</Button>
             </CardContent>
           </Card>
         </div>
@@ -169,78 +220,15 @@ const HelpCenter = () => {
           </Tabs>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
-          <Card>
-            <CardHeader>
-              <div className="flex items-start">
-                <div className="mr-4 p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
-                  <MessageSquare className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <div>
-                  <CardTitle className="mb-2">Chat with Paulie</CardTitle>
-                  <CardDescription>
-                    Get instant answers to your questions from our AI safety assistant
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                  <span>Available 24/7</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                  <span>Answers about safety regulations and procedures</span>
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                  <span>Platform usage guidance</span>
-                </div>
-              </div>
-              
-              <Button className="w-full mt-6 bg-yellow-600 hover:bg-yellow-700">
-                Chat with Paulie <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
+        <div className="mb-16">
+          <div className="text-center mb-8" id="support-form">
+            <h2 className="text-2xl font-bold mb-2">Contact Our Support Team</h2>
+            <p className="text-muted-foreground">
+              Need personalized assistance? Submit a support ticket and our team will get back to you as soon as possible.
+            </p>
+          </div>
           
-          <Card>
-            <CardHeader>
-              <div className="flex items-start">
-                <div className="mr-4 p-2 bg-green-100 dark:bg-green-900/30 rounded-full">
-                  <HelpCircle className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <CardTitle className="mb-2">Contact Human Support</CardTitle>
-                  <CardDescription>
-                    Get personalized assistance from our support team
-                  </CardDescription>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center">
-                  <Badge className="mr-2" variant="outline">Standard</Badge>
-                  <span>Email support with 24-hour response time</span>
-                </div>
-                <div className="flex items-center">
-                  <Badge className="mr-2" variant="outline">Professional</Badge>
-                  <span>Email and chat support with 8-hour response time</span>
-                </div>
-                <div className="flex items-center">
-                  <Badge className="mr-2" variant="outline">Enterprise</Badge>
-                  <span>Priority support with dedicated account manager</span>
-                </div>
-              </div>
-              
-              <Button variant="outline" className="w-full mt-6">
-                Submit Support Ticket <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
+          <SupportTicketForm />
         </div>
         
         <div className="bg-card border border-border rounded-lg p-6">

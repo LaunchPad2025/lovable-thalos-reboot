@@ -25,60 +25,21 @@ const Integrations = () => {
           </TabsList>
 
           <TabsContent value="available" className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Database Integrations */}
-              <IntegrationCard 
-                icon={<Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
-                title="Database Systems"
-                description="Connect to your existing databases to import and export safety data."
-                items={['SQL Server', 'Oracle', 'MySQL', 'PostgreSQL']}
-              />
-              
-              {/* Document Management */}
-              <IntegrationCard 
-                icon={<FileText className="h-6 w-6 text-green-600 dark:text-green-400" />}
-                title="Document Management"
-                description="Integrate with document storage and management systems."
-                items={['SharePoint', 'Google Drive', 'Dropbox', 'OneDrive']}
-              />
-              
-              {/* Scheduling */}
-              <IntegrationCard 
-                icon={<Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
-                title="Calendar & Scheduling"
-                description="Sync safety audits and tasks with your calendar systems."
-                items={['Google Calendar', 'Outlook Calendar', 'iCal']}
-              />
-              
-              {/* Time Tracking */}
-              <IntegrationCard 
-                icon={<Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />}
-                title="Time Tracking"
-                description="Track time spent on safety tasks and compliance activities."
-                items={['Harvest', 'Toggl', 'Clockify']}
-              />
-              
-              {/* Communication */}
-              <IntegrationCard 
-                icon={<MessageSquare className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />}
-                title="Communication"
-                description="Send safety alerts and notifications through your communication channels."
-                items={['Slack', 'Microsoft Teams', 'Email Systems']}
-              />
-              
-              {/* Notification Systems */}
-              <IntegrationCard 
-                icon={<Bell className="h-6 w-6 text-red-600 dark:text-red-400" />}
-                title="Notification Systems"
-                description="Deliver critical safety alerts through multiple channels."
-                items={['SMS', 'Email', 'Push Notifications', 'In-app Alerts']}
-              />
+            <div className="text-center py-12">
+              <h3 className="text-xl font-bold mb-4">Our API is Ready!</h3>
+              <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+                While we're still developing direct integrations, our comprehensive API is available now, 
+                allowing you to build custom integrations with your existing systems.
+              </p>
+              <Button onClick={() => document.querySelector('[value="api"]')?.dispatchEvent(new Event('click'))}>
+                View API Documentation
+              </Button>
             </div>
             
             <div className="bg-muted p-6 rounded-lg">
               <h3 className="text-xl font-bold mb-4">Custom Integrations</h3>
               <p className="text-muted-foreground mb-4">
-                Need to connect Thalos with a specific system not listed here? Our team can build custom 
+                Need to connect Thalos with a specific system? Our team can build custom 
                 integrations to meet your unique requirements.
               </p>
               <Button>Contact Our Integration Team</Button>
@@ -87,6 +48,60 @@ const Integrations = () => {
           
           <TabsContent value="upcoming" className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {/* Database Integrations */}
+              <IntegrationCard 
+                icon={<Database className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
+                title="Database Systems"
+                description="Connect to your existing databases to import and export safety data."
+                items={['SQL Server', 'Oracle', 'MySQL', 'PostgreSQL']}
+                comingSoon={true}
+              />
+              
+              {/* Document Management */}
+              <IntegrationCard 
+                icon={<FileText className="h-6 w-6 text-green-600 dark:text-green-400" />}
+                title="Document Management"
+                description="Integrate with document storage and management systems."
+                items={['SharePoint', 'Google Drive', 'Dropbox', 'OneDrive']}
+                comingSoon={true}
+              />
+              
+              {/* Scheduling */}
+              <IntegrationCard 
+                icon={<Calendar className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
+                title="Calendar & Scheduling"
+                description="Sync safety audits and tasks with your calendar systems."
+                items={['Google Calendar', 'Outlook Calendar', 'iCal']}
+                comingSoon={true}
+              />
+              
+              {/* Time Tracking */}
+              <IntegrationCard 
+                icon={<Clock className="h-6 w-6 text-amber-600 dark:text-amber-400" />}
+                title="Time Tracking"
+                description="Track time spent on safety tasks and compliance activities."
+                items={['Harvest', 'Toggl', 'Clockify']}
+                comingSoon={true}
+              />
+              
+              {/* Communication */}
+              <IntegrationCard 
+                icon={<MessageSquare className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />}
+                title="Communication"
+                description="Send safety alerts and notifications through your communication channels."
+                items={['Slack', 'Microsoft Teams', 'Email Systems']}
+                comingSoon={true}
+              />
+              
+              {/* Notification Systems */}
+              <IntegrationCard 
+                icon={<Bell className="h-6 w-6 text-red-600 dark:text-red-400" />}
+                title="Notification Systems"
+                description="Deliver critical safety alerts through multiple channels."
+                items={['SMS', 'Email', 'Push Notifications', 'In-app Alerts']}
+                comingSoon={true}
+              />
+
               {/* IoT Devices */}
               <IntegrationCard 
                 icon={<Camera className="h-6 w-6 text-blue-600 dark:text-blue-400" />}

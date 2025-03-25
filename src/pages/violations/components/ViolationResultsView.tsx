@@ -31,7 +31,7 @@ const ViolationResultsView = ({
       test_name: 'Safety Violation Analysis',
       result: 'Violation Detected',
       severity: testResults?.severity || 'medium',
-      location: testResults?.industry || 'Unknown',
+      location: testResults?.industry || 'Unknown', // Use industry as location if not available
       timestamp: new Date().toISOString(),
       image_url: testResults?.imagePreview || undefined,
       description: testResults?.description,

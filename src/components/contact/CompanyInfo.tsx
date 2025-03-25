@@ -1,50 +1,50 @@
 
 import React from 'react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { MapPin, Mail, Clock } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Mail, Phone, MapPin, Clock, Globe } from 'lucide-react';
+import ContactItem from './ContactItem';
 
 const CompanyInfo = () => {
   return (
-    <Card>
+    <Card className="h-full">
       <CardHeader>
-        <CardTitle>Company Information</CardTitle>
-        <CardDescription>
-          Other ways to reach us
-        </CardDescription>
+        <CardTitle>Thalos by Steel Toe Technologies</CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
-        <div className="space-y-2">
-          <h3 className="font-medium">Headquarters</h3>
-          <div className="flex items-start">
-            <MapPin className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
-            <address className="text-muted-foreground not-italic">
-              Washington, DC<br />
-              United States
-            </address>
-          </div>
-        </div>
+      <CardContent className="space-y-4">
+        <ContactItem 
+          icon={<Mail className="h-5 w-5" />} 
+          title="Email"
+          text="contact@steeltoetech.io"
+        />
         
-        <div className="space-y-2">
-          <h3 className="font-medium">General Inquiries</h3>
-          <div className="space-y-2">
-            <div className="flex items-center">
-              <Mail className="h-5 w-5 text-muted-foreground mr-3" />
-              <span className="text-muted-foreground">contact@steeltoetech.io</span>
-            </div>
-          </div>
-        </div>
+        <ContactItem 
+          icon={<Phone className="h-5 w-5" />} 
+          title="Phone"
+          text="+1 (555) 987-6543"
+        />
         
-        <div className="space-y-2">
-          <h3 className="font-medium">Business Hours</h3>
-          <div className="flex items-center">
-            <Clock className="h-5 w-5 text-muted-foreground mr-3" />
-            <span className="text-muted-foreground">Monday-Friday: 9AM-6PM ET</span>
-          </div>
-        </div>
+        <ContactItem 
+          icon={<MapPin className="h-5 w-5" />} 
+          title="Address"
+          text="123 Safety Street, Tech Valley, CA 94103"
+        />
         
-        <div className="pt-4 border-t border-border">
-          <h3 className="font-medium mb-2">Connect With Us</h3>
-          {/* Social icons hidden for now */}
+        <ContactItem 
+          icon={<Clock className="h-5 w-5" />} 
+          title="Business Hours"
+          text="Monday - Friday: 7:00 AM - 7:00 PM ET"
+        />
+        
+        <ContactItem 
+          icon={<Globe className="h-5 w-5" />} 
+          title="Website"
+          text="www.steeltoetech.io"
+        />
+        
+        <div className="pt-4 text-sm text-muted-foreground">
+          <p>
+            All support requests are sent to our dedicated team at contact@steeltoetech.io and annie.eser@steeltoetech.io.
+          </p>
         </div>
       </CardContent>
     </Card>

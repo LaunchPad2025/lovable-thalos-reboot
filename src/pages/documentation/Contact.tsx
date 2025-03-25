@@ -3,7 +3,7 @@ import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import ContactCards from '@/components/contact/ContactCards';
-import ContactForm from '@/components/contact/ContactForm';
+import SupportTicketForm from '@/components/contact/SupportTicketForm';
 import CompanyInfo from '@/components/contact/CompanyInfo';
 import FaqSection from '@/components/contact/FaqSection';
 import MapSection from '@/components/contact/MapSection';
@@ -21,10 +21,10 @@ const Contact = () => {
         
         <ContactCards />
         
-        {/* Contact Form & Info */}
+        {/* Support Ticket Form & Company Info */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-16">
           <div className="lg:col-span-2">
-            <ContactForm />
+            <SupportTicketForm />
           </div>
           
           <div>
