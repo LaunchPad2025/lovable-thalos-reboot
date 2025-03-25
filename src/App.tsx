@@ -37,7 +37,6 @@ import {
   Pricing, 
   Integrations, 
   Updates, 
-  Blog, 
   HelpCenter, 
   Guides, 
   ApiDocs, 
@@ -109,7 +108,6 @@ function App() {
                   <Route path="/documentation/pricing" element={<Pricing />} />
                   <Route path="/documentation/integrations" element={<Integrations />} />
                   <Route path="/documentation/updates" element={<Updates />} />
-                  <Route path="/documentation/blog" element={<Blog />} />
                   <Route path="/documentation/help-center" element={<HelpCenter />} />
                   <Route path="/documentation/guides" element={<Guides />} />
                   <Route path="/documentation/api-docs" element={<ApiDocs />} />
