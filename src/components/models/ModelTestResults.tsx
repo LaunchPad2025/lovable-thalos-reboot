@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle, Download } from 'lucide-react';
-import { TestResult } from '@/hooks/model-testing';
+import { TestResult } from '@/hooks/model-testing/types';
 import { useRef, useEffect } from 'react';
 
 interface ModelTestResultsProps {
@@ -38,26 +38,19 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
           if (detection.bbox) {
             const [x, y, width, height] = detection.bbox;
             
-            // Calculate scaled dimensions
-            const scaleX = canvas.width / img.naturalWidth;
-            const scaleY = canvas.height / img.naturalHeight;
-            
-            const scaledX = x * scaleX;
-            const scaledY = y * scaleY;
-            const scaledWidth = width * scaleX;
-            const scaledHeight = height * scaleY;
-            
             // Draw the rectangle
             ctx.lineWidth = 3;
             ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
-            ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+            ctx.strokeRect(x, y, width, height);
             
-            // Add label
+            // Add label with background
             ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
-            ctx.fillRect(scaledX, scaledY - 20, detection.label ? detection.label.length * 8 : 80, 20);
+            const labelText = detection.label?.replace(/_/g, ' ') || 'Violation';
+            const labelWidth = Math.min(labelText.length * 8, 200);
+            ctx.fillRect(x, y - 20, labelWidth, 20);
             ctx.fillStyle = 'white';
             ctx.font = '14px Arial';
-            ctx.fillText(detection.label?.replace('_', ' ') || 'Violation', scaledX + 5, scaledY - 5);
+            ctx.fillText(labelText, x + 5, y - 5);
           }
         });
       };
@@ -107,6 +100,13 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
           <p className="text-sm text-muted-foreground">{testResult.description}</p>
         </div>
         
+        {testResult.location && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Location:</p>
+            <p className="text-sm text-muted-foreground">{testResult.location}</p>
+          </div>
+        )}
+        
         {imagePreview && testResult.detections && testResult.detections.length > 0 && (
           <div className="space-y-2">
             <p className="text-sm font-medium">Annotated Image:</p>
@@ -132,17 +132,31 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
         
         {testResult.detections && testResult.detections.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Detections:</p>
-            <ul className="list-disc pl-5 space-y-1">
+            <p className="text-sm font-medium">Detected Violations:</p>
+            <ul className="list-disc pl-5 space-y-2">
               {testResult.detections.map((detection, idx) => (
                 <li key={idx} className="text-sm">
                   {detection.label ? (
-                    <>
-                      <span className="font-medium">{detection.label.replace('_', ' ')}</span>
-                      {detection.confidence && (
-                        <span className="text-muted-foreground"> (Confidence: {(detection.confidence * 100).toFixed(1)}%)</span>
+                    <div>
+                      <div>
+                        <span className="font-medium">{detection.label.replace(/_/g, ' ')}</span>
+                        {detection.confidence && (
+                          <span className="text-muted-foreground"> (Confidence: {(detection.confidence * 100).toFixed(1)}%)</span>
+                        )}
+                      </div>
+                      
+                      {testResult.regulationIds && testResult.regulationIds[idx] && (
+                        <div className="mt-1 text-muted-foreground">
+                          Regulation: {testResult.regulationIds[idx]}
+                        </div>
                       )}
-                    </>
+                      
+                      {detection.remediationSteps && (
+                        <div className="mt-1 text-muted-foreground">
+                          {detection.remediationSteps.split('\n')[0]}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <span className="text-muted-foreground">See analysis in description</span>
                   )}
@@ -151,22 +165,6 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
             </ul>
           </div>
         )}
-        
-        <div className="space-y-2">
-          <p className="text-sm font-medium">Related Regulations:</p>
-          {testResult.regulationIds && testResult.regulationIds.length > 0 ? (
-            <ul className="list-disc pl-5 space-y-1">
-              {testResult.regulationIds.map((id, index) => (
-                <li key={id} className="text-sm">
-                  Regulation ID: {id.substring(0, 8)}... 
-                  (Relevance: {(testResult.relevanceScores[index] * 100).toFixed(1)}%)
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-muted-foreground">No regulations matched</p>
-          )}
-        </div>
         
         <div className="pt-3 border-t flex justify-between items-center">
           <div className="flex items-center gap-2 text-sm">

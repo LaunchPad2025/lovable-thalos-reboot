@@ -1,24 +1,15 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { 
   Card, 
   CardContent, 
   CardHeader, 
   CardTitle 
 } from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ClipboardList, AlertTriangle, Shield, HardHat, FlagTriangleLeft } from 'lucide-react';
-import { formatDistanceToNow } from 'date-fns';
+import { ClipboardList, Download, Shield } from 'lucide-react';
 import { getSeverityBadgeClass } from './utils/violationHelpers';
+import ViolationsList from './ViolationsList';
 
 export interface ViolationResult {
   id: string;
@@ -39,43 +30,75 @@ export interface ViolationResultsProps {
   onSave?: () => void;
 }
 
-const getSeverityText = (severity: string) => {
-  switch (severity) {
-    case 'critical':
-      return 'Critical';
-    case 'high':
-      return 'High Risk';
-    case 'medium':
-      return 'Medium Risk';
-    case 'low':
-      return 'Low Risk';
-    default:
-      return 'Unknown';
-  }
-};
-
-const getRegulationDescription = (regId: string) => {
-  const descriptions: Record<string, string> = {
-    '29 CFR 1926.100': 'Head protection requirements',
-    '29 CFR 1926.201': 'Signaling requirements for traffic control',
-    '29 CFR 1926.451': 'General requirements for scaffolds',
-    '29 CFR 1926.501': 'Duty to have fall protection',
-    '29 CFR 1926.20': 'General safety and health provisions',
-    '29 CFR 1926.25': 'Housekeeping requirements'
+const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  useEffect(() => {
+    if (results.length > 0 && results[0].image_url && results[0].detections && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) return;
+      
+      const img = new Image();
+      img.src = results[0].image_url;
+      
+      img.onload = () => {
+        // Set canvas dimensions to match the image
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw the image
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        
+        // Draw bounding boxes for detections
+        results[0].detections?.forEach((detection) => {
+          if (detection.bbox) {
+            const [x, y, width, height] = detection.bbox;
+            
+            // Calculate scaled dimensions if needed
+            const scaleX = canvas.width / img.naturalWidth;
+            const scaleY = canvas.height / img.naturalHeight;
+            
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            const scaledWidth = width * scaleX;
+            const scaledHeight = height * scaleY;
+            
+            // Draw the rectangle
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
+            ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+            
+            // Add label with background
+            ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
+            const labelText = detection.label?.replace(/_/g, ' ') || 'Violation';
+            const labelWidth = Math.min(labelText.length * 8, 200);
+            ctx.fillRect(scaledX, scaledY - 20, labelWidth, 20);
+            ctx.fillStyle = 'white';
+            ctx.font = '14px Arial';
+            ctx.fillText(labelText, scaledX + 5, scaledY - 5);
+          }
+        });
+      };
+    }
+  }, [results, canvasRef]);
+  
+  const downloadAnnotatedImage = () => {
+    if (canvasRef.current) {
+      const link = document.createElement('a');
+      link.download = 'violation-detection.png';
+      link.href = canvasRef.current.toDataURL();
+      link.click();
+    }
   };
   
-  // Try to match the beginning of regulation IDs
-  const matched = Object.keys(descriptions).find(key => regId.includes(key));
-  return matched ? descriptions[matched] : 'Regulation details not available';
-};
-
-const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
   if (!results || results.length === 0) {
     return (
       <Card className="bg-[#0d1117] border-gray-800 text-white shadow-none">
         <CardContent className="p-6">
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <AlertTriangle size={40} className="text-gray-500 mb-4" />
+            <Shield size={40} className="text-gray-500 mb-4" />
             <h3 className="text-xl font-medium mb-2">No Violations Detected</h3>
             <p className="text-gray-400 max-w-md mx-auto">
               No safety violations were identified in the analyzed content. Continue monitoring and following safety protocols.
@@ -86,103 +109,69 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
     );
   }
 
+  const result = results[0];
+  const violationsCount = result.detections?.length || 0;
+
   return (
-    <Card className="bg-[#0d1117] border-gray-800 text-white shadow-none">
-      <CardHeader className="border-b border-gray-800 p-4">
-        <CardTitle className="text-lg flex items-center">
-          <Shield className="mr-2 h-5 w-5 text-red-400" />
-          Identified Violations
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-0">
-        {results.map((result) => (
-          <div key={result.id}>
-            {result.detections && result.detections.length > 0 ? (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="md:col-span-2">
+        <Card className="bg-[#0d1117] border-gray-800 text-white shadow-none h-full">
+          <CardHeader className="bg-[#0f1419] border-b border-gray-800 px-6 py-4">
+            <CardTitle className="text-lg flex items-center">
+              <Shield className="mr-2 h-5 w-5 text-yellow-400" />
+              Safety Analysis Results
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-4">
+            {result.image_url ? (
               <div>
-                <div className="flex items-center justify-between p-3 bg-[#161b22] border-b border-gray-700">
-                  <div className="flex items-center">
-                    <span className="text-white font-medium">All Violations ({result.detections.length})</span>
-                  </div>
+                <div className="relative rounded-md border border-gray-700 overflow-hidden">
+                  <canvas 
+                    ref={canvasRef} 
+                    className="max-w-full h-auto" 
+                  />
+                  <Button 
+                    size="sm" 
+                    variant="outline" 
+                    className="absolute bottom-2 right-2 bg-gray-800 border-gray-700 text-white hover:bg-gray-700"
+                    onClick={downloadAnnotatedImage}
+                  >
+                    <Download size={16} className="mr-1" />
+                    Download
+                  </Button>
                 </div>
-                <div className="px-4 pb-4">
-                  {result.detections.map((detection, index) => (
-                    <div key={index} className="mt-3 bg-[#161b22] rounded-md border border-gray-700 p-3">
-                      <div className="flex items-start">
-                        <div className="flex-1">
-                          <div className="flex justify-between">
-                            <h4 className="text-white font-medium">
-                              {detection.label ? detection.label.replace(/_/g, ' ') : `Violation ${index + 1}`}
-                            </h4>
-                            <Badge className="ml-2 bg-blue-600 text-white">
-                              {detection.confidence ? `${(detection.confidence * 100).toFixed(0)}%` : 'medium'}
-                            </Badge>
-                          </div>
-                          
-                          {result.regulationIds && result.regulationIds[index] && (
-                            <div className="mt-2 text-sm">
-                              <div className="text-gray-300 font-medium">{result.regulationIds[index]}</div>
-                              <div className="text-gray-400">Location: {result.location || "Work area"}</div>
-                            </div>
-                          )}
-                          
-                          <p className="mt-2 text-sm text-gray-300">
-                            {detection.remediationSteps || 
-                              `Workers are potentially exposed to hazards related to ${detection.label?.replace(/_/g, ' ') || 'safety violations'}, creating a serious safety risk.`}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                <div className="mt-4 bg-[#161b22] rounded-md border border-gray-700 p-3">
+                  <div className="text-sm">
+                    <span className="text-gray-400">Industry: </span>
+                    <span className="text-gray-300">{result.industry || 'Construction'}</span>
+                  </div>
+                  <div className="text-sm mt-1">
+                    <span className="text-gray-400">Description: </span>
+                    <span className="text-gray-300">{result.description}</span>
+                  </div>
                 </div>
               </div>
             ) : (
-              <Table>
-                <TableHeader className="bg-[#161b22] rounded-t-md">
-                  <TableRow className="border-gray-800">
-                    <TableHead className="text-gray-400 font-medium">Severity</TableHead>
-                    <TableHead className="text-gray-400 font-medium">Description</TableHead>
-                    <TableHead className="text-gray-400 font-medium">Location</TableHead>
-                    <TableHead className="text-gray-400 font-medium">Detected</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  <TableRow className="border-gray-800">
-                    <TableCell>
-                      <Badge className={getSeverityBadgeClass(result.severity)}>
-                        {getSeverityText(result.severity)}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-gray-300">
-                      {result.description || result.result || "Safety violation detected"}
-                    </TableCell>
-                    <TableCell className="text-gray-300">
-                      {result.location || "Unknown location"}
-                    </TableCell>
-                    <TableCell className="text-gray-300 whitespace-nowrap">
-                      {result.timestamp 
-                        ? formatDistanceToNow(new Date(result.timestamp), { addSuffix: true }) 
-                        : "Recently"}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
+              <div className="flex items-center justify-center h-64 bg-gray-800 rounded-md border border-gray-700">
+                <p className="text-gray-400">No image available</p>
+              </div>
             )}
-          </div>
-        ))}
-
-        <div className="p-4 pt-3 border-t border-gray-700">
-          {onSave && (
-            <Button 
-              onClick={onSave} 
-              className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <ClipboardList size={16} className="mr-2" />
-              Create Remediation Task
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          </CardContent>
+        </Card>
+      </div>
+      <div className="md:col-span-1">
+        <ViolationsList 
+          detections={result.detections || []}
+          violationsCount={violationsCount}
+          imageUrl={result.image_url}
+          severity={result.severity}
+          description={result.description}
+          location={result.location}
+          regulations={result.regulationIds}
+          onCreateTask={onSave}
+        />
+      </div>
+    </div>
   );
 };
 

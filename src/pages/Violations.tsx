@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageContainer from "@/components/layout/PageContainer";
@@ -6,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useMLModels } from "@/hooks/ml-models";
 import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
-import { TestResult } from "@/hooks/model-testing";
+import { TestResult } from "@/hooks/model-testing/types";
 import ViolationResults, { ViolationResult } from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -21,12 +22,18 @@ const Violations = () => {
   const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
   const { user } = useAuth();
   const [modelInitError, setModelInitError] = useState<string | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
   
   const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
   
   const handleUploadComplete = (results: TestResult) => {
     setAnalysisResults(results);
     setActiveTab("results");
+    
+    // Scroll to results after a short delay to allow the tab to render
+    setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
     
     if (results.detections && results.detections.length > 0) {
       toast.success(`Detected ${results.detections.length} safety violation(s)`, {
@@ -81,7 +88,7 @@ const Violations = () => {
       test_name: 'Safety Violation Analysis',
       result: 'Violation Detected',
       severity: analysisResults.severity || 'medium',
-      location: analysisResults.industry || 'Unknown',
+      location: analysisResults.location || 'Unknown',
       timestamp: new Date().toISOString(),
       image_url: analysisResults.imagePreview || undefined,
       description: analysisResults.description,
@@ -135,7 +142,7 @@ const Violations = () => {
           </CardHeader>
           <CardContent>
             <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-              <TabsList className="mb-4 w-full">
+              <TabsList className="mb-4 w-full grid grid-cols-2">
                 <TabsTrigger value="upload" className="flex-1">Upload</TabsTrigger>
                 <TabsTrigger value="results" className="flex-1" disabled={!analysisResults}>Results</TabsTrigger>
               </TabsList>
@@ -168,7 +175,7 @@ const Violations = () => {
                 )}
               </TabsContent>
               
-              <TabsContent value="results">
+              <TabsContent value="results" ref={resultsRef}>
                 {analysisResults && (
                   <ViolationResults 
                     results={formattedResults} 
