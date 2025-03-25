@@ -11,3 +11,14 @@ export const getSeverityClass = (severity: string): string => {
     default: return 'bg-gray-100 text-gray-800';
   }
 };
+
+// Added for TestResult type to support location property
+export interface TestResult {
+  id: string;
+  violation: string;
+  confidence: number;
+  location?: string;
+  severity: string;
+  description?: string;
+  regulation?: string;
+}

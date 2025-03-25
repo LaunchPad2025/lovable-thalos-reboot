@@ -31,7 +31,6 @@ const AboutUs = () => {
               Through our flagship product, Thalos, we're empowering safety professionals with the tools they need
               to identify risks, prevent incidents, and maintain compliance with increasingly complex regulations.
             </p>
-            <Button>Learn About Thalos</Button>
           </div>
           
           <div className="bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center h-80 rounded-lg"></div>
@@ -90,7 +89,7 @@ const AboutUs = () => {
           </div>
         </div>
         
-        {/* Story Section */}
+        {/* Story Section - Consolidated */}
         <div className="mb-16">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Our Story</Badge>
@@ -101,38 +100,26 @@ const AboutUs = () => {
           </div>
           
           <div className="space-y-8">
-            <StoryMilestone 
-              year="2025"
-              title="The Beginning"
-              description="Steel Toe Technologies was founded by a team of safety professionals and AI experts who recognized the need for innovation in workplace safety management."
-              icon={<Timer className="h-6 w-6 text-blue-600 dark:text-blue-400" />}
-            />
-            
-            <StoryMilestone 
-              year="2026"
-              title="Prototype Development"
-              description="Our team developed the first prototype of Thalos, focusing on AI-powered violation detection for construction sites."
-              icon={<Code className="h-6 w-6 text-green-600 dark:text-green-400" />}
-            />
-            
-            <StoryMilestone 
-              year="2027"
-              title="Product Launch"
-              description="We officially launched Thalos with our core features, serving customers in construction and manufacturing industries."
-              icon={<Award className="h-6 w-6 text-amber-600 dark:text-amber-400" />}
-            />
-            
-            <StoryMilestone 
-              year="2028"
-              title="Growth & Expansion"
-              description="Thalos expanded to new industries including healthcare and logistics, with enhanced AI capabilities and comprehensive compliance tools."
-              icon={<Globe className="h-6 w-6 text-purple-600 dark:text-purple-400" />}
-              isLast={true}
-            />
+            <div className="flex">
+              <div className="flex flex-col items-center mr-6">
+                <div className="p-3 rounded-full bg-muted">
+                  <Timer className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <div>
+                <div className="font-bold text-blue-600 dark:text-blue-400 mb-2">2025</div>
+                <h3 className="text-xl font-bold mb-2">Steel Toe Technologies Origins</h3>
+                <p className="text-muted-foreground">
+                  Steel Toe Technologies was founded by a team of safety professionals and AI experts who recognized the 
+                  need for innovation in workplace safety management. Our team developed the first prototype of Thalos, 
+                  focusing on AI-powered violation detection for construction sites. We're now working on expanding our 
+                  platform to serve customers across construction, manufacturing, healthcare, and logistics industries 
+                  with enhanced AI capabilities and comprehensive compliance tools.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
-        
-        {/* Team Section - Hidden for now */}
         
         {/* Contact Section */}
         <div className="bg-card border border-border rounded-lg p-8 text-center">
@@ -150,29 +137,5 @@ const AboutUs = () => {
     </PageContainer>
   );
 };
-
-interface StoryMilestoneProps {
-  year: string;
-  title: string;
-  description: string;
-  icon: React.ReactNode;
-  isLast?: boolean;
-}
-
-const StoryMilestone = ({ year, title, description, icon, isLast = false }: StoryMilestoneProps) => (
-  <div className="flex">
-    <div className="flex flex-col items-center mr-6">
-      <div className="p-3 rounded-full bg-muted">
-        {icon}
-      </div>
-      {!isLast && <div className="h-full w-px bg-border mt-4"></div>}
-    </div>
-    <div>
-      <div className="font-bold text-blue-600 dark:text-blue-400 mb-2">{year}</div>
-      <h3 className="text-xl font-bold mb-2">{title}</h3>
-      <p className="text-muted-foreground">{description}</p>
-    </div>
-  </div>
-);
 
 export default AboutUs;

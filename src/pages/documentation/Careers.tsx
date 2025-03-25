@@ -5,7 +5,6 @@ import PageTitle from '@/components/ui/PageTitle';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Shield, MapPin, BadgeCheck, GraduationCap, Heart, Check, BookOpen, Users, Coffee } from 'lucide-react';
 
 const Careers = () => {
@@ -19,7 +18,7 @@ const Careers = () => {
         />
         
         {/* Hero Section */}
-        <div className="relative mb-16 overflow-hidden rounded-xl border border-border">
+        <div className="relative mb-16 overflow-hidden rounded-xl border border-border z-10">
           <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-blue-900/30 z-10"></div>
           <div className="bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center h-96"></div>
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
@@ -28,14 +27,11 @@ const Careers = () => {
               At Steel Toe Technologies, we're building AI-powered safety solutions that help organizations
               protect their most valuable asset: their people.
             </p>
-            <Button size="lg" className="bg-white text-blue-900 hover:bg-white/90">
-              View Open Positions
-            </Button>
           </div>
         </div>
         
         {/* Values Section */}
-        <div className="mb-16">
+        <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Our Culture</Badge>
             <h2 className="text-3xl font-bold mb-4">What makes us different</h2>
@@ -87,7 +83,7 @@ const Careers = () => {
         </div>
         
         {/* Benefits Section */}
-        <div className="mb-16">
+        <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Benefits</Badge>
             <h2 className="text-3xl font-bold mb-4">What we offer</h2>
@@ -152,7 +148,7 @@ const Careers = () => {
         </div>
         
         {/* Life at Steel Toe */}
-        <div className="mb-16">
+        <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Team Life</Badge>
             <h2 className="text-3xl font-bold mb-4">Life at Steel Toe</h2>
@@ -207,169 +203,26 @@ const Careers = () => {
           </div>
         </div>
         
-        {/* Open Positions */}
-        <div className="mb-16">
+        {/* Open Positions - Replaced with notice */}
+        <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Join Us</Badge>
             <h2 className="text-3xl font-bold mb-4">Open Positions</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
-              Find your next opportunity at Steel Toe Technologies
-            </p>
           </div>
           
-          <Tabs defaultValue="all" className="mb-8">
-            <TabsList className="grid grid-cols-2 md:grid-cols-5 mb-8 w-full">
-              <TabsTrigger value="all">All Departments</TabsTrigger>
-              <TabsTrigger value="engineering">Engineering</TabsTrigger>
-              <TabsTrigger value="product">Product</TabsTrigger>
-              <TabsTrigger value="customer">Customer Success</TabsTrigger>
-              <TabsTrigger value="sales">Sales & Marketing</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="all">
-              <div className="space-y-4">
-                <JobListing
-                  title="Senior Machine Learning Engineer"
-                  department="Engineering"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Frontend Developer"
-                  department="Engineering"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Product Manager"
-                  department="Product"
-                  location="Boston, MA"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Safety Compliance Specialist"
-                  department="Customer Success"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Sales Development Representative"
-                  department="Sales"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Director of Marketing"
-                  department="Marketing"
-                  location="Boston, MA"
-                  type="Full-time"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="engineering">
-              <div className="space-y-4">
-                <JobListing
-                  title="Senior Machine Learning Engineer"
-                  department="Engineering"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Frontend Developer"
-                  department="Engineering"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="DevOps Engineer"
-                  department="Engineering"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="product">
-              <div className="space-y-4">
-                <JobListing
-                  title="Product Manager"
-                  department="Product"
-                  location="Boston, MA"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="UX/UI Designer"
-                  department="Product"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="customer">
-              <div className="space-y-4">
-                <JobListing
-                  title="Safety Compliance Specialist"
-                  department="Customer Success"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Customer Success Manager"
-                  department="Customer Success"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="sales">
-              <div className="space-y-4">
-                <JobListing
-                  title="Sales Development Representative"
-                  department="Sales"
-                  location="Boston, MA or Remote"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Director of Marketing"
-                  department="Marketing"
-                  location="Boston, MA"
-                  type="Full-time"
-                />
-                
-                <JobListing
-                  title="Content Marketing Specialist"
-                  department="Marketing"
-                  location="Remote (US)"
-                  type="Full-time"
-                />
-              </div>
-            </TabsContent>
-          </Tabs>
-          
-          <div className="bg-card border border-border rounded-lg p-6 text-center">
-            <h3 className="text-xl font-bold mb-2">Don't see the right fit?</h3>
-            <p className="text-muted-foreground mb-4">
-              We're always looking for talented individuals to join our team. Send us your resume for future opportunities.
+          <div className="bg-card border border-border rounded-lg p-8 text-center">
+            <h3 className="text-xl font-bold mb-4">We don't have any open positions at this time</h3>
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+              While we don't have any open roles currently, we're always interested in connecting with talented 
+              individuals who are passionate about workplace safety and technology. Please check back later for 
+              future opportunities.
             </p>
             <Button variant="outline">Submit Your Resume</Button>
           </div>
         </div>
         
         {/* Recruiting Process */}
-        <div>
+        <div className="relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Our Process</Badge>
             <h2 className="text-3xl font-bold mb-4">Our Recruiting Process</h2>
@@ -422,30 +275,6 @@ const BenefitItem = ({ icon, title, description }: BenefitItemProps) => (
       <h3 className="font-medium mb-1">{title}</h3>
       <p className="text-sm text-muted-foreground">{description}</p>
     </div>
-  </div>
-);
-
-interface JobListingProps {
-  title: string;
-  department: string;
-  location: string;
-  type: string;
-}
-
-const JobListing = ({ title, department, location, type }: JobListingProps) => (
-  <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-6 bg-card border border-border rounded-lg">
-    <div className="mb-4 md:mb-0">
-      <h3 className="font-bold mb-2">{title}</h3>
-      <div className="flex flex-col sm:flex-row sm:items-center text-sm text-muted-foreground">
-        <span className="mr-4">{department}</span>
-        <div className="hidden sm:flex items-center mr-4">
-          <MapPin className="h-3 w-3 mr-1" />
-          <span>{location}</span>
-        </div>
-        <span>{type}</span>
-      </div>
-    </div>
-    <Button>View Job</Button>
   </div>
 );
 
