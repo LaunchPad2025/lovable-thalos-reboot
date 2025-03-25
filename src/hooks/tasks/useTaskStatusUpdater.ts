@@ -36,19 +36,16 @@ export function useTaskStatusUpdater() {
       return data[0];
     },
     onSuccess: (data) => {
-      toast({
-        description: `Task status changed to ${data.status.replace('-', ' ')}.`,
-      });
+      // Using the correct Sonner toast format
+      toast(`Task status changed to ${data.status.replace('-', ' ')}.`);
       
       queryClient.invalidateQueries({ queryKey: ['tasks'] });
       queryClient.invalidateQueries({ queryKey: ['task', data.id] });
     },
     onError: (error) => {
       console.error("Error updating task status:", error);
-      toast({
-        description: "There was an error updating the status. Please try again.",
-        variant: "destructive",
-      });
+      // Using the correct Sonner toast format for errors
+      toast.error("There was an error updating the status. Please try again.");
     }
   });
 
