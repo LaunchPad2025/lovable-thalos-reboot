@@ -9,9 +9,8 @@ import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
 import { TestResult } from "@/hooks/useModelTest";
 import ViolationResults from "@/components/violations/ViolationResults";
-import { Loader2, AlertCircle } from "lucide-react";
+import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import ChatPopup from "@/components/chatbot/ChatPopup";
 import { useAuth } from "@/context/AuthContext";
 
 const Violations = () => {
@@ -55,7 +54,7 @@ const Violations = () => {
       title="Safety Violations"
       subtitle="Upload images or describe safety violations to detect and analyze them using AI."
     >
-      <div className="grid gap-4">
+      <div className="grid gap-4 pb-16">
         {error && (
           <Alert variant="destructive">
             <AlertCircle className="h-4 w-4" />
@@ -69,7 +68,9 @@ const Violations = () => {
         <Card className="border border-gray-700 bg-gray-800/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
-              <span className="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">P</span>
+              <span className="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">
+                <HardHat className="h-4 w-4" />
+              </span>
               Safety Assistant "Paulie"
             </CardTitle>
             <CardDescription>
@@ -132,9 +133,6 @@ const Violations = () => {
           </CardContent>
         </Card>
       </div>
-      
-      {/* Global chat popup that will be available on all pages */}
-      <ChatPopup />
     </PageContainer>
   );
 };

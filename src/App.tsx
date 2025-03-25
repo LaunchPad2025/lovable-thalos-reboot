@@ -52,7 +52,7 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Add the ChatPopup component to the App component
+// Chat popup is now handled in individual components
 import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
@@ -122,7 +122,7 @@ function App() {
         </ThemeProvider>
       </QueryClientProvider>
       
-      {/* Add ChatPopup globally */}
+      {/* We'll add ChatPopup globally */}
       <ChatPopup />
     </div>
   );

@@ -13,10 +13,10 @@ const DashboardLayout = () => {
   const [activeTab, setActiveTab] = useState('personal');
   
   return (
-    <div className="flex flex-col min-h-screen bg-[#0b0f14] overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-[#0b0f14]">
       <DashboardHeader />
 
-      <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto pb-20">
+      <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto">
         {/* Free Trial Banner */}
         <FreeTrial />
 
@@ -33,7 +33,7 @@ const DashboardLayout = () => {
         <RecommendedFeatures />
       </main>
 
-      {/* Footer */}
+      {/* Footer - moved outside of the main content */}
       <Footer />
       
       {/* Chat Popup - Fixed positioning ensures it doesn't affect scroll */}

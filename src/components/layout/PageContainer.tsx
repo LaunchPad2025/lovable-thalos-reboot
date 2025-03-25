@@ -1,5 +1,5 @@
 
-import React, { ReactNode, useEffect, useState } from 'react';
+import React, { ReactNode } from 'react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -22,7 +22,7 @@ const PageContainer = ({ children, title, subtitle, className }: PageContainerPr
           {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
       )}
-      <div className="page-transition p-4 md:p-6">
+      <div className="page-transition p-4 md:p-6 pb-20">
         {children}
       </div>
     </div>
