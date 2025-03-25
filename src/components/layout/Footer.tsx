@@ -1,69 +1,68 @@
 
 import React from 'react';
-import { Twitter, Linkedin, Github } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+  
   return (
-    <footer className="bg-[#0d1117] border-t border-gray-800 py-10 mt-auto">
+    <footer className="bg-[#0d1117] border-t border-gray-800 py-8 text-gray-400">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="col-span-1">
-            <div className="flex flex-col">
-              <h2 className="text-xl font-bold text-white">
-                Thalos<span className="text-primary text-opacity-80">.</span>
-              </h2>
-              <p className="text-sm text-gray-400 mt-2">
-                AI-powered workplace safety platform automating violation detection, compliance, and task management.
-              </p>
-              <div className="flex space-x-4 mt-4">
-                <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  <Twitter size={20} />
-                </a>
-                <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  <Linkedin size={20} />
-                </a>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
-                  <Github size={20} />
-                </a>
-              </div>
-            </div>
+          <div>
+            <h3 className="text-white text-lg font-semibold mb-4">Thalos</h3>
+            <p className="text-sm">
+              Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
+            </p>
           </div>
-
-          <div className="col-span-1">
-            <h3 className="font-medium text-white mb-4">Product</h3>
-            <ul className="space-y-2">
-              <li><Link to="/features" className="text-gray-400 hover:text-white text-sm">Features</Link></li>
-              <li><Link to="/security" className="text-gray-400 hover:text-white text-sm">Security</Link></li>
-              <li><Link to="/compliance" className="text-gray-400 hover:text-white text-sm">Compliance</Link></li>
-              <li><Link to="/pricing" className="text-gray-400 hover:text-white text-sm">Pricing</Link></li>
+          
+          <div>
+            <h4 className="text-white font-medium mb-4">Product</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/features" className="hover:text-white transition-colors">Features</Link></li>
+              <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+              <li><Link to="/integrations" className="hover:text-white transition-colors">Integrations</Link></li>
+              <li><Link to="/updates" className="hover:text-white transition-colors">Updates</Link></li>
             </ul>
           </div>
-
-          <div className="col-span-1">
-            <h3 className="font-medium text-white mb-4">Resources</h3>
-            <ul className="space-y-2">
-              <li><Link to="/documentation" className="text-gray-400 hover:text-white text-sm">Documentation</Link></li>
-              <li><Link to="/api" className="text-gray-400 hover:text-white text-sm">API Reference</Link></li>
-              <li><Link to="/tutorials" className="text-gray-400 hover:text-white text-sm">Tutorials</Link></li>
-              <li><Link to="/blog" className="text-gray-400 hover:text-white text-sm">Blog</Link></li>
+          
+          <div>
+            <h4 className="text-white font-medium mb-4">Resources</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              <li><Link to="/help" className="hover:text-white transition-colors">Help Center</Link></li>
+              <li><Link to="/guides" className="hover:text-white transition-colors">Guides</Link></li>
+              <li><Link to="/documentation" className="hover:text-white transition-colors">API Docs</Link></li>
             </ul>
           </div>
-
-          <div className="col-span-1">
-            <h3 className="font-medium text-white mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li><Link to="/legal" className="text-gray-400 hover:text-white text-sm">Privacy</Link></li>
-              <li><Link to="/legal" className="text-gray-400 hover:text-white text-sm">Terms</Link></li>
-              <li><Link to="/legal" className="text-gray-400 hover:text-white text-sm">Security</Link></li>
-              <li><Link to="/legal" className="text-gray-400 hover:text-white text-sm">Cookies</Link></li>
+          
+          <div>
+            <h4 className="text-white font-medium mb-4">Company</h4>
+            <ul className="space-y-2 text-sm">
+              <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+              <li><Link to="/legal" className="hover:text-white transition-colors">Legal</Link></li>
+              <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>
         
-        <div className="border-t border-gray-800 mt-8 pt-8 flex flex-col sm:flex-row justify-between items-center">
-          <p className="text-gray-400 text-sm">&copy; {new Date().getFullYear()} Thalos. All rights reserved.</p>
-          <p className="text-gray-400 text-sm mt-2 sm:mt-0">Powered by Steel Toe</p>
+        <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
+          <div className="text-sm">
+            © {currentYear} Steel Toe, Inc. All rights reserved.
+          </div>
+          
+          <div className="mt-4 md:mt-0 flex space-x-6">
+            <Link to="/privacy" className="text-sm hover:text-white transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="text-sm hover:text-white transition-colors">
+              Terms of Service
+            </Link>
+            <Link to="/cookies" className="text-sm hover:text-white transition-colors">
+              Cookie Policy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

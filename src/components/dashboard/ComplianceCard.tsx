@@ -7,7 +7,7 @@ import { useToast } from '@/components/ui/use-toast';
 const ComplianceCard = () => {
   const { toast } = useToast();
   
-  const startCompliantTour = () => {
+  const startComplianceTour = () => {
     toast({
       title: "Compliance Score Tour",
       description: "Your compliance score is calculated based on completed tasks, resolved violations, and up-to-date safety documentation. Higher scores indicate better workplace safety compliance.",
@@ -19,7 +19,7 @@ const ComplianceCard = () => {
     <div className="bg-[#0d1117] rounded-lg border border-gray-800 p-6">
       <div className="flex justify-between items-start">
         <h3 className="text-lg font-medium text-white">Compliance Score</h3>
-        <Button variant="ghost" size="icon" onClick={startCompliantTour} className="h-8 w-8">
+        <Button variant="ghost" size="icon" onClick={startComplianceTour} className="h-8 w-8">
           <CircleHelp className="h-5 w-5 text-gray-400" />
         </Button>
       </div>

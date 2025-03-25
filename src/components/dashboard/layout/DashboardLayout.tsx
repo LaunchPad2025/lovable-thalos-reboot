@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import FreeTrial from '@/components/dashboard/FreeTrial';
 import WelcomeSection from '@/components/dashboard/WelcomeSection';
@@ -7,18 +7,21 @@ import StatsCards from '@/components/dashboard/StatsCards';
 import DetailCards from '@/components/dashboard/DetailCards';
 import RecommendedFeatures from '@/components/dashboard/RecommendedFeatures';
 import Footer from '@/components/layout/Footer';
+import ChatPopup from '@/components/chatbot/ChatPopup';
 
 const DashboardLayout = () => {
+  const [activeTab, setActiveTab] = useState('personal');
+  
   return (
-    <div className="flex flex-col min-h-screen bg-[#0b0f14] overflow-y-auto">
+    <div className="flex flex-col min-h-screen bg-[#0b0f14]">
       <DashboardHeader />
 
-      <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto">
+      <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto pb-16">
         {/* Free Trial Banner */}
         <FreeTrial />
 
-        {/* Welcome Section */}
-        <WelcomeSection />
+        {/* Welcome Section with Tabs */}
+        <WelcomeSection activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Stats Cards */}
         <StatsCards />
@@ -32,6 +35,9 @@ const DashboardLayout = () => {
 
       {/* Footer */}
       <Footer />
+      
+      {/* Chat Popup */}
+      <ChatPopup />
     </div>
   );
 };
