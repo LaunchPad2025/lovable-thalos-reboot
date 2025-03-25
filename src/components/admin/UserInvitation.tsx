@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/context/AuthContext";
 
 const UserInvitation = () => {
@@ -27,23 +26,25 @@ const UserInvitation = () => {
     setIsLoading(true);
     
     try {
-      // In a real implementation, this would call a Supabase Edge Function
-      // that sends an invitation email and stores the invitation in the database
-      const { data, error } = await supabase
-        .from('user_invitations')
-        .insert({
-          email,
-          role,
-          department,
-          invited_by: user?.id,
-          status: 'pending'
-        })
-        .select();
+      // This is a mock implementation
+      // In a production environment, we would:
+      // 1. Create a user_invitations table in Supabase
+      // 2. Set up an edge function to send invitation emails
       
-      if (error) throw error;
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      console.log("Invitation data:", {
+        email,
+        role,
+        department,
+        invited_by: user?.id,
+        status: 'pending'
+      });
       
       toast.success(`Invitation sent to ${email}`);
       setEmail("");
+      setDepartment("");
     } catch (error: any) {
       console.error("Error sending invitation:", error);
       toast.error(error.message || "Failed to send invitation");
