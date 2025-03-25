@@ -4,7 +4,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import GettingStartedGuides from './GettingStartedGuides';
 import CoreFeaturesGuides from './CoreFeaturesGuides';
 
-const GuideTabs = () => {
+interface GuideTabsProps {
+  searchQuery?: string;
+}
+
+const GuideTabs = ({ searchQuery = '' }: GuideTabsProps) => {
   return (
     <Tabs defaultValue="getting-started">
       <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 mb-8">
@@ -16,11 +20,11 @@ const GuideTabs = () => {
       </TabsList>
       
       <TabsContent value="getting-started" className="space-y-8">
-        <GettingStartedGuides />
+        <GettingStartedGuides searchQuery={searchQuery} />
       </TabsContent>
       
       <TabsContent value="features" className="space-y-8">
-        <CoreFeaturesGuides />
+        <CoreFeaturesGuides searchQuery={searchQuery} />
       </TabsContent>
       
       <TabsContent value="admin">
