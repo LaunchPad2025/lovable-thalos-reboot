@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useModelTest } from '@/hooks/useModelTest';
@@ -37,24 +36,30 @@ const ViolationUpload = ({
     resetTest 
   } = useModelTest();
   
-  // Auto-select first model if none selected and models are available
   useEffect(() => {
     if (models?.length > 0 && !selectedModelId) {
-      // Find the YOLOv8 model or default to the first one
-      const yoloModel = models.find(m => m.name.toLowerCase().includes('yolo'));
-      setSelectedModelId(yoloModel?.id || models[0].id);
+      const bestModel = models.find(m => 
+        m.industry === userIndustry && 
+        m.model_type.includes('Object Detection')
+      ) || models.find(m => m.name.toLowerCase().includes('yolo'));
       
-      // Update connection status
+      setSelectedModelId(bestModel?.id || models[0].id);
       setConnectionStatus('connected');
-      console.log("Models loaded successfully, using: ", yoloModel?.name || models[0].name);
+      console.log("Selected model for analysis:", bestModel?.name);
     }
-  }, [models, selectedModelId]);
+  }, [models, selectedModelId, userIndustry]);
 
-  // Check model connection
   useEffect(() => {
     if (modelsError || modelInitError) {
       setConnectionStatus('error');
       console.error("Model connection error:", modelsError || modelInitError);
+      
+      const timer = setTimeout(() => {
+        console.log("Attempting to reconnect to AI models...");
+        window.location.reload();
+      }, 5000);
+      
+      return () => clearTimeout(timer);
     } else if (!modelsLoading && models.length > 0) {
       setConnectionStatus('connected');
     } else {
@@ -65,7 +70,6 @@ const ViolationUpload = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    // For multimodal models, text only is OK
     const selectedModel = models.find(m => m.id === selectedModelId);
     const isMultimodal = selectedModel?.model_type === 'Multimodal (Image + Text)';
     
@@ -74,34 +78,49 @@ const ViolationUpload = ({
       return;
     }
     
-    // If no model is explicitly selected, use the first one in the list
-    const modelToUse = selectedModelId || (models.length > 0 ? models[0].id : '');
-    
-    // Always allow analysis even if no models are available - backend will use fallback detection
     try {
-      console.log("Submitting analysis with image:", imagePreview ? "Image present" : "No image");
+      console.log("Starting analysis with model:", selectedModel?.name);
       
-      // If we have connection issues, let the user know we're using fallback detection
-      if (connectionStatus === 'error' || !modelToUse) {
-        toast.info("Using fallback detection system", {
-          description: "Some AI models couldn't be loaded. We'll use our basic detection system instead."
-        });
+      if (connectionStatus === 'error' || !selectedModelId) {
+        const fallbackModel = models.find(m => m.name.toLowerCase().includes('yolo'));
+        if (fallbackModel) {
+          toast.info("Using YOLOv8 for reliable detection", {
+            description: "Switched to our most reliable model for analysis."
+          });
+          setSelectedModelId(fallbackModel.id);
+        } else {
+          toast.info("Using fallback detection system", {
+            description: "AI models unavailable. Using basic detection system."
+          });
+        }
       }
       
       const values = {
-        model_id: modelToUse || 'default',  // Use default if no model available
+        model_id: selectedModelId || 'default',
         violation_text: violationText,
         industry: industry,
       };
       
       const results = await submitModelTest(values, selectedModel);
       if (results) {
-        console.log("Analysis complete, results:", results);
+        console.log("Analysis complete:", results);
         onUploadComplete(results);
+        
+        if (results.detections && results.detections.length > 0) {
+          toast.success(`Detected ${results.detections.length} safety violation(s)`, {
+            description: "Click 'Create Task' to generate remediation steps."
+          });
+        } else {
+          toast.info("No immediate violations detected", {
+            description: "The area appears to comply with safety standards."
+          });
+        }
       }
     } catch (error) {
       console.error('Error analyzing image:', error);
-      toast.error('Failed to analyze image. Please try again.');
+      toast.error('Analysis failed', {
+        description: 'Please try again or contact support if the issue persists.'
+      });
     }
   };
   

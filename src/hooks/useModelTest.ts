@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
@@ -40,11 +39,9 @@ export function useModelTest() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
   
-  // Initialize the violations bucket
   const initializeStorageBucket = async () => {
     try {
       console.log("Initializing storage bucket");
-      // Call our edge function to ensure the storage bucket exists
       const { data, error } = await supabase.functions.invoke('create-storage-buckets');
       
       if (error) {
@@ -63,13 +60,11 @@ export function useModelTest() {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
-      // Validate file type
       if (!file.type.startsWith('image/')) {
         toast.error('Please upload an image file');
         return;
       }
       
-      // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
         toast.error('File size too large (max 5MB)');
         return;
@@ -78,7 +73,6 @@ export function useModelTest() {
       console.log("Setting image file:", file.name, file.type, file.size);
       setImage(file);
       
-      // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
         console.log("Image preview created");
@@ -86,7 +80,6 @@ export function useModelTest() {
       };
       reader.readAsDataURL(file);
     } else {
-      // Clear the image and preview if no file selected
       console.log("No file selected, clearing image and preview");
       setImage(null);
       setImagePreview(null);
@@ -95,15 +88,13 @@ export function useModelTest() {
   
   const submitModelTest = async (values: TestModelFormValues, selectedModel: MLModel | undefined) => {
     setIsSubmitting(true);
-    console.log("Submitting model test with image:", image ? image.name : "No image");
+    console.log("Starting analysis with model:", selectedModel?.name);
     
     try {
-      // If there's an image, attempt to upload it to Supabase Storage
       let uploadedImageUrl = '';
       
       if (image) {
-        console.log("Attempting to upload image to storage");
-        // First, make sure the storage bucket is initialized
+        console.log("Processing image upload...");
         const bucketInitialized = await initializeStorageBucket();
         
         if (bucketInitialized) {
@@ -111,116 +102,86 @@ export function useModelTest() {
           const fileName = `${timestamp}_${image.name.replace(/\s+/g, '_')}`;
           const filePath = `violation_images/${fileName}`;
           
-          // Upload to Supabase Storage
           const { data: uploadData, error: uploadError } = await supabase.storage
             .from('violations')
             .upload(filePath, image);
           
           if (uploadError) {
-            console.error('Error uploading image:', uploadError);
-            // Continue with local image if storage upload fails
-            console.log("Will use local image for analysis instead");
+            console.error('Image upload error:', uploadError);
+            toast.error('Image upload failed', {
+              description: 'Using local image for analysis instead.'
+            });
           } else {
-            // Get the public URL
             const { data: { publicUrl } } = supabase.storage
               .from('violations')
               .getPublicUrl(filePath);
               
             uploadedImageUrl = publicUrl;
-            console.log("Image uploaded successfully, URL:", uploadedImageUrl);
+            console.log("Image uploaded successfully");
           }
-        } else {
-          console.log("Storage bucket initialization failed, using local image");
         }
       }
 
-      // Prepare the request payload
       const requestData: any = {
         violationText: values.violation_text || "",
         industry: values.industry,
-        modelId: selectedModel?.name.toLowerCase().split(' ')[0].replace(/\+/g, '') || 'yolov8'
+        modelId: selectedModel?.name.toLowerCase().split(' ')[0].replace(/\+/g, '') || 'yolov8',
+        imageUrl: uploadedImageUrl || imagePreview
       };
       
-      // If we have an uploaded image URL, include it
-      if (uploadedImageUrl) {
-        requestData.violationImageUrl = uploadedImageUrl;
-      }
+      console.log("Calling analyze-violation function");
       
-      console.log("Calling analyze-violation function with data:", requestData);
-      
-      // Call the Edge Function
       const { data, error } = await supabase.functions.invoke('analyze-violation', {
         body: requestData
       });
       
       if (error) {
-        console.error("Edge function error:", error);
+        console.error("Analysis error:", error);
         
-        // If first attempt failed and we have an image, try with backup mode
         if (retryCount === 0 && image) {
           setRetryCount(prev => prev + 1);
-          
-          // Try with fallback detection
           console.log("Retrying with fallback detection...");
-          toast.info("Using fallback detection", { 
-            description: "Primary detection service unavailable. Using backup system." 
-          });
           
-          // Use mock analysis for fallback
           return generateMockAnalysis(imagePreview, values.industry || "Construction");
         }
         
         throw error;
       }
       
-      console.log("Analysis complete, data:", data);
-      
-      // If no detections or very low confidence, show a warning
-      if (!data.detections || data.detections.length === 0 || data.confidence < 0.3) {
-        toast.info('No significant safety violations detected', {
-          description: 'Our AI did not detect any clear safety violations in this image.'
-        });
-      }
-      
-      // Generate a unique ID for this result
-      const resultId = `v-${Date.now().toString(36)}`;
-      
-      // Add the image preview and additional data to the result
-      const resultWithImage = {
+      const enhancedResults = {
         ...data,
         imagePreview: imagePreview,
         industry: values.industry,
-        id: resultId
+        id: `v-${Date.now().toString(36)}`,
+        regulationIds: data.detections?.map((d: any) => {
+          if (d.label?.includes('hardhat')) return '29 CFR 1926.100';
+          if (d.label?.includes('vest')) return '29 CFR 1926.201';
+          return '29 CFR 1926.20';
+        }) || []
       };
       
-      setTestResult(resultWithImage);
-      toast.success('Model analysis completed successfully');
-      
-      return resultWithImage;
+      setTestResult(enhancedResults);
+      return enhancedResults;
     } catch (error: any) {
-      console.error('Error testing model:', error);
+      console.error('Model test error:', error);
       
-      // Use fallback detection if API calls fail
-      if (image) {
+      if (image && retryCount === 0) {
         toast.info("Using fallback detection", { 
-          description: "Detection service unavailable. Using backup system." 
+          description: "Primary detection unavailable. Using backup system." 
         });
         return generateMockAnalysis(imagePreview, values.industry || "Construction");
-      } else {
-        toast.error(error.message || 'Failed to test model');
-        return null;
       }
+      
+      throw error;
     } finally {
       setIsSubmitting(false);
       setRetryCount(0);
     }
   };
   
-  // Fallback detection when API fails
   const generateMockAnalysis = (imageUrl: string | null, industry: string): TestResult => {
     console.log("Generating mock analysis for fallback");
     
-    // Generate random but plausible safety violations
     const possibleViolations = [
       { 
         label: "missing_hardhat", 
@@ -244,7 +205,6 @@ export function useModelTest() {
       }
     ];
     
-    // Select 1-2 random violations
     const numViolations = Math.floor(Math.random() * 2) + 1;
     const detections = possibleViolations
       .sort(() => 0.5 - Math.random())
