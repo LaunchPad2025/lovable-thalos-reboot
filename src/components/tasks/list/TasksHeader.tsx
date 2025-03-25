@@ -1,22 +1,23 @@
 
 import React from 'react';
-import { Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface TasksHeaderProps {
-  onAddNewTask: () => void;
+  onCreateTask: () => void;
 }
 
-const TasksHeader = ({ onAddNewTask }: TasksHeaderProps) => {
+const TasksHeader: React.FC<TasksHeaderProps> = ({ onCreateTask }) => {
   return (
-    <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg font-medium text-gray-900">Tasks</h2>
+    <div className="flex justify-between items-center mb-6">
+      <div>
+        <h1 className="text-2xl font-bold text-white mb-1">Tasks</h1>
+        <p className="text-gray-400">Manage and track your safety compliance tasks</p>
+      </div>
       <Button 
-        onClick={onAddNewTask}
-        className="flex items-center text-sm bg-thalos-blue hover:bg-blue-600"
+        className="bg-blue-600 hover:bg-blue-700"
+        onClick={onCreateTask}
       >
-        <Plus size={16} className="mr-1" />
-        New Task
+        Create Task
       </Button>
     </div>
   );
