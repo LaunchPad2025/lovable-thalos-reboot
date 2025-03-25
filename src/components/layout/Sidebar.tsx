@@ -4,6 +4,7 @@ import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/useMobile";
 import { useTheme } from "@/providers/ThemeProvider";
+import { useAuth } from "@/context/AuthContext";
 import {
   LayoutDashboard,
   AlertTriangle,
@@ -14,7 +15,10 @@ import {
   Settings,
   BrainCircuit,
   Menu,
-  X
+  X,
+  Users,
+  Building,
+  Gauge
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -23,14 +27,18 @@ interface NavItem {
   title: string;
   path: string;
   icon: any;
-  roles: ("admin" | "user")[];
+  roles: ("admin" | "safety_officer" | "worker")[];
 }
 
-const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
+const Sidebar = () => {
   const location = useLocation();
   const isMobile = useMobile();
   const { sidebarCollapsed } = useTheme();
+  const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Get user role from auth context
+  const userRole = user?.user_metadata?.role || "worker";
 
   // The initial state is expanded on desktop, closed on mobile
   const [expanded, setExpanded] = useState(!isMobile && !sidebarCollapsed);
@@ -50,42 +58,60 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
   }, [location.pathname]);
 
   // Items for the sidebar navigation
-  const navItems = [
+  const navItems: NavItem[] = [
     {
       title: "Dashboard",
       path: "/",
       icon: LayoutDashboard,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
     },
     {
       title: "Violations",
       path: "/violations",
       icon: AlertTriangle,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
     },
     {
       title: "Tasks",
       path: "/tasks",
       icon: ListTodo,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
     },
     {
       title: "Regulations",
       path: "/regulations",
       icon: FileText,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
     },
     {
       title: "ML Models",
       path: "/models",
       icon: BrainCircuit,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer"],
     },
     {
       title: "AI Assistant",
       path: "/chatbot",
       icon: MessageSquare,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
+    },
+    {
+      title: "Team Members",
+      path: "/team",
+      icon: Users,
+      roles: ["admin", "safety_officer"],
+    },
+    {
+      title: "Organizations",
+      path: "/organizations",
+      icon: Building,
+      roles: ["admin"],
+    },
+    {
+      title: "Analytics",
+      path: "/analytics",
+      icon: Gauge,
+      roles: ["admin", "safety_officer"],
     },
     {
       title: "Subscription",
@@ -97,7 +123,7 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
       title: "Settings",
       path: "/settings",
       icon: Settings,
-      roles: ["admin", "user"],
+      roles: ["admin", "safety_officer", "worker"],
     },
   ];
 
@@ -118,7 +144,7 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
     <ul className="space-y-1 px-2">
       {navItems.map(
         (item) =>
-          item.roles.includes(userRole) && (
+          item.roles.includes(userRole as any) && (
             <li key={item.title}>
               <Link
                 to={item.path}
@@ -165,7 +191,7 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
                   <NavItems />
                 </nav>
                 <div className="p-4 text-xs text-muted-foreground text-center border-t border-border">
-                  © 2025 Thalos
+                  © 2025 Thalos - powered by Steel Toe
                 </div>
               </div>
             </SheetContent>
@@ -184,7 +210,7 @@ const Sidebar = ({ userRole = "user" }: { userRole?: "admin" | "user" }) => {
               <NavItems />
             </nav>
             <div className="p-4 text-xs text-muted-foreground text-center border-t border-border">
-              © 2025 Thalos
+              © 2025 Thalos - powered by Steel Toe
             </div>
           </div>
         </aside>

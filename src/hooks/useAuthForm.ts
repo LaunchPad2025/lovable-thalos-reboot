@@ -21,7 +21,7 @@ export function useAuthForm() {
       setAuthError(null);
       setIsSubmitting(true);
       await signIn(values.email, values.password);
-      navigate("/");
+      // Let the user be redirected by the main Auth component
     } catch (error: any) {
       console.error("Login error:", error);
       setAuthError(
@@ -38,7 +38,8 @@ export function useAuthForm() {
       setAuthError(null);
       setIsSubmitting(true);
       await signUp(values.email, values.password, values.name);
-      setAuthError("Registration successful! Please check your email to confirm your account.");
+      setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
+      // Don't navigate yet, let them confirm their email first
     } catch (error: any) {
       console.error("Signup error:", error);
       if (error.message?.includes("already registered")) {

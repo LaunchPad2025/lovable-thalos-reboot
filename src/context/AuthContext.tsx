@@ -4,6 +4,15 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
+type UserMetadata = {
+  name?: string;
+  role?: 'admin' | 'safety_officer' | 'worker';
+  industries?: string[];
+  preferredModules?: string[];
+  onboarded?: boolean;
+  [key: string]: any;
+}
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
@@ -11,6 +20,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  updateUserProfile: (metadata: UserMetadata) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -49,6 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         options: {
           data: {
             name,
+            role: 'worker', // Default role
+            onboarded: false // Flag to indicate onboarding status
           }
         }
       });
@@ -107,8 +119,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const updateUserProfile = async (metadata: UserMetadata) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          ...user?.user_metadata,
+          ...metadata
+        }
+      });
+
+      if (error) throw error;
+      
+      // Update the local user state with the new metadata
+      if (user) {
+        setUser({
+          ...user,
+          user_metadata: {
+            ...user.user_metadata,
+            ...metadata
+          }
+        });
+      }
+      
+      return;
+    } catch (error: any) {
+      console.error("Error updating profile:", error);
+      throw error;
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, session, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ 
+      user, 
+      session, 
+      loading, 
+      signUp, 
+      signIn, 
+      signOut,
+      updateUserProfile
+    }}>
       {children}
     </AuthContext.Provider>
   );

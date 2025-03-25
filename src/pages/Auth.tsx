@@ -1,5 +1,5 @@
 
-import { Navigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
@@ -8,6 +8,7 @@ import { useAuthForm } from "@/hooks/useAuthForm";
 
 export default function Auth() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const {
     isLogin,
     authError,
@@ -17,9 +18,20 @@ export default function Auth() {
     onSignupSubmit
   } = useAuthForm();
 
+  // Handle successful login and redirect to appropriate page
+  const handleSuccessfulAuth = () => {
+    // Check if user has completed onboarding
+    if (user?.user_metadata?.onboarded === false) {
+      navigate("/onboarding");
+    } else {
+      navigate("/");
+    }
+  };
+
   // Redirect if user is already logged in
   if (user) {
-    return <Navigate to="/" />;
+    handleSuccessfulAuth();
+    return null;
   }
 
   return (
@@ -53,6 +65,12 @@ export default function Auth() {
               ? "Don't have an account? Sign up"
               : "Already have an account? Sign in"}
           </button>
+        </div>
+        
+        <div className="mt-6 pt-4 border-t border-gray-800 text-center">
+          <p className="text-xs text-gray-500">
+            Thalos - powered by Steel Toe
+          </p>
         </div>
       </div>
     </div>
