@@ -64,8 +64,9 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				thalos: {
-					blue: '#3B82F6',
-					'blue-light': '#93C5FD',
+					blue: '#0EA5E9',
+					'blue-light': '#38BDF8',
+					'blue-dark': '#0284C7',
 					red: '#EF4444',
 					green: '#10B981',
 					yellow: '#F59E0B',
