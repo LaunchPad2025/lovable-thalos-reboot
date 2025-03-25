@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/components/ui/button';
 import { Form } from '@/components/ui/form';
 import { Loader2 } from 'lucide-react';
-import { MLModel } from '@/hooks/useMLModels';
+import { MLModel } from '@/hooks/ml-models';
 import { useModelTest, testModelSchema, TestModelFormValues } from '@/hooks/model-testing';
 import ModelSelector from './ModelSelector';
 import IndustrySelector from './IndustrySelector';

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import PageContainer from "@/components/layout/PageContainer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMLModels } from "@/hooks/useMLModels";
+import { useMLModels } from "@/hooks/ml-models";
 import ViolationUpload from "@/components/violations/ViolationUpload";
 import ChatInterface from "@/components/chatbot/ChatInterface";
 import { TestResult } from "@/hooks/model-testing";

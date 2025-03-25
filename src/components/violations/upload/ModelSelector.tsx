@@ -1,8 +1,7 @@
-
 import React from 'react';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MLModel } from '@/hooks/useMLModels';
+import { MLModel } from '@/hooks/ml-models';
 
 interface ModelSelectorProps {
   value: string;

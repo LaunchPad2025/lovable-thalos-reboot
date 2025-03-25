@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useModelTest } from '@/hooks/model-testing';
-import { useMLModels } from '@/hooks/useMLModels';
+import { useMLModels } from '@/hooks/ml-models';
 import { toast } from 'sonner';
 import ConnectionStatus from './upload/ConnectionStatus';
 import UploadFormLayout from './upload/UploadFormLayout';

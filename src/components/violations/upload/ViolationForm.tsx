@@ -1,9 +1,8 @@
-
 import React from 'react';
 import IndustrySelector from './IndustrySelector';
 import ModelSelector from './ModelSelector';
 import ViolationTextInput from './ViolationTextInput';
-import { MLModel } from '@/hooks/useMLModels';
+import { MLModel } from '@/hooks/ml-models';
 
 interface ViolationFormProps {
   industry: string;
