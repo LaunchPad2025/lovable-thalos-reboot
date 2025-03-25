@@ -4,7 +4,6 @@ import ChatHeader from './ChatHeader';
 import MessageList from './messages/MessageList';
 import MessageInput from './input/MessageInput';
 import { useChatMessages } from './useChatMessages';
-import { X } from 'lucide-react';
 import { useThemeStyles } from '@/hooks/useThemeStyles';
 
 interface ChatInterfaceProps {

@@ -7,23 +7,24 @@ interface ImagePreviewProps {
   removeImage: () => void;
 }
 
-const ImagePreview = ({ imagePreview, removeImage }: ImagePreviewProps) => {
+const ImagePreview: React.FC<ImagePreviewProps> = ({ imagePreview, removeImage }) => {
   if (!imagePreview) return null;
   
   return (
-    <div className="mb-3 relative inline-block">
-      <div className="relative inline-block">
+    <div className="relative mb-3">
+      <div className="relative rounded-md overflow-hidden border border-gray-700 bg-gray-900">
         <img 
           src={imagePreview} 
-          alt="Preview" 
-          className="h-16 w-16 object-cover rounded border border-gray-300" 
+          alt="Upload preview" 
+          className="max-h-36 max-w-full object-contain mx-auto"
+          style={{ maxWidth: '100%' }}
         />
         <button
-          type="button"
           onClick={removeImage}
-          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1"
+          className="absolute top-1 right-1 p-1 bg-gray-900/80 rounded-full text-gray-300 hover:text-white"
+          type="button"
         >
-          <X size={12} />
+          <X size={16} />
         </button>
       </div>
     </div>

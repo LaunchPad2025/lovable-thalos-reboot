@@ -14,20 +14,35 @@ import { taskSchema } from '@/components/tasks/schemas/taskFormSchema';
 import { Task } from '@/types/models';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Control } from 'react-hook-form';
 
 interface TaskModalContentProps {
   initialData?: Partial<Task>;
   onSubmit: (data: any) => void;
   isLoading?: boolean;
+  control?: Control<any>;
+  errors?: any;
+  title?: string;
+  submitButtonText?: string;
+  onClose?: () => void;
+  onViolationChange?: (id: string) => void;
+  violations?: any[];
 }
 
 const TaskModalContent: React.FC<TaskModalContentProps> = ({
   initialData,
   onSubmit,
   isLoading = false,
+  control: externalControl,
+  errors: externalErrors,
+  title,
+  submitButtonText = 'Save Task',
+  onClose,
+  onViolationChange,
+  violations = [],
 }) => {
-  // Create form with default values
-  const form = useForm<z.infer<typeof taskSchema>>({
+  // Create form with default values if no external control is provided
+  const defaultForm = useForm<z.infer<typeof taskSchema>>({
     resolver: zodResolver(taskSchema),
     defaultValues: {
       title: initialData?.title || '',
@@ -40,6 +55,10 @@ const TaskModalContent: React.FC<TaskModalContentProps> = ({
     },
   });
 
+  // Use either the external control or our default form
+  const form = externalControl ? { control: externalControl } : defaultForm;
+  const formErrors = externalErrors || defaultForm.formState.errors;
+
   const handleFormSubmit = (data: z.infer<typeof taskSchema>) => {
     // Convert the date object to ISO string for database storage
     const formattedData = {
@@ -51,8 +70,12 @@ const TaskModalContent: React.FC<TaskModalContentProps> = ({
 
   return (
     <div className="p-6 space-y-4">
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-4">
+      {title && (
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
+      )}
+      
+      <Form {...(externalControl ? {} : defaultForm)}>
+        <form onSubmit={externalControl ? undefined : defaultForm.handleSubmit(handleFormSubmit)} className="space-y-4">
           <FormField
             control={form.control}
             name="title"
@@ -186,7 +209,29 @@ const TaskModalContent: React.FC<TaskModalContentProps> = ({
               <FormItem>
                 <FormLabel>Related Violation (optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="Violation ID" {...field} />
+                  {violations && violations.length > 0 ? (
+                    <Select 
+                      onValueChange={(value) => {
+                        field.onChange(value);
+                        if (onViolationChange) onViolationChange(value);
+                      }} 
+                      defaultValue={field.value}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a violation" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="">None</SelectItem>
+                        {violations.map((violation) => (
+                          <SelectItem key={violation.id} value={violation.id}>
+                            {violation.title || violation.violation}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input placeholder="Violation ID" {...field} />
+                  )}
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -194,9 +239,21 @@ const TaskModalContent: React.FC<TaskModalContentProps> = ({
           />
 
           <div className="flex justify-end pt-4">
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Saving...' : 'Save Task'}
-            </Button>
+            {onClose && (
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={onClose} 
+                className="mr-2 border-gray-700 text-gray-300"
+              >
+                Cancel
+              </Button>
+            )}
+            {!externalControl && (
+              <Button type="submit" disabled={isLoading} className="bg-blue-600 hover:bg-blue-700">
+                {isLoading ? 'Saving...' : submitButtonText}
+              </Button>
+            )}
           </div>
         </form>
       </Form>

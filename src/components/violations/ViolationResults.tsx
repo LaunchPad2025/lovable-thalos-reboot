@@ -46,18 +46,27 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
             violation: results.description,
             description: results.description,
             severity: results.severity,
-            status: results.status,
+            status: results.status || 'open',
             organization_id: user.id, // Using user ID as org ID for demo
             created_by: user.id,
             confidence: results.confidence,
+            image_url: results.imageUrl || null,
             // Other fields as needed
           })
           .select();
         
-        if (violationError) throw violationError;
+        if (violationError) {
+          console.error("Error creating violation record:", violationError);
+          throw violationError;
+        }
         
         vId = violationData?.[0]?.id;
         setViolationId(vId);
+        
+        toast({
+          title: "Violation recorded",
+          description: "Successfully saved the violation details.",
+        });
       }
       
       // Now navigate to create a task with this violation ID
@@ -67,17 +76,73 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
         throw new Error("Failed to create violation record");
       }
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error creating task from violation:", error);
       toast({
         title: "Error",
-        description: "Failed to create task from violation. Please try again.",
+        description: error.message || "Failed to create task from violation. Please try again.",
         variant: "destructive"
       });
     } finally {
       setIsCreatingTask(false);
     }
   };
+  
+  // If no violations detected, show a different UI
+  if (results.relevanceScores?.length === 0 && results.confidence < 0.3) {
+    return (
+      <div className="space-y-6">
+        <Card className="border-gray-700 bg-gray-800/50">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <CheckCircle className="h-5 w-5 mr-2 text-green-500" />
+                <CardTitle>No Safety Violations Detected</CardTitle>
+              </div>
+              <StatusBadge status="low" />
+            </div>
+            <CardDescription>
+              Our AI did not detect any safety violations in the uploaded image.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <h3 className="text-sm font-medium text-gray-300 mb-1">Analysis Summary</h3>
+              <p className="text-white text-sm p-3 bg-gray-800 rounded-md border border-gray-700">
+                The analysis found no significant safety concerns that would require remediation.
+              </p>
+            </div>
+            
+            {results.imagePreview && (
+              <div>
+                <h3 className="text-sm font-medium text-gray-300 mb-1">Analyzed Image</h3>
+                <div className="overflow-hidden rounded-md border border-gray-700">
+                  <img 
+                    src={results.imagePreview} 
+                    alt="Analyzed image" 
+                    className="w-full h-auto max-h-[300px] object-contain bg-black"
+                  />
+                </div>
+              </div>
+            )}
+          </CardContent>
+          <CardFooter className="flex gap-3 pt-2 justify-between">
+            <div className="flex items-center text-sm text-gray-400">
+              <CheckCircle className="h-4 w-4 mr-1 text-green-500" />
+              Safety analysis complete
+            </div>
+            <Button 
+              variant="outline" 
+              onClick={onSave} 
+              className="border-gray-600"
+            >
+              Back
+            </Button>
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
   
   return (
     <div className="space-y-6">
@@ -127,6 +192,20 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
                   className="w-full h-auto max-h-[300px] object-contain bg-black"
                 />
               </div>
+            </div>
+          )}
+          
+          {results.regulationIds && results.regulationIds.length > 0 && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-300 mb-1">Relevant Regulations</h3>
+              <ul className="list-disc pl-5 space-y-1 text-white text-sm p-3 bg-gray-800 rounded-md border border-gray-700">
+                {results.regulationIds.map((id, index) => (
+                  <li key={id} className="text-sm">
+                    Regulation ID: {id.substring(0, 8)}... 
+                    (Relevance: {(results.relevanceScores[index] * 100).toFixed(1)}%)
+                  </li>
+                ))}
+              </ul>
             </div>
           )}
         </CardContent>

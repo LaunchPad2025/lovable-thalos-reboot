@@ -135,7 +135,7 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId, onAddNewTask }: TasksL
                       <td colSpan={8} className="p-4">
                         <div className="text-sm text-gray-300">
                           <h4 className="font-medium text-white mb-2">Description</h4>
-                          <p className="mb-4">{task.description || "No description provided"}</p>
+                          <p className="mb-4 whitespace-pre-line">{task.description || "No description provided"}</p>
                           
                           <div className="grid grid-cols-2 gap-4 mt-2">
                             <div>

@@ -72,11 +72,16 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
       removeImage();
     } catch (error) {
       console.error("Error sending message:", error);
+      toast({
+        title: "Error sending message",
+        description: "Please try again",
+        variant: "destructive"
+      });
     }
   };
   
   return (
-    <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200">
+    <form onSubmit={handleSubmit} className="p-2">
       <ImagePreview imagePreview={imagePreview} removeImage={removeImage} />
       
       <div className="flex space-x-2">
@@ -84,6 +89,7 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
           type="button"
           variant="outline"
           size="icon"
+          className="flex-shrink-0 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
           onClick={() => fileInputRef.current?.click()}
           disabled={isLoading}
         >
@@ -103,20 +109,20 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
           placeholder="Type your message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          className="flex-1"
+          className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
           disabled={isLoading}
         />
         
         <Button 
           type="submit"
-          className="bg-thalos-blue hover:bg-blue-600"
+          className="flex-shrink-0 bg-blue-600 hover:bg-blue-700"
           disabled={(!newMessage.trim() && !imageFile) || isLoading}
         >
           {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
         </Button>
       </div>
       
-      <p className="text-xs text-muted-foreground mt-2">
+      <p className="text-xs text-gray-400 mt-2">
         Upload images of safety concerns for AI analysis or ask questions about workplace safety regulations.
       </p>
     </form>
