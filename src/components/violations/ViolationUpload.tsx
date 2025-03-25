@@ -6,6 +6,7 @@ import { useMLModels } from '@/hooks/useMLModels';
 import { Loader2, Upload, Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { toast } from 'sonner';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;
@@ -26,23 +27,33 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!imagePreview) {
-      alert('Please upload an image');
+      toast.error('Please upload an image to analyze');
       return;
     }
     
-    const selectedModel = models.find(m => m.id === selectedModelId);
+    // If no model is explicitly selected, use the first one in the list
+    const modelToUse = selectedModelId || (models.length > 0 ? models[0].id : '');
+    if (!modelToUse) {
+      toast.error('No models available. Please contact support.');
+      return;
+    }
+    
+    const selectedModel = models.find(m => m.id === modelToUse);
     
     const values = {
-      model_id: selectedModelId || (models[0]?.id || ''),
+      model_id: modelToUse,
       violation_text: '',
       industry: industry,
     };
     
     try {
       const results = await submitModelTest(values, selectedModel);
-      onUploadComplete(results);
+      if (results) {
+        onUploadComplete(results);
+      }
     } catch (error) {
       console.error('Error analyzing image:', error);
+      toast.error('Failed to analyze image. Please try again.');
     }
   };
   
@@ -65,7 +76,7 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                   </div>
                   
                   <p className="text-sm text-gray-400 mb-6">
-                    Upload images or videos to analyze for safety violations
+                    Upload images to analyze for safety violations
                   </p>
                   
                   <div className="flex items-center gap-2">
@@ -80,7 +91,7 @@ const ViolationUpload = ({ onUploadComplete }: ViolationUploadProps) => {
                     </label>
                   </div>
                   <p className="text-xs text-gray-500 mt-2">
-                    Supported formats: JPEG, PNG, GIF, MP4, MOV
+                    Supported formats: JPEG, PNG, GIF
                   </p>
                 </div>
               </>

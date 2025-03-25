@@ -58,6 +58,32 @@ export function useModelTest() {
     setIsSubmitting(true);
     
     try {
+      // If there's an image, upload it to Supabase Storage first
+      let uploadedImageUrl = '';
+      
+      if (image) {
+        const timestamp = Date.now();
+        const fileName = `${timestamp}_${image.name.replace(/\s+/g, '_')}`;
+        const filePath = `violation_images/${fileName}`;
+        
+        // Upload to Supabase Storage
+        const { data: uploadData, error: uploadError } = await supabase.storage
+          .from('violations')
+          .upload(filePath, image);
+        
+        if (uploadError) {
+          console.error('Error uploading image:', uploadError);
+          throw new Error('Failed to upload image. Please try again.');
+        }
+        
+        // Get the public URL
+        const { data: { publicUrl } } = supabase.storage
+          .from('violations')
+          .getPublicUrl(filePath);
+          
+        uploadedImageUrl = publicUrl;
+      }
+      
       // Prepare the request payload
       const requestData: any = {
         violationText: values.violation_text || undefined,
@@ -65,11 +91,9 @@ export function useModelTest() {
         modelId: selectedModel?.name.toLowerCase().split(' ')[0].replace(/\+/g, '') || 'yolov8'
       };
       
-      // If there's an image, include information about it
-      if (image) {
-        // In a production app, you would upload the image to storage first
-        // For now, we'll just simulate with the image name
-        requestData.violationImageUrl = `mock_url_for_${image.name}`;
+      // If we have an uploaded image URL, include it
+      if (uploadedImageUrl) {
+        requestData.violationImageUrl = uploadedImageUrl;
       }
       
       // Call the Edge Function
