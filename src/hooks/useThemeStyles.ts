@@ -4,7 +4,7 @@ import { themeColors, themeSizing, themeShadows } from '@/lib/theme';
 import { useEffect, useState } from 'react';
 
 export function useThemeStyles() {
-  const { mode, density } = useTheme();
+  const { theme } = useTheme();
   const [systemIsDark, setSystemIsDark] = useState(false);
   
   // Listen for system theme changes
@@ -26,8 +26,9 @@ export function useThemeStyles() {
     };
   }, []);
   
-  const isDark = mode === 'dark' || (mode === 'system' && systemIsDark);
+  const isDark = theme === 'dark' || (theme === 'system' && systemIsDark);
   const currentMode = isDark ? 'dark' : 'light';
+  const density = 'comfortable'; // Default density since we aren't using it
   
   const getColor = (colorPath: string) => {
     const parts = colorPath.split('.');

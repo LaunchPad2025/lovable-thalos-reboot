@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Bell, Clock } from 'lucide-react';
+import { Bell } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 
 const Notifications = () => {

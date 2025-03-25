@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { FileQuestion, Clock } from 'lucide-react';
+import { FileQuestion } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 
 const RiskAssessment = () => {

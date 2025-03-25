@@ -6,7 +6,6 @@ import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/providers/ThemeProvider';
-import { useThemeStyles } from '@/hooks/useThemeStyles';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,8 +16,7 @@ import {
 
 const Navbar = () => {
   const { user, signOut } = useAuth();
-  const { mode, setMode } = useTheme();
-  const { isDark } = useThemeStyles();
+  const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -27,7 +25,7 @@ const Navbar = () => {
   };
 
   const toggleTheme = () => {
-    setMode(isDark ? 'light' : 'dark');
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
   return (
@@ -57,7 +55,7 @@ const Navbar = () => {
             size="icon" 
             onClick={toggleTheme}
             className="text-muted-foreground hover:text-foreground hover:bg-muted"
-            aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
+            aria-label={theme === 'dark' ? "Switch to light mode" : "Switch to dark mode"}
           >
             <SunMoon size={20} />
           </Button>
