@@ -3,6 +3,7 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { NavItem } from "./types";
+import { getNavItems } from "./navItems";
 
 interface NavItemsProps {
   navItems: NavItem[];
@@ -36,4 +37,5 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
   );
 };
 
-// Remove the export of getNavItems that's causing the import error
+// Export getNavItems function as well to maintain compatibility
+export { getNavItems };
