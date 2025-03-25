@@ -9,8 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 
 const AppearanceSettings = () => {
   const { 
-    mode, 
-    setMode, 
+    theme, 
+    setTheme, 
     density, 
     setDensity, 
     contrast,
@@ -40,7 +40,7 @@ const AppearanceSettings = () => {
       {/* Theme Selection */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Theme</h3>
-        <RadioGroup value={mode} onValueChange={(value) => setMode(value as 'dark' | 'light' | 'system')} className="space-y-3">
+        <RadioGroup value={theme} onValueChange={(value) => setTheme(value as 'dark' | 'light' | 'system')} className="space-y-3">
           <div className="flex items-center space-x-3">
             <RadioGroupItem value="dark" id="theme-dark" />
             <Label htmlFor="theme-dark" className="cursor-pointer">Dark (Default)</Label>
