@@ -58,28 +58,28 @@ export const getNavItems = (): NavItem[] => [
     path: "/audits",
     icon: ClipboardList,
     roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    badge: "Soon"
   },
   {
     title: "Reports",
     path: "/reports",
     icon: BarChart2,
     roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    badge: "Soon"
   },
   {
     title: "Training",
     path: "/training",
     icon: BookOpen,
     roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    badge: "Soon"
   },
   {
     title: "Admin",
     path: "/admin",
     icon: Users,
     roles: ["admin"],
-    comingSoon: true
+    badge: "Soon"
   },
   {
     title: "Copilot",
@@ -99,6 +99,6 @@ export const getNavItems = (): NavItem[] => [
     path: "/help",
     icon: HelpCircle,
     roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    badge: "Soon"
   }
 ];

@@ -1,56 +1,74 @@
 
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import PageContainer from '@/components/layout/PageContainer';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Clock } from 'lucide-react';
-
-const featureInfo = {
-  analytics: {
-    title: 'Advanced Analytics',
-    description: 'Comprehensive safety performance metrics and reporting tools are coming soon.',
-    details: 'Track trends, visualize data, and generate custom reports to improve your safety program.'
-  },
-  help: {
-    title: 'Help Center',
-    description: 'Our comprehensive knowledge base and support resources will be available soon.',
-    details: 'Find tutorials, FAQs, and best practices to maximize your Thalos experience.'
-  },
-  default: {
-    title: 'Coming Soon',
-    description: 'This feature is currently under development.',
-    details: "We're working hard to bring you new capabilities. Check back soon!"
-  }
-};
+import { Calendar, Clock, AlertTriangle } from 'lucide-react';
+import PageContainer from '@/components/layout/PageContainer';
+import { useLocation } from 'react-router-dom';
 
 const ComingSoon = () => {
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
-  const feature = params.get('feature') || 'default';
   
-  const { title, description, details } = 
-    feature === 'analytics' ? featureInfo.analytics :
-    feature === 'help' ? featureInfo.help :
-    featureInfo.default;
-  
+  // Determine the feature name based on the current route
+  const getFeatureName = () => {
+    const path = location.pathname.split('/')[1];
+    
+    switch (path) {
+      case 'audits':
+        return {
+          name: 'Audits',
+          icon: <Calendar className="h-12 w-12 mb-4" />,
+          description: 'Schedule, conduct, and manage workplace safety audits'
+        };
+      case 'reports':
+        return {
+          name: 'Reports',
+          icon: <Clock className="h-12 w-12 mb-4" />,
+          description: 'Generate and analyze comprehensive safety reports'
+        };
+      case 'training':
+        return {
+          name: 'Training',
+          icon: <Clock className="h-12 w-12 mb-4" />,
+          description: 'Manage and track safety training and certifications'
+        };
+      case 'admin':
+        return {
+          name: 'Admin',
+          icon: <Clock className="h-12 w-12 mb-4" />,
+          description: 'Configure system settings and manage users'
+        };
+      case 'help':
+        return {
+          name: 'Help & Tour',
+          icon: <Clock className="h-12 w-12 mb-4" />,
+          description: 'Get assistance and learn how to use the platform'
+        };
+      default:
+        return {
+          name: 'This Feature',
+          icon: <AlertTriangle className="h-12 w-12 mb-4" />,
+          description: 'This feature is coming soon to the Thalos Safety Assistant'
+        };
+    }
+  };
+
+  const feature = getFeatureName();
+
   return (
     <PageContainer>
-      <div className="flex justify-center items-center min-h-[calc(100vh-12rem)]">
-        <div className="bg-[#0d1117] border border-gray-800 rounded-lg shadow-lg text-center max-w-xl p-8">
-          <div className="h-20 w-20 bg-blue-900/30 rounded-full flex justify-center items-center mx-auto mb-6">
-            <Clock size={40} className="text-thalos-blue" />
-          </div>
-          
-          <h1 className="text-3xl font-bold text-white mb-3">{title}</h1>
-          <p className="text-lg text-gray-300 mb-4">{description}</p>
-          <p className="text-gray-400 mb-8">{details}</p>
-          
-          <Link to="/">
-            <Button className="bg-thalos-blue hover:bg-blue-600">
-              <ArrowLeft size={16} className="mr-2" />
-              Back to Dashboard
-            </Button>
-          </Link>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        {feature.icon}
+        <h1 className="text-2xl font-bold mb-2">{feature.name} Coming Soon</h1>
+        <p className="text-muted-foreground max-w-md mb-8">
+          {feature.description}
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+          <Button onClick={() => window.location.href = '/dashboard'}>
+            Return to Dashboard
+          </Button>
         </div>
       </div>
     </PageContainer>

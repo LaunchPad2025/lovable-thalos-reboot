@@ -13,7 +13,7 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
     <ul className="space-y-1">
       {navItems.map((item) => {
         const isDisabled = item.roles && !item.roles.includes(userRole as "admin" | "safety_officer" | "worker");
-        const isComingSoon = item.comingSoon;
+        const isComingSoon = item.comingSoon || item.badge === "Soon";
 
         return (
           <li key={item.path}>
@@ -43,7 +43,7 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
                   Soon
                 </span>
               )}
-              {item.badge && (
+              {item.badge && item.badge !== "Soon" && (
                 <span className="ml-auto text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-md">
                   {item.badge}
                 </span>
