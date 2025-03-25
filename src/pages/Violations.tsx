@@ -27,12 +27,15 @@ const Violations = () => {
   const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
   
   const handleUploadComplete = (results: TestResult) => {
+    console.log("Upload complete with results:", results);
     setAnalysisResults(results);
     setActiveTab("results");
     
     // Scroll to results after a short delay to allow the tab to render
     setTimeout(() => {
-      resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
+      if (resultsRef.current) {
+        resultsRef.current.scrollIntoView({ behavior: 'smooth' });
+      }
     }, 100);
     
     if (results.detections && results.detections.length > 0) {
@@ -55,7 +58,7 @@ const Violations = () => {
     if (modelsLoading) {
       const timer = setTimeout(() => {
         setIsLoadingOverride(false);
-      }, 3000);
+      }, 1500);
       
       return () => clearTimeout(timer);
     } else {
@@ -70,7 +73,7 @@ const Violations = () => {
       const retryTimer = setTimeout(() => {
         console.log("Retrying model fetch...");
         refetch();
-      }, 5000);
+      }, 3000);
       
       return () => clearTimeout(retryTimer);
     } else {
@@ -137,7 +140,9 @@ const Violations = () => {
             <CardTitle>Violation Detection</CardTitle>
             <CardDescription>
               Upload images or describe potential safety violations to analyze them using our AI models.
-              {!hasWorkingModels && !isLoading && <span className="text-yellow-500 ml-1">Using fallback detection.</span>}
+              {!hasWorkingModels && !isLoading && (
+                <span className="text-yellow-500 ml-1">Using fallback detection.</span>
+              )}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -176,11 +181,23 @@ const Violations = () => {
               </TabsContent>
               
               <TabsContent value="results" ref={resultsRef}>
-                {analysisResults && (
+                {analysisResults ? (
                   <ViolationResults 
                     results={formattedResults} 
                     onSave={handleReset} 
                   />
+                ) : (
+                  <div className="flex flex-col items-center justify-center p-8">
+                    <AlertCircle className="h-8 w-8 text-yellow-500 mb-2" />
+                    <p className="text-muted-foreground">No analysis results available. Please upload an image first.</p>
+                    <Button 
+                      onClick={() => setActiveTab("upload")} 
+                      variant="outline" 
+                      className="mt-4"
+                    >
+                      Go to Upload
+                    </Button>
+                  </div>
                 )}
               </TabsContent>
             </Tabs>

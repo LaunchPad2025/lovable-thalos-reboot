@@ -1,10 +1,11 @@
 
+import React, { useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle, Download } from 'lucide-react';
+import { AlertTriangle, Download, CheckCircle } from 'lucide-react';
 import { TestResult } from '@/hooks/model-testing/types';
-import { useRef, useEffect } from 'react';
+import { toast } from 'sonner';
 
 interface ModelTestResultsProps {
   testResult: TestResult | null;
@@ -16,24 +17,26 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   useEffect(() => {
-    if (canvasRef.current && imagePreview && testResult?.detections && testResult.detections.length > 0) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
+    if (!canvasRef.current || !imagePreview || !testResult) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    if (!ctx) return;
+    
+    const img = new Image();
+    img.src = imagePreview;
+    
+    img.onload = () => {
+      // Set canvas dimensions to match the image
+      canvas.width = img.width;
+      canvas.height = img.height;
       
-      if (!ctx) return;
+      // Draw the image
+      ctx.drawImage(img, 0, 0, img.width, img.height);
       
-      const img = new Image();
-      img.src = imagePreview;
-      
-      img.onload = () => {
-        // Set canvas dimensions to match the image
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        // Draw the image
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-        
-        // Draw bounding boxes for detections
+      // Draw bounding boxes for detections
+      if (testResult.detections && testResult.detections.length > 0) {
         testResult.detections.forEach((detection) => {
           if (detection.bbox) {
             const [x, y, width, height] = detection.bbox;
@@ -53,16 +56,22 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
             ctx.fillText(labelText, x + 5, y - 5);
           }
         });
-      };
-    }
+      }
+    };
   }, [canvasRef, imagePreview, testResult]);
   
   const downloadAnnotatedImage = () => {
-    if (canvasRef.current) {
+    if (!canvasRef.current) return;
+    
+    try {
       const link = document.createElement('a');
       link.download = 'violation-detection.png';
       link.href = canvasRef.current.toDataURL();
       link.click();
+      toast.success('Image downloaded successfully');
+    } catch (error) {
+      console.error('Error downloading image:', error);
+      toast.error('Failed to download image');
     }
   };
   
@@ -77,6 +86,8 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
+
+  const hasDetections = testResult.detections && testResult.detections.length > 0;
 
   return (
     <Card className="mt-6 p-4 bg-gray-800 border-gray-700 text-white">
@@ -95,10 +106,12 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
           </Badge>
         </div>
         
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-gray-300">Description:</p>
-          <p className="text-sm text-gray-400">{testResult.description}</p>
-        </div>
+        {testResult.description && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-300">Description:</p>
+            <p className="text-sm text-gray-400">{testResult.description}</p>
+          </div>
+        )}
         
         {testResult.location && (
           <div className="space-y-2">
@@ -107,7 +120,30 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
           </div>
         )}
         
-        {testResult.regulationIds && testResult.regulationIds.length > 0 && (
+        {hasDetections ? (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-300">Detected Violations:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {testResult.detections.map((detection, index) => (
+                <li key={index} className="text-sm">
+                  <span className="text-gray-300">{detection.label?.replace(/_/g, ' ')}</span>
+                  {detection.confidence && (
+                    <span className="text-gray-500 ml-2">
+                      (Confidence: {(detection.confidence * 100).toFixed(1)}%)
+                    </span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-300">Detected Violations:</p>
+            <p className="text-sm text-gray-500">No specific violations detected</p>
+          </div>
+        )}
+        
+        {testResult.regulationIds && testResult.regulationIds.length > 0 ? (
           <div className="space-y-2">
             <p className="text-sm font-medium text-gray-300">Related Regulations:</p>
             <ul className="list-disc pl-5 space-y-1">
@@ -123,9 +159,14 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
               ))}
             </ul>
           </div>
+        ) : (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-300">Related Regulations:</p>
+            <p className="text-sm text-gray-500">No specific regulations matched</p>
+          </div>
         )}
         
-        {imagePreview && testResult.detections && testResult.detections.length > 0 && (
+        {imagePreview && (
           <div className="space-y-2">
             <p className="text-sm font-medium text-gray-300">Annotated Image:</p>
             <div className="relative rounded-md border border-gray-700 overflow-hidden">

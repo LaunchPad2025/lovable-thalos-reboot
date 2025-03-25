@@ -1,158 +1,221 @@
 
+import { useState } from 'react';
 import { TestResult } from './types';
 
 export function useMockAnalysis() {
-  const generateMockAnalysis = async (imagePreview: string | null, industry: string): Promise<TestResult> => {
-    // Simulate a processing delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    const severity: 'low' | 'medium' | 'high' | 'critical' = 
-      ['low', 'medium', 'high', 'critical'][Math.floor(Math.random() * 4)] as any;
-    
-    // Generate mock detection data based on industry
-    const detections = generateMockDetections(industry);
-    
-    // Generate description based on detections
-    const description = generateMockDescription(detections, industry);
-    
-    // Generate mock regulation IDs based on industry and severity
-    const regulationIds = generateMockRegulationIds(industry, severity);
-    
-    // Generate relevance scores
-    const relevanceScores = regulationIds.map(() => Math.random() * 0.3 + 0.65);
-    
-    // Set location based on industry
-    let location = 'Work Area';
-    if (industry === 'Construction') {
-      location = 'Building A Construction Site';
-    } else if (industry === 'Manufacturing') {
-      location = 'Factory Floor, Section B';
-    } else if (industry === 'Warehouse') {
-      location = 'Warehouse Storage Area';
-    } else if (industry === 'Oil & Gas') {
-      location = 'Processing Facility, Zone 3';
-    } else if (industry === 'Healthcare') {
-      location = 'Hospital Wing B';
-    }
-    
-    const mockResult: TestResult = {
-      confidence: Math.random() * 0.3 + 0.7,
-      severity: severity,
-      status: 'open',
-      description: description,
-      detections: detections,
-      imagePreview: imagePreview,
-      industry: industry,
-      id: `v-${Date.now().toString(36)}`,
-      location: location,
-      regulationIds: regulationIds,
-      relevanceScores: relevanceScores
-    };
-    
-    return mockResult;
-  };
+  const [isGenerating, setIsGenerating] = useState(false);
   
-  // Helper function to generate mock detections
-  const generateMockDetections = (industry: string) => {
-    const detectionCount = Math.floor(Math.random() * 3) + 1;
-    const detections = [];
+  const generateMockAnalysis = async (imageUrl: string | null, industry: string): Promise<TestResult> => {
+    setIsGenerating(true);
+    console.log("Generating mock analysis data for fallback");
     
-    const possibleLabels: Record<string, string[]> = {
-      'Construction': ['missing_hardhat', 'missing_safety_vest', 'unsafe_ladder_position', 'tripping_hazard', 'unguarded_edge'],
-      'Manufacturing': ['missing_eye_protection', 'machine_guard_removed', 'improper_lifting', 'chemical_spill', 'electrical_hazard'],
-      'Warehouse': ['improper_stacking', 'blocked_exit', 'forklift_unsafe_operation', 'missing_ppe', 'fall_hazard'],
-      'Oil & Gas': ['missing_gas_detector', 'hot_work_violation', 'confined_space_entry', 'improper_lockout', 'missing_respirator'],
-      'Healthcare': ['sharps_container_full', 'wet_floor_hazard', 'missing_gloves', 'biohazard_waste_improper', 'ergonomic_violation'],
-      'Transportation': ['unsecured_load', 'missing_seatbelt', 'distracted_driving', 'tire_pressure_low', 'fatigue_signs']
-    };
-    
-    const labels = possibleLabels[industry] || possibleLabels['Construction'];
-    
-    for (let i = 0; i < detectionCount; i++) {
-      const randomIndex = Math.floor(Math.random() * labels.length);
+    try {
+      // Simple delay to simulate processing
+      await new Promise(resolve => setTimeout(resolve, 1000));
       
-      detections.push({
-        label: labels[randomIndex],
-        confidence: Math.random() * 0.3 + 0.7,
-        bbox: [
-          Math.random() * 100, // x
-          Math.random() * 100, // y
-          Math.random() * 200 + 50, // width
-          Math.random() * 200 + 50 // height
-        ] as [number, number, number, number],
-        text: `${labels[randomIndex].replace(/_/g, ' ')} detected`,
-        remediationSteps: `1. Identify the affected area\n2. Address the ${labels[randomIndex].replace(/_/g, ' ')}\n3. Document corrective actions`
-      });
+      // Create random mock detections based on industry
+      const detections = generateMockDetections(industry);
+      
+      // Calculate severity
+      const severity = determineSeverity(detections);
+      
+      // Generate random location based on industry
+      const location = generateLocation(industry);
+      
+      // Get relevant regulations
+      const { regulationIds, relevanceScores } = getRelevantRegulations(industry, detections);
+      
+      // Generate description
+      const description = generateDescription(detections, industry);
+      
+      const result: TestResult = {
+        id: `mock-${Date.now()}`,
+        confidence: detections.length > 0 
+          ? detections.reduce((sum, d) => sum + (d.confidence || 0), 0) / detections.length 
+          : 0.75,
+        severity: severity,
+        status: 'open',
+        imagePreview: imageUrl,
+        industry: industry,
+        location: location,
+        description: description,
+        detections: detections,
+        regulationIds: regulationIds,
+        relevanceScores: relevanceScores
+      };
+      
+      console.log("Generated mock result:", result);
+      return result;
+    } catch (error) {
+      console.error("Error generating mock analysis:", error);
+      throw error;
+    } finally {
+      setIsGenerating(false);
     }
-    
-    return detections;
   };
   
-  // Helper function to generate a description
-  const generateMockDescription = (detections: any[], industry: string) => {
-    if (detections.length === 0) {
-      return `No safety violations detected in this ${industry} environment.`;
-    }
-    
-    if (detections.length === 1) {
-      return `Detected ${detections[0].label.replace(/_/g, ' ')} in ${industry} environment with ${(detections[0].confidence * 100).toFixed(0)}% confidence.`;
-    }
-    
-    return `Detected ${detections.length} safety violations in ${industry} environment, including ${detections.map(d => d.label.replace(/_/g, ' ')).join(', ')}.`;
+  return { isGenerating, generateMockAnalysis };
+}
+
+// Helper functions
+
+function generateMockDetections(industry: string) {
+  const detectionCount = Math.floor(Math.random() * 3) + 1;
+  const detections = [];
+  
+  // Define possible violations by industry
+  const possibleLabels: Record<string, string[]> = {
+    'Construction': ['missing_hardhat', 'missing_safety_vest', 'unsafe_ladder_position', 'tripping_hazard', 'unguarded_edge'],
+    'Manufacturing': ['missing_eye_protection', 'machine_guard_removed', 'improper_lifting', 'chemical_spill', 'electrical_hazard'],
+    'Warehouse': ['improper_stacking', 'blocked_exit', 'forklift_unsafe_operation', 'missing_ppe', 'fall_hazard'],
+    'Oil & Gas': ['missing_gas_detector', 'hot_work_violation', 'confined_space_entry', 'improper_lockout', 'missing_respirator'],
+    'Healthcare': ['sharps_container_full', 'wet_floor_hazard', 'missing_gloves', 'biohazard_waste_improper', 'ergonomic_violation'],
+    'Transportation': ['unsecured_load', 'missing_seatbelt', 'distracted_driving', 'tire_pressure_low', 'fatigue_signs']
   };
   
-  // Helper function to generate regulation IDs
-  const generateMockRegulationIds = (industry: string, severity: 'low' | 'medium' | 'high' | 'critical') => {
-    const regulationCount = Math.floor(Math.random() * 2) + 1;
-    const regulations = [];
+  const labels = possibleLabels[industry] || possibleLabels['Construction'];
+  
+  for (let i = 0; i < detectionCount; i++) {
+    const randomIndex = Math.floor(Math.random() * labels.length);
     
-    const constructionRegs = ['29 CFR 1926.100', '29 CFR 1926.200', '29 CFR 1926.501', '29 CFR 1926.451'];
-    const manufacturingRegs = ['29 CFR 1910.132', '29 CFR 1910.212', '29 CFR 1910.147', '29 CFR 1910.1200'];
-    const warehouseRegs = ['29 CFR 1910.176', '29 CFR 1910.178', '29 CFR 1910.37', '29 CFR 1910.159'];
-    const oilGasRegs = ['29 CFR 1910.119', '29 CFR 1910.146', '30 CFR 250.107', '40 CFR 112'];
-    const healthcareRegs = ['29 CFR 1910.1030', '29 CFR 1910.1096', '42 CFR 482', 'NFPA 99'];
-    
-    let regs: string[] = [];
-    
-    switch (industry) {
-      case 'Construction':
-        regs = constructionRegs;
-        break;
-      case 'Manufacturing':
-        regs = manufacturingRegs;
-        break;
-      case 'Warehouse':
-        regs = warehouseRegs;
-        break;
-      case 'Oil & Gas':
-        regs = oilGasRegs;
-        break;
-      case 'Healthcare':
-        regs = healthcareRegs;
-        break;
-      default:
-        regs = constructionRegs;
-    }
-    
-    for (let i = 0; i < regulationCount; i++) {
-      regulations.push(regs[Math.floor(Math.random() * regs.length)]);
-    }
-    
-    // Add a critical regulation for higher severity violations
-    if (severity === 'high' || severity === 'critical') {
-      if (industry === 'Construction') {
-        regulations.push('29 CFR 1926.501(b)(1)'); // Falls
-      } else if (industry === 'Manufacturing') {
-        regulations.push('29 CFR 1910.147(c)(1)'); // Lockout/Tagout
-      } else {
-        regulations.push('29 CFR 1910.37(a)(3)'); // Exit Routes
-      }
-    }
-    
-    return [...new Set(regulations)]; // Remove duplicates
+    detections.push({
+      label: labels[randomIndex],
+      confidence: Math.random() * 0.3 + 0.7, // Random confidence between 0.7 and 1.0
+      bbox: [
+        Math.random() * 100, // x
+        Math.random() * 100, // y
+        Math.random() * 200 + 50, // width
+        Math.random() * 200 + 50 // height
+      ],
+      text: `${labels[randomIndex].replace(/_/g, ' ')} detected`
+    });
+  }
+  
+  return detections;
+}
+
+function determineSeverity(detections: any[]): 'low' | 'medium' | 'high' | 'critical' {
+  if (!detections || detections.length === 0) return 'low';
+  
+  const criticalLabels = ['fall', 'electrical', 'fire', 'confined_space', 'chemical'];
+  const highLabels = ['scaffold', 'ladder', 'guard', 'ppe', 'lockout'];
+  
+  // Check for critical violations
+  if (detections.some(d => 
+    criticalLabels.some(label => d.label?.toLowerCase().includes(label)) && 
+    d.confidence > 0.7
+  )) {
+    return 'critical';
+  }
+  
+  // Check for high severity violations
+  if (detections.some(d => 
+    highLabels.some(label => d.label?.toLowerCase().includes(label)) && 
+    d.confidence > 0.7
+  )) {
+    return 'high';
+  }
+  
+  // Check for medium severity based on confidence
+  if (detections.some(d => d.confidence > 0.8)) {
+    return 'medium';
+  }
+  
+  // Default to low severity
+  return 'low';
+}
+
+function generateLocation(industry: string): string {
+  const locationsByIndustry: Record<string, string[]> = {
+    'Construction': ['Building A Construction Site', 'North Tower Foundation', 'South Wing Scaffold Area', 'Main Excavation Zone'],
+    'Manufacturing': ['Assembly Line Section B', 'Processing Plant Floor 3', 'Packaging Department', 'Chemical Storage Area'],
+    'Warehouse': ['Aisle 12 Storage Racks', 'Loading Dock B', 'Pallet Stacking Area', 'High-Bay Storage Zone'],
+    'Oil & Gas': ['Processing Platform Alpha', 'Pump Station 3', 'Offshore Rig Section 2', 'Pipeline Junction 12'],
+    'Healthcare': ['Emergency Department', 'Laboratory Area 3', 'Patient Ward B', 'Sterilization Room'],
+    'Transportation': ['Loading Terminal 5', 'Fleet Garage Bay 2', 'Shipping Dock C', 'Vehicle Maintenance Area']
   };
   
-  return {
-    generateMockAnalysis
+  const locations = locationsByIndustry[industry] || locationsByIndustry['Construction'];
+  return locations[Math.floor(Math.random() * locations.length)];
+}
+
+function getRelevantRegulations(industry: string, detections: any[]) {
+  // Map of industry-specific regulations
+  const regulationsByIndustry: Record<string, string[]> = {
+    'Construction': [
+      '29 CFR 1926.100', // Head protection
+      '29 CFR 1926.102', // Eye and face protection
+      '29 CFR 1926.501', // Fall protection
+      '29 CFR 1926.451', // Scaffolding
+      '29 CFR 1926.1053' // Ladders
+    ],
+    'Manufacturing': [
+      '29 CFR 1910.132', // PPE General requirements
+      '29 CFR 1910.212', // Machine guarding
+      '29 CFR 1910.147', // Lockout/Tagout
+      '29 CFR 1910.1200', // Hazard Communication
+      '29 CFR 1910.219' // Mechanical power-transmission
+    ],
+    'Warehouse': [
+      '29 CFR 1910.176', // Material handling
+      '29 CFR 1910.178', // Powered industrial trucks
+      '29 CFR 1910.37', // Exit routes
+      '29 CFR 1910.36', // Design and construction
+      '29 CFR 1910.159' // Fire detection systems
+    ],
+    'Oil & Gas': [
+      '29 CFR 1910.119', // Process safety management
+      '29 CFR 1910.146', // Confined spaces
+      '29 CFR 1910.252', // Hot work
+      '29 CFR 1910.1200', // Hazard Communication
+      '29 CFR 1910.134' // Respiratory protection
+    ],
+    'Healthcare': [
+      '29 CFR 1910.1030', // Bloodborne pathogens
+      '29 CFR 1910.134', // Respiratory protection
+      '29 CFR 1910.1047', // Ethylene oxide
+      '29 CFR 1910.1048', // Formaldehyde
+      '29 CFR 1910.1096' // Ionizing radiation
+    ],
+    'Transportation': [
+      '49 CFR 391', // Driver qualifications
+      '49 CFR 392', // Driving of vehicles
+      '49 CFR 393', // Parts and accessories
+      '49 CFR 396', // Inspection, repair, and maintenance
+      '49 CFR 177' // Hazardous materials
+    ]
   };
+  
+  // Get regulations for the specified industry or default to Construction
+  const regs = regulationsByIndustry[industry] || regulationsByIndustry['Construction'];
+  
+  // Select 1-3 random regulations
+  const count = Math.min(Math.floor(Math.random() * 3) + 1, regs.length);
+  const regulationIds = [];
+  const relevanceScores = [];
+  
+  const availableRegs = [...regs];
+  
+  for (let i = 0; i < count; i++) {
+    const index = Math.floor(Math.random() * availableRegs.length);
+    regulationIds.push(availableRegs[index]);
+    relevanceScores.push(Math.random() * 0.3 + 0.7); // Random relevance between 0.7 and 1.0
+    
+    // Remove the selected reg to avoid duplicates
+    availableRegs.splice(index, 1);
+    if (availableRegs.length === 0) break;
+  }
+  
+  return { regulationIds, relevanceScores };
+}
+
+function generateDescription(detections: any[], industry: string): string {
+  if (!detections || detections.length === 0) 
+    return `No safety violations detected in this ${industry} environment.`;
+  
+  if (detections.length === 1) {
+    return `Detected ${detections[0].label.replace(/_/g, ' ')} in ${industry} environment with ${(detections[0].confidence * 100).toFixed(0)}% confidence.`;
+  }
+  
+  return `Detected ${detections.length} safety violations in ${industry} environment, including ${detections.map(d => d.label?.replace(/_/g, ' ')).slice(0, 2).join(', ')}${detections.length > 2 ? ', and more' : ''}.`;
 }

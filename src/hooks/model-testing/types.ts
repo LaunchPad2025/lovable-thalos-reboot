@@ -1,33 +1,37 @@
 
 import { z } from 'zod';
 
-export interface Detection {
-  label?: string;
-  confidence?: number;
-  bbox?: [number, number, number, number];
-  text?: string;
-  remediationSteps?: string;
-}
-
-export interface TestResult {
-  regulationIds: string[];
-  relevanceScores: number[];
-  confidence: number;
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  status: 'pending' | 'open' | 'in-progress' | 'resolved';
-  description: string;
-  detections?: Detection[];
-  imagePreview?: string | null;
-  industry?: string;
-  id?: string;
-  location?: string;
-}
-
 export const testModelSchema = z.object({
-  model_id: z.string().min(1, 'Model selection is required'),
+  model_id: z.string(),
   violation_text: z.string().optional(),
-  industry: z.string().min(1, 'Industry is required'),
+  industry: z.string(),
 });
 
 export type TestModelFormValues = z.infer<typeof testModelSchema>;
 
+export interface Detection {
+  label: string;
+  confidence?: number;
+  bbox?: [number, number, number, number];
+  text?: string;
+  remediationSteps?: string;
+  regulations?: {
+    id: string;
+    title: string;
+    relevance: number;
+  }[];
+}
+
+export interface TestResult {
+  id: string;
+  confidence: number;
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  status?: 'pending' | 'open' | 'in-progress' | 'resolved';
+  imagePreview?: string | null;
+  industry?: string;
+  location?: string;
+  description?: string;
+  detections?: Detection[];
+  regulationIds?: string[];
+  relevanceScores?: number[];
+}

@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Clipboard, ClipboardCheck, AlertTriangle, ArrowRight } from 'lucide-react';
+import { Clipboard, ClipboardCheck, AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
 import { Detection } from '@/hooks/model-testing/types';
 
 interface ViolationsListProps {
@@ -41,10 +41,19 @@ const ViolationsList = ({
     <Card className="bg-[#0d1117] border-gray-800">
       <CardHeader className="bg-[#0f1419] border-b border-gray-800 p-4">
         <CardTitle className="text-white flex items-center">
-          <AlertTriangle className="mr-2 h-5 w-5 text-yellow-500" />
-          {violationsCount === 1 
-            ? '1 Violation Detected' 
-            : `${violationsCount} Violations Detected`}
+          {violationsCount > 0 ? (
+            <>
+              <AlertTriangle className="mr-2 h-5 w-5 text-yellow-500" />
+              {violationsCount === 1 
+                ? '1 Violation Detected' 
+                : `${violationsCount} Violations Detected`}
+            </>
+          ) : (
+            <>
+              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
+              No Violations Detected
+            </>
+          )}
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
@@ -115,6 +124,7 @@ const ViolationsList = ({
           <Button 
             onClick={onCreateTask} 
             className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            disabled={violationsCount === 0}
           >
             <Clipboard className="mr-2 h-4 w-4" />
             Create Remediation Task
