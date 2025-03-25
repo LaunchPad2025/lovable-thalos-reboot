@@ -1,11 +1,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { useModelTest } from '@/hooks/model-testing';
-import { useMLModels } from '@/hooks/ml-models';
 import { toast } from 'sonner';
 import ConnectionStatus from './upload/ConnectionStatus';
 import UploadFormLayout from './upload/UploadFormLayout';
+import { useViolationAnalysis } from '@/hooks/useViolationAnalysis';
+import { useMLModelsByIndustry } from '@/hooks/ml-models/useModelQueries';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;
@@ -20,20 +20,20 @@ const ViolationUpload = ({
   hideModelSelection = false,
   modelInitError = null
 }: ViolationUploadProps) => {
-  const { data: models = [], isLoading: modelsLoading, error: modelsError } = useMLModels();
-  const [selectedModelId, setSelectedModelId] = useState<string>('');
   const [industry, setIndustry] = useState<string>(userIndustry);
   const [violationText, setViolationText] = useState<string>('');
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'error'>('connecting');
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  
+  const { data: models = [], isLoading: modelsLoading, error: modelsError } = useMLModelsByIndustry(industry);
+  const [selectedModelId, setSelectedModelId] = useState<string>('');
   
   const { 
-    isSubmitting, 
-    imagePreview, 
-    handleImageChange, 
-    submitModelTest,
-    resetTest 
-  } = useModelTest();
-  
+    isAnalyzing, 
+    analyzeImage 
+  } = useViolationAnalysis(industry);
+
   // Initialize and select the best model for the user's industry
   useEffect(() => {
     if (models?.length > 0 && !selectedModelId) {
@@ -53,13 +53,6 @@ const ViolationUpload = ({
     if (modelsError || modelInitError) {
       setConnectionStatus('error');
       console.error("Model connection error:", modelsError || modelInitError);
-      
-      const timer = setTimeout(() => {
-        console.log("Attempting to reconnect to AI models...");
-        window.location.reload();
-      }, 5000);
-      
-      return () => clearTimeout(timer);
     } else if (!modelsLoading && models.length > 0) {
       setConnectionStatus('connected');
     } else {
@@ -67,53 +60,44 @@ const ViolationUpload = ({
     }
   }, [models, modelsLoading, modelsError, modelInitError]);
 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const resetTest = () => {
+    setImagePreview(null);
+    setImage(null);
+    setViolationText('');
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const selectedModel = models.find(m => m.id === selectedModelId);
-    
-    if (!imagePreview && !violationText) {
+    if (!image && !violationText) {
       toast.error('Please upload an image or provide a text description to analyze');
       return;
     }
     
     try {
-      console.log("Starting analysis with model:", selectedModel?.name);
-      
-      if (connectionStatus === 'error' || !selectedModelId) {
-        const fallbackModel = models.find(m => m.name.toLowerCase().includes('yolo'));
-        if (fallbackModel) {
-          toast.info("Using YOLOv8 for reliable detection", {
-            description: "Switched to our most reliable model for analysis."
-          });
-          setSelectedModelId(fallbackModel.id);
-        } else {
-          toast.info("Using fallback detection system", {
-            description: "AI models unavailable. Using basic detection system."
-          });
+      if (image) {
+        const results = await analyzeImage(image);
+        if (results) {
+          console.log("Analysis complete:", results);
+          onUploadComplete(results);
         }
-      }
-      
-      const values = {
-        model_id: selectedModelId || 'default',
-        violation_text: violationText,
-        industry: industry,
-      };
-      
-      const results = await submitModelTest(values, selectedModel);
-      if (results) {
-        console.log("Analysis complete:", results);
-        onUploadComplete(results);
-        
-        if (results.detections && results.detections.length > 0) {
-          toast.success(`Detected ${results.detections.length} safety violation(s)`, {
-            description: "Click 'Create Task' to generate remediation steps."
-          });
-        } else {
-          toast.info("No immediate violations detected", {
-            description: "The area appears to comply with safety standards."
-          });
-        }
+      } else if (violationText) {
+        // Implement text-based analysis if needed
+        toast.info("Text analysis not yet implemented", {
+          description: "Please upload an image for analysis."
+        });
       }
     } catch (error) {
       console.error('Error analyzing image:', error);
@@ -152,7 +136,7 @@ const ViolationUpload = ({
             violationText={violationText}
             setViolationText={(e) => setViolationText(e.target.value)}
             handleImageChange={handleImageChange}
-            isSubmitting={isSubmitting}
+            isSubmitting={isAnalyzing}
             resetTest={resetTest}
             handleSubmit={handleSubmit}
             hideModelSelection={hideModelSelection}
