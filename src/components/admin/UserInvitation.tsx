@@ -74,7 +74,7 @@ const UserInvitation = () => {
         },
         body: JSON.stringify({
           email,
-          role,
+          role: mapRoleToPermissionLevel(role),
           department: department || undefined,
           organization_id: organizationId || undefined,
         }),
@@ -94,6 +94,20 @@ const UserInvitation = () => {
       toast.error(error.message || "Failed to send invitation");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // Map front-end friendly role names to system permission levels
+  const mapRoleToPermissionLevel = (selectedRole: string): string => {
+    switch (selectedRole) {
+      case 'admin':
+        return 'admin';
+      case 'safety_manager':
+        return 'safety_officer';
+      case 'contributor':
+        return 'worker';
+      default:
+        return selectedRole;
     }
   };
 
@@ -129,10 +143,15 @@ const UserInvitation = () => {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="admin">Admin</SelectItem>
-                <SelectItem value="safety_officer">Safety Officer</SelectItem>
-                <SelectItem value="worker">Worker</SelectItem>
+                <SelectItem value="safety_manager">Safety Manager</SelectItem>
+                <SelectItem value="contributor">Contributor</SelectItem>
               </SelectContent>
             </Select>
+            <p className="text-xs text-muted-foreground mt-1">
+              {role === "admin" ? "Full access to all platform features, user management, and billing." :
+               role === "safety_manager" ? "Can manage safety tasks, view violations, and generate reports." :
+               "Can report violations, complete assigned tasks, and view basic reports."}
+            </p>
           </div>
           
           {organizations.length > 0 && (

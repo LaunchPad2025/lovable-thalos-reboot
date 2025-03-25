@@ -59,6 +59,34 @@ const RecentInvitations = () => {
     }
   };
 
+  // Function to get a more user-friendly role name
+  const formatRole = (role: string): string => {
+    switch (role) {
+      case 'admin':
+        return 'Admin';
+      case 'safety_officer':
+        return 'Safety Manager';
+      case 'worker':
+        return 'Contributor';
+      default:
+        return role.charAt(0).toUpperCase() + role.slice(1);
+    }
+  };
+
+  // Function to determine badge variant based on role
+  const getRoleBadgeVariant = (role: string): "destructive" | "default" | "outline" | "secondary" => {
+    switch (role) {
+      case 'admin':
+        return "destructive";
+      case 'safety_officer':
+        return "default";
+      case 'worker':
+        return "secondary";
+      default:
+        return "outline";
+    }
+  };
+
   return (
     <Card className="border-border bg-card h-full">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -90,8 +118,8 @@ const RecentInvitations = () => {
                   <div>
                     <p className="font-medium">{invitation.email}</p>
                     <div className="flex items-center space-x-2 mt-1">
-                      <Badge variant={invitation.role === 'admin' ? "destructive" : invitation.role === 'safety_officer' ? "default" : "outline"}>
-                        {invitation.role}
+                      <Badge variant={getRoleBadgeVariant(invitation.role)}>
+                        {formatRole(invitation.role)}
                       </Badge>
                       {invitation.department && (
                         <span className="text-xs text-muted-foreground">
