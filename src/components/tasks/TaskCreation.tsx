@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { Task } from '@/types/models';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
+import { useOrganization } from '@/hooks/useOrganization';
 
 interface TaskCreationProps {
   violationId?: string;
@@ -23,8 +24,8 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   const { toast: uiToast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
+  const { organization, isLoading: isLoadingOrg } = useOrganization();
 
-  // Auto-open modal when violationId changes
   useEffect(() => {
     if (violationId) {
       setIsModalOpen(true);
@@ -38,29 +39,14 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       toast.error("Please log in to create tasks");
       return;
     }
+
+    if (!organization?.organization_id) {
+      toast.error("You must be a member of an organization to create tasks");
+      return;
+    }
     
     setIsSubmitting(true);
     try {
-      // Create task with default organization if we can't verify membership
-      // This prevents blocking the entire app functionality
-      let organizationId = "00000000-0000-0000-0000-000000000000"; // Default fallback
-      
-      try {
-        // Try to get user's organization, but don't block if it fails
-        const { data: orgMember, error: orgError } = await supabase
-          .from('organization_members')
-          .select('organization_id, role')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
-        if (!orgError && orgMember) {
-          organizationId = orgMember.organization_id;
-        }
-      } catch (orgLookupError) {
-        console.warn("Could not verify organization membership:", orgLookupError);
-        // Continue with default organization
-      }
-
       const taskToInsert = {
         title: newTask.title,
         description: newTask.description,
@@ -69,7 +55,7 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         priority: newTask.priority,
         assignee_id: newTask.assignee_id,
         created_by: user.id,
-        organization_id: organizationId,
+        organization_id: organization.organization_id,
         worksite_id: newTask.worksite_id,
         updated_at: new Date().toISOString()
       };
@@ -86,7 +72,6 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       }
       
       if (data && data[0]) {
-        // If we have a violation ID, create the relationship
         if (violationId) {
           try {
             const { error: relationError } = await supabase
@@ -102,7 +87,6 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
             }
           } catch (relationError) {
             console.error("Exception linking task to violation:", relationError);
-            // Don't block if this fails
           }
         }
         
@@ -120,9 +104,17 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
     }
   };
 
+  if (isLoadingOrg) {
+    return null; // Or show a loading state
+  }
+
   return (
     <>
-      <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setIsModalOpen(true)}>
+      <Button 
+        className="bg-blue-600 hover:bg-blue-700" 
+        onClick={() => setIsModalOpen(true)}
+        disabled={!organization?.organization_id}
+      >
         <PlusCircle size={16} className="mr-2" />
         Create Task
       </Button>
