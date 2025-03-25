@@ -21,7 +21,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 // Persist theme settings in localStorage
-const getStoredValue = <T extends string>(key: string, defaultValue: T): T => {
+const getStoredValue = <T extends string | boolean>(key: string, defaultValue: T): T => {
   if (typeof window === 'undefined') return defaultValue;
   
   try {
