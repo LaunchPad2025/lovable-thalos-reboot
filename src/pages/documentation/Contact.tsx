@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
@@ -9,7 +9,6 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { 
   MapPin, 
-  Phone, 
   Mail, 
   Clock, 
   MessageSquare, 
@@ -24,8 +23,70 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useToast } from "@/components/ui/use-toast";
 
 const Contact = () => {
+  const { toast } = useToast();
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    reason: '',
+    message: ''
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const handleSelectChange = (value: string) => {
+    setFormData((prev) => ({ ...prev, reason: value }));
+  };
+
+  const handleSubmit = async (event: React.FormEvent) => {
+    event.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // In a real implementation, you would send this data to your backend
+      // For now, we'll simulate a successful form submission
+      console.log("Form submitted with data:", formData);
+      console.log("Will be sent to: contact@steeltoetech.io and annie.eser@steeltoetech.io");
+      
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      toast({
+        title: "Message sent successfully",
+        description: "Thank you for contacting us. We'll get back to you soon!",
+      });
+      
+      // Reset form
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        company: '',
+        reason: '',
+        message: ''
+      });
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      toast({
+        title: "Error sending message",
+        description: "There was a problem sending your message. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
   return (
     <PageContainer>
       <div className="max-w-6xl mx-auto">
@@ -43,7 +104,6 @@ const Contact = () => {
             contactInfo={
               <>
                 <ContactItem icon={<Mail className="h-5 w-5" />} text="contact@steeltoetech.io" />
-                <ContactItem icon={<Phone className="h-5 w-5" />} text="+1 (800) 555-1234" />
               </>
             }
             buttonText="Schedule a Demo"
@@ -89,37 +149,66 @@ const Contact = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <form className="space-y-6">
+                <form className="space-y-6" onSubmit={handleSubmit}>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="first-name">First name</Label>
-                      <Input id="first-name" placeholder="John" />
+                      <Label htmlFor="firstName">First name</Label>
+                      <Input 
+                        id="firstName" 
+                        placeholder="John"
+                        value={formData.firstName}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="last-name">Last name</Label>
-                      <Input id="last-name" placeholder="Doe" />
+                      <Label htmlFor="lastName">Last name</Label>
+                      <Input 
+                        id="lastName" 
+                        placeholder="Doe"
+                        value={formData.lastName}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" placeholder="john.doe@example.com" />
+                      <Input 
+                        id="email" 
+                        type="email" 
+                        placeholder="john.doe@example.com"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                      />
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone (optional)</Label>
-                      <Input id="phone" placeholder="+1 (555) 123-4567" />
+                      <Input 
+                        id="phone" 
+                        placeholder="+1 (555) 123-4567"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                      />
                     </div>
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="company">Company</Label>
-                    <Input id="company" placeholder="Acme Corporation" />
+                    <Input 
+                      id="company" 
+                      placeholder="Acme Corporation"
+                      value={formData.company}
+                      onChange={handleInputChange}
+                    />
                   </div>
                   
                   <div className="space-y-2">
                     <Label htmlFor="reason">Reason for contacting</Label>
-                    <Select>
+                    <Select value={formData.reason} onValueChange={handleSelectChange}>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select a reason" />
                       </SelectTrigger>
@@ -140,10 +229,15 @@ const Contact = () => {
                       id="message" 
                       placeholder="Please provide details about your inquiry..."
                       rows={5}
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required
                     />
                   </div>
                   
-                  <Button type="submit" className="w-full">Send Message</Button>
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? "Sending..." : "Send Message"}
+                  </Button>
                 </form>
               </CardContent>
             </Card>
@@ -163,9 +257,7 @@ const Contact = () => {
                   <div className="flex items-start">
                     <MapPin className="h-5 w-5 text-muted-foreground mr-3 mt-0.5" />
                     <address className="text-muted-foreground not-italic">
-                      100 Innovation Drive<br />
-                      Suite 500<br />
-                      Boston, MA 02110<br />
+                      Washington, DC<br />
                       United States
                     </address>
                   </div>
@@ -177,10 +269,6 @@ const Contact = () => {
                     <div className="flex items-center">
                       <Mail className="h-5 w-5 text-muted-foreground mr-3" />
                       <span className="text-muted-foreground">contact@steeltoetech.io</span>
-                    </div>
-                    <div className="flex items-center">
-                      <Phone className="h-5 w-5 text-muted-foreground mr-3" />
-                      <span className="text-muted-foreground">+1 (800) 555-9876</span>
                     </div>
                   </div>
                 </div>
@@ -237,7 +325,7 @@ const Contact = () => {
             
             <FaqCard 
               question="How do I request a product demo?"
-              answer="You can request a demo by clicking the 'Schedule a Demo' button in the Sales Inquiries section above, or by emailing sales@steeltoetech.com."
+              answer="You can request a demo by clicking the 'Schedule a Demo' button in the Sales Inquiries section above, or by emailing contact@steeltoetech.io."
             />
             
             <FaqCard 
@@ -253,7 +341,7 @@ const Contact = () => {
             <div className="h-full">
               {/* Replace with actual map implementation */}
               <div className="h-full flex items-center justify-center bg-muted">
-                <p className="text-muted-foreground">Map showing our Boston headquarters location</p>
+                <p className="text-muted-foreground">Map showing our Washington, DC location</p>
               </div>
             </div>
           </div>
