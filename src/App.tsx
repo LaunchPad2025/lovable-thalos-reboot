@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { AuthProvider, useAuth } from "@/context/AuthContext";
+import { AuthProvider, useAuth } from "@/context/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
@@ -68,10 +68,12 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Chat popup is now handled in individual components
+// Chat popup is handled in individual components
 import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
+  console.log("App component rendering");
+  
   return (
     <div className="app">
       <QueryClientProvider client={queryClient}>
@@ -152,8 +154,10 @@ function App() {
         </ThemeProvider>
       </QueryClientProvider>
       
-      {/* We'll add ChatPopup globally */}
-      <ChatPopup />
+      {/* Add debug info to help troubleshoot */}
+      <div className="fixed bottom-0 left-0 bg-black/70 text-white text-xs p-1 z-50 pointer-events-none">
+        Debug: App loaded
+      </div>
     </div>
   );
 }
