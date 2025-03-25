@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { VariantProps } from "class-variance-authority"
@@ -16,6 +15,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import { useMobile } from "@/hooks/useMobile"
 
 import { SidebarContext, useSidebar, SIDEBAR_WIDTH, SIDEBAR_WIDTH_MOBILE, SIDEBAR_WIDTH_ICON, SIDEBAR_KEYBOARD_SHORTCUT, SIDEBAR_COOKIE_NAME, SIDEBAR_COOKIE_MAX_AGE } from "./context"
 import { sidebarMenuButtonVariants } from "./utils"
@@ -674,7 +674,6 @@ const SidebarMenuSubButton = React.forwardRef<
 })
 SidebarMenuSubButton.displayName = "SidebarMenuSubButton"
 
-// Export all components
 export {
   Sidebar,
   SidebarContent,
