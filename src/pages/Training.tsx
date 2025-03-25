@@ -7,11 +7,14 @@ import UpcomingTraining from "@/components/training/UpcomingTraining";
 import RecentlyCompleted from "@/components/training/RecentlyCompleted";
 import TrainingTabs from "@/components/training/TrainingTabs";
 import ComingSoonOverlay from "@/components/admin/ComingSoonOverlay";
+import MockDataAlert from "@/components/ui/MockDataAlert";
 
 const Training = () => {
   return (
     <PageContainer>
       <div className="relative space-y-6">
+        <MockDataAlert featureName="Training & Certifications" />
+        
         {/* Main content that will be behind the overlay */}
         <div>
           <PageTitle title="Training & Certifications" />

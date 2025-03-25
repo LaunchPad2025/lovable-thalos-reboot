@@ -7,6 +7,7 @@ import PageContainer from '@/components/layout/PageContainer';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import NotificationItem from '@/components/notifications/NotificationItem';
 import { mockNotifications } from '@/components/notifications/mockData';
+import MockDataAlert from '@/components/ui/MockDataAlert';
 
 const Notifications = () => {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -36,6 +37,8 @@ const Notifications = () => {
 
   return (
     <PageContainer>
+      <MockDataAlert featureName="Notifications" />
+      
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center">
           <h1 className="text-xl font-semibold mr-2">Notifications</h1>

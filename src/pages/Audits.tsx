@@ -8,6 +8,7 @@ import AuditFindings from "@/components/audits/AuditFindings";
 import AuditTemplates from "@/components/audits/AuditTemplates";
 import AuditReports from "@/components/audits/AuditReports";
 import AuditStatusCard from "@/components/audits/AuditStatusCard";
+import MockDataAlert from "@/components/ui/MockDataAlert";
 
 const Audits = () => {
   const [activeTab, setActiveTab] = useState("schedule");
@@ -15,6 +16,8 @@ const Audits = () => {
   return (
     <PageContainer>
       <div className="space-y-6">
+        <MockDataAlert featureName="Audits" />
+
         <div>
           <PageTitle 
             title="Audits" 

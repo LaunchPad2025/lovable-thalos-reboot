@@ -10,6 +10,7 @@ import RiskAssessmentTemplates from '@/components/risk-assessment/RiskAssessment
 import NewAssessmentForm from '@/components/risk-assessment/NewAssessmentForm';
 import { Button } from '@/components/ui/button';
 import { PlusCircle } from 'lucide-react';
+import MockDataAlert from '@/components/ui/MockDataAlert';
 
 const RiskAssessment = () => {
   const [searchParams] = useSearchParams();
@@ -34,6 +35,8 @@ const RiskAssessment = () => {
   return (
     <PageContainer>
       <div className="flex flex-col h-full">
+        <MockDataAlert featureName="Risk Assessment" />
+        
         {id ? (
           <div className="space-y-6">
             <div className="flex items-center mb-6">
