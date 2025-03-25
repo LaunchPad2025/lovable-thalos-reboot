@@ -36,4 +36,4 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
   );
 };
 
-export { getNavItems } from "./navItems";
+// Remove the export of getNavItems that's causing the import error

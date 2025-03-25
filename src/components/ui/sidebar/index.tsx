@@ -17,19 +17,23 @@ export {
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,
-  SidebarMenuSubButton,
   SidebarMenuSubItem,
+  SidebarMenuSubButton,
   SidebarProvider,
   SidebarRail,
   SidebarSeparator,
-  SidebarTrigger,
-  SIDEBAR_WIDTH,
-  SIDEBAR_WIDTH_ICON,
-  SIDEBAR_WIDTH_MOBILE
+  SidebarTrigger
 } from './components';
 
 // Re-export context and hook
 export { useSidebar, SidebarContext } from './context';
+
+// Re-export constants
+export { 
+  SIDEBAR_WIDTH, 
+  SIDEBAR_WIDTH_ICON, 
+  SIDEBAR_WIDTH_MOBILE 
+} from './context';
 
 // Re-export types
 export type { SidebarContext as SidebarContextType } from './context';
