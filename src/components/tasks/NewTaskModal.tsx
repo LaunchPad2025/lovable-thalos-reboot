@@ -29,7 +29,6 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
       <DialogContent className="sm:max-w-[600px] bg-[#0f1419] border border-gray-800 text-white">
         <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <TaskModalContent
-            title="Create New Task"
             control={control}
             errors={errors}
             isLoading={isSubmitting}
@@ -37,6 +36,7 @@ const NewTaskModal = ({ isOpen, onClose, onSubmit, violationId }: NewTaskModalPr
             onViolationChange={setSelectedViolationId}
             violations={violations}
             submitButtonText="Create Task"
+            title="Create New Task"
           />
         </form>
       </DialogContent>
