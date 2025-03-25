@@ -24,7 +24,7 @@ interface ViolationsListProps {
   onCreateTask?: () => void;
 }
 
-const ViolationsList = ({ 
+export const ViolationsList = ({ 
   detections, 
   violationsCount, 
   imageUrl,

@@ -10,6 +10,7 @@ import { AlertCircle, ClipboardCheck, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { generateRemediationSteps } from '@/components/violations/utils/violationHelpers';
 import NoViolationsCard from '@/components/violations/NoViolationsCard';
+import { ViolationsList as ViolationsListComponent } from '@/components/violations/ViolationsList';
 
 interface ViolationResultsViewProps {
   testResults: TestResult;
@@ -122,7 +123,7 @@ const ViolationResultsView = ({
           </div>
           
           <div className="md:col-span-1">
-            <ViolationsList 
+            <ViolationsListComponent 
               detections={enhancedResults?.detections || []}
               violationsCount={violationsCount}
               imageUrl={enhancedResults?.imagePreview}
