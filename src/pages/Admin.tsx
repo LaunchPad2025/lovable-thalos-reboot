@@ -8,6 +8,7 @@ import RolePermissions from "@/components/admin/RolePermissions";
 import SystemSettings from "@/components/admin/SystemSettings";
 import MockDataAlert from "@/components/ui/MockDataAlert";
 import UserInvitation from "@/components/admin/UserInvitation";
+import RecentInvitations from "@/components/admin/RecentInvitations";
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState("users");
@@ -39,19 +40,7 @@ const Admin = () => {
           <TabsContent value="invitations" className="space-y-4">
             <div className="grid md:grid-cols-2 gap-6">
               <UserInvitation />
-              <div className="border border-border bg-card rounded-md p-6 space-y-4">
-                <h3 className="text-lg font-medium">Recent Invitations</h3>
-                <p className="text-muted-foreground text-sm">
-                  Recent invitations will be displayed here once implemented.
-                </p>
-                <div className="text-muted-foreground text-xs">
-                  <ul className="list-disc pl-4 space-y-1">
-                    <li>Invitations expire after 7 days</li>
-                    <li>Users must complete onboarding after registration</li>
-                    <li>You can resend invitations if they expire</li>
-                  </ul>
-                </div>
-              </div>
+              <RecentInvitations />
             </div>
           </TabsContent>
 

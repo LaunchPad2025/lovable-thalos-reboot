@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -7,13 +7,47 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/lib/supabase";
+
+interface Organization {
+  id: string;
+  name: string;
+}
 
 const UserInvitation = () => {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("worker");
   const [department, setDepartment] = useState("");
+  const [organizationId, setOrganizationId] = useState<string | null>(null);
+  const [organizations, setOrganizations] = useState<Organization[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const { user } = useAuth();
+  const { user, session } = useAuth();
+
+  useEffect(() => {
+    const fetchOrganizations = async () => {
+      if (!user) return;
+      
+      try {
+        const { data, error } = await supabase
+          .from("organizations")
+          .select("id, name");
+          
+        if (error) throw error;
+        
+        if (data) {
+          setOrganizations(data);
+          if (data.length > 0) {
+            setOrganizationId(data[0].id);
+          }
+        }
+      } catch (error: any) {
+        console.error("Error fetching organizations:", error);
+        toast.error("Failed to load organizations");
+      }
+    };
+
+    fetchOrganizations();
+  }, [user]);
 
   const handleSendInvitation = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,28 +57,38 @@ const UserInvitation = () => {
       return;
     }
     
+    if (!session) {
+      toast.error("You must be logged in to send invitations");
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
-      // This is a mock implementation
-      // In a production environment, we would:
-      // 1. Create a user_invitations table in Supabase
-      // 2. Set up an edge function to send invitation emails
-      
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      console.log("Invitation data:", {
-        email,
-        role,
-        department,
-        invited_by: user?.id,
-        status: 'pending'
+      // Call our Supabase Edge Function
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-invitation`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify({
+          email,
+          role,
+          department: department || undefined,
+          organization_id: organizationId || undefined,
+        }),
       });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || "Failed to send invitation");
+      }
       
       toast.success(`Invitation sent to ${email}`);
       setEmail("");
       setDepartment("");
+      
     } catch (error: any) {
       console.error("Error sending invitation:", error);
       toast.error(error.message || "Failed to send invitation");
@@ -90,6 +134,27 @@ const UserInvitation = () => {
               </SelectContent>
             </Select>
           </div>
+          
+          {organizations.length > 0 && (
+            <div className="space-y-2">
+              <Label htmlFor="organization">Organization</Label>
+              <Select 
+                value={organizationId || undefined} 
+                onValueChange={setOrganizationId}
+              >
+                <SelectTrigger id="organization">
+                  <SelectValue placeholder="Select an organization" />
+                </SelectTrigger>
+                <SelectContent>
+                  {organizations.map((org) => (
+                    <SelectItem key={org.id} value={org.id}>
+                      {org.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
           
           <div className="space-y-2">
             <Label htmlFor="department">Department</Label>

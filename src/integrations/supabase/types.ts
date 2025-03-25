@@ -550,6 +550,53 @@ export type Database = {
           },
         ]
       }
+      user_invitations: {
+        Row: {
+          created_at: string
+          department: string | null
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string
+          organization_id: string | null
+          role: string
+          status: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          department?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by: string
+          organization_id?: string | null
+          role: string
+          status?: string
+          token?: string
+        }
+        Update: {
+          created_at?: string
+          department?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string
+          organization_id?: string | null
+          role?: string
+          status?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_invitations_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       violation_regulations: {
         Row: {
           created_at: string | null
@@ -722,6 +769,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_user_role: {
+        Args: {
+          org_id: string
+        }
+        Returns: string
+      }
       is_organization_admin: {
         Args: {
           org_id: string
