@@ -1,11 +1,13 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import ChatInterface from './ChatInterface';
 import { Button } from '@/components/ui/button';
 import { MessageSquare, X } from 'lucide-react';
 
 const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
   
   const toggleChat = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -17,15 +19,13 @@ const ChatPopup = () => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      const chatPopup = document.getElementById('chat-popup-container');
-      const chatToggle = document.getElementById('chat-popup-toggle');
       
       if (
         isOpen && 
-        chatPopup && 
-        !chatPopup.contains(target) && 
-        chatToggle && 
-        !chatToggle.contains(target)
+        popupRef.current && 
+        !popupRef.current.contains(target) && 
+        buttonRef.current && 
+        !buttonRef.current.contains(target)
       ) {
         setIsOpen(false);
       }
@@ -38,15 +38,18 @@ const ChatPopup = () => {
   }, [isOpen]);
   
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
       {isOpen && (
-        <div id="chat-popup-container" className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden">
+        <div 
+          ref={popupRef}
+          className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden"
+        >
           <ChatInterface isPopup={true} onClose={() => setIsOpen(false)} />
         </div>
       )}
       
       <Button 
-        id="chat-popup-toggle"
+        ref={buttonRef}
         onClick={toggleChat} 
         className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-[#0EA5E9] hover:bg-[#0284C7]"
         aria-label={isOpen ? "Close chat" : "Open chat"}
