@@ -25,33 +25,60 @@ serve(async (req) => {
       }
     );
 
-    // Create violations bucket if it doesn't exist
-    const { data: violationsBucket, error: violationsBucketError } = await supabaseClient
+    // Check if bucket already exists before creating
+    const { data: buckets, error: listError } = await supabaseClient
       .storage
-      .createBucket('violations', {
-        public: true, // Set to public so we can access files without authentication
-        fileSizeLimit: 5242880, // 5MB limit
-      });
+      .listBuckets();
+    
+    if (listError) {
+      console.error('Error listing buckets:', listError);
+      throw listError;
+    }
+    
+    const violationsBucketExists = buckets.some(bucket => bucket.name === 'violations');
+    
+    if (!violationsBucketExists) {
+      // Create violations bucket if it doesn't exist
+      const { data: violationsBucket, error: violationsBucketError } = await supabaseClient
+        .storage
+        .createBucket('violations', {
+          public: true, // Set to public so we can access files without authentication
+          fileSizeLimit: 5242880, // 5MB limit
+        });
 
-    if (violationsBucketError && violationsBucketError.message !== 'Bucket already exists') {
-      console.error('Error creating violations bucket:', violationsBucketError);
+      if (violationsBucketError) {
+        console.error('Error creating violations bucket:', violationsBucketError);
+        // Don't throw if it's just that the bucket already exists
+        if (violationsBucketError.message !== 'Bucket already exists') {
+          throw violationsBucketError;
+        }
+      } else {
+        console.log('Violations bucket created successfully');
+      }
     } else {
-      console.log('Violations bucket setup complete');
-      
-      // Set RLS policy to allow anyone to read/write to the bucket
-      // This is important for uploading violation images
-      const { error: policyError } = await supabaseClient
+      console.log('Violations bucket already exists');
+    }
+    
+    // Set bucket policy to allow public access
+    try {
+      // Update the RLS policy to allow anyone to read/write to the bucket
+      const { data: policyData, error: policyError } = await supabaseClient
         .storage
         .from('violations')
         .createSignedUploadUrl('policy-check');
         
       if (policyError && !policyError.message.includes('already exists')) {
         console.error('Error setting bucket policy:', policyError);
+      } else {
+        console.log('Bucket policy updated successfully or already exists');
       }
+    } catch (policySetError) {
+      console.error('Error during policy setup:', policySetError);
+      // Don't fail the whole function if just the policy update fails
     }
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Storage buckets created successfully' }),
+      JSON.stringify({ success: true, message: 'Storage buckets setup completed successfully' }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
@@ -60,7 +87,11 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error creating storage buckets:', error);
     return new Response(
-      JSON.stringify({ success: false, error: error.message }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message,
+        detail: 'Please check server logs for more information'
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,

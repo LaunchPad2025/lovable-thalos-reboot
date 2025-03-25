@@ -3,8 +3,15 @@ import { AnalysisResult } from '@/hooks/useViolationAnalysis';
 
 // Helper function to generate mock violation data for testing and fallback
 export function useMockViolationData() {
-  const generateMockViolationData = (imageUrl: string, industry: string): AnalysisResult => {
+  const generateMockViolationData = (imageUrl: string, industry: string = 'construction'): AnalysisResult => {
     console.log("Generating mock analysis data for fallback");
+    
+    // Ensure we have a valid industry (fallback to construction if not provided or invalid)
+    const validIndustries = ['construction', 'manufacturing', 'warehouse', 'oil_and_gas', 'healthcare'];
+    const safeIndustry = validIndustries.includes(industry) ? industry : 'construction';
+    
+    // Ensure we have a valid image URL
+    const safeImageUrl = imageUrl || '/placeholder.svg';
     
     const possibleViolations = [
       { 
@@ -62,7 +69,7 @@ export function useMockViolationData() {
     
     // Generate a description based on the detected violations
     const violationTypes = detections.map(d => d.label.replace(/_/g, ' ')).join(', ');
-    const description = `Detected potential safety violations: ${violationTypes} in ${industry} environment.`;
+    const description = `Detected potential safety violations: ${violationTypes} in ${safeIndustry} environment.`;
     
     // Set severity based on the number and type of violations
     let severity: 'low' | 'medium' | 'high' | 'critical' = 'low';
@@ -77,12 +84,12 @@ export function useMockViolationData() {
     }
     
     const result: AnalysisResult = {
-      imagePreview: imageUrl,
+      imagePreview: safeImageUrl,
       detections,
       description,
       severity,
       confidence: 0.85,
-      industry,
+      industry: safeIndustry,
       id: `v-${Date.now().toString(36)}`,
       regulationIds: detections.flatMap(d => d.regulations?.map(r => r.id) || []),
       relevanceScores: detections.flatMap(d => d.regulations?.map(r => r.relevance) || [])
@@ -91,5 +98,28 @@ export function useMockViolationData() {
     return result;
   };
   
-  return { generateMockViolationData };
+  // Function to generate fallback data in case of error
+  const generateFallbackData = (): AnalysisResult => {
+    console.warn("Generating fallback violation data due to error");
+    return {
+      imagePreview: '/placeholder.svg',
+      detections: [{
+        label: "missing_hardhat",
+        confidence: 0.95,
+        bbox: [100, 100, 100, 100],
+        regulations: [
+          { id: "OSHA-1926.100", title: "OSHA 29 CFR 1926.100 - Head Protection", relevance: 0.95 }
+        ]
+      }],
+      description: "Fallback data: Detected potential safety violations",
+      severity: 'medium',
+      confidence: 0.85,
+      industry: 'construction',
+      id: `v-fallback-${Date.now().toString(36)}`,
+      regulationIds: ["OSHA-1926.100"],
+      relevanceScores: [0.95]
+    };
+  };
+  
+  return { generateMockViolationData, generateFallbackData };
 }

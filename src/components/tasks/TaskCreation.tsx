@@ -6,6 +6,7 @@ import NewTaskModal from '@/components/tasks/NewTaskModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { Task } from '@/types/models';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/AuthContext';
@@ -17,8 +18,9 @@ interface TaskCreationProps {
 
 export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProps) {
   const [isModalOpen, setIsModalOpen] = useState(autoOpen || !!violationId);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
 
@@ -30,9 +32,12 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   }, [violationId]);
 
   const handleCreateTask = async (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
     try {
       if (!user) {
-        toast({
+        uiToast({
           title: "Authentication required",
           description: "You must be logged in to create tasks.",
           variant: "destructive",
@@ -63,6 +68,18 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       
       if (error) {
         console.error("Error inserting task:", error);
+        
+        // Show a more user-friendly error message
+        if (error.code === '23503') {
+          toast.error("Failed to create task: One of the references (assignee, violation) is invalid.");
+        } else if (error.code === '23505') {
+          toast.error("A task with these details already exists.");
+        } else if (error.code.startsWith('42')) {
+          toast.error("Database configuration error. Please contact support.");
+        } else {
+          toast.error(`Error creating task: ${error.message}`);
+        }
+        
         throw error;
       }
       
@@ -81,15 +98,14 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
           
         if (violationError) {
           console.error("Error linking task to violation:", violationError);
+          // Show warning but don't fail the whole operation
+          toast.warning("Task created, but couldn't link it to the violation.");
         } else {
           console.log("Successfully linked task to violation");
         }
       }
       
-      toast({
-        title: "Task created",
-        description: "The task has been successfully created from the safety violation.",
-      });
+      toast.success("Task created successfully!");
       
       // Invalidate relevant queries
       await queryClient.invalidateQueries({ queryKey: ['tasks'] });
@@ -106,11 +122,9 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       }
     } catch (error: any) {
       console.error("Error creating task:", error);
-      toast({
-        title: "Failed to create task",
-        description: `There was an error creating the task: ${error.message}`,
-        variant: "destructive",
-      });
+      toast.error(`Failed to create task: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
