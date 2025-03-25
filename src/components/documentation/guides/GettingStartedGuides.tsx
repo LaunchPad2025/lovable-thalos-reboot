@@ -1,14 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { 
-  Shield, 
-  Users, 
-  AlertTriangle, 
-  CheckSquare, 
-  FileQuestion, 
-  BarChart2 
-} from 'lucide-react';
 import GuideCard from './GuideCard';
+import { Code, BookOpen, FileText, Video, PenTool } from 'lucide-react';
 
 interface GettingStartedGuidesProps {
   searchQuery?: string;
@@ -17,58 +10,44 @@ interface GettingStartedGuidesProps {
 const GettingStartedGuides = ({ searchQuery = '' }: GettingStartedGuidesProps) => {
   const guides = [
     {
-      icon: <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />,
       title: "Setting Up Your Thalos Account",
-      description: "Learn how to create and configure your Thalos account for your organization.",
-      category: "Basics",
-      difficulty: "Beginner",
-      timeToComplete: "10 min",
-      updatedDate: "July 2025"
+      description: "Learn how to create and configure your Thalos account for optimal use.",
+      icon: <FileText className="h-4 w-4" />,
+      level: "Beginner" as const,
+      time: "5 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <Users className="h-6 w-6 text-green-600 dark:text-green-400" />,
-      title: "Inviting Team Members",
-      description: "How to add users to your organization and manage their permissions.",
-      category: "Basics",
-      difficulty: "Beginner",
-      timeToComplete: "5 min",
-      updatedDate: "July 2025"
+      title: "Installation Guide for Thalos Platform",
+      description: "Step-by-step instructions for installing Thalos in your environment.",
+      icon: <Code className="h-4 w-4" />,
+      level: "Beginner" as const,
+      time: "10 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <AlertTriangle className="h-6 w-6 text-amber-600 dark:text-amber-400" />,
-      title: "Your First Violation Analysis",
-      description: "Step-by-step guide to analyzing your first safety violation with AI.",
-      category: "Basics",
-      difficulty: "Beginner",
-      timeToComplete: "15 min",
-      updatedDate: "June 2025"
+      title: "Understanding the Dashboard",
+      description: "A comprehensive tour of the Thalos dashboard and its features.",
+      icon: <BookOpen className="h-4 w-4" />,
+      level: "Beginner" as const,
+      time: "8 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <CheckSquare className="h-6 w-6 text-purple-600 dark:text-purple-400" />,
-      title: "Creating and Assigning Tasks",
-      description: "Learn how to create, assign, and track safety remediation tasks.",
-      category: "Basics",
-      difficulty: "Beginner",
-      timeToComplete: "10 min",
-      updatedDate: "June 2025"
+      title: "Quick Start Video Tutorial",
+      description: "Watch our video guide to get up and running with Thalos in minutes.",
+      icon: <Video className="h-4 w-4" />,
+      level: "Beginner" as const,
+      time: "12 min video",
+      author: "Thalos Team"
     },
     {
-      icon: <FileQuestion className="h-6 w-6 text-red-600 dark:text-red-400" />,
-      title: "Conducting a Risk Assessment",
-      description: "How to use templates to perform comprehensive risk assessments.",
-      category: "Basics",
-      difficulty: "Intermediate",
-      timeToComplete: "20 min",
-      updatedDate: "May 2025"
-    },
-    {
-      icon: <BarChart2 className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />,
-      title: "Accessing Reports and Analytics",
-      description: "Guide to viewing and interpreting safety analytics and reports.",
-      category: "Basics",
-      difficulty: "Beginner",
-      timeToComplete: "10 min",
-      updatedDate: "May 2025"
+      title: "Configuring Your First Safety Model",
+      description: "Learn how to set up and configure your first AI safety model in Thalos.",
+      icon: <PenTool className="h-4 w-4" />,
+      level: "Intermediate" as const,
+      time: "15 min read",
+      author: "Thalos Team"
     }
   ];
 
@@ -79,33 +58,28 @@ const GettingStartedGuides = ({ searchQuery = '' }: GettingStartedGuidesProps) =
     return guides.filter(guide => 
       guide.title.toLowerCase().includes(query) || 
       guide.description.toLowerCase().includes(query) ||
-      guide.category.toLowerCase().includes(query) ||
-      guide.difficulty.toLowerCase().includes(query)
+      guide.level.toLowerCase().includes(query) ||
+      guide.author.toLowerCase().includes(query)
     );
   }, [guides, searchQuery]);
 
   const hasResults = filteredGuides.length > 0;
 
-  if (!hasResults) {
-    return (
-      <div className="text-center py-8 bg-muted/30 rounded-lg">
-        <p className="text-muted-foreground">No getting started guides match your search criteria.</p>
-      </div>
-    );
+  if (!hasResults && searchQuery) {
+    return null; // Hide section if no results match the search
   }
-
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-4">
       {filteredGuides.map((guide, index) => (
         <GuideCard
           key={index}
-          icon={guide.icon}
           title={guide.title}
           description={guide.description}
-          category={guide.category}
-          difficulty={guide.difficulty}
-          timeToComplete={guide.timeToComplete}
-          updatedDate={guide.updatedDate}
+          icon={guide.icon}
+          level={guide.level}
+          time={guide.time}
+          author={guide.author}
         />
       ))}
     </div>

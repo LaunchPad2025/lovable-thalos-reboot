@@ -1,14 +1,7 @@
 
 import React, { useMemo } from 'react';
-import { 
-  AlertTriangle, 
-  CheckSquare, 
-  FileQuestion, 
-  BarChart2,
-  Database,
-  Smartphone
-} from 'lucide-react';
 import GuideCard from './GuideCard';
+import { Shield, BarChart, Bell, Cog, PenTool } from 'lucide-react';
 
 interface CoreFeaturesGuidesProps {
   searchQuery?: string;
@@ -17,60 +10,44 @@ interface CoreFeaturesGuidesProps {
 const CoreFeaturesGuides = ({ searchQuery = '' }: CoreFeaturesGuidesProps) => {
   const guides = [
     {
-      icon: <AlertTriangle className="h-6 w-6 text-blue-600 dark:text-blue-400" />,
-      title: "Advanced Violation Detection",
-      description: "Master the AI-powered violation detection system for various safety scenarios.",
-      category: "Features",
-      difficulty: "Intermediate",
-      timeToComplete: "25 min",
-      updatedDate: "July 2025"
+      title: "AI Safety Compliance Monitoring",
+      description: "Learn how to implement real-time safety compliance monitoring with Thalos.",
+      icon: <Shield className="h-4 w-4" />,
+      level: "Intermediate" as const,
+      time: "15 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <CheckSquare className="h-6 w-6 text-green-600 dark:text-green-400" />,
-      title: "Task Management Best Practices",
-      description: "Learn advanced task management techniques for safety remediation.",
-      category: "Features",
-      difficulty: "Intermediate",
-      timeToComplete: "20 min",
-      updatedDate: "June 2025"
+      title: "Advanced Analytics and Reporting",
+      description: "Discover how to generate insightful safety analytics and compliance reports.",
+      icon: <BarChart className="h-4 w-4" />,
+      level: "Advanced" as const,
+      time: "20 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <FileQuestion className="h-6 w-6 text-amber-600 dark:text-amber-400" />,
-      title: "Creating Custom Risk Assessment Templates",
-      description: "How to design risk assessment templates tailored to your industry.",
-      category: "Features",
-      difficulty: "Advanced",
-      timeToComplete: "30 min",
-      updatedDate: "June 2025"
+      title: "Setting Up Alert Systems",
+      description: "Configure automated alerts for safety violations and incidents.",
+      icon: <Bell className="h-4 w-4" />,
+      level: "Intermediate" as const,
+      time: "12 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <BarChart2 className="h-6 w-6 text-purple-600 dark:text-purple-400" />,
-      title: "Customizing Analytics Dashboards",
-      description: "Build personalized dashboards to track your most important safety metrics.",
-      category: "Features",
-      difficulty: "Intermediate",
-      timeToComplete: "20 min",
-      updatedDate: "May 2025",
-      new: true
+      title: "Custom Safety Rule Configuration",
+      description: "Learn to create and implement custom safety rules tailored to your industry.",
+      icon: <Cog className="h-4 w-4" />,
+      level: "Advanced" as const,
+      time: "25 min read",
+      author: "Thalos Team"
     },
     {
-      icon: <Database className="h-6 w-6 text-red-600 dark:text-red-400" />,
-      title: "Document Management System",
-      description: "How to upload, organize, and share safety documentation.",
-      category: "Features",
-      difficulty: "Beginner",
-      timeToComplete: "15 min",
-      updatedDate: "May 2025"
-    },
-    {
-      icon: <Smartphone className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />,
-      title: "Mobile App Usage Guide",
-      description: "Get the most out of the Thalos mobile application for on-site safety management.",
-      category: "Features",
-      difficulty: "Beginner",
-      timeToComplete: "15 min",
-      updatedDate: "July 2025",
-      new: true
+      title: "Safety Model Customization",
+      description: "Customize AI safety models to meet your specific requirements.",
+      icon: <PenTool className="h-4 w-4" />,
+      level: "Advanced" as const,
+      time: "30 min read",
+      author: "Thalos Team"
     }
   ];
 
@@ -81,34 +58,28 @@ const CoreFeaturesGuides = ({ searchQuery = '' }: CoreFeaturesGuidesProps) => {
     return guides.filter(guide => 
       guide.title.toLowerCase().includes(query) || 
       guide.description.toLowerCase().includes(query) ||
-      guide.category.toLowerCase().includes(query) ||
-      guide.difficulty.toLowerCase().includes(query)
+      guide.level.toLowerCase().includes(query) ||
+      guide.author.toLowerCase().includes(query)
     );
   }, [guides, searchQuery]);
 
   const hasResults = filteredGuides.length > 0;
 
-  if (!hasResults) {
-    return (
-      <div className="text-center py-8 bg-muted/30 rounded-lg">
-        <p className="text-muted-foreground">No feature guides match your search criteria.</p>
-      </div>
-    );
+  if (!hasResults && searchQuery) {
+    return null; // Hide section if no results match the search
   }
-
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="space-y-4">
       {filteredGuides.map((guide, index) => (
         <GuideCard
           key={index}
-          icon={guide.icon}
           title={guide.title}
           description={guide.description}
-          category={guide.category}
-          difficulty={guide.difficulty}
-          timeToComplete={guide.timeToComplete}
-          updatedDate={guide.updatedDate}
-          new={guide.new}
+          icon={guide.icon}
+          level={guide.level}
+          time={guide.time}
+          author={guide.author}
         />
       ))}
     </div>

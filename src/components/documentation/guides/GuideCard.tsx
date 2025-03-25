@@ -1,74 +1,60 @@
 
 import React from 'react';
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
 
-export interface GuideCardProps {
-  icon: React.ReactNode;
+interface GuideCardProps {
   title: string;
   description: string;
-  category: string;
-  difficulty: 'Beginner' | 'Intermediate' | 'Advanced';
-  timeToComplete: string;
-  updatedDate: string;
-  new?: boolean;
+  icon: React.ReactNode;
+  level: "Beginner" | "Intermediate" | "Advanced";
+  time: string;
+  author: string;
 }
 
-const GuideCard = ({ 
-  icon, 
-  title, 
-  description, 
-  category, 
-  difficulty, 
-  timeToComplete, 
-  updatedDate,
-  new: isNew = false
-}: GuideCardProps) => {
-  const difficultyColor = 
-    difficulty === 'Beginner' ? 'text-green-500' :
-    difficulty === 'Intermediate' ? 'text-amber-500' : 'text-red-500';
+const GuideCard = ({ title, description, icon, level, time, author }: GuideCardProps) => {
+  const getLevelColor = (level: string) => {
+    switch(level) {
+      case 'Beginner':
+        return 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400';
+      case 'Intermediate':
+        return 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400';
+      case 'Advanced':
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400';
+      default:
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900/30 dark:text-gray-400';
+    }
+  };
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader>
-        <div className="flex justify-between items-start">
-          <div className="p-2 bg-muted rounded-full">
-            {icon}
-          </div>
-          {isNew && (
-            <Badge className="ml-auto" variant="success">New</Badge>
-          )}
-        </div>
-        <CardTitle className="mt-4">{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
-      </CardHeader>
-      <CardContent className="flex-grow">
-        <div className="grid grid-cols-2 gap-2 text-sm">
-          <div className="bg-muted p-2 rounded-md text-center">
-            <span className="block text-muted-foreground">Category</span>
-            <span>{category}</span>
-          </div>
-          <div className="bg-muted p-2 rounded-md text-center">
-            <span className="block text-muted-foreground">Difficulty</span>
-            <span className={difficultyColor}>{difficulty}</span>
-          </div>
-          <div className="bg-muted p-2 rounded-md text-center">
-            <span className="block text-muted-foreground">Time</span>
-            <span>{timeToComplete}</span>
-          </div>
-          <div className="bg-muted p-2 rounded-md text-center">
-            <span className="block text-muted-foreground">Updated</span>
-            <span>{updatedDate}</span>
+    <Card className="hover:border-primary/50 transition-all duration-300">
+      <CardContent className="p-6">
+        <div className="flex flex-col md:flex-row md:items-start gap-4">
+          <div className="flex-1">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="p-1.5 rounded-md bg-primary/10 text-primary">
+                {icon}
+              </div>
+              <Badge variant="outline" className={`${getLevelColor(level)} border-0`}>
+                {level}
+              </Badge>
+              <span className="text-xs text-muted-foreground">{time}</span>
+            </div>
+            
+            <h3 className="text-lg font-medium mb-1">{title}</h3>
+            <p className="text-muted-foreground text-sm mb-3">{description}</p>
+            
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">By {author}</span>
+              <Button variant="ghost" size="sm" className="gap-1 text-xs h-8 px-2">
+                Read guide <ArrowRight className="h-3 w-3" />
+              </Button>
+            </div>
           </div>
         </div>
       </CardContent>
-      <CardFooter>
-        <Button className="w-full">
-          View Guide <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </CardFooter>
     </Card>
   );
 };
