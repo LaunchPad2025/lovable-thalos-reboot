@@ -85,7 +85,7 @@ const Violations = () => {
         <Card className="border border-gray-700 bg-gray-800/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
-              <span className="bg-blue-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">
+              <span className="bg-yellow-500 text-white rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">
                 <HardHat className="h-4 w-4" />
               </span>
               Safety Assistant "Paulie"
@@ -119,7 +119,7 @@ const Violations = () => {
               <TabsContent value="upload">
                 {isLoading ? (
                   <div className="flex flex-col items-center justify-center p-8">
-                    <Loader2 className="h-8 w-8 animate-spin text-[#0EA5E9] mb-2" />
+                    <Loader2 className="h-8 w-8 animate-spin text-[#f59e0b] mb-2" />
                     <span>Preparing safety models...</span>
                     <p className="mt-4 text-muted-foreground text-sm max-w-md text-center">
                       Our AI safety inspection tools are being calibrated. You can proceed with your upload and we'll automatically select the most appropriate safety standards and compliance guidelines for your analysis.

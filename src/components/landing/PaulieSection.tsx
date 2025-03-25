@@ -13,13 +13,13 @@ const PaulieSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             <div className="flex items-center mb-4">
-              <div className="mr-4 bg-blue-900/30 p-2 rounded-md">
-                <HardHat className="w-6 h-6 text-blue-500" />
+              <div className="mr-4 bg-yellow-900/30 p-2 rounded-md">
+                <HardHat className="w-6 h-6 text-yellow-500" />
               </div>
-              <h2 className="text-3xl font-bold">Meet <span className="text-blue-500">Paulie</span></h2>
+              <h2 className="text-3xl font-bold">Meet <span className="text-yellow-500">Paulie</span></h2>
             </div>
             
-            <h3 className="text-2xl text-blue-500 font-bold mb-6">Your AI Safety Assistant</h3>
+            <h3 className="text-2xl text-yellow-500 font-bold mb-6">Your AI Safety Assistant</h3>
             
             <p className="text-gray-300 mb-8">
               Paulie provides step-by-step guidance on safety regulations, 
@@ -47,7 +47,7 @@ const PaulieSection = () => {
             </ul>
             
             <Button 
-              className="bg-blue-600 hover:bg-blue-700 rounded-md px-6 py-3 font-medium"
+              className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
               onClick={() => navigate('/dashboard')}
             >
               Try Demo <ChevronRight className="ml-2 h-5 w-5" />
@@ -56,7 +56,7 @@ const PaulieSection = () => {
           
           <div className="bg-[#111724] border border-gray-800 rounded-xl p-6 shadow-lg">
             <div className="flex items-center border-b border-gray-800 pb-4 mb-4">
-              <div className="w-10 h-10 rounded-full bg-[#0EA5E9] flex items-center justify-center mr-3">
+              <div className="w-10 h-10 rounded-full bg-[#f59e0b] flex items-center justify-center mr-3">
                 <HardHat className="h-6 w-6 text-white" />
               </div>
               <div>
@@ -100,9 +100,9 @@ const PaulieSection = () => {
               <input
                 type="text"
                 placeholder="Ask Paulie about safety regulations..."
-                className="w-full bg-gray-800 border border-gray-700 rounded-full py-3 px-4 pr-10 text-sm focus:outline-none focus:border-blue-500"
+                className="w-full bg-gray-800 border border-gray-700 rounded-full py-3 px-4 pr-10 text-sm focus:outline-none focus:border-yellow-500"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-500">
+              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-500">
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>

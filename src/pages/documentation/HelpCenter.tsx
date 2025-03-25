@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -31,7 +30,6 @@ const HelpCenter = () => {
           className="mb-8"
         />
         
-        {/* Search Bar */}
         <div className="bg-card border border-border rounded-lg p-8 mb-12">
           <h2 className="text-2xl font-bold text-center mb-6">How can we help you?</h2>
           <div className="flex items-center max-w-xl mx-auto">
@@ -47,7 +45,6 @@ const HelpCenter = () => {
           </div>
         </div>
         
-        {/* Help Categories */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           <Card className="text-center">
             <CardHeader className="pb-3">
@@ -102,7 +99,6 @@ const HelpCenter = () => {
           </Card>
         </div>
         
-        {/* FAQ Section */}
         <div className="mb-16">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold mb-2">Frequently Asked Questions</h2>
@@ -173,13 +169,12 @@ const HelpCenter = () => {
           </Tabs>
         </div>
         
-        {/* Get Support Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           <Card>
             <CardHeader>
               <div className="flex items-start">
-                <div className="mr-4 p-2 bg-blue-100 dark:bg-blue-900/30 rounded-full">
-                  <MessageSquare className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <div className="mr-4 p-2 bg-yellow-100 dark:bg-yellow-900/30 rounded-full">
+                  <MessageSquare className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
                 </div>
                 <div>
                   <CardTitle className="mb-2">Chat with Paulie</CardTitle>
@@ -205,7 +200,7 @@ const HelpCenter = () => {
                 </div>
               </div>
               
-              <Button className="w-full mt-6">
+              <Button className="w-full mt-6 bg-yellow-600 hover:bg-yellow-700">
                 Chat with Paulie <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
@@ -248,7 +243,6 @@ const HelpCenter = () => {
           </Card>
         </div>
         
-        {/* Status Section */}
         <div className="bg-card border border-border rounded-lg p-6">
           <div className="flex items-center mb-4">
             <div className="mr-4 p-2 bg-green-100 dark:bg-green-900/30 rounded-full">

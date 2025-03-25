@@ -23,8 +23,8 @@ const MessageBubble = ({ message }: MessageBubbleProps) => {
     >
       {message.sender === 'bot' && (
         <div className="mr-2">
-          <Avatar className="h-8 w-8 border-2 border-[#9b87f5] bg-[#1A1F2C]">
-            <AvatarFallback className="bg-[#9b87f5] text-white">
+          <Avatar className="h-8 w-8 border-2 border-[#f59e0b] bg-[#1A1F2C]">
+            <AvatarFallback className="bg-[#f59e0b] text-white">
               <HardHat className="h-4 w-4" />
             </AvatarFallback>
           </Avatar>

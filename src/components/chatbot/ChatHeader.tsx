@@ -11,7 +11,7 @@ const ChatHeader = ({ onClose }: ChatHeaderProps) => {
     <div className="p-4 bg-card border-b border-border">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-[#0EA5E9] flex items-center justify-center mr-3">
+          <div className="w-10 h-10 rounded-full bg-[#f59e0b] flex items-center justify-center mr-3">
             <HardHat className="text-white h-6 w-6" />
           </div>
           <div>

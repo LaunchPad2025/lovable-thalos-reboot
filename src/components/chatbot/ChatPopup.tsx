@@ -51,7 +51,7 @@ const ChatPopup = () => {
       <Button 
         ref={buttonRef}
         onClick={toggleChat} 
-        className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-[#0EA5E9] hover:bg-[#0284C7] pointer-events-auto"
+        className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-[#f59e0b] hover:bg-[#d97706] pointer-events-auto"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
@@ -59,7 +59,7 @@ const ChatPopup = () => {
         ) : (
           <div className="relative">
             <HardHat className="h-6 w-6" />
-            <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full border-2 border-[#0EA5E9]"></span>
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full border-2 border-[#f59e0b]"></span>
           </div>
         )}
       </Button>
