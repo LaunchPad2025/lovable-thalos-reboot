@@ -7,13 +7,11 @@ import { useAuth } from "@/context/AuthContext";
 import { getNavItems } from "./sidebar/navItems";
 import MobileNav from "./sidebar/MobileNav";
 import DesktopNav from "./sidebar/DesktopNav";
-import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
-import { PanelLeft } from "lucide-react";
 
 const Sidebar = () => {
   const location = useLocation();
   const isMobile = useMobile();
-  const { sidebarCollapsed, setSidebarCollapsed } = useTheme();
+  const { sidebarCollapsed } = useTheme();
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -32,11 +30,6 @@ const Sidebar = () => {
     setMobileOpen(!mobileOpen);
   };
 
-  const toggleSidebar = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
-    setExpanded(!expanded);
-  };
-
   // Close mobile sidebar when location changes
   useEffect(() => {
     if (mobileOpen) setMobileOpen(false);
@@ -46,7 +39,7 @@ const Sidebar = () => {
   const navItems = getNavItems();
 
   return (
-    <SidebarProvider defaultOpen={!sidebarCollapsed}>
+    <>
       {isMobile ? (
         <MobileNav
           mobileOpen={mobileOpen}
@@ -58,12 +51,11 @@ const Sidebar = () => {
       ) : (
         <DesktopNav
           expanded={expanded}
-          toggleSidebar={toggleSidebar}
           navItems={navItems}
           userRole={userRole}
         />
       )}
-    </SidebarProvider>
+    </>
   );
 };
 

@@ -4,7 +4,7 @@ import { themeColors, themeSizing, themeShadows } from '@/lib/theme';
 import { useEffect, useState } from 'react';
 
 export function useThemeStyles() {
-  const { theme, density, contrast } = useTheme();
+  const { mode, density } = useTheme();
   const [systemIsDark, setSystemIsDark] = useState(false);
   
   // Listen for system theme changes
@@ -26,9 +26,8 @@ export function useThemeStyles() {
     };
   }, []);
   
-  const isDark = theme === 'dark' || (theme === 'system' && systemIsDark);
+  const isDark = mode === 'dark' || (mode === 'system' && systemIsDark);
   const currentMode = isDark ? 'dark' : 'light';
-  const isHighContrast = contrast === 'high';
   
   const getColor = (colorPath: string) => {
     const parts = colorPath.split('.');
@@ -66,7 +65,6 @@ export function useThemeStyles() {
   return {
     isDark,
     currentMode,
-    isHighContrast,
     colors: themeColors,
     sizing: themeSizing,
     shadows: themeShadows,
@@ -76,18 +74,10 @@ export function useThemeStyles() {
     getHighContrastColor,
     
     // Derived values with improved contrast
-    bg: isHighContrast 
-      ? (isDark ? themeColors.highContrast.dark.background : themeColors.highContrast.light.background)
-      : (isDark ? themeColors.dark.background : themeColors.light.background),
-    cardBg: isHighContrast
-      ? (isDark ? themeColors.highContrast.dark.card : themeColors.highContrast.light.card)
-      : (isDark ? themeColors.dark.card : themeColors.light.card),
-    borderColor: isHighContrast
-      ? (isDark ? themeColors.highContrast.dark.border : themeColors.highContrast.light.border)
-      : (isDark ? themeColors.dark.border : themeColors.light.border),
-    textPrimary: isHighContrast
-      ? (isDark ? themeColors.highContrast.dark.text.primary : themeColors.highContrast.light.text.primary)
-      : (isDark ? themeColors.light.text.primary : themeColors.dark.text.primary),
+    bg: isDark ? themeColors.dark.background : themeColors.light.background,
+    cardBg: isDark ? themeColors.dark.card : themeColors.light.card,
+    borderColor: isDark ? themeColors.dark.border : themeColors.light.border,
+    textPrimary: isDark ? themeColors.light.text.primary : themeColors.dark.text.primary,
     textSecondary: isDark ? '#E1E3E6' : '#303540', // Enhanced contrast for secondary text
     textMuted: isDark ? '#A0A8B5' : '#555E70',    // Enhanced contrast for muted text
     interactive: {
