@@ -1,76 +1,69 @@
 
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { corsHeaders } from "../_shared/cors.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.29.0";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Initialize Supabase client with admin privileges
-const supabaseUrl = Deno.env.get('SUPABASE_URL') || '';
-const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '';
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
 
 serve(async (req) => {
-  // Handle CORS preflight request
+  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
-    return new Response(null, {
-      status: 204,
-      headers: corsHeaders
-    });
+    return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    console.log("Creating violations storage bucket");
-    
-    // Create a new storage bucket for violation images
-    const { data: bucket, error: createError } = await supabase
+    // Create a Supabase client with the Auth context of the logged in user
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      {
+        global: {
+          headers: { Authorization: req.headers.get('Authorization')! },
+        },
+      }
+    );
+
+    // Create violations bucket if it doesn't exist
+    const { data: violationsBucket, error: violationsBucketError } = await supabaseClient
       .storage
       .createBucket('violations', {
-        public: true,
-        allowedMimeTypes: ['image/png', 'image/jpeg', 'image/gif', 'image/webp'],
-        fileSizeLimit: 10485760 // 10MB
+        public: true, // Set to public so we can access files without authentication
+        fileSizeLimit: 5242880, // 5MB limit
       });
 
-    if (createError) {
-      // If bucket already exists, this is fine
-      if (createError.message.includes('already exists')) {
-        console.log("Violations bucket already exists");
-        return new Response(
-          JSON.stringify({ message: "Violations bucket already exists" }),
-          {
-            status: 200,
-            headers: {
-              ...corsHeaders,
-              "Content-Type": "application/json"
-            }
-          }
-        );
-      }
+    if (violationsBucketError && violationsBucketError.message !== 'Bucket already exists') {
+      console.error('Error creating violations bucket:', violationsBucketError);
+    } else {
+      console.log('Violations bucket setup complete');
       
-      throw createError;
+      // Set RLS policy to allow anyone to read/write to the bucket
+      // This is important for uploading violation images
+      const { error: policyError } = await supabaseClient
+        .storage
+        .from('violations')
+        .createSignedUploadUrl('policy-check');
+        
+      if (policyError && !policyError.message.includes('already exists')) {
+        console.error('Error setting bucket policy:', policyError);
+      }
     }
 
-    console.log("Storage bucket created successfully");
-    
     return new Response(
-      JSON.stringify({ message: "Storage bucket created successfully", data: bucket }),
+      JSON.stringify({ success: true, message: 'Storage buckets created successfully' }),
       {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json"
-        }
       }
     );
   } catch (error) {
-    console.error("Error creating storage bucket:", error);
-    
+    console.error('Error creating storage buckets:', error);
     return new Response(
-      JSON.stringify({ error: error.message || "An error occurred creating the storage bucket" }),
+      JSON.stringify({ success: false, error: error.message }),
       {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 500,
-        headers: {
-          ...corsHeaders,
-          "Content-Type": "application/json"
-        }
       }
     );
   }

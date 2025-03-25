@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import ConnectionStatus from './upload/ConnectionStatus';
 import UploadFormLayout from './upload/UploadFormLayout';
-import { useViolationAnalysis } from '@/hooks/useViolationAnalysis';
+import { useViolationAnalysisContext } from './ViolationAnalysisProvider';
 import { useMLModelsByIndustry } from '@/hooks/ml-models/useModelQueries';
 
 interface ViolationUploadProps {
@@ -29,10 +29,8 @@ const ViolationUpload = ({
   const { data: models = [], isLoading: modelsLoading, error: modelsError } = useMLModelsByIndustry(industry);
   const [selectedModelId, setSelectedModelId] = useState<string>('');
   
-  const { 
-    isAnalyzing, 
-    analyzeImage 
-  } = useViolationAnalysis(industry);
+  // Use the context instead of the direct hook
+  const { isAnalyzing, analyzeImage } = useViolationAnalysisContext();
 
   // Initialize and select the best model for the user's industry
   useEffect(() => {
@@ -88,11 +86,17 @@ const ViolationUpload = ({
     
     try {
       if (image) {
-        const results = await analyzeImage(image);
-        if (results) {
-          console.log("Analysis complete:", results);
-          onUploadComplete(results);
-        }
+        // Initialize storage bucket first to ensure permissions are set
+        await fetch('/api/supabase/functions/v1/create-storage-buckets', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        await analyzeImage(image, industry);
+        // The Provider will handle showing success/error toasts
+        onUploadComplete({ imagePreview: imagePreview });
       } else if (violationText) {
         // Implement text-based analysis if needed
         toast.info("Text analysis not yet implemented", {
