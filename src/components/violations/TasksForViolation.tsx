@@ -6,6 +6,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@
 import StatusBadge from '@/components/ui/StatusBadge';
 import { useNavigate } from 'react-router-dom';
 import { Task } from '@/types/models';
+import { useToast } from '@/hooks/use-toast';
 
 interface TasksForViolationProps {
   violationId: string;
@@ -15,6 +16,15 @@ interface TasksForViolationProps {
 
 const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForViolationProps) => {
   const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleCreateTask = () => {
+    toast({
+      title: "Creating new task",
+      description: "You will be redirected to the task creation form.",
+    });
+    navigate(`/tasks?violation=${violationId}&newTask=true`);
+  };
 
   if (isLoading) {
     return <div className="flex items-center justify-center p-6">
@@ -30,7 +40,7 @@ const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForV
         <Button 
           size="sm" 
           className="bg-thalos-blue hover:bg-blue-600 text-white"
-          onClick={() => navigate(`/tasks?violation=${violationId}&newTask=true`)}
+          onClick={handleCreateTask}
         >
           <PlusCircle size={16} className="mr-2" />
           Create Task
@@ -63,7 +73,12 @@ const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForV
                     <StatusBadge status={task.status} />
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={task.priority} />
+                    <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
+                      ${task.priority === 'high' ? 'bg-orange-500 text-white' : 
+                        task.priority === 'medium' ? 'bg-blue-500 text-white' :
+                        'bg-gray-700 text-white'}`}>
+                      {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                    </div>
                   </TableCell>
                   <TableCell className="text-gray-400">
                     {task.due_date ? new Date(task.due_date).toLocaleDateString() : '—'}
@@ -77,7 +92,8 @@ const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForV
           </Table>
         ) : (
           <div className="text-center py-6 text-gray-500">
-            No tasks associated with this violation yet.
+            <p className="mb-2">No tasks associated with this violation yet.</p>
+            <p className="text-sm">Click "Create Task" to automatically generate a remediation task.</p>
           </div>
         )}
       </div>

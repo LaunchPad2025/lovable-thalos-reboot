@@ -81,9 +81,9 @@ export function TaskCreation({ violationId }: TaskCreationProps) {
 
   return (
     <>
-      <Button className="bg-thalos-blue hover:bg-blue-600" onClick={() => setIsModalOpen(true)}>
+      <Button className="bg-blue-600 hover:bg-blue-700" onClick={() => setIsModalOpen(true)}>
         <PlusCircle size={16} className="mr-2" />
-        New Task
+        Create Task
       </Button>
       
       <NewTaskModal 
