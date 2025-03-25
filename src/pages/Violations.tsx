@@ -10,15 +10,15 @@ import PageTitle from '@/components/ui/PageTitle';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { InfoIcon } from 'lucide-react';
 
-// Mock data
+// Mock data with fixed status types
 const mockViolations = [
   {
     id: 'V-1234',
     title: 'Missing guardrail on platform',
     location: 'Building A, Floor 2',
     date: 'October 15, 2023',
-    status: 'open',
-    severity: 'high',
+    status: 'open' as const, // Using const assertion to ensure literal type
+    severity: 'high' as const,
     assignee: 'Sarah Johnson',
     image: null
   },
@@ -27,8 +27,8 @@ const mockViolations = [
     title: 'Improper chemical storage',
     location: 'Lab 3',
     date: 'October 12, 2023',
-    status: 'in-progress',
-    severity: 'medium',
+    status: 'in-progress' as const,
+    severity: 'medium' as const,
     assignee: 'Mike Williams',
     image: null
   },
@@ -37,8 +37,8 @@ const mockViolations = [
     title: 'Blocked fire exit',
     location: 'Building B, Ground Floor',
     date: 'October 10, 2023',
-    status: 'resolved',
-    severity: 'critical',
+    status: 'resolved' as const,
+    severity: 'critical' as const,
     assignee: 'John Doe',
     image: null
   },
@@ -47,8 +47,8 @@ const mockViolations = [
     title: 'Exposed electrical wiring',
     location: 'Maintenance Room',
     date: 'October 8, 2023',
-    status: 'open',
-    severity: 'high',
+    status: 'open' as const,
+    severity: 'high' as const,
     assignee: 'Emily Davis',
     image: null
   },
@@ -57,8 +57,8 @@ const mockViolations = [
     title: 'Inadequate ventilation',
     location: 'Paint Shop',
     date: 'October 5, 2023',
-    status: 'in-progress',
-    severity: 'medium',
+    status: 'in-progress' as const,
+    severity: 'medium' as const,
     assignee: 'Robert Chen',
     image: null
   },
@@ -67,8 +67,8 @@ const mockViolations = [
     title: 'Slippery floor without warning signs',
     location: 'Cafeteria',
     date: 'October 3, 2023',
-    status: 'resolved',
-    severity: 'low',
+    status: 'resolved' as const,
+    severity: 'low' as const,
     assignee: 'Lisa Martinez',
     image: null
   },
@@ -77,8 +77,8 @@ const mockViolations = [
     title: 'Forklift operating without certified driver',
     location: 'Warehouse',
     date: 'September 28, 2023',
-    status: 'open',
-    severity: 'critical',
+    status: 'open' as const,
+    severity: 'critical' as const,
     assignee: 'David Taylor',
     image: null
   }
@@ -92,8 +92,8 @@ const mockViolationDetails = {
     location: 'Building A, Floor 2',
     date: 'October 15, 2023',
     reportedBy: 'Alice Brown',
-    status: 'open',
-    severity: 'high',
+    status: 'open' as const,
+    severity: 'high' as const,
     assignee: 'Sarah Johnson',
     regulations: [
       { id: 'OSHA-1926.501', title: 'OSHA 29 CFR 1926.501(b)(1)', confidence: 85 }
@@ -111,8 +111,8 @@ const mockViolationDetails = {
     location: 'Lab 3',
     date: 'October 12, 2023',
     reportedBy: 'Thomas Wilson',
-    status: 'in-progress',
-    severity: 'medium',
+    status: 'in-progress' as const,
+    severity: 'medium' as const,
     assignee: 'Mike Williams',
     regulations: [
       { id: 'OSHA-1910.106', title: 'OSHA 29 CFR 1910.106', confidence: 72 }

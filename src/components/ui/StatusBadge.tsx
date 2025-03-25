@@ -1,7 +1,7 @@
 
 import { cn } from '@/lib/utils';
 
-type StatusType = 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled' | 'medium' | 'high' | 'low';
+type StatusType = 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled' | 'medium' | 'high' | 'low' | 'critical';
 
 interface StatusBadgeProps {
   status: StatusType;
@@ -13,6 +13,7 @@ const getStatusClasses = (status: StatusType) => {
     case 'open':
       return 'bg-red-900/30 text-red-400';
     case 'high':
+    case 'critical':
       return 'bg-red-900/30 text-red-400';
     case 'in-progress':
       return 'bg-amber-900/30 text-amber-400';
