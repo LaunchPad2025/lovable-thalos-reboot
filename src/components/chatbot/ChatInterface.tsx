@@ -30,7 +30,7 @@ const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
     <div className={`flex flex-col h-full bg-[#0F172A] rounded-lg shadow-lg overflow-hidden border border-gray-800 ${isPopup ? 'max-w-md w-full' : ''}`}>
       <ChatHeader onClose={isPopup ? onClose : undefined} />
       
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 messages-container">
         <MessageList messages={messages} isLoading={isLoading} />
         <div ref={messagesEndRef} />
       </div>

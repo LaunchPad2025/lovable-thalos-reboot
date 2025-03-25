@@ -81,7 +81,7 @@ const Violations = () => {
           </Alert>
         )}
         
-        {/* Safety Assistant - Repositioned above the main content */}
+        {/* Safety Assistant - Ensure proper height to see full chatbot interface */}
         <Card className="border border-gray-700 bg-gray-800/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
@@ -95,7 +95,7 @@ const Violations = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-[200px]">
+            <div className="h-[400px]"> {/* Increased height from 200px to 400px to show full chatbot */}
               <ChatInterface />
             </div>
           </CardContent>
