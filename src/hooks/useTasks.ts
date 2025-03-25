@@ -93,6 +93,7 @@ export function useTasks() {
     queryKey: ['tasks'],
     queryFn: async () => {
       try {
+        console.log("Fetching tasks...");
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
@@ -100,17 +101,22 @@ export function useTasks() {
         
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
+          console.log("Returning fallback data");
           // Return fallback data when Supabase fails
           return mockTasks;
         }
         
+        console.log(`Successfully fetched ${data?.length} tasks`);
         return data as Task[];
       } catch (err) {
         console.error("Exception in task fetch:", err);
+        console.log("Returning fallback data due to exception");
         // Return fallback data for any other errors
         return mockTasks;
       }
-    }
+    },
+    retry: 3,
+    refetchOnWindowFocus: false
   });
 
   // Log error to console

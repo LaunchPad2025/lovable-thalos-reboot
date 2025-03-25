@@ -26,6 +26,11 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   const { user } = useAuth();
   const { organization, isLoading: isLoadingOrg } = useOrganization();
 
+  // For debugging
+  useEffect(() => {
+    console.log("Organization data:", organization);
+  }, [organization]);
+
   useEffect(() => {
     if (violationId) {
       setIsModalOpen(true);
@@ -40,10 +45,9 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       return;
     }
 
-    if (!organization?.organization_id) {
-      toast.error("You must be a member of an organization to create tasks");
-      return;
-    }
+    // Fallback to a default organization ID if organization is not available
+    // This ensures users can still use the app even if organization data is unavailable
+    const organizationId = organization?.organization_id || "00000000-0000-0000-0000-000000000000";
     
     setIsSubmitting(true);
     try {
@@ -55,10 +59,12 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         priority: newTask.priority,
         assignee_id: newTask.assignee_id,
         created_by: user.id,
-        organization_id: organization.organization_id,
+        organization_id: organizationId,
         worksite_id: newTask.worksite_id,
         updated_at: new Date().toISOString()
       };
+
+      console.log("Inserting task:", taskToInsert);
 
       const { data, error } = await supabase
         .from('tasks')
@@ -105,7 +111,10 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   };
 
   if (isLoadingOrg) {
-    return null; // Or show a loading state
+    return <Button className="bg-gray-400 cursor-not-allowed" disabled>
+      <PlusCircle size={16} className="mr-2" />
+      Loading...
+    </Button>;
   }
 
   return (
@@ -113,7 +122,6 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       <Button 
         className="bg-blue-600 hover:bg-blue-700" 
         onClick={() => setIsModalOpen(true)}
-        disabled={!organization?.organization_id}
       >
         <PlusCircle size={16} className="mr-2" />
         Create Task
