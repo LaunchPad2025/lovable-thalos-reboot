@@ -4,9 +4,13 @@ import PageContainer from '@/components/layout/PageContainer';
 import PlanSelector from '@/components/subscription/PlanSelector';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
+import { useStripeStatus } from '@/hooks/useStripeStatus';
 
 const Subscription = () => {
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  
+  // Use the hook to handle Stripe status
+  useStripeStatus();
 
   return (
     <PageContainer>
@@ -23,7 +27,7 @@ const Subscription = () => {
           </div>
         </div>
         
-        <div className="bg-[#101418] border border-gray-800 rounded-lg p-6 mb-8">
+        <div className="bg-card border border-border rounded-lg p-6 mb-8">
           <div className="flex items-center gap-4">
             <div className="bg-blue-900/20 p-3 rounded-full">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
@@ -32,15 +36,15 @@ const Subscription = () => {
               </svg>
             </div>
             <div>
-              <h3 className="text-xl font-medium text-white">Worksite-Based Pricing</h3>
-              <p className="text-gray-400 mt-1">
+              <h3 className="text-xl font-medium text-foreground">Worksite-Based Pricing</h3>
+              <p className="text-muted-foreground mt-1">
                 Our pricing is based on physical locations, not the number of users. Pay only for each worksite that needs safety compliance monitoring.
               </p>
             </div>
           </div>
           
           <div className="flex flex-wrap gap-6 mt-4 ml-12">
-            <div className="flex items-center gap-2 text-gray-300">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                 <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
                 <circle cx="12" cy="10" r="3" />
@@ -48,7 +52,7 @@ const Subscription = () => {
               <span>Per-location pricing</span>
             </div>
             
-            <div className="flex items-center gap-2 text-gray-300">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
@@ -58,7 +62,7 @@ const Subscription = () => {
               <span>Unlimited users per location</span>
             </div>
             
-            <div className="flex items-center gap-2 text-gray-300">
+            <div className="flex items-center gap-2 text-muted-foreground">
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                 <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
               </svg>
@@ -68,27 +72,27 @@ const Subscription = () => {
         </div>
         
         <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-gray-900 p-1 rounded-full">
+          <div className="inline-flex bg-muted p-1 rounded-full">
             <Button 
               variant="ghost" 
-              className={`px-8 rounded-full ${billingCycle === 'monthly' ? 'bg-indigo-600 text-white' : 'text-gray-300'}`}
+              className={`px-8 rounded-full ${billingCycle === 'monthly' ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}
               onClick={() => setBillingCycle('monthly')}
             >
               Monthly
             </Button>
             <Button 
               variant="ghost" 
-              className={`px-8 rounded-full ${billingCycle === 'annual' ? 'bg-indigo-600 text-white' : 'text-gray-300'}`}
+              className={`px-8 rounded-full ${billingCycle === 'annual' ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}
               onClick={() => setBillingCycle('annual')}
             >
-              Yearly <span className="text-gray-500 text-xs ml-1">Save 15%</span>
+              Yearly <span className="text-muted-foreground text-xs ml-1">Save 15%</span>
             </Button>
           </div>
         </div>
         
         <PlanSelector billingCycle={billingCycle} />
         
-        <div className="mt-16 bg-[#101418] border border-gray-800 rounded-lg p-6">
+        <div className="mt-16 bg-card border border-border rounded-lg p-6">
           <div className="flex items-start gap-4">
             <div className="text-teal-500 mt-1">
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -102,8 +106,8 @@ const Subscription = () => {
               </svg>
             </div>
             <div>
-              <h3 className="text-lg font-medium text-white">Multi-Location Management</h3>
-              <p className="text-gray-400 mt-1 mb-4">
+              <h3 className="text-lg font-medium text-foreground">Multi-Location Management</h3>
+              <p className="text-muted-foreground mt-1 mb-4">
                 Organizations with multiple locations can benefit from our Corporate plan with tiered volume discounts:
               </p>
               
@@ -112,30 +116,30 @@ const Subscription = () => {
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
-                  <span className="text-gray-300">5-10 locations: 10% discount on per-location pricing</span>
+                  <span className="text-muted-foreground">5-10 locations: 10% discount on per-location pricing</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
-                  <span className="text-gray-300">11-25 locations: 15% discount on per-location pricing</span>
+                  <span className="text-muted-foreground">11-25 locations: 15% discount on per-location pricing</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
-                  <span className="text-gray-300">26+ locations: 20% discount on per-location pricing</span>
+                  <span className="text-muted-foreground">26+ locations: 20% discount on per-location pricing</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-teal-500">
                     <path d="M20 6 9 17l-5-5" />
                   </svg>
-                  <span className="text-gray-300">Enterprise API access: Higher rate limits for large-scale operations</span>
+                  <span className="text-muted-foreground">Enterprise API access: Higher rate limits for large-scale operations</span>
                 </div>
               </div>
               
               <div className="mt-6">
-                <Button className="border border-teal-500 text-teal-500 hover:bg-teal-900/20 bg-transparent">
+                <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10">
                   Contact for Custom Quote
                 </Button>
               </div>
@@ -143,7 +147,7 @@ const Subscription = () => {
           </div>
         </div>
         
-        <div className="text-center mt-8 text-gray-400 text-sm">
+        <div className="text-center mt-8 text-muted-foreground text-sm">
           <p>All plans include a 14-day free trial.</p>
           <p>Cancel anytime during your trial and you won't be charged.</p>
         </div>

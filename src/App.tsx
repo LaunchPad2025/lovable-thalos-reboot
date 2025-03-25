@@ -7,7 +7,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { AuthProvider, useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import Navbar from "@/components/layout/Navbar";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 
 // Pages
@@ -27,6 +26,7 @@ import Legal from "./pages/Legal";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
+import Navbar from "./components/layout/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -59,15 +59,15 @@ const App = () => {
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/onboarding" element={<Onboarding />} />
 
-                {/* Protected routes with sidebar layout */}
+                {/* Protected routes with layout */}
                 <Route element={<ProtectedRoute />}>
                   <Route
                     path="/*"
                     element={
                       <OnboardingCheck>
-                        <div className="flex h-screen w-full">
+                        <div className="flex h-screen w-full overflow-hidden bg-background">
                           <Sidebar />
-                          <div className="flex-1 overflow-hidden flex flex-col">
+                          <div className="flex-1 flex flex-col overflow-hidden">
                             <Navbar />
                             <Routes>
                               <Route path="/" element={<Dashboard />} />

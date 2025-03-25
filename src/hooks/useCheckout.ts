@@ -72,6 +72,7 @@ export const useCheckout = () => {
         description: error.message || "An error occurred during checkout. Please try again.",
         variant: "destructive",
       });
+      throw error; // Re-throw to allow the component to handle it
     } finally {
       setIsLoading(false);
     }

@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import PlanCard from './PlanCard';
 import { plans } from '@/data/subscriptionPlans';
 import { useCheckout } from '@/hooks/useCheckout';
@@ -16,6 +17,7 @@ interface PlanSelectorProps {
 
 const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   const [selectedPlan, setSelectedPlan] = useState<string>('pro');
+  const [error, setError] = useState<string | null>(null);
   const { isLoading, handleSubscribe } = useCheckout();
   const { user } = useAuth();
   const { toast } = useToast();
@@ -24,7 +26,9 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   // Use the hook to handle Stripe status
   useStripeStatus();
   
-  const handleSubscription = () => {
+  const handleSubscription = async () => {
+    setError(null);
+    
     if (!user) {
       toast({
         title: "Login required",
@@ -35,7 +39,12 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
       return;
     }
     
-    handleSubscribe(selectedPlan, billingCycle, plans);
+    try {
+      await handleSubscribe(selectedPlan, billingCycle, plans);
+    } catch (err) {
+      console.error('Subscription error:', err);
+      setError('There was a problem processing your subscription. Please try again later.');
+    }
   };
   
   return (
@@ -53,9 +62,16 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
           ))}
         </div>
         
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+        
         <div className="text-center">
           <Button 
-            className="bg-indigo-600 hover:bg-indigo-700 px-8 py-2 text-lg"
+            className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
             onClick={handleSubscription}
             disabled={isLoading}
           >
@@ -68,7 +84,7 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
               'Subscribe Now'
             )}
           </Button>
-          <p className="mt-4 text-sm text-gray-500">
+          <p className="mt-4 text-sm text-muted-foreground">
             Secure payment processing by Stripe. Cancel anytime.
           </p>
         </div>

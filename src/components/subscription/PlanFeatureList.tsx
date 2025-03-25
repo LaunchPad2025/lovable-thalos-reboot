@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { Check, X } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { PlanFeature } from '@/data/subscriptionPlans';
 
 interface PlanFeatureListProps {
@@ -14,14 +13,11 @@ const PlanFeatureList = ({ features }: PlanFeatureListProps) => {
       {features.map((feature, index) => (
         <li key={index} className="flex items-start">
           {feature.included ? (
-            <Check size={16} className="text-green-500 mt-0.5 mr-2 flex-shrink-0" />
+            <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
           ) : (
-            <X size={16} className="text-gray-400 mt-0.5 mr-2 flex-shrink-0" />
+            <X className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
           )}
-          <span className={cn(
-            "text-sm",
-            feature.included ? "text-gray-700" : "text-gray-400"
-          )}>
+          <span className={feature.included ? "text-foreground" : "text-muted-foreground"}>
             {feature.text}
           </span>
         </li>
