@@ -122,7 +122,7 @@ const ViolationUpload = ({
     <Card className="border border-dashed border-gray-700 bg-transparent">
       <CardContent className="p-6">
         {(modelInitError || modelsError) && (
-          <Alert variant="warning" className="mb-4 bg-yellow-900/30 border border-yellow-800 text-yellow-200">
+          <Alert variant="destructive" className="mb-4 bg-yellow-900/30 border border-yellow-800 text-yellow-200">
             <AlertCircle className="h-4 w-4 text-yellow-500" />
             <AlertDescription>
               {modelInitError || modelsError?.message || "Model connection issue. Using fallback detection."}
