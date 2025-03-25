@@ -1,16 +1,22 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 
-interface ContactItemProps {
-  icon: React.ReactNode;
+export interface ContactItemProps {
+  icon: ReactNode;
+  title: string;
   text: string;
 }
 
-const ContactItem = ({ icon, text }: ContactItemProps) => (
-  <div className="flex items-center text-muted-foreground">
-    <span className="mr-3 text-foreground">{icon}</span>
-    <span>{text}</span>
-  </div>
-);
+const ContactItem = ({ icon, title, text }: ContactItemProps) => {
+  return (
+    <div className="flex items-start">
+      <div className="mr-3 text-primary">{icon}</div>
+      <div>
+        <div className="font-medium mb-1">{title}</div>
+        <div className="text-sm text-muted-foreground">{text}</div>
+      </div>
+    </div>
+  );
+};
 
 export default ContactItem;
