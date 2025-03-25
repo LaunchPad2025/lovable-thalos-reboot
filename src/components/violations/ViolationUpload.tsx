@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { useModelTest } from '@/hooks/useModelTest';
 import { useMLModels } from '@/hooks/useMLModels';
@@ -20,7 +20,7 @@ const ViolationUpload = ({
   userIndustry = 'Construction', 
   hideModelSelection = false 
 }: ViolationUploadProps) => {
-  const { data: models = [] } = useMLModels();
+  const { data: models = [], isLoading: modelsLoading, error: modelsError } = useMLModels();
   const [selectedModelId, setSelectedModelId] = useState<string>('');
   const [industry, setIndustry] = useState<string>(userIndustry);
   const [violationText, setViolationText] = useState<string>('');
@@ -32,6 +32,13 @@ const ViolationUpload = ({
     resetTest 
   } = useModelTest();
   
+  // Auto-select first model if none selected and models are available
+  useEffect(() => {
+    if (models?.length > 0 && !selectedModelId) {
+      setSelectedModelId(models[0].id);
+    }
+  }, [models, selectedModelId]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -47,7 +54,7 @@ const ViolationUpload = ({
     // If no model is explicitly selected, use the first one in the list
     const modelToUse = selectedModelId || (models.length > 0 ? models[0].id : '');
     if (!modelToUse) {
-      toast.error('No models available. Please contact support.');
+      toast.error('No models available for analysis. Please try again later.');
       return;
     }
     
@@ -79,6 +86,12 @@ const ViolationUpload = ({
                   <p className="text-gray-400 mb-6">
                     Upload an image from your worksite to analyze for safety violations. Our AI will detect potential safety issues and regulatory non-compliance.
                   </p>
+                  
+                  {modelsError && (
+                    <div className="bg-red-900/30 text-red-200 p-3 rounded-md mb-4 border border-red-800">
+                      Error loading models: {modelsError.message || "Please try again later. Using default model settings."}
+                    </div>
+                  )}
                   
                   <ViolationForm
                     industry={industry}

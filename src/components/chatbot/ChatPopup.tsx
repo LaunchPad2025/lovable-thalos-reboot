@@ -38,11 +38,11 @@ const ChatPopup = () => {
   }, [isOpen]);
   
   return (
-    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end">
+    <div className="fixed bottom-4 right-4 z-50 flex flex-col items-end pointer-events-none">
       {isOpen && (
         <div 
           ref={popupRef}
-          className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden bg-[#0d1117] border border-gray-800"
+          className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden bg-[#0d1117] border border-gray-800 pointer-events-auto"
         >
           <ChatInterface isPopup={true} onClose={() => setIsOpen(false)} />
         </div>
@@ -51,7 +51,7 @@ const ChatPopup = () => {
       <Button 
         ref={buttonRef}
         onClick={toggleChat} 
-        className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-[#0EA5E9] hover:bg-[#0284C7]"
+        className="rounded-full w-14 h-14 flex items-center justify-center shadow-lg bg-[#0EA5E9] hover:bg-[#0284C7] pointer-events-auto"
         aria-label={isOpen ? "Close chat" : "Open chat"}
       >
         {isOpen ? (
