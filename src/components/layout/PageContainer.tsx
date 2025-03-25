@@ -2,6 +2,7 @@
 import React, { ReactNode } from 'react';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useMobile } from '@/hooks/useMobile';
+import Footer from './Footer';
 
 interface PageContainerProps {
   children: ReactNode;
@@ -15,16 +16,17 @@ const PageContainer = ({ children, title, subtitle, className }: PageContainerPr
   const isMobile = useMobile();
   
   return (
-    <div className={`flex-1 overflow-y-auto bg-background ${className || ''}`}>
+    <div className={`flex-1 overflow-y-auto bg-background flex flex-col min-h-screen ${className || ''}`}>
       {(title || subtitle) && (
         <div className="mb-6 p-4 md:p-6 animate-fade-in">
           {title && <h1 className="text-2xl font-bold text-foreground">{title}</h1>}
           {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
       )}
-      <div className="page-transition p-4 md:p-6 pb-20">
+      <div className="page-transition p-4 md:p-6 pb-20 flex-grow">
         {children}
       </div>
+      <Footer />
     </div>
   );
 };

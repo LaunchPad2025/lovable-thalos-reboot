@@ -5,7 +5,7 @@ import { Shield, Facebook, Twitter, Linkedin, Github } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0d1117] border-t border-gray-800 py-12 text-gray-400">
+    <footer className="bg-[#0d1117] border-t border-gray-800 py-12 text-gray-400 mt-auto">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
@@ -19,22 +19,7 @@ const Footer = () => {
             <p className="text-sm mb-6">
               Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
             </p>
-            {/* Social icons hidden for now 
-            <div className="flex space-x-4">
-              <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
-                <Facebook className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="Twitter" className="text-gray-400 hover:text-white transition-colors">
-                <Twitter className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="LinkedIn" className="text-gray-400 hover:text-white transition-colors">
-                <Linkedin className="w-5 h-5" />
-              </a>
-              <a href="#" aria-label="GitHub" className="text-gray-400 hover:text-white transition-colors">
-                <Github className="w-5 h-5" />
-              </a>
-            </div>
-            */}
+            {/* Social icons hidden for now */}
           </div>
           
           <div>
