@@ -47,7 +47,12 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
   };
   
   const onSubmit = async (values: TestModelFormValues) => {
-    await submitModelTest(values, selectedModel);
+    console.log("Submitting form with values:", values);
+    try {
+      await submitModelTest(values, selectedModel);
+    } catch (error) {
+      console.error("Error submitting test:", error);
+    }
   };
   
   return (
@@ -90,11 +95,13 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
         </form>
       </Form>
       
-      <ModelTestResults 
-        testResult={testResult} 
-        onReset={resetTest} 
-        imagePreview={imagePreview}
-      />
+      {testResult && (
+        <ModelTestResults 
+          testResult={testResult} 
+          onReset={resetTest} 
+          imagePreview={imagePreview}
+        />
+      )}
     </div>
   );
 };

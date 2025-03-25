@@ -70,95 +70,54 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
   
   const renderSeverityClass = (severity: string) => {
     switch (severity) {
-      case 'low': return 'bg-blue-100 text-blue-800';
-      case 'medium': return 'bg-yellow-100 text-yellow-800';
-      case 'high': return 'bg-orange-100 text-orange-800';
-      case 'critical': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'low': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
+      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
+      case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
+      case 'critical': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
+      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
   return (
-    <Card className="mt-6 p-4">
+    <Card className="mt-6 p-4 bg-gray-800 border-gray-700 text-white">
       <h3 className="text-lg font-semibold mb-4">Analysis Results</h3>
       
       <div className="space-y-4">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Confidence:</span>
-          <span className="text-sm">{(testResult.confidence * 100).toFixed(1)}%</span>
+          <span className="text-sm font-medium text-gray-300">Confidence:</span>
+          <span className="text-sm text-gray-300">{(testResult.confidence * 100).toFixed(1)}%</span>
         </div>
         
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">Severity:</span>
+          <span className="text-sm font-medium text-gray-300">Severity:</span>
           <Badge className={renderSeverityClass(testResult.severity)}>
             {testResult.severity.charAt(0).toUpperCase() + testResult.severity.slice(1)}
           </Badge>
         </div>
         
         <div className="space-y-2">
-          <p className="text-sm font-medium">Description:</p>
-          <p className="text-sm text-muted-foreground">{testResult.description}</p>
+          <p className="text-sm font-medium text-gray-300">Description:</p>
+          <p className="text-sm text-gray-400">{testResult.description}</p>
         </div>
         
         {testResult.location && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Location:</p>
-            <p className="text-sm text-muted-foreground">{testResult.location}</p>
+            <p className="text-sm font-medium text-gray-300">Location:</p>
+            <p className="text-sm text-gray-400">{testResult.location}</p>
           </div>
         )}
         
-        {imagePreview && testResult.detections && testResult.detections.length > 0 && (
+        {testResult.regulationIds && testResult.regulationIds.length > 0 && (
           <div className="space-y-2">
-            <p className="text-sm font-medium">Annotated Image:</p>
-            <div className="relative rounded-md border overflow-hidden">
-              <canvas 
-                ref={canvasRef} 
-                className="max-w-full h-auto" 
-              />
-              {canvasRef.current && (
-                <Button 
-                  size="sm" 
-                  variant="outline" 
-                  className="absolute bottom-2 right-2"
-                  onClick={downloadAnnotatedImage}
-                >
-                  <Download size={16} className="mr-1" />
-                  Download
-                </Button>
-              )}
-            </div>
-          </div>
-        )}
-        
-        {testResult.detections && testResult.detections.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Detected Violations:</p>
-            <ul className="list-disc pl-5 space-y-2">
-              {testResult.detections.map((detection, idx) => (
-                <li key={idx} className="text-sm">
-                  {detection.label ? (
-                    <div>
-                      <div>
-                        <span className="font-medium">{detection.label.replace(/_/g, ' ')}</span>
-                        {detection.confidence && (
-                          <span className="text-muted-foreground"> (Confidence: {(detection.confidence * 100).toFixed(1)}%)</span>
-                        )}
-                      </div>
-                      
-                      {testResult.regulationIds && testResult.regulationIds[idx] && (
-                        <div className="mt-1 text-muted-foreground">
-                          Regulation: {testResult.regulationIds[idx]}
-                        </div>
-                      )}
-                      
-                      {detection.remediationSteps && (
-                        <div className="mt-1 text-muted-foreground">
-                          {detection.remediationSteps.split('\n')[0]}
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <span className="text-muted-foreground">See analysis in description</span>
+            <p className="text-sm font-medium text-gray-300">Related Regulations:</p>
+            <ul className="list-disc pl-5 space-y-1">
+              {testResult.regulationIds.map((id, index) => (
+                <li key={id} className="text-sm">
+                  <span className="text-gray-300">{id}</span>
+                  {testResult.relevanceScores && (
+                    <span className="text-gray-500 ml-2">
+                      (Relevance: {(testResult.relevanceScores[index] * 100).toFixed(1)}%)
+                    </span>
                   )}
                 </li>
               ))}
@@ -166,14 +125,41 @@ const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResult
           </div>
         )}
         
-        <div className="pt-3 border-t flex justify-between items-center">
-          <div className="flex items-center gap-2 text-sm">
-            <AlertTriangle size={16} className="text-yellow-500" />
-            <span className="text-muted-foreground">AI model results are approximations and should be reviewed by safety experts.</span>
+        {imagePreview && testResult.detections && testResult.detections.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium text-gray-300">Annotated Image:</p>
+            <div className="relative rounded-md border border-gray-700 overflow-hidden">
+              <canvas 
+                ref={canvasRef} 
+                className="max-w-full h-auto" 
+              />
+              <Button 
+                size="sm" 
+                variant="outline" 
+                className="absolute bottom-2 right-2 bg-gray-700 hover:bg-gray-600"
+                onClick={downloadAnnotatedImage}
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Download
+              </Button>
+            </div>
           </div>
-          
-          <Button variant="outline" size="sm" onClick={onReset}>
-            Reset
+        )}
+        
+        <div className="flex items-start gap-2 mt-4 pt-3 border-t border-gray-700">
+          <AlertTriangle size={16} className="text-amber-500 mt-0.5 flex-shrink-0" />
+          <p className="text-xs text-gray-500">
+            AI model results are approximations and should be reviewed by safety experts.
+          </p>
+        </div>
+        
+        <div className="flex justify-end">
+          <Button 
+            variant="default" 
+            onClick={onReset}
+            className="mt-2 bg-blue-600 hover:bg-blue-700"
+          >
+            Run New Analysis
           </Button>
         </div>
       </div>
