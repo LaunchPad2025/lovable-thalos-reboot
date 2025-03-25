@@ -5,7 +5,7 @@ import { Shield } from 'lucide-react';
 
 const Footer = () => {
   return (
-    <footer className="bg-[#0d1117] border-t border-gray-800 py-12 text-gray-400 mt-auto">
+    <footer className="bg-[#0d1117] border-t border-gray-800 py-12 text-gray-400 mt-auto relative z-10">
       <div className="container mx-auto px-6">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">

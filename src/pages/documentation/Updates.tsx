@@ -28,104 +28,6 @@ const Updates = () => {
         </div>
 
         <div className="space-y-12">
-          {/* July 2025 Updates */}
-          <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <h2 className="text-2xl font-bold">July 2025</h2>
-              <Separator className="flex-1" />
-            </div>
-            
-            <div className="space-y-8">
-              <UpdateItem 
-                date="July 15, 2025"
-                title="Enhanced AI Violation Detection"
-                type="feature"
-                description="We've improved our AI violation detection models with better accuracy and support for more PPE types and safety scenarios."
-                bulletPoints={[
-                  "15% improvement in detection accuracy for construction PPE",
-                  "Added support for specialized healthcare PPE detection",
-                  "Improved low-light detection capabilities",
-                  "Reduced false positives by 23%"
-                ]}
-              />
-              
-              <UpdateItem 
-                date="July 8, 2025"
-                title="Task Management Improvements"
-                type="improvement"
-                description="We've enhanced the task management system with new filtering options and bulk actions."
-                bulletPoints={[
-                  "Added bulk task assignment and status updates",
-                  "New filtering options by location and department",
-                  "Task templates for common remediation actions",
-                  "Improved performance for organizations with many tasks"
-                ]}
-              />
-              
-              <UpdateItem 
-                date="July 3, 2025"
-                title="Bug Fixes and Stability Improvements"
-                type="bug"
-                description="This release addresses several bug fixes and stability improvements."
-                bulletPoints={[
-                  "Fixed an issue with report generation timing out for large datasets",
-                  "Resolved notification delivery delays for some users",
-                  "Fixed mobile view layout issues on task detail screens",
-                  "Addressed rare data synchronization issues in offline mode"
-                ]}
-              />
-            </div>
-          </div>
-          
-          {/* June 2025 Updates */}
-          <div>
-            <div className="flex items-center space-x-4 mb-6">
-              <h2 className="text-2xl font-bold">June 2025</h2>
-              <Separator className="flex-1" />
-            </div>
-            
-            <div className="space-y-8">
-              <UpdateItem 
-                date="June 22, 2025"
-                title="Introducing Paulie: Your AI Safety Assistant"
-                type="feature"
-                description="We're excited to introduce Paulie, our AI-powered safety assistant that helps you navigate regulations and compliance requirements."
-                bulletPoints={[
-                  "Ask questions about safety regulations and get instant answers",
-                  "Receive step-by-step guidance for remediation actions",
-                  "Access industry-specific compliance information",
-                  "Available in chat interface and throughout the platform"
-                ]}
-              />
-              
-              <UpdateItem 
-                date="June 15, 2025"
-                title="New Risk Assessment Templates"
-                type="feature"
-                description="We've added new industry-specific risk assessment templates to help you identify and mitigate hazards more effectively."
-                bulletPoints={[
-                  "Construction-specific templates for different project types",
-                  "Manufacturing templates for various equipment and processes",
-                  "Healthcare-specific templates for infection control and patient safety",
-                  "Customizable scoring and prioritization options"
-                ]}
-              />
-              
-              <UpdateItem 
-                date="June 5, 2025"
-                title="Performance Optimizations"
-                type="improvement"
-                description="We've made significant performance improvements across the platform."
-                bulletPoints={[
-                  "50% faster image processing for violation detection",
-                  "Improved dashboard loading times for large organizations",
-                  "Optimized database queries for better report generation",
-                  "Reduced memory usage on mobile devices"
-                ]}
-              />
-            </div>
-          </div>
-          
           {/* May 2025 Updates */}
           <div>
             <div className="flex items-center space-x-4 mb-6">
@@ -135,41 +37,139 @@ const Updates = () => {
             
             <div className="space-y-8">
               <UpdateItem 
-                date="May 28, 2025"
-                title="New Analytics Dashboard"
+                date="May 25, 2025"
+                title="New Guide System and Search Functionality"
                 type="feature"
-                description="We've completely redesigned our analytics dashboard to provide more actionable insights into your safety program."
+                description="We've launched a new comprehensive guide system and improved search capabilities to help users find resources more easily."
                 bulletPoints={[
-                  "Customizable dashboard with drag-and-drop widgets",
-                  "New trend analysis tools for violations and incidents",
-                  "Comparative reports across sites and time periods",
-                  "Export capabilities for regulatory submissions"
+                  "Added keyword search functionality across all guides and documentation",
+                  "Improved guide organization with tabs for different content types",
+                  "Created industry-specific guide sections",
+                  "Enhanced guide card UI with better readability and visual cues"
                 ]}
               />
               
               <UpdateItem 
-                date="May 15, 2025"
-                title="Mobile App Beta"
-                type="feature"
-                description="We're launching the beta version of our mobile app for iOS and Android."
-                bulletPoints={[
-                  "Capture violations and submit reports from the field",
-                  "Offline mode for remote worksites",
-                  "Task management on the go",
-                  "Push notifications for critical alerts"
-                ]}
-              />
-              
-              <UpdateItem 
-                date="May 7, 2025"
-                title="Documentation Improvements"
+                date="May 18, 2025"
+                title="Dashboard Performance Improvements"
                 type="improvement"
-                description="We've expanded our documentation and help resources."
+                description="We've made significant performance enhancements to the dashboard for faster loading and better user experience."
                 bulletPoints={[
-                  "New getting started guides for different roles",
-                  "Expanded API documentation with code examples",
-                  "Video tutorials for common tasks",
-                  "Updated knowledge base with searchable content"
+                  "Reduced dashboard loading time by 40%",
+                  "Optimized data fetching for stats cards and visualizations",
+                  "Improved responsive design for various screen sizes",
+                  "Enhanced dark mode compatibility"
+                ]}
+              />
+              
+              <UpdateItem 
+                date="May 10, 2025"
+                title="Bug Fixes and UI Refinements"
+                type="bug"
+                description="This release addresses several UI issues and improves overall stability."
+                bulletPoints={[
+                  "Fixed alignment issues in the GuideCard component",
+                  "Resolved inconsistent styling in dark mode",
+                  "Fixed search functionality in documentation pages",
+                  "Improved accessibility across the platform"
+                ]}
+              />
+            </div>
+          </div>
+          
+          {/* April 2025 Updates */}
+          <div>
+            <div className="flex items-center space-x-4 mb-6">
+              <h2 className="text-2xl font-bold">April 2025</h2>
+              <Separator className="flex-1" />
+            </div>
+            
+            <div className="space-y-8">
+              <UpdateItem 
+                date="April 28, 2025"
+                title="Enhanced AI Safety Model Customization"
+                type="feature"
+                description="We've expanded our AI safety model customization options to better serve different industries and compliance requirements."
+                bulletPoints={[
+                  "Added industry-specific model templates for manufacturing, healthcare, and construction",
+                  "Introduced new customization parameters for detection sensitivity",
+                  "Improved model testing interface with real-time feedback",
+                  "Enhanced visualization of safety detection zones"
+                ]}
+              />
+              
+              <UpdateItem 
+                date="April 15, 2025"
+                title="Documentation and Learning Resources Expansion"
+                type="feature"
+                description="We've significantly expanded our documentation and learning resources to help users get the most out of Thalos."
+                bulletPoints={[
+                  "Added comprehensive getting started guides for new users",
+                  "Created detailed documentation for core features and advanced usage",
+                  "Introduced video tutorials for common workflows",
+                  "Added downloadable resources and templates"
+                ]}
+              />
+              
+              <UpdateItem 
+                date="April 5, 2025"
+                title="Risk Assessment Module Enhancements"
+                type="improvement"
+                description="Our risk assessment module has been upgraded with new features and improved usability."
+                bulletPoints={[
+                  "Added customizable risk assessment templates",
+                  "Improved risk scoring algorithms",
+                  "Enhanced reporting capabilities with exportable formats",
+                  "Integrated risk assessments with violation tracking"
+                ]}
+              />
+            </div>
+          </div>
+          
+          {/* March 2025 Updates */}
+          <div>
+            <div className="flex items-center space-x-4 mb-6">
+              <h2 className="text-2xl font-bold">March 2025</h2>
+              <Separator className="flex-1" />
+            </div>
+            
+            <div className="space-y-8">
+              <UpdateItem 
+                date="March 30, 2025"
+                title="Thalos Platform Launch"
+                type="feature"
+                description="We're excited to announce the official launch of the Thalos safety compliance platform."
+                bulletPoints={[
+                  "Core AI safety monitoring and violation detection",
+                  "Task management system for violation remediation",
+                  "Dashboard with real-time safety metrics",
+                  "User management and role-based permissions"
+                ]}
+              />
+              
+              <UpdateItem 
+                date="March 20, 2025"
+                title="Mobile Responsive Interface"
+                type="feature"
+                description="We've ensured that Thalos works seamlessly across all devices with our responsive design."
+                bulletPoints={[
+                  "Fully responsive dashboard and analytics",
+                  "Mobile-optimized violation reporting",
+                  "Touch-friendly controls and interfaces",
+                  "Consistent experience across desktop and mobile devices"
+                ]}
+              />
+              
+              <UpdateItem 
+                date="March 10, 2025"
+                title="Initial Documentation Release"
+                type="improvement"
+                description="We've published our initial documentation to help users get started with Thalos."
+                bulletPoints={[
+                  "Installation and setup guides",
+                  "Admin configuration documentation",
+                  "API documentation for developers",
+                  "Frequently asked questions and troubleshooting"
                 ]}
               />
             </div>

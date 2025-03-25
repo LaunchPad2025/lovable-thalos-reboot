@@ -16,7 +16,7 @@ const PageContainer = ({ children, title, subtitle, className }: PageContainerPr
   const isMobile = useMobile();
   
   return (
-    <div className={`flex-1 overflow-y-auto bg-background flex flex-col min-h-screen ${className || ''}`}>
+    <div className={`flex-1 overflow-y-auto bg-background flex flex-col min-h-screen relative ${className || ''}`}>
       {(title || subtitle) && (
         <div className="mb-6 p-4 md:p-6 animate-fade-in">
           {title && <h1 className="text-2xl font-bold text-foreground">{title}</h1>}
