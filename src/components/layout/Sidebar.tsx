@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { useMobile } from "@/hooks/useMobile";
 import { useTheme } from "@/providers/ThemeProvider";
 import { useAuth } from "@/context/AuthContext";
-import { getNavItems } from "./sidebar/NavItems";
+import { getNavItems } from "./sidebar/navItems";
 import MobileNav from "./sidebar/MobileNav";
 import DesktopNav from "./sidebar/DesktopNav";
 

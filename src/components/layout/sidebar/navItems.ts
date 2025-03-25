@@ -1,5 +1,5 @@
 
-import { Home, FileText, Bell, Settings, CheckSquare, AlertTriangle } from "lucide-react";
+import { Home, FileText, Bell, Settings, CheckSquare, AlertTriangle, Layout } from "lucide-react";
 import { NavItem } from "./types";
 
 export const getNavItems = (): NavItem[] => [
@@ -31,6 +31,12 @@ export const getNavItems = (): NavItem[] => [
     title: "Notifications",
     path: "/notifications",
     icon: Bell,
+    roles: ["admin", "safety_officer", "worker"]
+  },
+  {
+    title: "Sidebar Examples",
+    path: "/sidebar-examples",
+    icon: Layout,
     roles: ["admin", "safety_officer", "worker"]
   },
   {
