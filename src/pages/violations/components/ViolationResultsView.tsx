@@ -9,6 +9,7 @@ import { TestResult } from '@/hooks/model-testing/types';
 import { AlertCircle, ClipboardCheck, ArrowLeft } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { generateRemediationSteps } from '@/components/violations/utils/violationHelpers';
+import NoViolationsCard from '@/components/violations/NoViolationsCard';
 
 interface ViolationResultsViewProps {
   testResults: TestResult;
@@ -73,10 +74,9 @@ const ViolationResultsView = ({
   
   const handleSaveViolation = () => {
     if (!hasDetections) {
-      toast.error("No violations to save", { 
-        description: "Our AI didn't detect any safety violations in this image."
+      toast.info("No violations to save", { 
+        description: "Creating a safety report for documentation purposes."
       });
-      return;
     }
     
     // Show task creation modal
@@ -115,28 +115,31 @@ const ViolationResultsView = ({
           <div className="md:col-span-2">
             <ViolationImageCard 
               results={enhancedResults}
+              imageUrl={enhancedResults?.imagePreview}
               violationsCount={violationsCount} 
               onSave={handleSaveViolation} 
             />
           </div>
           
           <div className="md:col-span-1">
-            <ViolationResults 
-              results={formattedResults} 
-              onSave={handleSaveViolation} 
+            <ViolationsList 
+              detections={enhancedResults?.detections || []}
+              violationsCount={violationsCount}
+              imageUrl={enhancedResults?.imagePreview}
+              severity={enhancedResults?.severity || 'medium'}
+              description={enhancedResults?.description}
+              location={enhancedResults?.location}
+              regulations={enhancedResults?.regulationIds}
+              onCreateTask={handleSaveViolation}
             />
           </div>
         </div>
       ) : (
-        <div className="bg-gray-800/50 p-8 rounded-lg border border-gray-700 text-center">
-          <h3 className="text-xl mb-2">No Violations Detected</h3>
-          <p className="text-gray-400 mb-4">
-            Our AI analysis didn't detect any safety violations in this image.
-          </p>
-          <Button onClick={onBackToUpload} className="bg-blue-600 hover:bg-blue-700">
-            Try Another Image
-          </Button>
-        </div>
+        <NoViolationsCard 
+          imageUrl={enhancedResults?.imagePreview} 
+          onNewAnalysis={onBackToUpload}
+          industry={enhancedResults?.industry}
+        />
       )}
       
       {/* No Violations Dialog */}

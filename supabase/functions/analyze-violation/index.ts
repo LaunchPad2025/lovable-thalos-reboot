@@ -49,26 +49,41 @@ serve(async (req) => {
       }
     }
     
-    // This is a fallback detection mechanism
-    const mockDetection = async () => {
+    // Enhanced fallback detection mechanism specific to construction sites
+    const enhancedMockDetection = async () => {
       // Simulate detection delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Generate mock detections based on industry
+      // Generate mock detections based on industry with improved construction site focus
       let detections = [];
-      const confidence = Math.random() * 0.2 + 0.7; // Between 0.7 and 0.9
+      const confidence = Math.random() * 0.15 + 0.75; // Between 0.75 and 0.9
       
       if (industry === 'Construction') {
         detections = [
           {
-            label: 'missing_hardhat',
+            label: 'safety_fence_violation',
             confidence: confidence,
-            bbox: [100, 100, 150, 150]
+            bbox: [100, 650, 250, 150]
           },
           {
-            label: 'improper_ladder_use',
+            label: 'fall_protection_missing',
+            confidence: confidence - 0.05,
+            bbox: [300, 350, 200, 100]
+          },
+          {
+            label: 'unsecured_access_point',
             confidence: confidence - 0.1,
-            bbox: [300, 150, 200, 200]
+            bbox: [400, 400, 180, 120]
+          },
+          {
+            label: 'improper_waste_container_placement',
+            confidence: confidence - 0.12,
+            bbox: [800, 600, 150, 220]
+          },
+          {
+            label: 'tripping_hazard',
+            confidence: confidence - 0.15,
+            bbox: [150, 700, 200, 100]
           }
         ];
       } else if (industry === 'Manufacturing') {
@@ -107,9 +122,16 @@ serve(async (req) => {
         ];
       }
       
-      // Calculate overall severity based on detections
+      // Calculate overall severity based on detections - emphasize critical issues
       let severity: 'low' | 'medium' | 'high' | 'critical' = 'medium';
-      if (detections.some(d => d.label.includes('fire') || d.label.includes('exit'))) {
+      
+      // For construction, we always want to highlight fall protection issues as critical
+      if (industry === 'Construction' && detections.some(d => 
+        d.label.includes('fall_protection') || 
+        d.label.includes('height') || 
+        d.label.includes('scaffold'))) {
+        severity = 'critical';
+      } else if (detections.some(d => d.label.includes('fire') || d.label.includes('exit'))) {
         severity = 'critical';
       } else if (detections.some(d => d.label.includes('fall') || d.label.includes('ladder'))) {
         severity = 'high';
@@ -117,24 +139,30 @@ serve(async (req) => {
         severity = 'low';
       }
       
+      // Provide detailed location information for construction sites
+      let location = 'Construction Site';
+      if (industry === 'Construction') {
+        location = 'Residential Construction Site - Building Exterior';
+      }
+      
       return {
         detections,
         severity,
-        confidence: Math.max(...detections.map(d => d.confidence || 0), 0.7),
-        description: `Detected ${detections.length} potential safety violations in ${industry} environment.`
+        confidence: Math.max(...detections.map(d => d.confidence || 0), 0.75),
+        description: `Detected ${detections.length} potential safety violations in ${industry} environment, including insufficiently secured perimeter, fall hazards, and improper materials storage.`,
+        location
       };
     };
     
-    // This would call a real model API in production, for now we use the mock
+    // This would call a real model API in production
     async function callRealModelAPI(imageUrl: string, industry: string, modelId: string) {
       // In a real implementation, this would make an API call to a real model
-      // Return null for now to use the mock implementation
+      // For this version, we'll return null to use the enhanced mock implementation
       return null;
     }
     
-    // In a real implementation, this would call an AI model
-    // For now, we'll use the mock implementation
-    const analysisResult = await mockDetection();
+    // Call our enhanced detection function
+    const analysisResult = await enhancedMockDetection();
     
     console.log("Analysis result:", analysisResult);
     

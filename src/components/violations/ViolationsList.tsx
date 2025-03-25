@@ -1,134 +1,145 @@
 
 import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
-import { Detection } from '@/hooks/model-testing/types';
+import { Shield, ChevronRight, AlertTriangle } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import NoViolationsCard from './NoViolationsCard';
+
+interface ViolationDetection {
+  label: string;
+  confidence: number;
+  bbox?: [number, number, number, number];
+  remediationSteps?: string;
+}
 
 interface ViolationsListProps {
-  detections?: Detection[];
-  violationsCount?: number;
+  detections: ViolationDetection[];
+  violationsCount: number;
   imageUrl?: string;
-  severity?: 'low' | 'medium' | 'high' | 'critical';
+  severity: 'low' | 'medium' | 'high' | 'critical';
   description?: string;
   location?: string;
   regulations?: string[];
   onCreateTask?: () => void;
 }
 
-const ViolationsList = ({
-  detections = [],
-  violationsCount = 0,
+const ViolationsList = ({ 
+  detections, 
+  violationsCount, 
   imageUrl,
-  severity = 'medium',
+  severity, 
   description,
   location,
-  regulations = [],
-  onCreateTask
+  regulations,
+  onCreateTask 
 }: ViolationsListProps) => {
-  const getSeverityClass = (severity: string) => {
+  const getSeverityColor = (severity: string) => {
     switch (severity) {
-      case 'low': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300';
-      case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300';
-      case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300';
-      case 'critical': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300';
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300';
+      case 'critical': return 'text-red-500 border-red-800 bg-red-950/30';
+      case 'high': return 'text-orange-500 border-orange-800 bg-orange-950/30';
+      case 'medium': return 'text-yellow-500 border-yellow-800 bg-yellow-950/30';
+      case 'low': return 'text-blue-500 border-blue-800 bg-blue-950/30';
+      default: return 'text-gray-500 border-gray-800 bg-gray-950/30';
     }
   };
 
+  const formatLabel = (label: string) => {
+    return label
+      .replace(/_/g, ' ')
+      .split(' ')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  if (violationsCount === 0) {
+    return <NoViolationsCard imageUrl={imageUrl} onSave={onCreateTask} />;
+  }
+
   return (
-    <Card className="bg-[#0d1117] border-gray-800">
-      <CardHeader className="bg-[#0f1419] border-b border-gray-800 p-4">
-        <CardTitle className="text-white flex items-center">
-          {violationsCount > 0 ? (
-            <>
-              <AlertTriangle className="mr-2 h-5 w-5 text-yellow-500" />
-              {violationsCount === 1 
-                ? '1 Violation Detected' 
-                : `${violationsCount} Violations Detected`}
-            </>
-          ) : (
-            <>
-              <CheckCircle className="mr-2 h-5 w-5 text-green-500" />
-              No Violations Detected
-            </>
-          )}
+    <Card className="bg-[#0d1117] border-gray-800 text-white shadow-none h-full">
+      <CardHeader className={`px-4 py-3 border-b border-gray-800 ${getSeverityColor(severity)}`}>
+        <CardTitle className="text-lg flex items-center">
+          <Shield className="mr-2 h-5 w-5" />
+          Safety Violations
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-0">
-        <div className="p-4 border-b border-gray-800">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-medium text-gray-300">Severity:</span>
-            <Badge className={getSeverityClass(severity)} variant="outline">
-              {severity.charAt(0).toUpperCase() + severity.slice(1)}
-            </Badge>
-          </div>
-          
+      <CardContent className="p-4 space-y-4">
+        {description && (
+          <p className="text-sm text-gray-400">{description}</p>
+        )}
+
+        <div className="grid grid-cols-2 gap-2 text-sm">
           {location && (
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-300">Location:</span>
-              <span className="text-sm text-gray-400">{location}</span>
+            <div>
+              <span className="text-gray-500">Location:</span>
+              <p className="text-gray-300">{location}</p>
             </div>
           )}
-          
-          {description && (
-            <div className="mt-3">
-              <span className="text-sm font-medium text-gray-300">Description:</span>
-              <p className="text-sm text-gray-400 mt-1">{description}</p>
-            </div>
-          )}
+          <div>
+            <span className="text-gray-500">Severity:</span>
+            <p>
+              <Badge className={`mt-1 ${
+                severity === 'critical' ? 'bg-red-900 hover:bg-red-900 text-red-200' :
+                severity === 'high' ? 'bg-orange-900 hover:bg-orange-900 text-orange-200' :
+                severity === 'medium' ? 'bg-yellow-900 hover:bg-yellow-900 text-yellow-200' :
+                'bg-blue-900 hover:bg-blue-900 text-blue-200'
+              }`}>
+                {severity.charAt(0).toUpperCase() + severity.slice(1)}
+              </Badge>
+            </p>
+          </div>
         </div>
-        
-        <div className="p-4 border-b border-gray-800">
-          <h4 className="text-sm font-medium text-gray-300 mb-2">Detected Violations:</h4>
-          {detections && detections.length > 0 ? (
-            <ul className="space-y-2">
-              {detections.map((detection, index) => (
-                <li key={index} className="flex items-start gap-2">
-                  <div className="mt-0.5">
-                    <AlertTriangle size={16} className="text-yellow-500" />
-                  </div>
-                  <div>
-                    <p className="text-sm text-gray-300">
-                      {detection.label?.replace(/_/g, ' ')}
-                    </p>
-                    <p className="text-xs text-gray-500">
-                      Confidence: {((detection.confidence || 0) * 100).toFixed(1)}%
+
+        <div className="border-t border-gray-800 pt-3">
+          <h3 className="text-sm font-medium mb-2">Detected Issues:</h3>
+          <ul className="space-y-2">
+            {detections.map((detection, index) => (
+              <li key={index} className="border border-gray-800 rounded-md p-3 bg-gray-900/50">
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h4 className="font-medium text-gray-200">{formatLabel(detection.label)}</h4>
+                    <p className="text-xs text-gray-400 mt-1">
+                      Confidence: {Math.round(detection.confidence * 100)}%
                     </p>
                   </div>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-sm text-gray-500">No specific violations detected</p>
-          )}
+                  <ChevronRight className="h-4 w-4 text-gray-500" />
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
-        
-        <div className="p-4 border-b border-gray-800">
-          <h4 className="text-sm font-medium text-gray-300 mb-2">Related Regulations:</h4>
-          {regulations && regulations.length > 0 ? (
-            <ul className="space-y-2">
+
+        {regulations && regulations.length > 0 && (
+          <div className="border-t border-gray-800 pt-3">
+            <h3 className="text-sm font-medium mb-2">Relevant Regulations:</h3>
+            <ul className="space-y-1">
               {regulations.map((reg, index) => (
                 <li key={index} className="text-sm text-gray-400">
-                  {reg}
+                  • {reg}
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className="text-sm text-gray-500">No specific regulations matched</p>
+          </div>
+        )}
+
+        <div className="flex justify-between items-center border-t border-gray-800 pt-3 mt-3">
+          <div className="flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-yellow-500 mt-0.5" />
+            <p className="text-xs text-gray-500">
+              Review findings with a safety expert
+            </p>
+          </div>
+          
+          {onCreateTask && (
+            <Button 
+              size="sm"
+              onClick={onCreateTask}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Create Task
+            </Button>
           )}
-        </div>
-        
-        <div className="p-4">
-          <Button 
-            onClick={onCreateTask} 
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-            disabled={violationsCount === 0}
-          >
-            <ArrowRight className="mr-2 h-4 w-4" />
-            Create Remediation Task
-          </Button>
         </div>
       </CardContent>
     </Card>
