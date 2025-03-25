@@ -3,7 +3,7 @@ import React from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { AlertTriangle } from 'lucide-react';
-import { TestResult } from '@/hooks/useModelTest';
+import { TestResult } from '@/hooks/model-testing/types';
 
 interface ViolationSummaryCardProps {
   results: TestResult;

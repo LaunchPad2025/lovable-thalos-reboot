@@ -1,7 +1,8 @@
+
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Control } from 'react-hook-form';
-import { TestModelFormValues } from '@/hooks/model-testing';
+import { TestModelFormValues } from '@/hooks/model-testing/types';
 import { MLModel } from '@/hooks/ml-models';
 
 interface ModelSelectorProps {

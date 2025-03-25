@@ -2,8 +2,8 @@
 import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Control } from 'react-hook-form';
-import { TestModelFormValues } from '@/hooks/useModelTest';
-import { MLModel } from '@/hooks/useMLModels';
+import { TestModelFormValues } from '@/hooks/model-testing/types';
+import { MLModel } from '@/hooks/ml-models';
 
 interface IndustrySelectorProps {
   control: Control<TestModelFormValues>;
@@ -11,6 +11,13 @@ interface IndustrySelectorProps {
 }
 
 const IndustrySelector = ({ control, selectedModel }: IndustrySelectorProps) => {
+  const industries = ['Construction', 'Manufacturing', 'Warehouse', 'Oil & Gas', 'Healthcare', 'Transportation'];
+  
+  // If model is industry-specific, only show that industry
+  const displayedIndustries = selectedModel?.industry !== 'All' 
+    ? [selectedModel?.industry || 'Construction'] 
+    : industries;
+
   return (
     <FormField
       control={control}
@@ -21,7 +28,7 @@ const IndustrySelector = ({ control, selectedModel }: IndustrySelectorProps) => 
           <Select 
             onValueChange={field.onChange}
             value={field.value}
-            disabled={!!selectedModel && selectedModel.industry !== 'All'}
+            disabled={selectedModel?.industry !== 'All'}
           >
             <FormControl>
               <SelectTrigger>
@@ -29,18 +36,11 @@ const IndustrySelector = ({ control, selectedModel }: IndustrySelectorProps) => 
               </SelectTrigger>
             </FormControl>
             <SelectContent>
-              <SelectItem value="Construction">Construction</SelectItem>
-              <SelectItem value="Manufacturing">Manufacturing</SelectItem>
-              <SelectItem value="Healthcare">Healthcare</SelectItem>
-              <SelectItem value="Energy">Energy</SelectItem>
-              <SelectItem value="Transportation">Transportation</SelectItem>
-              <SelectItem value="Agriculture">Agriculture</SelectItem>
-              <SelectItem value="Food Processing">Food Processing</SelectItem>
-              <SelectItem value="Mining">Mining</SelectItem>
-              <SelectItem value="Warehousing">Warehousing</SelectItem>
-              <SelectItem value="Industrial">Industrial</SelectItem>
-              <SelectItem value="Retail">Retail</SelectItem>
-              <SelectItem value="Ports">Ports</SelectItem>
+              {displayedIndustries.map(industry => (
+                <SelectItem key={industry} value={industry}>
+                  {industry}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <FormMessage />

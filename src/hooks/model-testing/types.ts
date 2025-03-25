@@ -24,9 +24,10 @@ export interface TestResult {
 }
 
 export const testModelSchema = z.object({
-  model_id: z.string(),
+  model_id: z.string().min(1, 'Model selection is required'),
   violation_text: z.string().optional(),
   industry: z.string().min(1, 'Industry is required'),
 });
 
 export type TestModelFormValues = z.infer<typeof testModelSchema>;
+
