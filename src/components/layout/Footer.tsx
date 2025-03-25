@@ -60,7 +60,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               <li><Link to="/documentation/about-us" className="hover:text-white transition-colors">About Us</Link></li>
               <li><Link to="/documentation/careers" className="hover:text-white transition-colors">Careers</Link></li>
-              <li><Link to="/documentation/legal" className="hover:text-white transition-colors">Legal</Link></li>
+              <li><Link to="/legal" className="hover:text-white transition-colors">Legal</Link></li>
               <li><Link to="/documentation/contact" className="hover:text-white transition-colors">Contact</Link></li>
             </ul>
           </div>
@@ -68,17 +68,17 @@ const Footer = () => {
         
         <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm">
-            © 2025 Steel Toe Technologies. All rights reserved.
+            © {new Date().getFullYear()} Steel Toe Technologies. All rights reserved.
           </div>
           
           <div className="mt-4 md:mt-0 flex space-x-6">
-            <Link to="/documentation/legal?tab=privacy" className="text-sm hover:text-white transition-colors">
+            <Link to="/legal?tab=privacy" className="text-sm hover:text-white transition-colors">
               Privacy Policy
             </Link>
-            <Link to="/documentation/legal?tab=terms" className="text-sm hover:text-white transition-colors">
+            <Link to="/legal?tab=terms" className="text-sm hover:text-white transition-colors">
               Terms of Service
             </Link>
-            <Link to="/documentation/legal?tab=cookies" className="text-sm hover:text-white transition-colors">
+            <Link to="/legal?tab=cookies" className="text-sm hover:text-white transition-colors">
               Cookie Policy
             </Link>
           </div>
