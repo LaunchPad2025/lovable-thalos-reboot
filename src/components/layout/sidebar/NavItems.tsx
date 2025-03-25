@@ -1,86 +1,39 @@
 
-import {
-  LayoutDashboard,
-  AlertTriangle,
-  ListTodo,
-  FileText,
-  MessageSquare,
-  CreditCard,
-  Settings,
-  BrainCircuit,
-  Users,
-  Building,
-  Gauge
-} from "lucide-react";
+import React from "react";
+import { NavLink } from "react-router-dom";
+import { cn } from "@/lib/utils";
 import { NavItem } from "./types";
 
-export const getNavItems = (): NavItem[] => {
-  return [
-    {
-      title: "Dashboard",
-      path: "/",
-      icon: LayoutDashboard,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-    {
-      title: "Violations",
-      path: "/violations",
-      icon: AlertTriangle,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-    {
-      title: "Tasks",
-      path: "/tasks",
-      icon: ListTodo,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-    {
-      title: "Regulations",
-      path: "/regulations",
-      icon: FileText,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-    {
-      title: "ML Models",
-      path: "/models",
-      icon: BrainCircuit,
-      roles: ["admin", "safety_officer"],
-    },
-    {
-      title: "AI Assistant",
-      path: "/chatbot",
-      icon: MessageSquare,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-    {
-      title: "Team Members",
-      path: "/team",
-      icon: Users,
-      roles: ["admin", "safety_officer"],
-    },
-    {
-      title: "Organizations",
-      path: "/organizations",
-      icon: Building,
-      roles: ["admin"],
-    },
-    {
-      title: "Analytics",
-      path: "/analytics",
-      icon: Gauge,
-      roles: ["admin", "safety_officer"],
-    },
-    {
-      title: "Subscription",
-      path: "/subscription",
-      icon: CreditCard,
-      roles: ["admin"],
-    },
-    {
-      title: "Settings",
-      path: "/settings",
-      icon: Settings,
-      roles: ["admin", "safety_officer", "worker"],
-    },
-  ];
+interface NavItemsProps {
+  navItems: NavItem[];
+  userRole: string;
+}
+
+export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
+  return (
+    <ul className="space-y-2 px-3 py-2">
+      {navItems
+        .filter((item) => item.roles.includes(userRole as any))
+        .map((item) => (
+          <li key={item.path}>
+            <NavLink
+              to={item.path}
+              className={({ isActive }) =>
+                cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary/10 text-primary"
+                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )
+              }
+            >
+              <item.icon className="h-5 w-5" />
+              <span>{item.title}</span>
+            </NavLink>
+          </li>
+        ))}
+    </ul>
+  );
 };
+
+export { getNavItems } from "./navItems";

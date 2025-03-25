@@ -4,7 +4,7 @@ import { Menu, X } from "lucide-react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import Logo from "./Logo";
-import NavItems from "./NavItems";
+import { NavItems } from "./NavItems";
 import { NavItem } from "./types";
 
 interface MobileNavProps {

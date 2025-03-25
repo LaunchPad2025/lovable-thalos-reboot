@@ -14,7 +14,6 @@ export {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuBadge,
-  SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSkeleton,
   SidebarMenuSub,
@@ -24,8 +23,13 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
-  useSidebar,
+  SIDEBAR_WIDTH,
+  SIDEBAR_WIDTH_ICON,
+  SIDEBAR_WIDTH_MOBILE
 } from './components';
 
+// Re-export context and hook
+export { useSidebar, SidebarContext } from './context';
+
 // Re-export types
-export type { SidebarContext } from './context';
+export type { SidebarContext as SidebarContextType } from './context';

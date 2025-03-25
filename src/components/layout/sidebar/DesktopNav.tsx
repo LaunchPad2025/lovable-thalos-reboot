@@ -2,7 +2,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 import Logo from "./Logo";
-import NavItems from "./NavItems";
+import { NavItems } from "./NavItems";
 import { NavItem } from "./types";
 
 interface DesktopNavProps {
