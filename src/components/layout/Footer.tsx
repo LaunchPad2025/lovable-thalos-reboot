@@ -19,6 +19,7 @@ const Footer = () => {
             <p className="text-sm mb-6">
               Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
             </p>
+            {/* Social icons hidden for now 
             <div className="flex space-x-4">
               <a href="#" aria-label="Facebook" className="text-gray-400 hover:text-white transition-colors">
                 <Facebook className="w-5 h-5" />
@@ -33,6 +34,7 @@ const Footer = () => {
                 <Github className="w-5 h-5" />
               </a>
             </div>
+            */}
           </div>
           
           <div>

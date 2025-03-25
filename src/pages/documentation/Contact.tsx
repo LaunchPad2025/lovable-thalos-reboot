@@ -42,7 +42,7 @@ const Contact = () => {
             description="Interested in Thalos for your organization? Our sales team is ready to help."
             contactInfo={
               <>
-                <ContactItem icon={<Mail className="h-5 w-5" />} text="sales@steeltoetech.com" />
+                <ContactItem icon={<Mail className="h-5 w-5" />} text="contact@steeltoetech.io" />
                 <ContactItem icon={<Phone className="h-5 w-5" />} text="+1 (800) 555-1234" />
               </>
             }
@@ -56,7 +56,7 @@ const Contact = () => {
             description="Need assistance with Thalos? Our support team is here to help you."
             contactInfo={
               <>
-                <ContactItem icon={<Mail className="h-5 w-5" />} text="support@steeltoetech.com" />
+                <ContactItem icon={<Mail className="h-5 w-5" />} text="contact@steeltoetech.io" />
                 <ContactItem icon={<Clock className="h-5 w-5" />} text="Mon-Fri, 7AM-7PM ET" />
               </>
             }
@@ -70,7 +70,7 @@ const Contact = () => {
             description="Interested in partnering with Steel Toe Technologies? Let's explore possibilities."
             contactInfo={
               <>
-                <ContactItem icon={<Mail className="h-5 w-5" />} text="partners@steeltoetech.com" />
+                <ContactItem icon={<Mail className="h-5 w-5" />} text="contact@steeltoetech.io" />
               </>
             }
             buttonText="Partner Inquiry"
@@ -176,7 +176,7 @@ const Contact = () => {
                   <div className="space-y-2">
                     <div className="flex items-center">
                       <Mail className="h-5 w-5 text-muted-foreground mr-3" />
-                      <span className="text-muted-foreground">info@steeltoetech.com</span>
+                      <span className="text-muted-foreground">contact@steeltoetech.io</span>
                     </div>
                     <div className="flex items-center">
                       <Phone className="h-5 w-5 text-muted-foreground mr-3" />
@@ -195,6 +195,7 @@ const Contact = () => {
                 
                 <div className="pt-4 border-t border-border">
                   <h3 className="font-medium mb-2">Connect With Us</h3>
+                  {/* Social icons hidden for now 
                   <div className="flex space-x-4">
                     <a href="#" className="text-muted-foreground hover:text-foreground transition-colors">
                       <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
@@ -212,6 +213,7 @@ const Contact = () => {
                       </svg>
                     </a>
                   </div>
+                  */}
                 </div>
               </CardContent>
             </Card>
