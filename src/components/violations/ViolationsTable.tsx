@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { Search, Filter, ChevronDown } from 'lucide-react';
 import StatusBadge from '../ui/StatusBadge';
 import { Button } from '@/components/ui/button';
@@ -14,13 +13,15 @@ export interface Violation {
   status: 'open' | 'in-progress' | 'resolved' | 'pending';
   severity: 'low' | 'medium' | 'high' | 'critical';
   assignee: string;
+  image?: string | null;
 }
 
 interface ViolationsTableProps {
   violations: Violation[];
+  onSelectViolation: (id: string) => void;
 }
 
-const ViolationsTable = ({ violations }: ViolationsTableProps) => {
+const ViolationsTable = ({ violations, onSelectViolation }: ViolationsTableProps) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   
@@ -104,7 +105,11 @@ const ViolationsTable = ({ violations }: ViolationsTableProps) => {
           <tbody className="bg-white divide-y divide-gray-200">
             {filteredViolations.length > 0 ? (
               filteredViolations.map((violation) => (
-                <tr key={violation.id} className="hover:bg-gray-50">
+                <tr 
+                  key={violation.id} 
+                  className="hover:bg-gray-50 cursor-pointer"
+                  onClick={() => onSelectViolation(violation.id)}
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="text-sm font-medium text-gray-900">{violation.title}</div>
                     <div className="text-xs text-gray-500">ID: {violation.id}</div>
@@ -133,12 +138,16 @@ const ViolationsTable = ({ violations }: ViolationsTableProps) => {
                     {violation.assignee}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <Link 
-                      to={`/violations/${violation.id}`} 
+                    <Button 
+                      variant="ghost" 
                       className="text-thalos-blue hover:text-blue-700"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onSelectViolation(violation.id);
+                      }}
                     >
                       View Details
-                    </Link>
+                    </Button>
                   </td>
                 </tr>
               ))

@@ -1,9 +1,14 @@
 
 import React from 'react';
 import { ArrowLeft, User, MapPin, Calendar, FileText, AlertTriangle } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import StatusBadge from '../ui/StatusBadge';
+
+interface Regulation {
+  id: string;
+  title: string;
+  confidence: number;
+}
 
 interface ViolationDetailsProps {
   id: string;
@@ -15,7 +20,10 @@ interface ViolationDetailsProps {
   status: 'open' | 'in-progress' | 'resolved' | 'pending';
   severity: 'low' | 'medium' | 'high' | 'critical';
   assignee: string;
+  regulations?: Regulation[];
   notes?: string[];
+  image?: string | null;
+  onBack: () => void;
 }
 
 const ViolationDetails = ({
@@ -28,16 +36,17 @@ const ViolationDetails = ({
   status,
   severity,
   assignee,
-  notes = []
+  regulations = [],
+  notes = [],
+  image,
+  onBack
 }: ViolationDetailsProps) => {
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
       <div className="border-b border-gray-200 bg-gray-50 px-6 py-4 flex items-center">
-        <Link to="/violations" className="mr-4">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft size={20} />
-          </Button>
-        </Link>
+        <Button variant="ghost" size="icon" onClick={onBack} className="mr-4">
+          <ArrowLeft size={20} />
+        </Button>
         <div>
           <h2 className="text-xl font-semibold text-gray-900">{title}</h2>
           <p className="text-sm text-gray-500">ID: {id}</p>
@@ -59,10 +68,39 @@ const ViolationDetails = ({
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div className="md:col-span-2">
+            {image && (
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Image</h3>
+                <img 
+                  src={image} 
+                  alt={title} 
+                  className="rounded-md border max-h-[300px]" 
+                />
+              </div>
+            )}
+            
             <div className="mb-6">
               <h3 className="text-lg font-medium text-gray-900 mb-2">Description</h3>
               <p className="text-gray-700">{description}</p>
             </div>
+            
+            {regulations.length > 0 && (
+              <div className="mb-6">
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Relevant Regulations</h3>
+                <div className="space-y-3">
+                  {regulations.map((regulation) => (
+                    <div key={regulation.id} className="p-3 bg-gray-50 rounded-md">
+                      <div className="flex justify-between">
+                        <h4 className="font-medium text-gray-900">{regulation.title}</h4>
+                        <span className="text-sm text-gray-500">
+                          Confidence: {regulation.confidence}%
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             {notes.length > 0 && (
               <div>

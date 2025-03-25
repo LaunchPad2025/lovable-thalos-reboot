@@ -13,6 +13,8 @@ export interface TestResult {
   status: 'pending' | 'open' | 'in-progress' | 'resolved';
   description: string;
   detections?: any[];
+  imagePreview?: string | null;
+  industry?: string;
 }
 
 export const testModelSchema = z.object({
@@ -50,7 +52,7 @@ export function useModelTest() {
   const submitModelTest = async (values: TestModelFormValues, selectedModel: MLModel | undefined) => {
     if (!values.violation_text && !image && selectedModel?.model_type !== 'Multimodal (Image + Text)') {
       toast.error('Please provide either text or an image');
-      return;
+      return null;
     }
     
     setIsSubmitting(true);
@@ -77,11 +79,21 @@ export function useModelTest() {
       
       if (error) throw error;
       
-      setTestResult(data);
+      // Add the image preview to the result data
+      const resultWithImage = {
+        ...data,
+        imagePreview: imagePreview,
+        industry: values.industry
+      };
+      
+      setTestResult(resultWithImage);
       toast.success('Model analysis completed successfully');
+      
+      return resultWithImage;
     } catch (error: any) {
       console.error('Error testing model:', error);
       toast.error(error.message || 'Failed to test model');
+      return null;
     } finally {
       setIsSubmitting(false);
     }
