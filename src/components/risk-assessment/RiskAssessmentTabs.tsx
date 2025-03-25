@@ -29,6 +29,9 @@ const RiskAssessmentTabs: React.FC<RiskAssessmentTabsProps> = ({ activeTab, onTa
             className={`px-6 py-3 text-sm font-medium ${activeTab === 'risk-matrix' ? 'text-white' : 'text-gray-400'}`}
           >
             Risk Matrix
+            <span className="ml-2 text-xs px-1.5 py-0.5 bg-purple-900/30 text-purple-300 border border-purple-800 rounded-md">
+              Soon
+            </span>
           </TabsTrigger>
         </TabsList>
       </Tabs>

@@ -45,8 +45,7 @@ export const getNavItems = (): NavItem[] => [
     title: "Documents",
     path: "/documents",
     icon: FileText,
-    roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    roles: ["admin", "safety_officer", "worker"]
   },
   {
     title: "Notifications",
