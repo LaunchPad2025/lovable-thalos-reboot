@@ -12,18 +12,26 @@ export interface IndustryGuideCardProps {
 }
 
 const IndustryGuideCard = ({ title, description, imageUrl, icon }: IndustryGuideCardProps) => (
-  <Card className="overflow-hidden">
-    <div className="h-36 bg-cover bg-center" style={{ backgroundImage: `url(${imageUrl})` }}></div>
-    <CardHeader className="pb-2">
-      <div className="flex items-center gap-2 mb-2">
-        {icon}
-        <CardTitle>{title}</CardTitle>
+  <Card className="overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 h-full flex flex-col">
+    <div 
+      className="h-40 bg-cover bg-center relative" 
+      style={{ backgroundImage: `url(${imageUrl})` }}
+    >
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+    </div>
+    <CardHeader className="pb-2 flex-grow">
+      <div className="flex items-center gap-3 mb-3">
+        <div className="p-2 rounded-full bg-muted flex items-center justify-center">
+          {icon}
+        </div>
+        <CardTitle className="text-xl">{title}</CardTitle>
       </div>
-      <CardDescription>{description}</CardDescription>
+      <CardDescription className="text-sm line-clamp-3">{description}</CardDescription>
     </CardHeader>
-    <CardFooter>
-      <Button variant="ghost" className="w-full justify-between">
-        Explore Guides <ArrowRight className="h-4 w-4" />
+    <CardFooter className="pt-0">
+      <Button variant="ghost" className="w-full justify-between group">
+        Explore Guides 
+        <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
       </Button>
     </CardFooter>
   </Card>
