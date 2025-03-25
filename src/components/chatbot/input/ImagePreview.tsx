@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface ImagePreviewProps {
   imagePreview: string | null;
@@ -16,17 +17,22 @@ const ImagePreview: React.FC<ImagePreviewProps> = ({ imagePreview, removeImage }
         <img 
           src={imagePreview} 
           alt="Upload preview" 
-          className="w-full max-h-[200px] object-contain mx-auto"
+          className="w-full h-auto max-h-[200px] object-contain mx-auto"
         />
-        <button
+        <Button
           onClick={removeImage}
-          className="absolute top-1 right-1 p-2 bg-gray-900/80 rounded-full text-gray-300 hover:text-white"
+          size="sm"
+          variant="ghost" 
+          className="absolute top-1 right-1 p-1 bg-gray-900/80 rounded-full text-gray-300 hover:text-white h-auto"
           type="button"
           aria-label="Remove image"
         >
           <X size={16} />
-        </button>
+        </Button>
       </div>
+      <p className="text-xs text-gray-400 mt-1">
+        Image ready for analysis. Images help our AI provide more accurate responses.
+      </p>
     </div>
   );
 };

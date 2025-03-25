@@ -11,11 +11,11 @@ interface ImagePreviewProps {
 const ImagePreview = ({ imageUrl, onRemove }: ImagePreviewProps) => {
   return (
     <div className="mb-6">
-      <div className="relative rounded-lg overflow-hidden border-2 border-blue-500/50 mb-4">
+      <div className="relative rounded-lg overflow-hidden border border-gray-700 bg-gray-900 mb-4">
         <img 
           src={imageUrl} 
           alt="Image preview" 
-          className="w-full max-h-[400px] object-contain mx-auto bg-gray-900/60"
+          className="w-full h-auto max-h-[400px] object-contain mx-auto"
         />
         <Button
           onClick={onRemove}
