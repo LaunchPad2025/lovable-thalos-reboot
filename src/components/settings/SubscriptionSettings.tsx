@@ -3,6 +3,7 @@ import React from 'react';
 import SubscriptionDetails from '@/components/subscription/SubscriptionDetails';
 import { Timer } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const SubscriptionSettings = () => {
   return (
@@ -14,13 +15,22 @@ const SubscriptionSettings = () => {
             View and manage your current subscription plan.
           </p>
         </div>
-        <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800">
-          <Timer className="h-3 w-3 mr-1" />
-          Coming Soon
-        </Badge>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="info" className="bg-blue-500/20 text-blue-300 border-blue-400">
+                <Timer className="h-3 w-3 mr-1" />
+                Coming Soon
+              </Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Simulation Only - Coming Soon</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       
-      <div className="opacity-75 filter grayscale">
+      <div className="opacity-90 filter-none border border-blue-500/20 rounded-lg p-4">
         <SubscriptionDetails />
       </div>
     </div>

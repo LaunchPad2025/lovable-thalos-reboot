@@ -5,6 +5,7 @@ import { VariantProps } from "class-variance-authority"
 import { 
   Tooltip,
   TooltipContent,
+  TooltipProvider,
   TooltipTrigger
 } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
@@ -17,6 +18,7 @@ const SidebarMenuButton = React.forwardRef<
     asChild?: boolean
     isActive?: boolean
     tooltip?: string | React.ComponentProps<typeof TooltipContent>
+    comingSoon?: boolean
   } & VariantProps<typeof sidebarMenuButtonVariants>
 >(
   (
@@ -26,6 +28,7 @@ const SidebarMenuButton = React.forwardRef<
       variant = "default",
       size = "default",
       tooltip,
+      comingSoon = false,
       className,
       ...props
     },
@@ -45,26 +48,35 @@ const SidebarMenuButton = React.forwardRef<
       />
     )
 
-    if (!tooltip) {
+    if (!tooltip && !comingSoon) {
       return button
     }
 
-    if (typeof tooltip === "string") {
-      tooltip = {
+    let tooltipContent = tooltip;
+    
+    if (comingSoon) {
+      tooltipContent = {
+        children: "Simulation Only - Coming Soon",
+        ...(typeof tooltip === "object" ? tooltip : {})
+      };
+    } else if (typeof tooltip === "string") {
+      tooltipContent = {
         children: tooltip,
-      }
+      };
     }
 
     return (
-      <Tooltip>
-        <TooltipTrigger asChild>{button}</TooltipTrigger>
-        <TooltipContent
-          side="right"
-          align="center"
-          hidden={state !== "collapsed" || isMobile}
-          {...tooltip}
-        />
-      </Tooltip>
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent
+            side="right"
+            align="center"
+            hidden={state !== "collapsed" || isMobile}
+            {...tooltipContent}
+          />
+        </Tooltip>
+      </TooltipProvider>
     )
   }
 )

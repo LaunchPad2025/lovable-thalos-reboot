@@ -59,7 +59,8 @@ export const getNavItems = (): NavItem[] => [
     title: "Audits",
     path: "/audits",
     icon: ClipboardList,
-    roles: ["admin", "safety_officer", "worker"]
+    roles: ["admin", "safety_officer", "worker"],
+    badge: "Soon"
   },
   {
     title: "Reports",
@@ -72,13 +73,15 @@ export const getNavItems = (): NavItem[] => [
     title: "Training",
     path: "/training",
     icon: BookOpen,
-    roles: ["admin", "safety_officer", "worker"]
+    roles: ["admin", "safety_officer", "worker"],
+    badge: "Soon"
   },
   {
     title: "Admin",
     path: "/admin",
     icon: ShieldCheck,
-    roles: ["admin"]
+    roles: ["admin"],
+    badge: "Soon"
   },
   {
     title: "Copilot",
@@ -91,7 +94,8 @@ export const getNavItems = (): NavItem[] => [
     title: "Subscription",
     path: "/subscription",
     icon: CreditCard,
-    roles: ["admin"]
+    roles: ["admin"],
+    badge: "Soon"
   },
   {
     title: "Settings",

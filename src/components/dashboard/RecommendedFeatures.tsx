@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const RecommendedFeatures = () => {
   const navigate = useNavigate();
@@ -18,25 +20,54 @@ const RecommendedFeatures = () => {
         <p className="text-gray-400 text-sm mb-4">Contact our sales team to access these powerful safety compliance tools</p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4 opacity-75">
+          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="bg-blue-900/30 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-xs">Pro</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="simulation">Pro</Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Simulation Only - Coming Soon</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <span className="text-sm font-medium">Risk Assessment</span>
             </div>
             <p className="text-gray-400 text-sm">Comprehensive risk assessment tools for your entire organization</p>
           </div>
           
-          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4 opacity-75">
+          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="bg-blue-900/30 text-blue-300 border border-blue-800 px-2 py-0.5 rounded text-xs">Pro</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="simulation">Pro</Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Simulation Only - Coming Soon</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <span className="text-sm font-medium">Advanced Analytics</span>
             </div>
             <p className="text-gray-400 text-sm">Detailed compliance analytics and reporting capabilities</p>
           </div>
           
-          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4 opacity-75">
+          <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4">
             <div className="flex items-center space-x-2 mb-2">
-              <span className="bg-purple-900/30 text-purple-300 border border-purple-800 px-2 py-0.5 rounded text-xs">Enterprise</span>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Badge variant="simulation" className="bg-blue-500/20 text-blue-300 border-blue-400/30">
+                      Coming Soon
+                    </Badge>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Simulation Only - Coming Soon</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
               <span className="text-sm font-medium">AI Remediation</span>
             </div>
             <p className="text-gray-400 text-sm">Automated AI-powered compliance remediation suggestions</p>

@@ -2,6 +2,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import { NavItem } from "./types";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface NavItemsProps {
   navItems: NavItem[];
@@ -19,18 +20,18 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded
         return (
           <li key={item.path}>
             <NavLink
-              to={isDisabled || isComingSoon ? "#" : item.path}
+              to={isDisabled ? "#" : item.path}
               className={({ isActive }) =>
                 `flex items-center px-4 py-2 text-sm transition-colors rounded-md ${
                   isActive ? "bg-sidebar-active" : ""
                 } ${
-                  isDisabled || isComingSoon
+                  isDisabled
                     ? "opacity-50 cursor-not-allowed"
                     : "hover:bg-sidebar-hover"
                 }`
               }
               onClick={(e) => {
-                if (isDisabled || isComingSoon) {
+                if (isDisabled) {
                   e.preventDefault();
                 }
               }}
@@ -39,11 +40,22 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded
                 <item.icon className="w-5 h-5 mr-3 text-sidebar-icon" />
               )}
               {expanded && <span>{item.title}</span>}
+              
               {isComingSoon && expanded && (
-                <span className="ml-2 text-xs px-1.5 py-0.5 bg-purple-900/30 text-purple-300 border border-purple-800 rounded-md">
-                  Soon
-                </span>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="ml-2 text-xs px-1.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-400/30 rounded-md">
+                        Soon
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Simulation Only - Coming Soon</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               )}
+              
               {item.badge && item.badge !== "Soon" && expanded && (
                 <span className="ml-auto text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-md">
                   {item.badge}

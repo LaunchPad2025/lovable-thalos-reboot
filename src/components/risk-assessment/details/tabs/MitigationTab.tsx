@@ -1,5 +1,7 @@
 
 import React from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Task {
   id: string;
@@ -17,7 +19,19 @@ interface MitigationTabProps {
 const MitigationTab: React.FC<MitigationTabProps> = ({ tasks }) => {
   return (
     <div className="bg-[#0f1419] p-6 rounded-md border border-gray-800">
-      <h3 className="text-white font-medium mb-4">Mitigation Actions</h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-white font-medium">Mitigation Actions</h3>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Badge variant="simulation">Advanced Features Coming Soon</Badge>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Simulation Only - Coming Soon</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
       <p className="text-gray-400">Actions to address identified risks and hazards.</p>
       
       {tasks.length > 0 ? (
@@ -50,7 +64,19 @@ const MitigationTab: React.FC<MitigationTabProps> = ({ tasks }) => {
         </div>
       ) : (
         <div className="py-10 text-center text-gray-500">
-          No mitigation actions have been added yet.
+          <p>No mitigation actions have been added yet.</p>
+          <p className="mt-2">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge variant="simulation" className="cursor-pointer">AI Recommendations Coming Soon</Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Our AI will soon recommend mitigation actions based on identified risks</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          </p>
         </div>
       )}
     </div>

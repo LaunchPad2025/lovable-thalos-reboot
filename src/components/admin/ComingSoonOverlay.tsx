@@ -1,6 +1,7 @@
 
 import React from "react";
 import { BadgeInfo } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const ComingSoonOverlay: React.FC = () => {
   return (
@@ -11,6 +12,7 @@ const ComingSoonOverlay: React.FC = () => {
         This feature is under development and currently shows simulated data. 
         Full functionality will be available in a future update.
       </p>
+      <Badge variant="info" className="mt-3">Simulation Only</Badge>
     </div>
   );
 };
