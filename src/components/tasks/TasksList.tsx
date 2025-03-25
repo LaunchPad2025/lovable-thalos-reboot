@@ -2,8 +2,9 @@
 import React, { useState } from 'react';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Task } from '@/types/models';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import TasksEmptyState from './list/TasksEmptyState';
 
 export interface TasksListProps {
   tasks: Task[];
@@ -12,16 +13,27 @@ export interface TasksListProps {
   onAddNewTask: () => void;
 }
 
-const TasksList = ({ tasks, onTaskSelect, selectedTaskId }: TasksListProps) => {
+const TasksList = ({ tasks, onTaskSelect, selectedTaskId, onAddNewTask }: TasksListProps) => {
   const [activeTab, setActiveTab] = useState('all');
+  const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
   
   // Filter tasks based on the active tab
   const displayedTasks = tasks.filter(task => {
     if (activeTab === 'all') return true;
-    if (activeTab === 'my') return task.assignee === 'John Smith'; // This would normally use the current user's name
+    if (activeTab === 'my') return task.assignee_id === 'user-1'; // This would normally use the current user's ID
     if (activeTab === 'completed') return task.status === 'completed';
     return true;
   });
+
+  const toggleTaskExpanded = (taskId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent row click from firing
+    setExpandedTaskId(expandedTaskId === taskId ? null : taskId);
+  };
+  
+  // If there are no tasks to display, show the empty state
+  if (displayedTasks.length === 0) {
+    return <TasksEmptyState onAddNewTask={onAddNewTask} type={activeTab as 'all' | 'my' | 'completed'} />;
+  }
   
   return (
     <div className="flex flex-col h-full">
@@ -48,28 +60,28 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId }: TasksListProps) => {
       </div>
       
       {/* Tasks Table */}
-      {displayedTasks.length > 0 ? (
-        <div className="flex-1 overflow-auto">
-          <table className="w-full table-auto">
-            <thead className="text-xs text-gray-400 border-b border-gray-800">
-              <tr>
-                <th className="px-4 py-3 text-left w-6"></th>
-                <th className="px-4 py-3 text-left">Task</th>
-                <th className="px-4 py-3 text-left">Worksite</th>
-                <th className="px-4 py-3 text-left">Assignee</th>
-                <th className="px-4 py-3 text-left">Due Date</th>
-                <th className="px-4 py-3 text-left">Priority</th>
-                <th className="px-4 py-3 text-left">Status</th>
-                <th className="px-4 py-3 text-left">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-800">
-              {displayedTasks.map((task) => {
-                const isOverdue = task.due_date && new Date(task.due_date) < new Date();
-                
-                return (
+      <div className="flex-1 overflow-auto">
+        <table className="w-full table-auto">
+          <thead className="text-xs text-gray-400 border-b border-gray-800">
+            <tr>
+              <th className="px-4 py-3 text-left w-6"></th>
+              <th className="px-4 py-3 text-left">Task</th>
+              <th className="px-4 py-3 text-left">Worksite</th>
+              <th className="px-4 py-3 text-left">Assignee</th>
+              <th className="px-4 py-3 text-left">Due Date</th>
+              <th className="px-4 py-3 text-left">Priority</th>
+              <th className="px-4 py-3 text-left">Status</th>
+              <th className="px-4 py-3 text-left">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-800">
+            {displayedTasks.map((task) => {
+              const isOverdue = task.due_date && new Date(task.due_date) < new Date();
+              const isExpanded = expandedTaskId === task.id;
+              
+              return (
+                <React.Fragment key={task.id}>
                   <tr 
-                    key={task.id} 
                     className={cn(
                       "cursor-pointer hover:bg-[#1a1f29]",
                       selectedTaskId === task.id && "bg-[#1a1f29]"
@@ -77,7 +89,16 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId }: TasksListProps) => {
                     onClick={() => onTaskSelect(task)}
                   >
                     <td className="px-4 py-4">
-                      <ChevronDown className="h-4 w-4 text-gray-500" />
+                      <button 
+                        onClick={(e) => toggleTaskExpanded(task.id, e)} 
+                        className="focus:outline-none"
+                      >
+                        {isExpanded ? (
+                          <ChevronUp className="h-4 w-4 text-gray-500" />
+                        ) : (
+                          <ChevronDown className="h-4 w-4 text-gray-500" />
+                        )}
+                      </button>
                     </td>
                     <td className="px-4 py-4">
                       <div className="font-medium text-white">{task.title}</div>
@@ -86,11 +107,11 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId }: TasksListProps) => {
                       {task.worksite_id || "Unassigned"}
                     </td>
                     <td className="px-4 py-4 text-gray-300">
-                      {task.assignee}
+                      {task.assignee_id || "Unassigned"}
                     </td>
                     <td className="px-4 py-4">
                       <div className={isOverdue ? "text-red-500" : "text-gray-300"}>
-                        {task.dueDate}
+                        {task.due_date ? new Date(task.due_date).toLocaleDateString() : "No due date"}
                         {isOverdue && <div className="text-xs text-red-500">Overdue</div>}
                       </div>
                     </td>
@@ -109,25 +130,39 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId }: TasksListProps) => {
                       ...
                     </td>
                   </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
-      ) : (
-        <div className="flex flex-col items-center justify-center h-full py-20 text-gray-500">
-          <p className="text-lg mb-2">
-            {activeTab === 'all' ? "No tasks found" : 
-              activeTab === 'my' ? "No tasks assigned to you" : 
-              "No completed tasks"}
-          </p>
-          <p className="text-sm">
-            {activeTab === 'all' ? "Try adjusting your filters or create a new task" : 
-              activeTab === 'my' ? "Tasks assigned to you will appear here" : 
-              "Completed tasks will appear here"}
-          </p>
-        </div>
-      )}
+                  {isExpanded && (
+                    <tr className="bg-[#131920] border-b border-gray-800">
+                      <td colSpan={8} className="p-4">
+                        <div className="text-sm text-gray-300">
+                          <h4 className="font-medium text-white mb-2">Description</h4>
+                          <p className="mb-4">{task.description || "No description provided"}</p>
+                          
+                          <div className="grid grid-cols-2 gap-4 mt-2">
+                            <div>
+                              <h5 className="font-medium text-white mb-1">Created</h5>
+                              <p>{new Date(task.created_at).toLocaleDateString()}</p>
+                            </div>
+                            <div>
+                              <h5 className="font-medium text-white mb-1">Last Updated</h5>
+                              <p>{new Date(task.updated_at).toLocaleDateString()}</p>
+                            </div>
+                            {task.violation_id && (
+                              <div className="col-span-2">
+                                <h5 className="font-medium text-white mb-1">Related Violation</h5>
+                                <p>ID: {task.violation_id}</p>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };
