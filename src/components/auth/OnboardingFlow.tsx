@@ -24,6 +24,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+type UserRole = 'admin' | 'safety_officer' | 'worker';
+
 const industries = [
   "Construction",
   "Manufacturing",
@@ -45,7 +47,7 @@ const modules = [
 
 export function OnboardingFlow() {
   const [step, setStep] = useState(1);
-  const [role, setRole] = useState<string>("worker");
+  const [role, setRole] = useState<UserRole>("worker");
   const [organization, setOrganization] = useState<string>("");
   const [createOrg, setCreateOrg] = useState<boolean>(false);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
