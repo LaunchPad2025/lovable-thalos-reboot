@@ -3,7 +3,7 @@ import React, { useRef, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download, Save, AlertCircle } from 'lucide-react';
+import { Download, Save, AlertCircle, HardHat, FlagTriangleLeft } from 'lucide-react';
 import { TestResult } from '@/hooks/useModelTest';
 
 interface ViolationImageCardProps {
@@ -35,59 +35,121 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           // Draw the image
           ctx.drawImage(img, 0, 0, img.width, img.height);
           
-          // Draw bounding boxes for detections with consistent styling
+          // Draw bounding boxes for detections with improved styling
           results.detections.forEach((detection, index) => {
             if (detection.bbox) {
               const [x, y, width, height] = detection.bbox;
               
-              // Draw the rectangle with consistent coloring based on violation type
+              // Determine if this is a critical violation
               const isCritical = detection.label?.includes('missing') || 
                                 detection.label?.includes('critical') || 
                                 detection.confidence > 0.85;
               
-              ctx.lineWidth = 3;
+              // Draw the rectangle with distinctive styling
+              ctx.lineWidth = 4;
               ctx.strokeStyle = isCritical ? '#e11d48' : '#f59e0b'; // red for critical, amber for others
               ctx.strokeRect(x, y, width, height);
               
-              // Create label background with consistent styling
-              ctx.fillStyle = isCritical ? 'rgba(225, 29, 72, 0.8)' : 'rgba(245, 158, 11, 0.8)';
+              // Add diagonal hash pattern for emphasis
+              ctx.beginPath();
+              ctx.lineWidth = 1.5;
+              if (isCritical) {
+                // More dense pattern for critical
+                for (let i = 0; i < width; i += 15) {
+                  ctx.moveTo(x + i, y);
+                  ctx.lineTo(Math.min(x + i + height, x + width), Math.min(y + height, y + height));
+                }
+              } else {
+                // Less dense pattern for normal violations
+                for (let i = 0; i < width; i += 30) {
+                  ctx.moveTo(x + i, y);
+                  ctx.lineTo(Math.min(x + i + height, x + width), Math.min(y + height, y + height));
+                }
+              }
+              ctx.stroke();
+              
+              // Create label background with enhanced styling
+              ctx.fillStyle = isCritical ? 'rgba(225, 29, 72, 0.85)' : 'rgba(245, 158, 11, 0.85)';
               
               // Calculate text width to make background appropriate size
               const labelText = detection.label ? 
                 detection.label.replace(/_/g, ' ') : 
                 `Violation ${index + 1}`;
                 
-              ctx.font = 'bold 14px Arial';
+              ctx.font = 'bold 16px Arial';
               const textWidth = ctx.measureText(labelText).width;
               
               // Draw label background with consistent positioning
-              const labelHeight = 24;
+              const labelHeight = 28;
               const labelY = y > 30 ? y - labelHeight - 6 : y + height + 6;
               ctx.fillRect(x, labelY, textWidth + 16, labelHeight);
               
               // Add label text
               ctx.fillStyle = 'white';
-              ctx.fillText(labelText, x + 8, labelY + 17);
+              ctx.fillText(labelText, x + 8, labelY + 19);
+              
+              // Add regulation citation if available
+              if (results.regulationIds && results.regulationIds[index]) {
+                const regText = results.regulationIds[index].substring(0, 20);
+                ctx.font = '12px Arial';
+                const regWidth = ctx.measureText(regText).width;
+                
+                // Draw regulation citation badge
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                ctx.fillRect(x, y + height + 2, regWidth + 16, 22);
+                
+                ctx.fillStyle = '#a3e635'; // Light green text for regulation
+                ctx.fillText(regText, x + 8, y + height + 17);
+              }
               
               // Add confidence percentage if available
               if (detection.confidence) {
                 const confidenceText = `${(detection.confidence * 100).toFixed(0)}%`;
+                ctx.font = 'bold 12px Arial';
                 const confWidth = ctx.measureText(confidenceText).width;
                 
                 // Draw confidence badge
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 ctx.fillRect(x + width - confWidth - 16, y, confWidth + 16, 24);
                 
-                ctx.fillStyle = 'white';
+                // Color based on confidence level
+                if (detection.confidence > 0.8) {
+                  ctx.fillStyle = '#ef4444'; // Red for high confidence
+                } else if (detection.confidence > 0.6) {
+                  ctx.fillStyle = '#f59e0b'; // Amber for medium confidence
+                } else {
+                  ctx.fillStyle = '#3b82f6'; // Blue for lower confidence
+                }
+                
                 ctx.fillText(confidenceText, x + width - confWidth - 8, y + 17);
               }
               
               // Add ID number to make violations easier to reference
               const idText = `#${index + 1}`;
               ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
-              ctx.fillRect(x, y, 28, 24);
+              const idWidth = ctx.measureText(idText).width + 10;
+              const idHeight = 24;
+              
+              // Create circular or pill shape for the ID
+              ctx.beginPath();
+              ctx.arc(x + idWidth/2, y + idHeight/2, idHeight/2, 0, Math.PI * 2);
+              ctx.fill();
+              
               ctx.fillStyle = 'white';
-              ctx.fillText(idText, x + 6, y + 17);
+              ctx.fillText(idText, x + 5, y + 17);
+              
+              // Add a hazard icon for visual emphasis
+              if (isCritical) {
+                ctx.fillStyle = 'rgba(225, 29, 72, 0.9)';
+                ctx.beginPath();
+                ctx.arc(x + width - 15, y + 15, 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw exclamation mark
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText("!", x + width - 18, y + 20);
+              }
             }
           });
         } catch (error) {
@@ -126,9 +188,10 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
     <Card className="bg-[#0d1117] border-gray-800">
       <CardHeader className="bg-[#0f1419] border-b border-gray-800 flex flex-row items-center justify-between p-4">
         <div>
-          <CardTitle className="text-white">Analysis Results</CardTitle>
+          <CardTitle className="text-white">Violation Analysis</CardTitle>
           <p className="text-sm text-gray-400">
-            Industry: {results.industry || 'Construction'} | Report ID: VS-{Math.floor(Math.random() * 10000)}
+            Location: {results.location || 'Work Site'} | 
+            Severity: {results.severity?.toUpperCase() || 'MEDIUM'}
           </p>
         </div>
         <div>
@@ -179,20 +242,32 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           {results.detections && results.detections.length > 0 && (
             <div className="mb-4">
               <h4 className="text-sm font-medium text-gray-300 mb-2">Detected Violations:</h4>
-              <ul className="space-y-1">
+              <ul className="space-y-3">
                 {results.detections.map((detection, index) => (
-                  <li key={index} className="flex items-start text-sm">
-                    <span className="flex items-center justify-center h-5 w-5 rounded-full bg-gray-800 text-white text-xs mr-2 mt-0.5">
-                      {index + 1}
-                    </span>
-                    <span className="text-gray-300">
-                      {detection.label ? detection.label.replace(/_/g, ' ') : 'Violation'} 
-                      {detection.confidence && 
-                        <span className="text-gray-500 ml-1">
-                          ({(detection.confidence * 100).toFixed(0)}% confidence)
-                        </span>
-                      }
-                    </span>
+                  <li key={index} className="p-3 bg-gray-800/50 rounded-md border border-gray-700">
+                    <div className="flex items-start text-sm">
+                      <span className="flex items-center justify-center h-6 w-6 rounded-full bg-gray-700 text-white text-xs mr-3 mt-0.5">
+                        {index + 1}
+                      </span>
+                      <div className="flex-1">
+                        <p className="text-gray-200 font-medium">
+                          {detection.label ? detection.label.replace(/_/g, ' ') : 'Violation'}
+                        </p>
+                        <div className="flex items-center mt-1 space-x-3">
+                          {results.regulationIds && results.regulationIds[index] && (
+                            <Badge variant="outline" className="text-green-400 border-green-800 bg-green-900/20">
+                              <FlagTriangleLeft className="mr-1 h-3 w-3" />
+                              {results.regulationIds[index]}
+                            </Badge>
+                          )}
+                          {detection.confidence && (
+                            <Badge className={`${detection.confidence > 0.8 ? 'bg-red-900/30 border-red-800' : detection.confidence > 0.6 ? 'bg-yellow-900/30 border-yellow-800' : 'bg-blue-900/30 border-blue-800'}`}>
+                              Confidence: {(detection.confidence * 100).toFixed(0)}%
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -209,7 +284,7 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           {results.detections && results.detections.length > 0 && (
             <Button className="bg-blue-600 hover:bg-blue-700" onClick={onSave}>
               <Save size={16} className="mr-1" />
-              Create Task
+              Create Remediation Task
             </Button>
           )}
         </div>

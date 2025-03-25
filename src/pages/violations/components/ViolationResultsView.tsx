@@ -6,6 +6,8 @@ import { Button } from '@/components/ui/button';
 import { TaskCreation } from '@/components/tasks/TaskCreation';
 import { toast } from 'sonner';
 import { TestResult } from '@/hooks/useModelTest';
+import { AlertCircle, ClipboardCheck, ArrowLeft } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 
 interface ViolationResultsViewProps {
   testResults: TestResult;
@@ -19,10 +21,11 @@ const ViolationResultsView = ({
   onViewViolationsList 
 }: ViolationResultsViewProps) => {
   const [showTaskModal, setShowTaskModal] = useState(false);
+  const [showNoViolationsDialog, setShowNoViolationsDialog] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   
   // Convert testResults to the format expected by ViolationResults
-  const formattedResults: ViolationResult[] = [
+  const formattedResults: ViolationResult[] = testResults?.detections?.length > 0 ? [
     {
       id: testResults?.id || '1',
       test_name: 'Safety Violation Analysis',
@@ -36,60 +39,16 @@ const ViolationResultsView = ({
       regulationIds: testResults?.regulationIds,
       industry: testResults?.industry
     }
-  ];
-  
-  // Draw violation annotations on the image
-  useEffect(() => {
-    if (canvasRef.current && testResults?.imagePreview && testResults?.detections && testResults.detections.length > 0) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      
-      if (!ctx) return;
-      
-      const img = new Image();
-      img.src = testResults.imagePreview;
-      
-      img.onload = () => {
-        // Set canvas dimensions to match the image
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        // Draw the image
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-        
-        // Draw bounding boxes for detections
-        testResults.detections.forEach((detection: any) => {
-          if (detection.bbox) {
-            const [x, y, width, height] = detection.bbox;
-            
-            // Draw the rectangle
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
-            ctx.strokeRect(x, y, width, height);
-            
-            // Add label
-            ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
-            ctx.fillRect(x, y - 25, detection.label ? detection.label.length * 7 : 80, 25);
-            ctx.fillStyle = 'white';
-            ctx.font = '16px Arial';
-            ctx.fillText(detection.label?.replace(/_/g, ' ') || 'Violation', x + 5, y - 7);
-          }
-        });
-      };
-    }
-  }, [testResults]);
+  ] : [];
   
   // Check if we have actual violations detected
   const hasDetections = testResults?.detections && testResults.detections.length > 0;
   const violationsCount = hasDetections ? testResults.detections.length : 0;
   
-  // Show toast if no violations detected
+  // Show dialog if no violations detected
   useEffect(() => {
     if (testResults && (!hasDetections || violationsCount === 0)) {
-      toast.info("No safety violations detected in this image", {
-        duration: 5000,
-        description: "Our AI models didn't identify any safety issues in this upload."
-      });
+      setShowNoViolationsDialog(true);
     }
   }, [testResults, hasDetections, violationsCount]);
   
@@ -108,8 +67,12 @@ const ViolationResultsView = ({
   return (
     <>
       <div className="mb-6">
-        <h1 className="text-2xl font-medium text-white mb-1">Analysis Results</h1>
-        <p className="text-gray-400">AI-detected safety violations</p>
+        <h1 className="text-2xl font-medium text-white mb-1">Safety Violation Analysis</h1>
+        <p className="text-gray-400">
+          Report ID: VS-{Math.floor(Math.random() * 10000)} | 
+          Industry: {testResults?.industry || 'Construction'} | 
+          Analysis Date: {new Date().toLocaleDateString()}
+        </p>
       </div>
       
       <div className="flex justify-end mb-6 space-x-2">
@@ -117,6 +80,7 @@ const ViolationResultsView = ({
           onClick={onBackToUpload}
           className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
         >
+          <ArrowLeft size={16} className="mr-2" />
           New Analysis
         </Button>
         <Button 
@@ -155,6 +119,42 @@ const ViolationResultsView = ({
           </Button>
         </div>
       )}
+      
+      {/* No Violations Dialog */}
+      <Dialog open={showNoViolationsDialog} onOpenChange={setShowNoViolationsDialog}>
+        <DialogContent className="bg-gray-900 border border-gray-700 text-white">
+          <DialogHeader>
+            <DialogTitle className="flex items-center text-green-400">
+              <ClipboardCheck className="mr-2 h-5 w-5" />
+              No Safety Violations Detected
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <p className="text-gray-300">
+              Our AI analysis has examined the image and found no safety violations or hazards.
+            </p>
+            <p className="text-gray-400 mt-2 text-sm">
+              This result indicates compliance with standard safety protocols, but we recommend 
+              regular physical inspections to validate these findings.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              className="border-gray-600 text-gray-300 hover:bg-gray-800"
+              onClick={() => setShowNoViolationsDialog(false)}
+            >
+              Close
+            </Button>
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={onBackToUpload}
+            >
+              Upload Another Image
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {showTaskModal && testResults && (
         <TaskCreation 

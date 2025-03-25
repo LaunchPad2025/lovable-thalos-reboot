@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,14 +22,12 @@ const Violations = () => {
   const { user } = useAuth();
   const [modelInitError, setModelInitError] = useState<string | null>(null);
   
-  // Get user's preferred industry from user metadata
   const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
   
   const handleUploadComplete = (results: TestResult) => {
     setAnalysisResults(results);
     setActiveTab("results");
     
-    // Show success toast
     if (results.detections && results.detections.length > 0) {
       toast.success(`Detected ${results.detections.length} safety violation(s)`, {
         description: "The analysis has completed successfully"
@@ -47,7 +44,6 @@ const Violations = () => {
     setActiveTab("upload");
   };
   
-  // Auto-continue after 3 seconds if models are still loading
   useEffect(() => {
     if (modelsLoading) {
       const timer = setTimeout(() => {
@@ -60,12 +56,10 @@ const Violations = () => {
     }
   }, [modelsLoading]);
   
-  // Attempt to retry loading models if there's an error
   useEffect(() => {
     if (error) {
       setModelInitError(error.message || "Could not connect to AI models. Using fallback detection.");
       
-      // Try to refetch models after a delay
       const retryTimer = setTimeout(() => {
         console.log("Retrying model fetch...");
         refetch();
@@ -77,13 +71,10 @@ const Violations = () => {
     }
   }, [error, refetch]);
   
-  // Combine the real loading state with our override
   const isLoading = modelsLoading && isLoadingOverride;
   
-  // Check if we have valid working models
   const hasWorkingModels = models.length > 0 && !error;
   
-  // Convert single TestResult to array for ViolationResults component
   const formattedResults: ViolationResult[] = analysisResults ? [
     {
       id: analysisResults.id || '1',
@@ -115,7 +106,6 @@ const Violations = () => {
           </Alert>
         )}
         
-        {/* Safety Assistant - Ensure proper height to see full chatbot interface */}
         <Card className="border border-gray-700 bg-gray-800/50">
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex items-center">
@@ -135,7 +125,6 @@ const Violations = () => {
           </CardContent>
         </Card>
         
-        {/* Main violation detection content */}
         <Card>
           <CardHeader>
             <CardTitle>Violation Detection</CardTitle>

@@ -26,6 +26,7 @@ export interface AnalysisResult {
   id: string;
   regulationIds?: string[];
   relevanceScores?: number[];
+  location?: string;
 }
 
 export function useViolationAnalysis(industry: string) {
@@ -61,15 +62,70 @@ export function useViolationAnalysis(industry: string) {
         remediationSteps: generateRemediationSteps(violation)
       }));
       
-      // Create an analysis result with a unique ID
+      // Create regulation IDs based on the violation type
+      const regulationIds = violationsWithSteps.map(violation => {
+        const label = violation.label?.toLowerCase() || '';
+        if (label.includes('hardhat') || label.includes('helmet') || label.includes('head')) {
+          return '29 CFR 1926.100(a)';
+        } else if (label.includes('vest') || label.includes('visibility')) {
+          return '29 CFR 1926.201(a)(4)';
+        } else if (label.includes('scaffold') || label.includes('platform')) {
+          return '29 CFR 1926.451(g)(1)';
+        } else if (label.includes('fall') || label.includes('height') || label.includes('guardrail')) {
+          return '29 CFR 1926.501(b)(1)';
+        } else if (label.includes('electrical') || label.includes('wiring')) {
+          return '29 CFR 1926.403(a)';
+        } else if (label.includes('housekeep') || label.includes('trip') || label.includes('debris')) {
+          return '29 CFR 1926.25(a)';
+        } else if (label.includes('fire') || label.includes('exit')) {
+          return '29 CFR 1926.34(a)';
+        } else if (label.includes('ladder')) {
+          return '29 CFR 1926.1053(b)';
+        } else {
+          return '29 CFR 1926.20(b)(1)';
+        }
+      });
+      
+      // Create relevance scores for regulations
+      const relevanceScores = violationsWithSteps.map(violation => 
+        violation.confidence ? Math.min(violation.confidence + 0.15, 0.98) : 0.85
+      );
+      
+      // Generate a comprehensive description
+      let description = '';
+      if (violationsWithSteps.length === 1) {
+        const v = violationsWithSteps[0];
+        description = `Detected ${v.label?.replace(/_/g, ' ') || 'safety violation'} in ${industry} environment with ${(v.confidence ? (v.confidence * 100).toFixed(0) : 75)}% confidence.`;
+      } else {
+        description = `Detected ${violationsWithSteps.length} safety violations in ${industry} environment, including ${violationsWithSteps.map(v => v.label?.replace(/_/g, ' ')).slice(0, 2).join(', ')}${violationsWithSteps.length > 2 ? ', and more' : ''}.`;
+      }
+      
+      // Determine overall severity based on highest violation severity and confidence
+      let severity: 'low' | 'medium' | 'high' | 'critical' = 'medium';
+      const highestConfidence = Math.max(...violationsWithSteps.map(v => v.confidence || 0));
+      const criticalLabels = ['fall', 'electrical', 'fire', 'trapped', 'confined'];
+      
+      if (violationsWithSteps.some(v => criticalLabels.some(label => v.label?.toLowerCase().includes(label)))) {
+        severity = highestConfidence > 0.8 ? 'critical' : 'high';
+      } else if (highestConfidence > 0.85) {
+        severity = 'high';
+      } else if (highestConfidence < 0.6) {
+        severity = 'low';
+      }
+      
+      // Create an analysis result with a unique ID and additional information
       const analysisResult: AnalysisResult = {
         ...result,
         detections: violationsWithSteps,
         id: `v-${Date.now().toString(36)}`,
-        severity: result.severity || 'medium',
-        confidence: result.confidence || 0.7,
+        severity: severity,
+        confidence: highestConfidence || 0.7,
         industry: industry,
-        imagePreview: result.imagePreview || ''
+        imagePreview: result.imagePreview || '',
+        regulationIds: regulationIds,
+        relevanceScores: relevanceScores,
+        description: description,
+        location: 'Work Area'
       };
       
       console.log('Analysis completed successfully:', analysisResult);
