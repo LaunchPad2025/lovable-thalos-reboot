@@ -1,6 +1,6 @@
 
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { useEffect, useState } from "react";
 import { toast } from 'sonner';
 import { Loader2 } from "lucide-react";

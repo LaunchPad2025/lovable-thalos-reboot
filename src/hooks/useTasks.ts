@@ -81,7 +81,7 @@ const mockTasks: Task[] = [
 ];
 
 export function useTasks() {
-  const { toast } = useToast();
+  const { toast: uiToast } = useToast();
   const queryClient = useQueryClient();
 
   const {
@@ -104,7 +104,7 @@ export function useTasks() {
           console.error("Error fetching tasks from Supabase:", error);
           console.log("Returning fallback data");
           // Show a toast notification about using mock data
-          toast.info("Using demo data since we couldn't connect to the database");
+          toast("Using demo data since we couldn't connect to the database");
           // Return fallback data when Supabase fails
           return mockTasks;
         }
@@ -114,7 +114,7 @@ export function useTasks() {
         // If no tasks were found, return mock data for demonstration
         if (!data || data.length === 0) {
           console.log("No tasks found, returning demo data");
-          toast.info("No tasks found. Showing demo data.");
+          toast("No tasks found. Showing demo data.");
           return mockTasks;
         }
         

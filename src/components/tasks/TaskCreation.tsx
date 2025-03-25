@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { toast } from 'sonner';
 import { Task } from '@/types/models';
 import { supabase } from '@/lib/supabase';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { useOrganization } from '@/hooks/useOrganization';
 
 interface TaskCreationProps {

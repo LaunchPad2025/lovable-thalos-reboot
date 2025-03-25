@@ -3,7 +3,7 @@ import React from 'react';
 import { Bell, Search, Info, LogOut, Settings, SunMoon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useThemeStyles } from '@/hooks/useThemeStyles';
