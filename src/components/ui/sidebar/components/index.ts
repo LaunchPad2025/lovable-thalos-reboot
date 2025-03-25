@@ -1,16 +1,33 @@
 
-import { SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON, SIDEBAR_WIDTH_MOBILE } from "../context"
+import { Sidebar } from './Sidebar';
+import { SidebarLayout } from './SidebarLayout';
+import { SidebarProvider } from './SidebarProvider';
+import { SidebarRail } from './SidebarRail';
+import { SidebarTrigger } from './SidebarTrigger';
+import { SidebarInput } from './SidebarInput';
+import { SidebarGroup } from './SidebarGroup';
 
-export { SidebarProvider } from "./SidebarProvider"
-export { Sidebar } from "./Sidebar"
-export { SidebarTrigger } from "./SidebarTrigger"
-export { SidebarRail } from "./SidebarRail"
-export { SidebarContent, SidebarFooter, SidebarHeader, SidebarInset } from "./SidebarLayout"
-export { SidebarInput, SidebarSeparator } from "./SidebarInput"
-export { SidebarGroup, SidebarGroupAction, SidebarGroupContent, SidebarGroupLabel } from "./SidebarGroup"
-export { SidebarMenu, SidebarMenuItem, SidebarMenuButton, SidebarMenuAction } from "./SidebarMenu"
-export { SidebarMenuBadge, SidebarMenuSkeleton } from "./SidebarMenuExtras"
-export { SidebarMenuSub, SidebarMenuSubItem, SidebarMenuSubButton } from "./SidebarMenuSub"
+import {
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem
+} from './menu';
 
-// Re-export constants for easy access
-export { SIDEBAR_WIDTH, SIDEBAR_WIDTH_ICON, SIDEBAR_WIDTH_MOBILE }
+// Export all components
+export {
+  Sidebar,
+  SidebarLayout,
+  SidebarProvider,
+  SidebarRail,
+  SidebarTrigger,
+  SidebarInput,
+  SidebarGroup,
+  SidebarMenu,
+  SidebarMenuAction,
+  SidebarMenuButton,
+  SidebarMenuItem
+};
+
+// Re-export from menu/index
+export * from './menu';

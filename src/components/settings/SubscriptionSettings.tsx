@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 const SubscriptionSettings = () => {
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between mb-2">
         <div>
           <h3 className="text-lg font-medium">Subscription Management</h3>
           <p className="text-sm text-gray-500">
@@ -20,7 +20,9 @@ const SubscriptionSettings = () => {
         </Badge>
       </div>
       
-      <SubscriptionDetails />
+      <div className="opacity-75 filter grayscale">
+        <SubscriptionDetails />
+      </div>
     </div>
   );
 };

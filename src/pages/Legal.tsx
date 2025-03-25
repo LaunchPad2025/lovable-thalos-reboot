@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from '@/components/ui/button';
-import { Download } from 'lucide-react';
+import { Download, Timer } from 'lucide-react';
 import { toast } from 'sonner';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
+import { Badge } from '@/components/ui/badge';
 
 export default function Legal() {
   const [activeTab, setActiveTab] = useState("terms");
@@ -47,15 +49,22 @@ export default function Legal() {
                   Last updated: {new Date().toLocaleDateString()}
                 </CardDescription>
               </div>
-              <Button 
-                variant="outline"
-                size="sm"
-                className="border-gray-700 hover:bg-gray-800"
-                onClick={() => downloadDocument(activeTab)}
-              >
-                <Download className="h-4 w-4 mr-2" />
-                Download
-              </Button>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800">
+                  <Timer className="h-3 w-3 mr-1" />
+                  Download Feature Coming Soon
+                </Badge>
+                <Button 
+                  variant="outline"
+                  size="sm"
+                  className="border-gray-700 hover:bg-gray-800 opacity-60"
+                  onClick={() => downloadDocument(activeTab)}
+                  disabled
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download
+                </Button>
+              </div>
             </CardHeader>
             
             <CardContent>

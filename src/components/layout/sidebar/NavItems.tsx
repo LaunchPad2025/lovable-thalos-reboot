@@ -1,9 +1,7 @@
 
 import React from "react";
 import { NavLink } from "react-router-dom";
-import { cn } from "@/lib/utils";
 import { NavItem } from "./types";
-import { getNavItems } from "./navItems";
 
 interface NavItemsProps {
   navItems: NavItem[];
@@ -12,30 +10,43 @@ interface NavItemsProps {
 
 export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
   return (
-    <ul className="space-y-2 px-3 py-2">
-      {navItems
-        .filter((item) => item.roles.includes(userRole as any))
-        .map((item) => (
-          <li key={item.path}>
+    <ul className="space-y-1">
+      {navItems.map((item) => {
+        const isDisabled = item.roles && !item.roles.includes(userRole);
+        const isComingSoon = item.comingSoon;
+
+        return (
+          <li key={item.href}>
             <NavLink
-              to={item.path}
+              to={isDisabled || isComingSoon ? "#" : item.href}
               className={({ isActive }) =>
-                cn(
-                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                  isActive
-                    ? "bg-primary/10 text-primary"
-                    : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-                )
+                `flex items-center px-4 py-2 text-sm transition-colors rounded-md ${
+                  isActive ? "bg-sidebar-active" : ""
+                } ${
+                  isDisabled || isComingSoon
+                    ? "opacity-50 cursor-not-allowed"
+                    : "hover:bg-sidebar-hover"
+                }`
               }
+              onClick={(e) => {
+                if (isDisabled || isComingSoon) {
+                  e.preventDefault();
+                }
+              }}
             >
-              <item.icon className="h-5 w-5" />
-              <span>{item.title}</span>
+              {item.icon && (
+                <item.icon className="w-5 h-5 mr-3 text-sidebar-icon" />
+              )}
+              <span>{item.label}</span>
+              {isComingSoon && (
+                <span className="ml-2 text-xs px-1.5 py-0.5 bg-purple-900/30 text-purple-300 border border-purple-800 rounded-md">
+                  Soon
+                </span>
+              )}
             </NavLink>
           </li>
-        ))}
+        );
+      })}
     </ul>
   );
 };
-
-// Export getNavItems function as well to maintain compatibility
-export { getNavItems };

@@ -23,9 +23,9 @@ const RecentDocuments = () => {
           </div>
         </div>
         
-        <div className="text-center py-12">
+        <div className="text-center py-12 opacity-60 grayscale">
           <p className="text-gray-400 text-sm mb-4">Document management is available on Professional and Enterprise plans</p>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" disabled>
             Upgrade to Pro
           </Button>
         </div>
