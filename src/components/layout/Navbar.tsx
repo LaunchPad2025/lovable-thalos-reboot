@@ -66,16 +66,6 @@ const Navbar = () => {
           </Button>
           
           <Button 
-            variant="outline" 
-            size="sm" 
-            className="border-muted-foreground/30 text-foreground hover:bg-muted hidden md:flex"
-            onClick={() => navigate('/legal')}
-          >
-            <Info size={16} className="mr-1" />
-            Legal Docs
-          </Button>
-          
-          <Button 
             variant="ghost" 
             size="icon" 
             className="relative text-muted-foreground hover:text-foreground hover:bg-muted"

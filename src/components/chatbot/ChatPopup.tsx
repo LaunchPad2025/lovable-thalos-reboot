@@ -42,7 +42,7 @@ const ChatPopup = () => {
       {isOpen && (
         <div 
           ref={popupRef}
-          className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden"
+          className="mb-4 w-[380px] h-[600px] shadow-xl rounded-lg overflow-hidden bg-background"
         >
           <ChatInterface isPopup={true} onClose={() => setIsOpen(false)} />
         </div>

@@ -78,9 +78,9 @@ function App() {
                       path="/*"
                       element={
                         <OnboardingCheck>
-                          <div className="flex h-screen w-full overflow-hidden bg-background">
+                          <div className="flex h-screen w-full bg-background">
                             <Sidebar />
-                            <div className="flex-1 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
+                            <div className="flex-1 flex flex-col overflow-y-auto ml-[var(--sidebar-width,0px)]">
                               <Navbar />
                               <Routes>
                                 <Route path="/" element={<Navigate to="/dashboard" replace />} />

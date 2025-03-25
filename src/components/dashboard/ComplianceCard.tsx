@@ -1,31 +1,42 @@
 
 import React from 'react';
-import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle } from 'lucide-react';
+import { CircleHelp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useToast } from '@/components/ui/use-toast';
 
 const ComplianceCard = () => {
+  const { toast } = useToast();
+  
+  const startCompliantTour = () => {
+    toast({
+      title: "Compliance Score Tour",
+      description: "Your compliance score is calculated based on completed tasks, resolved violations, and up-to-date safety documentation. Higher scores indicate better workplace safety compliance.",
+      duration: 5000,
+    });
+  };
+  
   return (
-    <Card className="bg-[#0d1117] border-gray-800 shadow-none text-white">
-      <CardContent className="p-6">
-        <div className="flex items-center space-x-2">
-          <CheckCircle className="h-5 w-5 text-green-500" />
-          <span className="font-medium">Compliance Score</span>
+    <div className="bg-[#0d1117] rounded-lg border border-gray-800 p-6">
+      <div className="flex justify-between items-start">
+        <h3 className="text-lg font-medium text-white">Compliance Score</h3>
+        <Button variant="ghost" size="icon" onClick={startCompliantTour} className="h-8 w-8">
+          <CircleHelp className="h-5 w-5 text-gray-400" />
+        </Button>
+      </div>
+      
+      <div className="mt-4">
+        <div className="flex items-end space-x-2">
+          <span className="text-3xl font-semibold text-white">72%</span>
+          <span className="text-green-400 text-sm">+5%</span>
         </div>
         
-        <div className="mt-4">
-          <h3 className="text-3xl font-bold">87%</h3>
-          <p className="text-green-500 text-sm mt-1">+5% from last month</p>
+        <div className="mt-3 w-full bg-gray-700 rounded-full h-2.5">
+          <div className="bg-green-500 h-2.5 rounded-full" style={{ width: '72%' }}></div>
         </div>
         
-        <p className="text-gray-400 text-sm mt-4">
-          Your compliance score is good. Keep up the good work!
-        </p>
-        
-        <div className="w-full h-2 bg-gray-700 rounded-full mt-4">
-          <div className="h-2 bg-green-500 rounded-full" style={{ width: "87%" }}></div>
-        </div>
-      </CardContent>
-    </Card>
+        <p className="mt-2 text-gray-400 text-sm">Target: 90%</p>
+      </div>
+    </div>
   );
 };
 
