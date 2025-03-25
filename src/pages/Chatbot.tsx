@@ -2,15 +2,14 @@
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import ChatInterface from '@/components/chatbot/ChatInterface';
-import PageTitle from '@/components/ui/PageTitle';
 
 const Chatbot = () => {
   return (
     <PageContainer>
-      <PageTitle 
-        title="Ask Paulie"
-        subtitle="Your AI workplace safety assistant"
-      />
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold text-white">Paulie</h1>
+        <p className="text-gray-400">Your AI assistant for safety regulations and compliance guidance</p>
+      </div>
       
       <div className="h-[calc(100vh-12rem)]">
         <ChatInterface />

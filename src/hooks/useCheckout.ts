@@ -14,7 +14,9 @@ export const useCheckout = () => {
     try {
       setIsLoading(true);
       const plan = plans.find(p => p.id === selectedPlan);
-      if (!plan) return;
+      if (!plan) {
+        throw new Error("Selected plan not found");
+      }
       
       // Check if user is logged in
       const { data: session } = await supabase.auth.getSession();
@@ -36,25 +38,32 @@ export const useCheckout = () => {
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
+      // Validate the stripe price ID before proceeding
+      const priceId = plan.stripe_price_id[billingCycle];
+      if (!priceId) {
+        throw new Error(`No price ID available for ${plan.name} with ${billingCycle} billing cycle`);
+      }
+      
       // Call our Supabase Edge Function to create a checkout session
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
-          priceId: plan.stripe_price_id[billingCycle],
+          priceId,
           billingCycle,
           planName: plan.name,
-          userId, // Pass the user ID to the edge function
+          userId,
         },
       });
       
       if (error) {
-        throw new Error(error.message);
+        console.error("Supabase function error:", error);
+        throw new Error(error.message || "Error creating checkout session");
       }
       
       // Redirect to Stripe checkout
       if (data?.url) {
         window.location.href = data.url;
       } else {
-        throw new Error('No checkout URL returned');
+        throw new Error('No checkout URL returned from server');
       }
     } catch (error) {
       console.error('Error creating checkout session:', error);

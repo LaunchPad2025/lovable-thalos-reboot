@@ -55,7 +55,7 @@ export const plans: PlanData[] = [
     },
     stripe_price_id: {
       monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
-      annual: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
+      annual: 'price_1R4Yv1GCrRkrgEFrTMkY8gMF',
     },
     features: [
       { text: 'Up to 50 users', included: true },
@@ -77,7 +77,7 @@ export const plans: PlanData[] = [
       annual: 3570.00,
     },
     stripe_price_id: {
-      monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
+      monthly: 'price_1R4YwjGCrRkrgEFrOCo5qMhv',
       annual: 'price_1R4Yw3GCrRkrgEFrredMrTtQ',
     },
     features: [
