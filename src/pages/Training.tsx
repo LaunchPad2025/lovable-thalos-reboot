@@ -1,7 +1,7 @@
 
 import React from "react";
 import PageContainer from "@/components/layout/PageContainer";
-import { PageTitle } from "@/components/ui/PageTitle";
+import PageTitle from "@/components/ui/PageTitle";
 import TrainingStatusCards from "@/components/training/TrainingStatusCards";
 import UpcomingTraining from "@/components/training/UpcomingTraining";
 import RecentlyCompleted from "@/components/training/RecentlyCompleted";
