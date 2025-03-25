@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
@@ -88,7 +87,6 @@ export function OnboardingFlow() {
     setIsSubmitting(true);
     
     try {
-      // Update user's metadata with onboarding info
       await updateUserProfile({
         role,
         industries: selectedIndustries,
@@ -96,7 +94,6 @@ export function OnboardingFlow() {
         onboarded: true
       });
       
-      // If creating an organization
       if (createOrg && organization) {
         const { data, error } = await supabase
           .from('organizations')
@@ -110,7 +107,6 @@ export function OnboardingFlow() {
         if (error) throw error;
         
         if (data && data[0]) {
-          // Add user as admin to the new organization
           await supabase
             .from('organization_members')
             .insert({
@@ -126,7 +122,6 @@ export function OnboardingFlow() {
         description: "Your profile has been set up successfully.",
       });
       
-      // Redirect to dashboard
       navigate("/");
     } catch (error: any) {
       console.error("Onboarding error:", error);
@@ -157,7 +152,7 @@ export function OnboardingFlow() {
               <div className="space-y-2">
                 <Label htmlFor="role">Your Role</Label>
                 <Select 
-                  onValueChange={(value) => setRole(value)}
+                  onValueChange={(value) => setRole(value as UserRole)}
                   defaultValue={role}
                 >
                   <SelectTrigger className="bg-[#1a2330] border-gray-700">
