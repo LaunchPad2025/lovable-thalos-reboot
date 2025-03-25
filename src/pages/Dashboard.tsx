@@ -9,11 +9,16 @@ import {
   CheckCircle,
   ArrowUpRight,
   BarChart2,
-  BrainCircuit
+  BrainCircuit,
+  Timer
 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const Dashboard = () => {
+  // Get current year
+  const currentYear = new Date().getFullYear();
+  
   return (
     <div className="flex flex-col min-h-screen bg-[#0b0f14]">
       <header className="bg-[#0d1117] border-b border-gray-800 p-6">
@@ -143,7 +148,7 @@ const Dashboard = () => {
                   <div className="flex justify-between">
                     <div>
                       <p className="text-white">Update emergency evacuation plan</p>
-                      <p className="text-gray-400 text-sm mt-1">Due: 12/19/2023</p>
+                      <p className="text-gray-400 text-sm mt-1">Due: 12/19/{currentYear}</p>
                     </div>
                     <span className="bg-red-900 text-red-300 px-2 py-1 rounded text-xs h-fit">High</span>
                   </div>
@@ -153,7 +158,7 @@ const Dashboard = () => {
                   <div className="flex justify-between">
                     <div>
                       <p className="text-white">Complete monthly safety inspection</p>
-                      <p className="text-gray-400 text-sm mt-1">Due: 12/14/2023</p>
+                      <p className="text-gray-400 text-sm mt-1">Due: 12/14/{currentYear}</p>
                     </div>
                     <span className="bg-yellow-900 text-yellow-300 px-2 py-1 rounded text-xs h-fit">Medium</span>
                   </div>
@@ -163,7 +168,7 @@ const Dashboard = () => {
                   <div className="flex justify-between">
                     <div>
                       <p className="text-white">Address hazardous materials storage violation</p>
-                      <p className="text-gray-400 text-sm mt-1">Due: 12/17/2023</p>
+                      <p className="text-gray-400 text-sm mt-1">Due: 12/17/{currentYear}</p>
                     </div>
                     <span className="bg-red-900 text-red-300 px-2 py-1 rounded text-xs h-fit">Critical</span>
                   </div>
@@ -180,7 +185,11 @@ const Dashboard = () => {
                   <FileText className="h-5 w-5 text-gray-400" />
                   <h3 className="font-medium">Recent Documents</h3>
                 </div>
-                <div className="text-xs text-gray-400">
+                <div className="flex items-center space-x-2">
+                  <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800">
+                    <Timer className="h-3 w-3 mr-1" />
+                    Coming Soon
+                  </Badge>
                   <span className="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs">Pro+</span>
                 </div>
               </div>
@@ -206,6 +215,10 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">Pro</span>
                   <span className="text-sm font-medium">Risk Assessment</span>
+                  <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
+                    <Timer className="h-3 w-3 mr-1" />
+                    Coming Soon
+                  </Badge>
                 </div>
                 <p className="text-gray-400 text-sm">Comprehensive risk assessment tools for your entire organization</p>
               </div>
@@ -214,6 +227,10 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">Pro</span>
                   <span className="text-sm font-medium">Advanced Analytics</span>
+                  <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
+                    <Timer className="h-3 w-3 mr-1" />
+                    Coming Soon
+                  </Badge>
                 </div>
                 <p className="text-gray-400 text-sm">Detailed compliance analytics and reporting capabilities</p>
               </div>
@@ -222,6 +239,10 @@ const Dashboard = () => {
                 <div className="flex items-center space-x-2 mb-2">
                   <span className="bg-purple-900 text-purple-300 px-2 py-0.5 rounded text-xs">Enterprise</span>
                   <span className="text-sm font-medium">AI Remediation</span>
+                  <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
+                    <Timer className="h-3 w-3 mr-1" />
+                    Coming Soon
+                  </Badge>
                 </div>
                 <p className="text-gray-400 text-sm">Automated AI-powered compliance remediation suggestions</p>
               </div>
