@@ -1,9 +1,7 @@
 
 import React from "react";
-import { cn } from "@/lib/utils";
-import Logo from "./Logo";
-import { NavItems } from "./NavItems";
 import { NavItem } from "./types";
+import { NavItems } from "./NavItems";
 
 interface DesktopNavProps {
   expanded: boolean;
@@ -11,24 +9,26 @@ interface DesktopNavProps {
   userRole: string;
 }
 
-const DesktopNav: React.FC<DesktopNavProps> = ({ expanded, navItems, userRole }) => {
+const DesktopNav: React.FC<DesktopNavProps> = ({
+  expanded,
+  navItems,
+  userRole,
+}) => {
   return (
-    <aside
-      className={cn(
-        "bg-sidebar border-r border-border text-sidebar-foreground flex-shrink-0 transition-all duration-300 ease-in-out overflow-y-auto",
-        expanded ? "w-64" : "w-0"
-      )}
+    <div
+      className={`fixed top-0 left-0 z-10 h-screen border-r border-border bg-sidebar transition-all duration-200 ${
+        expanded ? "w-64" : "w-20"
+      }`}
     >
-      <div className="flex flex-col h-full">
-        <Logo />
-        <nav className="flex-1">
-          <NavItems navItems={navItems} userRole={userRole} />
-        </nav>
-        <div className="p-4 text-xs text-muted-foreground text-center border-t border-border">
-          © 2025 Thalos - powered by Steel Toe
-        </div>
+      <div className="flex h-16 items-center justify-center border-b border-border px-4">
+        <span className={`text-xl font-bold ${!expanded && "sr-only"}`}>
+          Thalos
+        </span>
       </div>
-    </aside>
+      <nav className="h-[calc(100vh-4rem)] overflow-y-auto">
+        <NavItems navItems={navItems} userRole={userRole} />
+      </nav>
+    </div>
   );
 };
 

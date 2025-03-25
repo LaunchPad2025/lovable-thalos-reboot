@@ -1,6 +1,6 @@
 
-// Re-export all components directly from components.tsx
-export * from './components';
+// Re-export all components from components folder
+export * from './components/index';
 
 // Re-export context and hook
 export { useSidebar, SidebarContext } from './context';
