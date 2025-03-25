@@ -36,6 +36,9 @@ const Tasks = () => {
     }
   }, [id, taskDetails]);
 
+  // Check if the new task modal should be shown
+  const showNewTask = searchParams.get('newTask') === 'true';
+
   if (isError) {
     return (
       <PageContainer>

@@ -17,7 +17,10 @@ const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForV
   const navigate = useNavigate();
 
   if (isLoading) {
-    return <div>Loading related tasks...</div>;
+    return <div className="flex items-center justify-center p-6">
+      <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-thalos-blue"></div>
+      <span className="ml-3 text-gray-400">Loading related tasks...</span>
+    </div>;
   }
 
   return (
