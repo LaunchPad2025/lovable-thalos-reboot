@@ -11,7 +11,7 @@ import { TestResult } from "@/hooks/model-testing";
 import ViolationResults, { ViolationResult } from "@/components/violations/ViolationResults";
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { toast } from "sonner";
 
 const Violations = () => {

@@ -7,7 +7,7 @@ import PlanCard from './PlanCard';
 import { plans } from '@/data/subscriptionPlans';
 import { useCheckout } from '@/hooks/useCheckout';
 import { useStripeStatus } from '@/hooks/useStripeStatus';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate } from 'react-router-dom';
 

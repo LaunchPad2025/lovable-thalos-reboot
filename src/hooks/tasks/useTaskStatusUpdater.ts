@@ -37,7 +37,6 @@ export function useTaskStatusUpdater() {
     },
     onSuccess: (data) => {
       toast({
-        title: "Status updated",
         description: `Task status changed to ${data.status.replace('-', ' ')}.`,
       });
       
@@ -47,7 +46,6 @@ export function useTaskStatusUpdater() {
     onError: (error) => {
       console.error("Error updating task status:", error);
       toast({
-        title: "Failed to update status",
         description: "There was an error updating the status. Please try again.",
         variant: "destructive",
       });

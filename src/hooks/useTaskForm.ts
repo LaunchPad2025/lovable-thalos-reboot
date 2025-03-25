@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { taskSchema, TaskFormData } from '@/components/tasks/schemas/taskFormSchema';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth';
 import { Task } from '@/types/models';
 import { useTaskViolation } from '@/hooks/useTaskViolation';
 import { generateRemediationSteps } from '@/utils/remediationUtils';

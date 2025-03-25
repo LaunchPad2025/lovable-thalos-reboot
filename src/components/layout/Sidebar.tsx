@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useMobile } from "@/hooks/useMobile";
 import { useTheme } from "@/providers/ThemeProvider";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/auth";
 import { getNavItems } from "./sidebar/navItems";
 import MobileNav from "./sidebar/MobileNav";
 import DesktopNav from "./sidebar/DesktopNav";
