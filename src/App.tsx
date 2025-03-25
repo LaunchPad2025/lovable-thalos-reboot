@@ -29,6 +29,7 @@ import Documents from "./pages/Documents";
 import Notifications from "./pages/Notifications";
 import Training from "./pages/Training";
 import Audits from "./pages/audits";
+import Admin from "./pages/Admin";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -96,7 +97,7 @@ const App = () => {
                               <Route path="/audits" element={<Audits />} />
                               <Route path="/reports" element={<ComingSoon />} />
                               <Route path="/training" element={<Training />} />
-                              <Route path="/admin" element={<ComingSoon />} />
+                              <Route path="/admin" element={<Admin />} />
                               <Route path="/help" element={<ComingSoon />} />
                               <Route path="/coming-soon" element={<ComingSoon />} />
                               <Route path="/legal" element={<Legal />} />

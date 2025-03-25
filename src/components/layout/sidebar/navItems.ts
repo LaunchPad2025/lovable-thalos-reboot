@@ -12,7 +12,8 @@ import {
   BookOpen,
   Users,
   HelpCircle,
-  MessageSquare
+  MessageSquare,
+  ShieldCheck
 } from "lucide-react";
 import { NavItem } from "./types";
 
@@ -77,7 +78,7 @@ export const getNavItems = (): NavItem[] => [
   {
     title: "Admin",
     path: "/admin",
-    icon: Users,
+    icon: ShieldCheck,
     roles: ["admin"],
     badge: "Soon"
   },
