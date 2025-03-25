@@ -4,6 +4,7 @@ import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/models';
 import { useToast } from '@/hooks/use-toast';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 
 // Fallback task data for when Supabase is unavailable
 const mockTasks: Task[] = [
@@ -102,21 +103,35 @@ export function useTasks() {
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
           console.log("Returning fallback data");
+          // Show a toast notification about using mock data
+          toast.info("Using demo data since we couldn't connect to the database");
           // Return fallback data when Supabase fails
           return mockTasks;
         }
         
         console.log(`Successfully fetched ${data?.length} tasks`);
+        
+        // If no tasks were found, return mock data for demonstration
+        if (!data || data.length === 0) {
+          console.log("No tasks found, returning demo data");
+          toast.info("No tasks found. Showing demo data.");
+          return mockTasks;
+        }
+        
         return data as Task[];
       } catch (err) {
         console.error("Exception in task fetch:", err);
         console.log("Returning fallback data due to exception");
+        // Show a toast notification about using mock data
+        toast.error("Error connecting to database. Using demo data instead.");
         // Return fallback data for any other errors
         return mockTasks;
       }
     },
     retry: 3,
-    refetchOnWindowFocus: false
+    retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
+    refetchOnWindowFocus: false,
+    staleTime: 2 * 60 * 1000 // 2 minutes
   });
 
   // Log error to console
@@ -136,9 +151,11 @@ export function useTasks() {
     }) => {
       if (mockTasks.some(t => t.id === taskId)) {
         // Mock update for demo tasks
+        console.log("Updating mock task status:", taskId, newStatus);
         return { id: taskId, status: newStatus };
       }
       
+      console.log("Updating task status in database:", taskId, newStatus);
       const { data, error } = await supabase
         .from('tasks')
         .update({ 

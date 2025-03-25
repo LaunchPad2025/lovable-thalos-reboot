@@ -24,12 +24,17 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   const { toast: uiToast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { organization, isLoading: isLoadingOrg } = useOrganization();
+  const { organization, isLoading: isLoadingOrg, hasOrganization } = useOrganization();
 
   // For debugging
   useEffect(() => {
-    console.log("Organization data:", organization);
-  }, [organization]);
+    console.log("TaskCreation component:", {
+      user: !!user,
+      organization,
+      isLoadingOrg,
+      hasOrganization
+    });
+  }, [user, organization, isLoadingOrg, hasOrganization]);
 
   useEffect(() => {
     if (violationId) {
@@ -45,9 +50,9 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       return;
     }
 
-    // Fallback to a default organization ID if organization is not available
-    // This ensures users can still use the app even if organization data is unavailable
+    // Use organization data if available, otherwise fall back to a default
     const organizationId = organization?.organization_id || "00000000-0000-0000-0000-000000000000";
+    console.log("Creating task with organization ID:", organizationId);
     
     setIsSubmitting(true);
     try {
