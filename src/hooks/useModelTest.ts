@@ -42,6 +42,7 @@ export function useModelTest() {
   // Initialize the violations bucket
   const initializeStorageBucket = async () => {
     try {
+      console.log("Initializing storage bucket");
       // Call our edge function to ensure the storage bucket exists
       const { data, error } = await supabase.functions.invoke('create-storage-buckets');
       
@@ -57,6 +58,7 @@ export function useModelTest() {
   };
   
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log("Image change event triggered", e.target.files);
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       
@@ -72,16 +74,19 @@ export function useModelTest() {
         return;
       }
       
+      console.log("Setting image file:", file.name, file.type, file.size);
       setImage(file);
       
       // Create preview
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log("Image preview created");
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
     } else {
       // Clear the image and preview if no file selected
+      console.log("No file selected, clearing image and preview");
       setImage(null);
       setImagePreview(null);
     }
@@ -94,6 +99,7 @@ export function useModelTest() {
     }
     
     setIsSubmitting(true);
+    console.log("Submitting model test with image:", image ? image.name : "No image");
     
     try {
       // First, make sure the storage bucket is initialized
@@ -106,6 +112,7 @@ export function useModelTest() {
       let uploadedImageUrl = '';
       
       if (image) {
+        console.log("Uploading image to storage");
         const timestamp = Date.now();
         const fileName = `${timestamp}_${image.name.replace(/\s+/g, '_')}`;
         const filePath = `violation_images/${fileName}`;
@@ -126,6 +133,7 @@ export function useModelTest() {
           .getPublicUrl(filePath);
           
         uploadedImageUrl = publicUrl;
+        console.log("Image uploaded successfully, URL:", uploadedImageUrl);
       }
       
       // Prepare the request payload
@@ -140,12 +148,19 @@ export function useModelTest() {
         requestData.violationImageUrl = uploadedImageUrl;
       }
       
+      console.log("Calling analyze-violation function with data:", requestData);
+      
       // Call the Edge Function
       const { data, error } = await supabase.functions.invoke('analyze-violation', {
         body: requestData
       });
       
-      if (error) throw error;
+      if (error) {
+        console.error("Edge function error:", error);
+        throw error;
+      }
+      
+      console.log("Analysis complete, data:", data);
       
       // If no detections or very low confidence, show a warning
       if (!data.detections || data.detections.length === 0 || data.confidence < 0.3) {

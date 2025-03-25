@@ -28,7 +28,7 @@ const ImageUploader = ({ onImageChange }: ImageUploaderProps) => {
       <div className="flex items-center gap-2">
         <Button 
           onClick={handleClick}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded cursor-pointer"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded cursor-pointer"
         >
           <ImageIcon size={16} className="mr-2" />
           Select Image

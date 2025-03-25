@@ -68,8 +68,10 @@ const ViolationUpload = ({
     };
     
     try {
+      console.log("Submitting analysis with image:", imagePreview ? "Image present" : "No image");
       const results = await submitModelTest(values, selectedModel);
       if (results) {
+        console.log("Analysis complete, results:", results);
         onUploadComplete(results);
       }
     } catch (error) {

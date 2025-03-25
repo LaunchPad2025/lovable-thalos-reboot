@@ -18,6 +18,8 @@ serve(async (req) => {
   }
 
   try {
+    console.log("Creating violations storage bucket");
+    
     // Create a new storage bucket for violation images
     const { data: bucket, error: createError } = await supabase
       .storage
@@ -30,6 +32,7 @@ serve(async (req) => {
     if (createError) {
       // If bucket already exists, this is fine
       if (createError.message.includes('already exists')) {
+        console.log("Violations bucket already exists");
         return new Response(
           JSON.stringify({ message: "Violations bucket already exists" }),
           {
@@ -45,6 +48,8 @@ serve(async (req) => {
       throw createError;
     }
 
+    console.log("Storage bucket created successfully");
+    
     return new Response(
       JSON.stringify({ message: "Storage bucket created successfully", data: bucket }),
       {
