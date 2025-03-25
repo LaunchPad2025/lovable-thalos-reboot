@@ -8,23 +8,27 @@ import ImageUploader from './upload/ImageUploader';
 import ImagePreview from './upload/ImagePreview';
 import ViolationForm from './upload/ViolationForm';
 import AnalysisButtons from './upload/AnalysisButtons';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;
   userIndustry?: string;
   hideModelSelection?: boolean;
+  modelInitError?: string | null;
 }
 
 const ViolationUpload = ({ 
   onUploadComplete, 
   userIndustry = 'Construction', 
-  hideModelSelection = false 
+  hideModelSelection = false,
+  modelInitError = null
 }: ViolationUploadProps) => {
   const { data: models = [], isLoading: modelsLoading, error: modelsError } = useMLModels();
   const [selectedModelId, setSelectedModelId] = useState<string>('');
   const [industry, setIndustry] = useState<string>(userIndustry);
   const [violationText, setViolationText] = useState<string>('');
+  const [connectionStatus, setConnectionStatus] = useState<'connected' | 'connecting' | 'error'>('connecting');
   const { 
     isSubmitting, 
     imagePreview, 
@@ -39,8 +43,24 @@ const ViolationUpload = ({
       // Find the YOLOv8 model or default to the first one
       const yoloModel = models.find(m => m.name.toLowerCase().includes('yolo'));
       setSelectedModelId(yoloModel?.id || models[0].id);
+      
+      // Update connection status
+      setConnectionStatus('connected');
+      console.log("Models loaded successfully, using: ", yoloModel?.name || models[0].name);
     }
   }, [models, selectedModelId]);
+
+  // Check model connection
+  useEffect(() => {
+    if (modelsError || modelInitError) {
+      setConnectionStatus('error');
+      console.error("Model connection error:", modelsError || modelInitError);
+    } else if (!modelsLoading && models.length > 0) {
+      setConnectionStatus('connected');
+    } else {
+      setConnectionStatus('connecting');
+    }
+  }, [models, modelsLoading, modelsError, modelInitError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,26 +69,31 @@ const ViolationUpload = ({
     const selectedModel = models.find(m => m.id === selectedModelId);
     const isMultimodal = selectedModel?.model_type === 'Multimodal (Image + Text)';
     
-    if (!imagePreview && !violationText && !isMultimodal) {
+    if (!imagePreview && !violationText) {
       toast.error('Please upload an image or provide a text description to analyze');
       return;
     }
     
     // If no model is explicitly selected, use the first one in the list
     const modelToUse = selectedModelId || (models.length > 0 ? models[0].id : '');
-    if (!modelToUse) {
-      toast.error('No models available for analysis. Please try again later.');
-      return;
-    }
     
-    const values = {
-      model_id: modelToUse,
-      violation_text: violationText,
-      industry: industry,
-    };
-    
+    // Always allow analysis even if no models are available - backend will use fallback detection
     try {
       console.log("Submitting analysis with image:", imagePreview ? "Image present" : "No image");
+      
+      // If we have connection issues, let the user know we're using fallback detection
+      if (connectionStatus === 'error' || !modelToUse) {
+        toast.info("Using fallback detection system", {
+          description: "Some AI models couldn't be loaded. We'll use our basic detection system instead."
+        });
+      }
+      
+      const values = {
+        model_id: modelToUse || 'default',  // Use default if no model available
+        violation_text: violationText,
+        industry: industry,
+      };
+      
       const results = await submitModelTest(values, selectedModel);
       if (results) {
         console.log("Analysis complete, results:", results);
@@ -85,7 +110,7 @@ const ViolationUpload = ({
       <Card className="border border-dashed border-gray-700 bg-transparent">
         <CardContent className="p-6 flex items-center justify-center h-64">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin text-blue-400 mx-auto mb-4" />
+            <Loader2 className="h-8 w-8 animate-spin text-yellow-400 mx-auto mb-4" />
             <p className="text-gray-400">Loading AI models...</p>
           </div>
         </CardContent>
@@ -96,6 +121,15 @@ const ViolationUpload = ({
   return (
     <Card className="border border-dashed border-gray-700 bg-transparent">
       <CardContent className="p-6">
+        {(modelInitError || modelsError) && (
+          <Alert variant="warning" className="mb-4 bg-yellow-900/30 border border-yellow-800 text-yellow-200">
+            <AlertCircle className="h-4 w-4 text-yellow-500" />
+            <AlertDescription>
+              {modelInitError || modelsError?.message || "Model connection issue. Using fallback detection."}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="text-center">
           <form onSubmit={handleSubmit}>
             {!imagePreview ? (
@@ -104,12 +138,6 @@ const ViolationUpload = ({
                   <p className="text-gray-400 mb-6">
                     Upload an image from your worksite to analyze for safety violations. Our AI will detect potential safety issues and regulatory non-compliance.
                   </p>
-                  
-                  {modelsError && (
-                    <div className="bg-red-900/30 text-red-200 p-3 rounded-md mb-4 border border-red-800">
-                      Error loading models: {modelsError.message || "Please try again later. Using default model settings."}
-                    </div>
-                  )}
                   
                   <ViolationForm
                     industry={industry}

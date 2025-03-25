@@ -27,41 +27,65 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
       img.src = results.imagePreview;
       
       img.onload = () => {
-        // Set canvas dimensions to match the image
-        canvas.width = img.width;
-        canvas.height = img.height;
+        try {
+          // Set canvas dimensions to match the image
+          canvas.width = img.width;
+          canvas.height = img.height;
+          
+          // Draw the image
+          ctx.drawImage(img, 0, 0, img.width, img.height);
+          
+          // Draw bounding boxes for detections
+          results.detections.forEach((detection) => {
+            if (detection.bbox) {
+              const [x, y, width, height] = detection.bbox;
+              
+              // Draw the rectangle
+              ctx.lineWidth = 3;
+              ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
+              ctx.strokeRect(x, y, width, height);
+              
+              // Add label with try-catch to prevent rendering issues
+              try {
+                ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
+                ctx.fillRect(x, y - 25, detection.label ? Math.min(detection.label.length * 7, 150) : 80, 25);
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.fillText(detection.label?.replace(/_/g, ' ') || 'Violation', x + 5, y - 7);
+              } catch (e) {
+                console.error("Error drawing label:", e);
+              }
+            }
+          });
+        } catch (error) {
+          console.error("Error rendering detection overlay:", error);
+        }
+      };
+      
+      // Handle image loading errors
+      img.onerror = () => {
+        console.error("Failed to load image for annotation");
         
-        // Draw the image
-        ctx.drawImage(img, 0, 0, img.width, img.height);
-        
-        // Draw bounding boxes for detections
-        results.detections.forEach((detection) => {
-          if (detection.bbox) {
-            const [x, y, width, height] = detection.bbox;
-            
-            // Draw the rectangle
-            ctx.lineWidth = 3;
-            ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
-            ctx.strokeRect(x, y, width, height);
-            
-            // Add label
-            ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
-            ctx.fillRect(x, y - 25, detection.label ? detection.label.length * 7 : 80, 25);
-            ctx.fillStyle = 'white';
-            ctx.font = '16px Arial';
-            ctx.fillText(detection.label?.replace('_', ' ') || 'Violation', x + 5, y - 7);
-          }
-        });
+        // Draw a placeholder with error message
+        ctx.fillStyle = 'black';
+        ctx.fillRect(0, 0, 400, 300);
+        ctx.fillStyle = 'white';
+        ctx.font = '16px Arial';
+        ctx.fillText("Error loading image", 20, 150);
       };
     }
   }, [results]);
   
   const downloadImage = () => {
     if (canvasRef.current) {
-      const link = document.createElement('a');
-      link.download = `safety-violation-${new Date().toISOString().slice(0, 10)}.png`;
-      link.href = canvasRef.current.toDataURL('image/png');
-      link.click();
+      try {
+        const link = document.createElement('a');
+        link.download = `safety-violation-${new Date().toISOString().slice(0, 10)}.png`;
+        link.href = canvasRef.current.toDataURL('image/png');
+        link.click();
+      } catch (error) {
+        console.error("Error downloading image:", error);
+      }
     }
   };
   
@@ -127,7 +151,7 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
                   <li key={index} className="flex items-center text-sm">
                     <span className="h-2 w-2 rounded-full bg-red-500 mr-2"></span>
                     <span className="text-gray-300">
-                      {detection.label ? detection.label.replace('_', ' ') : 'Violation'} 
+                      {detection.label ? detection.label.replace(/_/g, ' ') : 'Violation'} 
                       {detection.confidence && ` (${(detection.confidence * 100).toFixed(0)}% confidence)`}
                     </span>
                   </li>

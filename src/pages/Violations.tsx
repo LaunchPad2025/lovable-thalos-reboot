@@ -12,13 +12,15 @@ import ViolationResults, { ViolationResult } from "@/components/violations/Viola
 import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/context/AuthContext";
+import { toast } from "sonner";
 
 const Violations = () => {
-  const { data: models = [], isLoading: modelsLoading, error } = useMLModels();
+  const { data: models = [], isLoading: modelsLoading, error, refetch } = useMLModels();
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [analysisResults, setAnalysisResults] = useState<TestResult | null>(null);
   const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
   const { user } = useAuth();
+  const [modelInitError, setModelInitError] = useState<string | null>(null);
   
   // Get user's preferred industry from user metadata
   const userIndustry = user?.user_metadata?.industries?.[0] || "Construction";
@@ -26,6 +28,17 @@ const Violations = () => {
   const handleUploadComplete = (results: TestResult) => {
     setAnalysisResults(results);
     setActiveTab("results");
+    
+    // Show success toast
+    if (results.detections && results.detections.length > 0) {
+      toast.success(`Detected ${results.detections.length} safety violation(s)`, {
+        description: "The analysis has completed successfully"
+      });
+    } else {
+      toast.info("No violations detected", {
+        description: "The analysis completed but no safety violations were identified"
+      });
+    }
   };
   
   const handleReset = () => {
@@ -46,8 +59,28 @@ const Violations = () => {
     }
   }, [modelsLoading]);
   
+  // Attempt to retry loading models if there's an error
+  useEffect(() => {
+    if (error) {
+      setModelInitError(error.message || "Could not connect to AI models. Using fallback detection.");
+      
+      // Try to refetch models after a delay
+      const retryTimer = setTimeout(() => {
+        console.log("Retrying model fetch...");
+        refetch();
+      }, 5000);
+      
+      return () => clearTimeout(retryTimer);
+    } else {
+      setModelInitError(null);
+    }
+  }, [error, refetch]);
+  
   // Combine the real loading state with our override
   const isLoading = modelsLoading && isLoadingOverride;
+  
+  // Check if we have valid working models
+  const hasWorkingModels = models.length > 0 && !error;
   
   // Convert single TestResult to array for ViolationResults component
   const formattedResults: ViolationResult[] = analysisResults ? [
@@ -107,6 +140,7 @@ const Violations = () => {
             <CardTitle>Violation Detection</CardTitle>
             <CardDescription>
               Upload images or describe potential safety violations to analyze them using our AI models.
+              {!hasWorkingModels && !isLoading && <span className="text-yellow-500 ml-1">Using fallback detection.</span>}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -137,6 +171,7 @@ const Violations = () => {
                     onUploadComplete={handleUploadComplete} 
                     userIndustry={userIndustry}
                     hideModelSelection={true}
+                    modelInitError={modelInitError}
                   />
                 )}
               </TabsContent>
