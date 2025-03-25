@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Control } from 'react-hook-form';
 import { TestModelFormValues } from '@/hooks/useModelTest';
 import { MLModel } from '@/hooks/useMLModels';
+import { useRef, useState } from 'react';
 
 interface ModelTestInputsProps {
   control: Control<TestModelFormValues>;
@@ -19,6 +20,8 @@ const ModelTestInputs = ({
   handleImageChange, 
   imagePreview 
 }: ModelTestInputsProps) => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
   return (
     <>
       {(selectedModel?.model_type.includes('Text') || selectedModel?.model_type.includes('Multimodal')) && (
@@ -44,11 +47,30 @@ const ModelTestInputs = ({
       {(selectedModel?.model_type.includes('Image') || selectedModel?.model_type.includes('Multimodal')) && (
         <div className="space-y-2">
           <FormLabel>Upload Image</FormLabel>
-          <Input 
-            type="file" 
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          <div className="flex items-center gap-2">
+            <Input 
+              type="file" 
+              accept="image/*"
+              onChange={handleImageChange}
+              ref={fileInputRef}
+            />
+            {fileInputRef.current?.files?.length > 0 && (
+              <button
+                type="button"
+                className="text-sm text-red-500 hover:text-red-700"
+                onClick={() => {
+                  if (fileInputRef.current) {
+                    fileInputRef.current.value = '';
+                    // Trigger the onChange event to clear the preview
+                    const event = new Event('change', { bubbles: true });
+                    fileInputRef.current.dispatchEvent(event);
+                  }
+                }}
+              >
+                Clear
+              </button>
+            )}
+          </div>
           {imagePreview && (
             <div className="mt-3">
               <p className="text-sm text-muted-foreground mb-2">

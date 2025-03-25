@@ -89,7 +89,11 @@ const TestModelForm = ({ models }: TestModelFormProps) => {
         </form>
       </Form>
       
-      <ModelTestResults testResult={testResult} onReset={resetTest} />
+      <ModelTestResults 
+        testResult={testResult} 
+        onReset={resetTest} 
+        imagePreview={imagePreview}
+      />
     </div>
   );
 };

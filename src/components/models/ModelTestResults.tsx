@@ -2,15 +2,77 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Download } from 'lucide-react';
 import { TestResult } from '@/hooks/useModelTest';
+import { useRef, useEffect } from 'react';
 
 interface ModelTestResultsProps {
   testResult: TestResult | null;
   onReset: () => void;
+  imagePreview: string | null;
 }
 
-const ModelTestResults = ({ testResult, onReset }: ModelTestResultsProps) => {
+const ModelTestResults = ({ testResult, onReset, imagePreview }: ModelTestResultsProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  
+  useEffect(() => {
+    if (canvasRef.current && imagePreview && testResult?.detections && testResult.detections.length > 0) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      
+      if (!ctx) return;
+      
+      const img = new Image();
+      img.src = imagePreview;
+      
+      img.onload = () => {
+        // Set canvas dimensions to match the image
+        canvas.width = img.width;
+        canvas.height = img.height;
+        
+        // Draw the image
+        ctx.drawImage(img, 0, 0, img.width, img.height);
+        
+        // Draw bounding boxes for detections
+        testResult.detections.forEach((detection) => {
+          if (detection.bbox) {
+            const [x, y, width, height] = detection.bbox;
+            
+            // Calculate scaled dimensions
+            const scaleX = canvas.width / img.naturalWidth;
+            const scaleY = canvas.height / img.naturalHeight;
+            
+            const scaledX = x * scaleX;
+            const scaledY = y * scaleY;
+            const scaledWidth = width * scaleX;
+            const scaledHeight = height * scaleY;
+            
+            // Draw the rectangle
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = detection.label?.includes('missing') ? 'red' : 'orange';
+            ctx.strokeRect(scaledX, scaledY, scaledWidth, scaledHeight);
+            
+            // Add label
+            ctx.fillStyle = detection.label?.includes('missing') ? 'rgba(255, 0, 0, 0.7)' : 'rgba(255, 165, 0, 0.7)';
+            ctx.fillRect(scaledX, scaledY - 20, detection.label ? detection.label.length * 8 : 80, 20);
+            ctx.fillStyle = 'white';
+            ctx.font = '14px Arial';
+            ctx.fillText(detection.label?.replace('_', ' ') || 'Violation', scaledX + 5, scaledY - 5);
+          }
+        });
+      };
+    }
+  }, [canvasRef, imagePreview, testResult]);
+  
+  const downloadAnnotatedImage = () => {
+    if (canvasRef.current) {
+      const link = document.createElement('a');
+      link.download = 'violation-detection.png';
+      link.href = canvasRef.current.toDataURL();
+      link.click();
+    }
+  };
+  
   if (!testResult) return null;
   
   const renderSeverityClass = (severity: string) => {
@@ -44,6 +106,29 @@ const ModelTestResults = ({ testResult, onReset }: ModelTestResultsProps) => {
           <p className="text-sm font-medium">Description:</p>
           <p className="text-sm text-muted-foreground">{testResult.description}</p>
         </div>
+        
+        {imagePreview && testResult.detections && testResult.detections.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Annotated Image:</p>
+            <div className="relative rounded-md border overflow-hidden">
+              <canvas 
+                ref={canvasRef} 
+                className="max-w-full h-auto" 
+              />
+              {canvasRef.current && (
+                <Button 
+                  size="sm" 
+                  variant="outline" 
+                  className="absolute bottom-2 right-2"
+                  onClick={downloadAnnotatedImage}
+                >
+                  <Download size={16} className="mr-1" />
+                  Download
+                </Button>
+              )}
+            </div>
+          </div>
+        )}
         
         {testResult.detections && testResult.detections.length > 0 && (
           <div className="space-y-2">

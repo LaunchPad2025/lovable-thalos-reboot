@@ -40,6 +40,10 @@ export function useModelTest() {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+    } else {
+      // Clear the image and preview if no file selected
+      setImage(null);
+      setImagePreview(null);
     }
   };
   
@@ -50,7 +54,6 @@ export function useModelTest() {
     }
     
     setIsSubmitting(true);
-    setTestResult(null);
     
     try {
       // Prepare the request payload
@@ -60,7 +63,7 @@ export function useModelTest() {
         modelId: selectedModel?.name.toLowerCase().split(' ')[0].replace(/\+/g, '') || 'yolov8'
       };
       
-      // If there's an image, we'd handle it here
+      // If there's an image, include information about it
       if (image) {
         // In a production app, you would upload the image to storage first
         // For now, we'll just simulate with the image name
@@ -86,6 +89,8 @@ export function useModelTest() {
   
   const resetTest = () => {
     setTestResult(null);
+    setImage(null);
+    setImagePreview(null);
   };
   
   return {
