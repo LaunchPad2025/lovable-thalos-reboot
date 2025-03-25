@@ -19,9 +19,11 @@ const IncidentsCard = () => {
         </div>
         
         <div className="flex justify-start mt-6">
-          <Button variant="link" className="text-blue-400 p-0 h-auto flex items-center">
-            View incident reports
-            <ArrowUpRight className="ml-1 h-4 w-4" />
+          <Button variant="link" className="text-blue-400 p-0 h-auto flex items-center" asChild>
+            <a href="/violations">
+              View incident reports
+              <ArrowUpRight className="ml-1 h-4 w-4" />
+            </a>
           </Button>
         </div>
       </CardContent>

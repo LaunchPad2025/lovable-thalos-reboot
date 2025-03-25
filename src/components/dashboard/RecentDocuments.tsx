@@ -2,8 +2,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { FileText, Timer } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { FileText } from 'lucide-react';
 
 const RecentDocuments = () => {
   return (
@@ -15,13 +14,13 @@ const RecentDocuments = () => {
             <h3 className="font-medium">Recent Documents</h3>
           </div>
           <div className="flex items-center space-x-2">
-            <span className="bg-purple-900/30 text-purple-300 border border-purple-800 px-2 py-0.5 rounded text-xs">Pro+</span>
+            <span className="bg-purple-900/30 text-purple-300 border border-purple-800 px-2 py-0.5 rounded text-xs ml-1">Pro+</span>
           </div>
         </div>
         
         <div className="text-center py-12 opacity-60 grayscale">
           <p className="text-gray-400 text-sm mb-4">Document management is available on Professional and Enterprise plans</p>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white" disabled>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "/subscription"}>
             Upgrade to Pro
           </Button>
         </div>

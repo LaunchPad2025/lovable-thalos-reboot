@@ -15,7 +15,7 @@ const DashboardHeader = () => {
               <p className="text-gray-400 text-sm">Overview of your safety compliance status</p>
             </div>
             <div className="flex gap-3">
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "/subscription"}>
                 Upgrade Plan
               </Button>
               <Button variant="outline" className="border-gray-700 text-gray-300" size="icon">
