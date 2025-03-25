@@ -6,9 +6,10 @@ import { NavItem } from "./types";
 interface NavItemsProps {
   navItems: NavItem[];
   userRole: string;
+  expanded?: boolean;
 }
 
-export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
+export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded = true }) => {
   return (
     <ul className="space-y-1">
       {navItems.map((item) => {
@@ -37,13 +38,13 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
               {item.icon && (
                 <item.icon className="w-5 h-5 mr-3 text-sidebar-icon" />
               )}
-              <span>{item.title}</span>
-              {isComingSoon && (
+              {expanded && <span>{item.title}</span>}
+              {isComingSoon && expanded && (
                 <span className="ml-2 text-xs px-1.5 py-0.5 bg-purple-900/30 text-purple-300 border border-purple-800 rounded-md">
                   Soon
                 </span>
               )}
-              {item.badge && item.badge !== "Soon" && (
+              {item.badge && item.badge !== "Soon" && expanded && (
                 <span className="ml-auto text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-md">
                   {item.badge}
                 </span>

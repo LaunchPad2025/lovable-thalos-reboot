@@ -39,7 +39,7 @@ const MobileNav: React.FC<MobileNavProps> = ({
           <h2 className="text-lg font-semibold">Navigation</h2>
         </div>
         <nav className="py-2">
-          <NavItems navItems={navItems} userRole={userRole} />
+          <NavItems navItems={navItems} userRole={userRole} expanded={true} />
         </nav>
       </SheetContent>
     </Sheet>

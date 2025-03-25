@@ -26,7 +26,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
         </span>
       </div>
       <nav className="h-[calc(100vh-4rem)] overflow-y-auto">
-        <NavItems navItems={navItems} userRole={userRole} />
+        <NavItems navItems={navItems} userRole={userRole} expanded={expanded} />
       </nav>
     </div>
   );
