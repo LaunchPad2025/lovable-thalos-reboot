@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Bell, Search, Info, LogOut, Settings, SunMoon } from 'lucide-react';
+import { Bell, Search, Info, LogOut, Settings, SunMoon, Shield } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useAuth } from '@/context/AuthContext';
@@ -34,7 +34,14 @@ const Navbar = () => {
     <header className="bg-card border-b border-border sticky top-0 z-10">
       <div className="h-16 px-4 md:px-6 flex items-center justify-between">
         <div className="flex items-center">
-          {/* Removed the Thalos text and logo from here */}
+          {/* Added Thalos branding here */}
+          <div className="mr-6 flex items-center">
+            <Shield className="h-8 w-8 text-blue-500 mr-2" />
+            <div>
+              <span className="text-xl font-bold">Thalos</span>
+              <span className="text-xs text-gray-400 block">powered by Steel Toe</span>
+            </div>
+          </div>
           <div className="flex items-center bg-muted rounded-md w-full max-w-sm px-3 py-2">
             <Search size={18} className="text-muted-foreground mr-2" />
             <Input 

@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import ChatInterface from './ChatInterface';
 import { Button } from '@/components/ui/button';
-import { MessageSquare, X } from 'lucide-react';
+import { HardHat, X } from 'lucide-react';
 
 const ChatPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,7 +57,10 @@ const ChatPopup = () => {
         {isOpen ? (
           <X className="h-6 w-6" />
         ) : (
-          <MessageSquare className="h-6 w-6" />
+          <div className="relative">
+            <HardHat className="h-6 w-6" />
+            <span className="absolute -top-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full border-2 border-[#0EA5E9]"></span>
+          </div>
         )}
       </Button>
     </div>
