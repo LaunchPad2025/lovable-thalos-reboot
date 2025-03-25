@@ -72,7 +72,7 @@ const UserManagement = () => {
                       <TableCell>{user.department}</TableCell>
                       <TableCell>
                         <Badge 
-                          variant={user.status === "Active" ? "success" : "secondary"}
+                          variant={user.status === "Active" ? "secondary" : "outline"}
                           className={user.status === "Active" ? "bg-green-500/20 text-green-500 border-green-500/50" : "bg-gray-500/20 text-gray-500 border-gray-500/50"}
                         >
                           {user.status}
