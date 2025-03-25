@@ -1,108 +1,147 @@
 
-import { TrainingCourse, TeamMember } from "./types";
+// Mock data for training components
 
-export const trainingCourses: TrainingCourse[] = [
-  {
-    id: "1",
-    title: "Fall Protection Awareness",
-    description: "Learn about fall protection systems and proper use.",
-    duration: "60 minutes",
-    timeRemaining: "Due in 7 days",
-    status: "upcoming",
-    category: "Safety",
-    required: true
-  },
-  {
-    id: "2",
-    title: "Chemical Handling Procedures",
-    description: "Safety protocols for chemical handling and distribution.",
-    duration: "90 minutes",
-    timeRemaining: "Due in 14 days",
-    status: "upcoming",
-    category: "Hazardous Materials",
-    required: true
-  },
-  {
-    id: "3",
-    title: "Confined Space Entry",
-    description: "Safety protocols for confined space entry and monitoring.",
-    duration: "120 minutes",
-    timeRemaining: "Due in 21 days",
-    status: "upcoming",
-    category: "Safety"
-  },
-  {
-    id: "4",
-    title: "Fire Safety Fundamentals",
-    description: "Basic fire safety, prevention, and emergency procedures.",
-    duration: "75 minutes",
-    status: "completed",
-    completedOn: "Feb 26, 2024", 
-    certificateExpires: "Mar 26, 2025",
-    category: "Emergency",
-    required: true
-  },
-  {
-    id: "5",
-    title: "Electrical Safety",
-    description: "Working safely with electrical systems and equipment.",
-    duration: "90 minutes",
-    status: "completed",
-    completedOn: "Jan 25, 2024",
-    certificateExpires: "Mar 24, 2025",
-    category: "Safety",
-    required: true
-  },
-  {
-    id: "6", 
-    title: "Confined Space Entry",
-    description: "Safety protocols for confined space entry and monitoring.",
-    duration: "120 minutes",
-    timeRemaining: "Due Apr 11, 2024",
-    status: "in_progress",
-    category: "Safety"
-  }
-];
-
-export const teamMembers: TeamMember[] = [
-  {
-    id: "1",
-    name: "John Smith",
-    role: "Foreman",
-    compliance: 94,
-    courseId: "1015",
-    nextDue: "Mar 31"
-  },
-  {
-    id: "2",
-    name: "Sarah Johnson",
-    role: "Safety Officer",
-    compliance: 100,
-    courseId: "1018",
-    status: "Completed"
-  },
-  {
-    id: "3",
-    name: "Mike Chan",
-    role: "Equipment Operator",
-    compliance: 75,
-    courseId: "912",
-    nextDue: "Mar 30"
-  },
-  {
-    id: "4",
-    name: "Lisa Rodriguez",
-    role: "Site Engineer",
-    compliance: 65,
-    courseId: "947",
-    nextDue: "Apr 7"
-  }
-];
-
-export const trainingStatistics = {
+export const trainingStatus = {
   completed: 2,
   upcoming: 3,
   overdue: 0,
-  expiring: 2,
-  teamCompliance: 87
+  expiring: 2
 };
+
+export const upcomingTrainings = [
+  {
+    id: 1,
+    title: "Fall Protection Awareness",
+    duration: "60 minutes",
+    daysLeft: 7,
+    startDate: "2023-11-17"
+  },
+  {
+    id: 2,
+    title: "Chemical Handling Procedures",
+    duration: "90 minutes",
+    daysLeft: 14,
+    startDate: "2023-11-24"
+  },
+  {
+    id: 3,
+    title: "Confined Space Entry",
+    duration: "120 minutes",
+    daysLeft: 21,
+    startDate: "2023-12-01"
+  }
+];
+
+export const completedTrainings = [
+  {
+    id: 101,
+    title: "Fire Safety Fundamentals",
+    completedDate: "2023-02-25",
+    certificateExpires: "2024-02-24"
+  },
+  {
+    id: 102,
+    title: "Electrical Safety",
+    completedDate: "2023-01-23",
+    certificateExpires: "2024-01-24"
+  }
+];
+
+export const teamComplianceData = {
+  overallCompliance: 87,
+  teamMembers: [
+    {
+      id: 1,
+      name: "John Smith",
+      role: "Foreman",
+      compliance: 100,
+      nextDue: "2024-03-31",
+      courseId: "FS15"
+    },
+    {
+      id: 2,
+      name: "Sarah Johnson",
+      role: "Safety Officer",
+      compliance: 100,
+      completed: true,
+      courseId: "FS18"
+    },
+    {
+      id: 3,
+      name: "Mike Chen",
+      role: "Equipment Operator",
+      compliance: 76,
+      nextDue: "2024-03-28",
+      courseId: "FS12"
+    },
+    {
+      id: 4,
+      name: "Lisa Rodriguez",
+      role: "Site Engineer",
+      compliance: 65,
+      nextDue: "2024-04-07",
+      courseId: "FS14"
+    }
+  ]
+};
+
+export const courseCategories = [
+  {
+    id: "safety",
+    name: "Safety",
+    courses: [
+      {
+        id: "fire-safety",
+        title: "Fire Safety Fundamentals",
+        required: true,
+        duration: "45 minutes",
+        description: "Basic fire safety, prevention, and emergency procedures",
+        dueDate: "2024-05-15"
+      },
+      {
+        id: "electrical-safety",
+        title: "Electrical Safety",
+        required: true,
+        duration: "75 minutes",
+        description: "Working safely with electrical systems and equipment",
+        completed: true
+      },
+      {
+        id: "confined-space",
+        title: "Confined Space Entry",
+        required: false,
+        duration: "120 minutes",
+        description: "Safety protocols for confined space entry and monitoring",
+        dueDate: "2024-03-11"
+      }
+    ]
+  },
+  {
+    id: "hazardous-materials",
+    name: "Hazardous Materials",
+    courses: [
+      {
+        id: "chemical-handling",
+        title: "Chemical Handling Procedures",
+        required: true,
+        duration: "90 minutes",
+        description: "Learn about handling chemicals safely and the hazardous materials schedules",
+        dueDate: "2024-04-07"
+      }
+    ]
+  },
+  {
+    id: "emergency",
+    name: "Emergency",
+    courses: [
+      {
+        id: "emergency-response",
+        title: "Fire Safety Fundamentals",
+        required: true,
+        duration: "45 minutes",
+        description: "Basic fire safety, prevention, and emergency procedures",
+        completed: true
+      }
+    ]
+  }
+];

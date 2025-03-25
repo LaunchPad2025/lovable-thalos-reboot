@@ -1,4 +1,4 @@
 
-import AuditsPage from '../Audits';
+import Audits from '../Audits';
 
-export default AuditsPage;
+export default Audits;

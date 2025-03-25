@@ -1,27 +1,53 @@
 
-export type TrainingStatus = 'completed' | 'in_progress' | 'upcoming' | 'overdue';
+export interface TrainingStatus {
+  completed: number;
+  upcoming: number;
+  overdue: number;
+  expiring: number;
+}
 
-export interface TrainingCourse {
-  id: string;
+export interface UpcomingTraining {
+  id: number;
   title: string;
-  description: string;
   duration: string;
-  dueDate?: string;
-  status: TrainingStatus;
-  category: string;
-  timeRemaining?: string;
-  completed?: boolean;
-  completedOn?: string;
-  certificateExpires?: string;
-  required?: boolean;
+  daysLeft: number;
+  startDate: string;
+}
+
+export interface CompletedTraining {
+  id: number;
+  title: string;
+  completedDate: string;
+  certificateExpires: string;
 }
 
 export interface TeamMember {
-  id: string;
+  id: number;
   name: string;
   role: string;
   compliance: number;
-  courseId: string;
   nextDue?: string;
-  status?: 'Completed' | 'In Progress' | 'Overdue';
+  completed?: boolean;
+  courseId: string;
+}
+
+export interface TeamCompliance {
+  overallCompliance: number;
+  teamMembers: TeamMember[];
+}
+
+export interface Course {
+  id: string;
+  title: string;
+  required: boolean;
+  duration: string;
+  description: string;
+  dueDate?: string;
+  completed?: boolean;
+}
+
+export interface CourseCategory {
+  id: string;
+  name: string;
+  courses: Course[];
 }

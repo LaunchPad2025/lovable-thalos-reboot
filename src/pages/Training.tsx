@@ -6,11 +6,13 @@ import TrainingStatusCards from "@/components/training/TrainingStatusCards";
 import UpcomingTraining from "@/components/training/UpcomingTraining";
 import RecentlyCompleted from "@/components/training/RecentlyCompleted";
 import TrainingTabs from "@/components/training/TrainingTabs";
+import ComingSoonOverlay from "@/components/admin/ComingSoonOverlay";
 
 const Training = () => {
   return (
     <PageContainer>
-      <div className="space-y-6">
+      <div className="relative space-y-6">
+        {/* Main content that will be behind the overlay */}
         <div>
           <PageTitle title="Training & Certifications" />
           <p className="text-muted-foreground">
@@ -26,6 +28,9 @@ const Training = () => {
         </div>
 
         <TrainingTabs />
+        
+        {/* Overlay for "Coming Soon" - since this is a future feature */}
+        <ComingSoonOverlay />
       </div>
     </PageContainer>
   );

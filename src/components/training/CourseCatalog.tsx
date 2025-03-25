@@ -1,65 +1,60 @@
 
-import React from "react";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { trainingCourses } from "./mockData";
+import React from 'react';
+import { courseCategories } from './mockData';
+import { Button } from '@/components/ui/button';
+import { Circle, CheckCircle, PlayCircle } from 'lucide-react';
 
-const CourseCatalog: React.FC = () => {
-  // Group courses by category
-  const coursesByCategory = trainingCourses.reduce((acc, course) => {
-    if (!acc[course.category]) {
-      acc[course.category] = [];
-    }
-    // Only add each course once (by title)
-    if (!acc[course.category].some(c => c.title === course.title)) {
-      acc[course.category].push(course);
-    }
-    return acc;
-  }, {} as Record<string, typeof trainingCourses>);
-
-  const categories = Object.keys(coursesByCategory);
-
+const CourseCatalog = () => {
   return (
-    <div className="space-y-8">
-      <div className="text-sm text-muted-foreground mb-4">
-        Browse available training courses by category, industry, and role requirements
-      </div>
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground mb-4">
+        Browse available training courses by category, industry, and role requirements.
+      </p>
       
-      <div className="text-sm mb-4">
+      <p className="text-sm text-muted-foreground mb-8">
         The course catalog component would go here, showing available courses filtered by industry and role.
-      </div>
+      </p>
 
-      {categories.map(category => (
-        <Card key={category} className="mb-6">
-          <CardHeader className="pb-3">
-            <CardTitle>{category}</CardTitle>
-            <CardDescription>{coursesByCategory[category].length} courses available</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {coursesByCategory[category].map(course => (
-                <div key={course.id} className="border rounded-md p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-medium">{course.title}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{course.description}</p>
-                      <div className="mt-2 flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">{course.duration}</span>
-                        {course.required && (
-                          <Badge variant="outline" className="text-xs bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border-red-200 dark:border-red-800">
-                            Required
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                    <Button size="sm">Enroll</Button>
+      {courseCategories.map((category) => (
+        <div key={category.id} className="mb-8">
+          <h3 className="text-lg font-semibold mb-3">{category.name}</h3>
+          <div className="space-y-3">
+            {category.courses.map((course) => (
+              <div key={course.id} className="border border-gray-800 rounded-md p-4 bg-gray-900/30">
+                <div className="flex items-center justify-between mb-1">
+                  <div className="flex items-center gap-2">
+                    <h4 className="font-medium">
+                      {course.title}
+                    </h4>
+                    {course.required && (
+                      <span className="inline-flex items-center rounded-md bg-red-900/50 px-2 py-1 text-xs font-medium text-red-300 border border-red-800">
+                        Required
+                      </span>
+                    )}
                   </div>
+                  <Button variant="outline" size="sm">
+                    {course.completed ? (
+                      <>
+                        <CheckCircle className="mr-1 h-4 w-4 text-green-500" /> Completed
+                      </>
+                    ) : (
+                      <>
+                        <PlayCircle className="mr-1 h-4 w-4" /> Start
+                      </>
+                    )}
+                  </Button>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+                <p className="text-sm text-muted-foreground mb-2">{course.description}</p>
+                <div className="flex items-center gap-4 text-xs text-muted-foreground">
+                  <span>{course.duration}</span>
+                  {course.dueDate && !course.completed && (
+                    <span>Due: {course.dueDate}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       ))}
     </div>
   );
