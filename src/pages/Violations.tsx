@@ -1,17 +1,26 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { AlertTriangle, Clock } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 
 const Violations = () => {
   return (
     <PageContainer>
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)] text-center">
-        <h1 className="text-2xl font-semibold mb-2">Failed to load violations</h1>
-        <p className="text-muted-foreground mb-6">There was an error loading the violations. Please try again later.</p>
-        <Button variant="default" className="bg-blue-500 hover:bg-blue-600">
-          Retry
-        </Button>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <AlertTriangle className="h-12 w-12 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Violations Coming Soon</h1>
+        <p className="text-muted-foreground max-w-md mb-8">
+          Detect, track, and resolve safety violations with AI-powered analysis and recommendations.
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+          <Button onClick={() => window.location.href = '/dashboard'}>
+            Return to Dashboard
+          </Button>
+        </div>
       </div>
     </PageContainer>
   );

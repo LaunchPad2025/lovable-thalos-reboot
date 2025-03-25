@@ -1,17 +1,26 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { FileText, Clock } from 'lucide-react';
 import PageContainer from '@/components/layout/PageContainer';
 
 const Documents = () => {
   return (
     <PageContainer>
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)] text-center">
-        <h1 className="text-2xl font-semibold mb-2">Failed to load documents</h1>
-        <p className="text-muted-foreground mb-6">There was an error loading the documents. Please try again later.</p>
-        <Button variant="default" className="bg-blue-500 hover:bg-blue-600">
-          Retry
-        </Button>
+      <div className="flex flex-col items-center justify-center min-h-[60vh] text-center">
+        <FileText className="h-12 w-12 mb-4" />
+        <h1 className="text-2xl font-bold mb-2">Documents Coming Soon</h1>
+        <p className="text-muted-foreground max-w-md mb-8">
+          Access, upload, and manage all your safety documentation in one centralized location.
+        </p>
+        <div className="flex justify-center space-x-4">
+          <Button variant="outline" onClick={() => window.history.back()}>
+            Go Back
+          </Button>
+          <Button onClick={() => window.location.href = '/dashboard'}>
+            Return to Dashboard
+          </Button>
+        </div>
       </div>
     </PageContainer>
   );
