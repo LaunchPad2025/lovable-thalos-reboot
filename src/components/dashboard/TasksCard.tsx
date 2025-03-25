@@ -4,9 +4,21 @@ import { ArrowRight, CircleHelp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import { useTasks } from '@/hooks/useTasks';
 
 const TasksCard = () => {
   const { toast } = useToast();
+  const { tasks } = useTasks();
+  
+  // Count tasks by priority
+  const highPriorityCount = tasks?.filter(task => task.priority === 'high').length || 0;
+  const mediumPriorityCount = tasks?.filter(task => task.priority === 'medium').length || 0;
+  const lowPriorityCount = tasks?.filter(task => task.priority === 'low').length || 0;
+  
+  // Count open tasks
+  const openTasksCount = tasks?.filter(task => 
+    task.status === 'open' || task.status === 'in-progress'
+  ).length || 0;
   
   const startTasksTour = () => {
     toast({
@@ -27,22 +39,22 @@ const TasksCard = () => {
       
       <div className="mt-4">
         <div className="flex items-end space-x-2">
-          <span className="text-3xl font-semibold text-white">24</span>
+          <span className="text-3xl font-semibold text-white">{openTasksCount}</span>
           <span className="text-sm text-gray-400">open tasks</span>
         </div>
         
         <div className="mt-3 flex space-x-3">
           <div className="flex-1 bg-[#161b22] rounded-md p-2 text-center">
             <p className="text-sm text-gray-400">High</p>
-            <p className="text-lg font-medium text-red-400">8</p>
+            <p className="text-lg font-medium text-red-400">{highPriorityCount}</p>
           </div>
           <div className="flex-1 bg-[#161b22] rounded-md p-2 text-center">
             <p className="text-sm text-gray-400">Medium</p>
-            <p className="text-lg font-medium text-yellow-400">10</p>
+            <p className="text-lg font-medium text-yellow-400">{mediumPriorityCount}</p>
           </div>
           <div className="flex-1 bg-[#161b22] rounded-md p-2 text-center">
             <p className="text-sm text-gray-400">Low</p>
-            <p className="text-lg font-medium text-green-400">6</p>
+            <p className="text-lg font-medium text-green-400">{lowPriorityCount}</p>
           </div>
         </div>
         
