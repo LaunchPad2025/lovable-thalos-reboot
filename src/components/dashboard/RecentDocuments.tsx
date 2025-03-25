@@ -19,9 +19,9 @@ const RecentDocuments = () => {
         </div>
         
         <div className="text-center py-12 opacity-60 grayscale">
-          <p className="text-gray-400 text-sm mb-4">Document management is available on Professional and Enterprise plans</p>
-          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "/subscription"}>
-            Upgrade to Pro
+          <p className="text-gray-400 text-sm mb-4">Document management is available for Professional and Enterprise plans</p>
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "https://cal.com/thalos-sales/30min"}>
+            Contact Sales
           </Button>
         </div>
       </CardContent>

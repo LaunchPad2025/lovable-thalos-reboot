@@ -1,29 +1,29 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
-import PlanSelector from '@/components/subscription/PlanSelector';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
-import { useStripeStatus } from '@/hooks/useStripeStatus';
+import { useNavigate } from 'react-router-dom';
 
 const Subscription = () => {
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const navigate = useNavigate();
   
-  // Use the hook to handle Stripe status
-  useStripeStatus();
+  const handleContactSales = () => {
+    window.location.href = "https://cal.com/thalos-sales/30min";
+  };
 
   return (
     <PageContainer>
       <div className="w-full max-w-7xl mx-auto">
         <PageTitle 
-          title="Choose The Perfect Plan For Your Business"
-          subtitle="No matter if you're beginning your journey or expanding your horizons, Thalos offers a solution tailored to your requirements."
+          title="Talk to Our Sales Team"
+          subtitle="Let us help you find the perfect safety compliance solution for your business."
           className="text-center mb-12"
         />
         
         <div className="mb-8 text-center">
           <div className="inline-block bg-indigo-600 text-white px-6 py-3 rounded-full text-sm font-medium">
-            Limited Time Offer: Use code THALOSBETA for 50% OFF Basic tier for 12 months!
+            Thalos - The most comprehensive safety compliance platform
           </div>
         </div>
         
@@ -71,26 +71,19 @@ const Subscription = () => {
           </div>
         </div>
         
-        <div className="flex justify-center mb-12">
-          <div className="inline-flex bg-muted p-1 rounded-full">
-            <Button 
-              variant="ghost" 
-              className={`px-8 rounded-full ${billingCycle === 'monthly' ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}
-              onClick={() => setBillingCycle('monthly')}
-            >
-              Monthly
-            </Button>
-            <Button 
-              variant="ghost" 
-              className={`px-8 rounded-full ${billingCycle === 'annual' ? 'bg-primary text-primary-foreground' : 'text-foreground'}`}
-              onClick={() => setBillingCycle('annual')}
-            >
-              Yearly <span className="text-muted-foreground text-xs ml-1">Save 15%</span>
-            </Button>
-          </div>
+        <div className="text-center mt-12 mb-12">
+          <h2 className="text-2xl font-bold mb-4">Ready to learn more about Thalos?</h2>
+          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+            Our sales team is ready to answer your questions and provide a personalized demo
+            of our safety compliance platform.
+          </p>
+          <Button 
+            className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
+            onClick={handleContactSales}
+          >
+            Schedule a Call
+          </Button>
         </div>
-        
-        <PlanSelector billingCycle={billingCycle} />
         
         <div className="mt-16 bg-card border border-border rounded-lg p-6">
           <div className="flex items-start gap-4">
@@ -139,7 +132,7 @@ const Subscription = () => {
               </div>
               
               <div className="mt-6">
-                <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10">
+                <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10" onClick={handleContactSales}>
                   Contact for Custom Quote
                 </Button>
               </div>
@@ -148,8 +141,8 @@ const Subscription = () => {
         </div>
         
         <div className="text-center mt-8 text-muted-foreground text-sm">
-          <p>All plans include a 14-day free trial.</p>
-          <p>Cancel anytime during your trial and you won't be charged.</p>
+          <p>Start your safety compliance journey today.</p>
+          <p>Our team is ready to help you find the perfect solution.</p>
         </div>
       </div>
     </PageContainer>

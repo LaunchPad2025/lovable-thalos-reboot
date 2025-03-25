@@ -66,9 +66,9 @@ const Navbar = () => {
             variant="default" 
             size="sm" 
             className="hidden md:flex"
-            onClick={() => navigate('/subscription')}
+            onClick={() => window.location.href = "https://cal.com/thalos-sales/30min"}
           >
-            Upgrade Plan
+            Contact Sales
           </Button>
           
           <Button 

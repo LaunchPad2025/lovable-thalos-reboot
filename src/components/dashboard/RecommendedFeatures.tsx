@@ -8,7 +8,7 @@ const RecommendedFeatures = () => {
     <Card className="bg-[#0d1117] border-gray-800 shadow-none text-white">
       <CardContent className="p-6">
         <h3 className="font-medium mb-1">Recommended Features</h3>
-        <p className="text-gray-400 text-sm mb-4">Upgrade to access these powerful safety compliance tools</p>
+        <p className="text-gray-400 text-sm mb-4">Contact our sales team to access these powerful safety compliance tools</p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4 opacity-75">
@@ -36,8 +36,8 @@ const RecommendedFeatures = () => {
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "/subscription"}>
-          Upgrade Your Plan
+        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={() => window.location.href = "https://cal.com/thalos-sales/30min"}>
+          Contact Sales
         </Button>
       </CardContent>
     </Card>
