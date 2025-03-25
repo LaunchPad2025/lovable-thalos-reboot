@@ -5,6 +5,7 @@ import ViolationsList from './components/ViolationsList';
 import ViolationDetails from '@/components/violations/ViolationDetails';
 import ViolationUploadView from './components/ViolationUploadView';
 import ViolationResultsView from './components/ViolationResultsView';
+import { ViolationAnalysisProvider } from '@/components/violations/ViolationAnalysisProvider';
 
 // Mock data with fixed status types - keeping the same data as the original file
 const mockViolations = [
@@ -151,35 +152,37 @@ const ViolationsPage = () => {
   
   return (
     <PageContainer className="bg-[#070b11] text-white">
-      {currentView === 'list' && (
-        <ViolationsList 
-          violations={mockViolations} 
-          onSelectViolation={handleSelectViolation} 
-          onUpload={() => setCurrentView('upload')} 
-        />
-      )}
-      
-      {currentView === 'details' && selectedViolation && (
-        <ViolationDetails 
-          {...mockViolationDetails[selectedViolation as keyof typeof mockViolationDetails]} 
-          onBack={handleViewViolationsList}
-        />
-      )}
-      
-      {currentView === 'upload' && (
-        <ViolationUploadView 
-          onUploadComplete={handleUploadComplete} 
-          onViewViolationsList={handleViewViolationsList} 
-        />
-      )}
-      
-      {currentView === 'results' && testResults && (
-        <ViolationResultsView 
-          testResults={testResults} 
-          onBackToUpload={handleBackToUpload} 
-          onViewViolationsList={handleViewViolationsList} 
-        />
-      )}
+      <ViolationAnalysisProvider>
+        {currentView === 'list' && (
+          <ViolationsList 
+            violations={mockViolations} 
+            onSelectViolation={handleSelectViolation} 
+            onUpload={() => setCurrentView('upload')} 
+          />
+        )}
+        
+        {currentView === 'details' && selectedViolation && (
+          <ViolationDetails 
+            {...mockViolationDetails[selectedViolation as keyof typeof mockViolationDetails]} 
+            onBack={handleViewViolationsList}
+          />
+        )}
+        
+        {currentView === 'upload' && (
+          <ViolationUploadView 
+            onUploadComplete={handleUploadComplete} 
+            onViewViolationsList={handleViewViolationsList} 
+          />
+        )}
+        
+        {currentView === 'results' && testResults && (
+          <ViolationResultsView 
+            testResults={testResults} 
+            onBackToUpload={handleBackToUpload} 
+            onViewViolationsList={handleViewViolationsList} 
+          />
+        )}
+      </ViolationAnalysisProvider>
     </PageContainer>
   );
 };

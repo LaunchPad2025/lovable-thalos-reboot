@@ -13,6 +13,7 @@ import { Loader2, AlertCircle, HardHat } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useAuth } from "@/context/auth";
 import { toast } from "sonner";
+import { ViolationAnalysisProvider } from "@/components/violations/ViolationAnalysisProvider";
 
 const Violations = () => {
   const { data: models = [], isLoading: modelsLoading, error, refetch } = useMLModels();
@@ -128,7 +129,7 @@ const Violations = () => {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <div className="h-[400px]"> {/* Increased height from 200px to 400px to show full chatbot */}
+            <div className="h-[400px]">
               <ChatInterface />
             </div>
           </CardContent>
@@ -167,12 +168,14 @@ const Violations = () => {
                     </Button>
                   </div>
                 ) : (
-                  <ViolationUpload 
-                    onUploadComplete={handleUploadComplete} 
-                    userIndustry={userIndustry}
-                    hideModelSelection={true}
-                    modelInitError={modelInitError}
-                  />
+                  <ViolationAnalysisProvider>
+                    <ViolationUpload 
+                      onUploadComplete={handleUploadComplete} 
+                      userIndustry={userIndustry}
+                      hideModelSelection={true}
+                      modelInitError={modelInitError}
+                    />
+                  </ViolationAnalysisProvider>
                 )}
               </TabsContent>
               

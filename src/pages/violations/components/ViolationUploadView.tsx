@@ -4,6 +4,7 @@ import ViolationUpload from '@/components/violations/ViolationUpload';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon, ShieldAlert } from 'lucide-react';
+import { ViolationAnalysisProvider } from '@/components/violations/ViolationAnalysisProvider';
 
 interface ViolationUploadViewProps {
   onUploadComplete: (results: any) => void;
@@ -39,7 +40,9 @@ const ViolationUploadView = ({ onUploadComplete, onViewViolationsList }: Violati
         </AlertDescription>
       </Alert>
       
-      <ViolationUpload onUploadComplete={onUploadComplete} />
+      <ViolationAnalysisProvider>
+        <ViolationUpload onUploadComplete={onUploadComplete} />
+      </ViolationAnalysisProvider>
     </>
   );
 };
