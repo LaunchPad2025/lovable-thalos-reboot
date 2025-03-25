@@ -8,7 +8,7 @@ interface FaqCardProps {
 }
 
 const FaqCard = ({ question, answer }: FaqCardProps) => (
-  <Card>
+  <Card className="h-full">
     <CardHeader>
       <CardTitle className="text-lg">{question}</CardTitle>
     </CardHeader>

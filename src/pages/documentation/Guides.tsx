@@ -14,7 +14,11 @@ import {
   Users,
   Database,
   ArrowRight,
-  Smartphone
+  Smartphone,
+  HardHat,
+  Factory,
+  Stethoscope,
+  Truck
 } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -192,37 +196,23 @@ const Guides = () => {
           <h2 className="text-2xl font-bold mb-8">Featured Guides</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-card border border-border rounded-lg overflow-hidden">
-              <div className="h-48 bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center"></div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Badge variant="outline">Video Tutorial</Badge>
-                  <span className="text-sm text-muted-foreground">Updated July 2025</span>
-                </div>
-                <h3 className="text-xl font-bold mb-2">Complete Guide to AI Safety Compliance</h3>
-                <p className="text-muted-foreground mb-4">
-                  A comprehensive walkthrough of how to implement an AI-powered safety compliance
-                  program using Thalos.
-                </p>
-                <Button className="w-full">Watch Tutorial</Button>
-              </div>
-            </div>
+            <FeaturedGuideCard
+              title="Complete Guide to AI Safety Compliance"
+              description="A comprehensive walkthrough of how to implement an AI-powered safety compliance program using Thalos."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              type="Video Tutorial"
+              updatedDate="July 2025"
+              buttonText="Watch Tutorial"
+            />
             
-            <div className="bg-card border border-border rounded-lg overflow-hidden">
-              <div className="h-48 bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center"></div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <Badge variant="outline">Whitepaper</Badge>
-                  <span className="text-sm text-muted-foreground">Updated June 2025</span>
-                </div>
-                <h3 className="text-xl font-bold mb-2">ROI of Safety Technology Investment</h3>
-                <p className="text-muted-foreground mb-4">
-                  Research-backed analysis of the return on investment for safety technology
-                  implementation across various industries.
-                </p>
-                <Button className="w-full">Download Whitepaper</Button>
-              </div>
-            </div>
+            <FeaturedGuideCard
+              title="ROI of Safety Technology Investment"
+              description="Research-backed analysis of the return on investment for safety technology implementation across various industries."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              type="Whitepaper"
+              updatedDate="June 2025"
+              buttonText="Download Whitepaper"
+            />
           </div>
         </div>
         
@@ -233,26 +223,30 @@ const Guides = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <IndustryGuideCard 
               title="Construction"
-              description="Safety compliance guides specific to construction sites"
-              imageUrl="/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png"
+              description="Safety compliance guides specific to construction sites and OSHA regulations."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              icon={<HardHat className="h-6 w-6 text-orange-500" />}
             />
             
             <IndustryGuideCard 
               title="Manufacturing"
-              description="Guides for factory and production environment safety"
-              imageUrl="/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png"
+              description="Guides for factory and production environment safety standards."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              icon={<Factory className="h-6 w-6 text-blue-500" />}
             />
             
             <IndustryGuideCard 
               title="Healthcare"
-              description="Safety protocols for medical facilities and staff"
-              imageUrl="/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png"
+              description="Safety protocols for medical facilities, staff, and patient safety."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              icon={<Stethoscope className="h-6 w-6 text-green-500" />}
             />
             
             <IndustryGuideCard 
               title="Logistics"
-              description="Safety guides for warehousing and transportation"
-              imageUrl="/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png"
+              description="Safety guides for warehousing, transportation, and supply chain operations."
+              imageUrl="/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png"
+              icon={<Truck className="h-6 w-6 text-purple-500" />}
             />
           </div>
         </div>
@@ -329,17 +323,52 @@ const GuideCard = ({
   );
 };
 
+interface FeaturedGuideCardProps {
+  title: string;
+  description: string;
+  imageUrl: string;
+  type: 'Video Tutorial' | 'Whitepaper' | string;
+  updatedDate: string;
+  buttonText: string;
+}
+
+const FeaturedGuideCard = ({ 
+  title, 
+  description, 
+  imageUrl, 
+  type, 
+  updatedDate, 
+  buttonText 
+}: FeaturedGuideCardProps) => (
+  <Card className="overflow-hidden">
+    <div className="h-48 bg-cover bg-center" style={{ backgroundImage: `url(${imageUrl})` }}></div>
+    <div className="p-6">
+      <div className="flex items-center justify-between mb-4">
+        <Badge variant="outline">{type}</Badge>
+        <span className="text-sm text-muted-foreground">Updated {updatedDate}</span>
+      </div>
+      <h3 className="text-xl font-bold mb-2">{title}</h3>
+      <p className="text-muted-foreground mb-4">{description}</p>
+      <Button className="w-full">{buttonText}</Button>
+    </div>
+  </Card>
+);
+
 interface IndustryGuideCardProps {
   title: string;
   description: string;
   imageUrl: string;
+  icon: React.ReactNode;
 }
 
-const IndustryGuideCard = ({ title, description, imageUrl }: IndustryGuideCardProps) => (
+const IndustryGuideCard = ({ title, description, imageUrl, icon }: IndustryGuideCardProps) => (
   <Card className="overflow-hidden">
     <div className="h-36 bg-cover bg-center" style={{ backgroundImage: `url(${imageUrl})` }}></div>
     <CardHeader className="pb-2">
-      <CardTitle>{title}</CardTitle>
+      <div className="flex items-center gap-2 mb-2">
+        {icon}
+        <CardTitle>{title}</CardTitle>
+      </div>
       <CardDescription>{description}</CardDescription>
     </CardHeader>
     <CardFooter>

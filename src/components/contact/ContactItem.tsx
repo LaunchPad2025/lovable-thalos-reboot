@@ -8,7 +8,7 @@ interface ContactItemProps {
 
 const ContactItem = ({ icon, text }: ContactItemProps) => (
   <div className="flex items-center text-muted-foreground">
-    <span className="mr-3">{icon}</span>
+    <span className="mr-3 text-foreground">{icon}</span>
     <span>{text}</span>
   </div>
 );
