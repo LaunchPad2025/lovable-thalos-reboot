@@ -95,16 +95,16 @@ const Violations = () => {
                     {isLoading ? (
                       <div className="flex flex-col items-center justify-center p-8">
                         <Loader2 className="h-8 w-8 animate-spin text-[#0EA5E9] mb-2" />
-                        <span>Loading models...</span>
+                        <span>Preparing safety models...</span>
                         <p className="mt-4 text-muted-foreground text-sm max-w-md text-center">
-                          You can proceed with the upload. Our system will automatically select the best model for your analysis.
+                          Our AI safety inspection tools are being calibrated. You can proceed with your upload and we'll automatically select the most appropriate safety standards and compliance guidelines for your analysis.
                         </p>
                         <Button 
                           onClick={() => setIsLoadingOverride(false)} 
                           variant="outline" 
                           className="mt-4"
                         >
-                          Continue anyway
+                          Continue to safety analysis
                         </Button>
                       </div>
                     ) : (
