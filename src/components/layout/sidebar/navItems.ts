@@ -39,8 +39,7 @@ export const getNavItems = (): NavItem[] => [
     title: "Risk Assessment",
     path: "/risk-assessment",
     icon: FileQuestion,
-    roles: ["admin", "safety_officer", "worker"],
-    comingSoon: true
+    roles: ["admin", "safety_officer", "worker"]
   },
   {
     title: "Documents",
