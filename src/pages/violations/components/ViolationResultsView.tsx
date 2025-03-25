@@ -1,19 +1,25 @@
 
-import React, { useState, useRef, useEffect } from 'react';
-import ViolationResults, { ViolationResult } from '@/components/violations/ViolationResults';
-import ViolationImageCard from '@/components/violations/ViolationImageCard';
+import React from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TaskCreation } from '@/components/tasks/TaskCreation';
-import { toast } from 'sonner';
-import { TestResult } from '@/hooks/model-testing/types';
-import { AlertCircle, ClipboardCheck, ArrowLeft } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
-import { generateRemediationSteps } from '@/components/violations/utils/violationHelpers';
+import { ArrowLeft, Download, Save, Check, AlertTriangle } from 'lucide-react';
 import NoViolationsCard from '@/components/violations/NoViolationsCard';
-import { ViolationsList as ViolationsListComponent } from '@/components/violations/ViolationsList';
+import { ViolationDetection } from '@/components/violations/types';
 
 interface ViolationResultsViewProps {
-  testResults: TestResult;
+  testResults: {
+    detections: Array<{
+      label: string;
+      confidence: number;
+      bbox?: number[];
+      remediationSteps?: string;
+    }>;
+    severity: string;
+    description: string;
+    imagePreview?: string;
+    location?: string;
+    industry?: string;
+  };
   onBackToUpload: () => void;
   onViewViolationsList: () => void;
 }
@@ -23,171 +29,192 @@ const ViolationResultsView = ({
   onBackToUpload, 
   onViewViolationsList 
 }: ViolationResultsViewProps) => {
-  const [showTaskModal, setShowTaskModal] = useState(false);
-  const [showNoViolationsDialog, setShowNoViolationsDialog] = useState(false);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const hasDetections = testResults.detections && testResults.detections.length > 0;
   
-  // Add remediation steps to detections if they don't exist
-  const enhancedDetections = testResults?.detections?.map(detection => {
-    if (!detection.remediationSteps && detection.label) {
-      return {
-        ...detection,
-        remediationSteps: generateRemediationSteps(detection.label)
-      };
-    }
-    return detection;
-  }) || [];
-  
-  // Enhanced test results with location if not provided
-  const enhancedResults = {
-    ...testResults,
-    location: testResults.location || (testResults.industry === 'Construction' ? 'Construction Site' : 'Work Area'),
-    detections: enhancedDetections
+  const handleSave = () => {
+    // Simulating save operation
+    setTimeout(() => {
+      console.log('Saved violation:', testResults);
+      onViewViolationsList();
+    }, 500);
   };
   
-  // Convert testResults to the format expected by ViolationResults
-  const formattedResults: ViolationResult[] = [{
-    id: enhancedResults?.id || '1',
-    test_name: 'Safety Violation Analysis',
-    result: 'Violation Detected',
-    severity: enhancedResults?.severity || 'medium',
-    location: enhancedResults?.location || 'Work Area',
-    timestamp: new Date().toISOString(),
-    image_url: enhancedResults?.imagePreview || undefined,
-    description: enhancedResults?.description,
-    detections: enhancedResults?.detections,
-    regulationIds: enhancedResults?.regulationIds,
-    industry: enhancedResults?.industry
-  }];
-  
-  // Check if we have actual violations detected
-  const hasDetections = enhancedResults?.detections && enhancedResults.detections.length > 0;
-  const violationsCount = hasDetections ? enhancedResults.detections.length : 0;
-  
-  // Show dialog if no violations detected
-  useEffect(() => {
-    if (enhancedResults && (!hasDetections || violationsCount === 0)) {
-      setShowNoViolationsDialog(true);
-    }
-  }, [enhancedResults, hasDetections, violationsCount]);
-  
-  const handleSaveViolation = () => {
-    if (!hasDetections) {
-      toast.info("No violations to save", { 
-        description: "Creating a safety report for documentation purposes."
-      });
-    }
+  const handleDownload = () => {
+    const element = document.createElement('a');
     
-    // Show task creation modal
-    setShowTaskModal(true);
+    const reportData = {
+      title: 'Safety Violation Analysis',
+      date: new Date().toLocaleDateString(),
+      location: testResults.location || 'Unknown',
+      description: testResults.description,
+      severity: testResults.severity,
+      detections: testResults.detections?.map(d => ({
+        type: d.label,
+        confidence: (d.confidence * 100).toFixed(1) + '%',
+        remediationSteps: d.remediationSteps || 'Contact safety officer'
+      }))
+    };
+    
+    const reportBlob = new Blob(
+      [JSON.stringify(reportData, null, 2)], 
+      { type: 'application/json' }
+    );
+    
+    element.href = URL.createObjectURL(reportBlob);
+    element.download = `safety-report-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
+  
+  if (!hasDetections) {
+    return (
+      <div className="space-y-4">
+        <div className="flex items-center mb-4">
+          <Button 
+            variant="ghost" 
+            className="mr-2"
+            onClick={onBackToUpload}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <h2 className="text-xl font-bold">Safety Analysis Results</h2>
+        </div>
+        
+        <NoViolationsCard 
+          description={testResults.description || "No safety violations were detected in the analysis."}
+          onReset={onBackToUpload}
+        />
+      </div>
+    );
+  }
   
   return (
-    <>
-      <div className="mb-6">
-        <h1 className="text-2xl font-medium text-white mb-1">Safety Violation Analysis</h1>
-        <p className="text-gray-400">
-          Report ID: VS-{Math.floor(Math.random() * 10000)} | 
-          Industry: {enhancedResults?.industry || 'Construction'} | 
-          Analysis Date: {new Date().toLocaleDateString()}
-        </p>
-      </div>
-      
-      <div className="flex justify-end mb-6 space-x-2">
-        <Button 
-          onClick={onBackToUpload}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
-        >
-          <ArrowLeft size={16} className="mr-2" />
-          New Analysis
-        </Button>
-        <Button 
-          onClick={onViewViolationsList}
-          className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
-        >
-          View All Violations
-        </Button>
-      </div>
-      
-      {violationsCount > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="md:col-span-2">
-            <ViolationImageCard 
-              results={enhancedResults}
-              imageUrl={enhancedResults?.imagePreview}
-              violationsCount={violationsCount} 
-              onSave={handleSaveViolation} 
-            />
-          </div>
-          
-          <div className="md:col-span-1">
-            <ViolationsListComponent 
-              detections={enhancedResults?.detections || []}
-              violationsCount={violationsCount}
-              imageUrl={enhancedResults?.imagePreview}
-              severity={enhancedResults?.severity || 'medium'}
-              description={enhancedResults?.description}
-              location={enhancedResults?.location}
-              regulations={enhancedResults?.regulationIds}
-              onCreateTask={handleSaveViolation}
-            />
-          </div>
+    <div className="space-y-4">
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center">
+          <Button 
+            variant="ghost" 
+            className="mr-2"
+            onClick={onBackToUpload}
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back
+          </Button>
+          <h2 className="text-xl font-bold">Safety Violation Analysis</h2>
         </div>
-      ) : (
-        <NoViolationsCard 
-          imageUrl={enhancedResults?.imagePreview} 
-          onNewAnalysis={onBackToUpload}
-          industry={enhancedResults?.industry}
-          onCreateTask={handleSaveViolation}
-        />
-      )}
+        
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            onClick={handleDownload}
+          >
+            <Download className="h-4 w-4 mr-2" />
+            Download
+          </Button>
+          <Button 
+            onClick={handleSave}
+          >
+            <Save className="h-4 w-4 mr-2" />
+            Save
+          </Button>
+        </div>
+      </div>
       
-      {/* No Violations Dialog */}
-      <Dialog open={showNoViolationsDialog} onOpenChange={setShowNoViolationsDialog}>
-        <DialogContent className="bg-gray-900 border border-gray-700 text-white">
-          <DialogHeader>
-            <DialogTitle className="flex items-center text-green-400">
-              <ClipboardCheck className="mr-2 h-5 w-5" />
-              No Safety Violations Detected
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-gray-300">
-              Our AI analysis has examined the image and found no safety violations or hazards.
-            </p>
-            <p className="text-gray-400 mt-2 text-sm">
-              This result indicates compliance with standard safety protocols, but we recommend 
-              regular physical inspections to validate these findings.
-            </p>
+      <div className="grid gap-4 md:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center text-lg">
+              <div className={`w-3 h-3 rounded-full mr-2 ${
+                testResults.severity === 'high' ? 'bg-red-500' :
+                testResults.severity === 'medium' ? 'bg-yellow-500' : 'bg-blue-500'
+              }`}></div>
+              Severity: {testResults.severity.charAt(0).toUpperCase() + testResults.severity.slice(1)}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-2">
+              <p><strong>Location:</strong> {testResults.location || 'Unknown'}</p>
+              <p><strong>Industry:</strong> {testResults.industry || 'Construction'}</p>
+              <p className="mt-2">{testResults.description}</p>
+            </div>
+          </CardContent>
+        </Card>
+        
+        {testResults.imagePreview && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Image Analysis</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="relative">
+                <img 
+                  src={testResults.imagePreview} 
+                  alt="Violation" 
+                  className="w-full h-auto rounded-md"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+      
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Detections ({testResults.detections?.length || 0})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {testResults.detections?.map((detection, index) => {
+              // Ensure detection has a confidence value
+              const detectionWithConfidence: ViolationDetection = {
+                ...detection,
+                confidence: detection.confidence || 0.5
+              };
+              
+              return (
+                <div key={index} className="p-3 bg-gray-800 rounded-lg">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-medium flex items-center">
+                        {detectionWithConfidence.label.split('_').map(word => 
+                          word.charAt(0).toUpperCase() + word.slice(1)
+                        ).join(' ')}
+                      </h3>
+                      <div className="text-sm text-gray-400">
+                        Confidence: {Math.round(detectionWithConfidence.confidence * 100)}%
+                      </div>
+                    </div>
+                    <div className={`p-1 rounded-full ${
+                      detectionWithConfidence.confidence > 0.7 ? 'bg-red-500/20 text-red-400' : 
+                      detectionWithConfidence.confidence > 0.5 ? 'bg-yellow-500/20 text-yellow-400' : 
+                      'bg-blue-500/20 text-blue-400'
+                    }`}>
+                      {detectionWithConfidence.confidence > 0.7 ? 
+                        <AlertTriangle size={16} /> : 
+                        <Check size={16} />
+                      }
+                    </div>
+                  </div>
+                  
+                  {detectionWithConfidence.remediationSteps && (
+                    <div className="mt-2">
+                      <p className="text-xs text-gray-400 mb-1">Remediation Steps:</p>
+                      <div className="text-sm pl-2 border-l-2 border-gray-700">
+                        {detectionWithConfidence.remediationSteps.split('\n').map((step, i) => (
+                          <p key={i} className="mb-1">{step}</p>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
-          <DialogFooter>
-            <Button 
-              variant="outline" 
-              className="border-gray-600 text-gray-300 hover:bg-gray-800"
-              onClick={() => setShowNoViolationsDialog(false)}
-            >
-              Close
-            </Button>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700"
-              onClick={onBackToUpload}
-            >
-              Upload Another Image
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {showTaskModal && enhancedResults && (
-        <TaskCreation 
-          violationId={enhancedResults.id || "1"} 
-          autoOpen={true}
-        />
-      )}
-      
-      {/* Hidden canvas for image processing */}
-      <canvas ref={canvasRef} className="hidden" />
-    </>
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 

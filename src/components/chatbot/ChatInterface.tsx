@@ -1,9 +1,10 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import MessageList, { Message } from './MessageList';
-import MessageInput from './MessageInput';
+import MessageList from '@/components/chatbot/messages/MessageList';
+import MessageInput from '@/components/chatbot/input/MessageInput';
 import { toast } from 'sonner';
+import { Message } from '@/components/chatbot/types';
 
 const ChatInterface = ({ isPopup = false, onClose }: { isPopup?: boolean; onClose?: () => void }) => {
   const [messages, setMessages] = useState<Message[]>([
@@ -78,7 +79,7 @@ const ChatInterface = ({ isPopup = false, onClose }: { isPopup?: boolean; onClos
         <div className="flex-1 overflow-auto mb-4">
           <MessageList messages={messages} isLoading={isLoading} />
         </div>
-        <MessageInput onSendMessage={handleSendMessage} disabled={isLoading} />
+        <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
       </CardContent>
     </Card>
   );

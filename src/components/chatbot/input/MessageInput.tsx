@@ -7,7 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import ImagePreview from './ImagePreview';
 
 interface MessageInputProps {
-  onSendMessage: (message: string, imageFile: File | null) => Promise<void>;
+  onSendMessage: (message: string, imageFile?: File | null) => Promise<void>;
   isLoading: boolean;
 }
 
