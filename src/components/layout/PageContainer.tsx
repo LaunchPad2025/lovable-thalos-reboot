@@ -1,14 +1,19 @@
 
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
+import { useTheme } from '@/providers/ThemeProvider';
+import { useMobile } from '@/hooks/useMobile';
 
 interface PageContainerProps {
   children: ReactNode;
   title?: string;
   subtitle?: string;
-  className?: string; // Add this line to accept className prop
+  className?: string;
 }
 
 const PageContainer = ({ children, title, subtitle, className }: PageContainerProps) => {
+  const { sidebarCollapsed } = useTheme();
+  const isMobile = useMobile();
+  
   return (
     <div className={`flex-1 overflow-y-auto bg-background ${className || ''}`}>
       {(title || subtitle) && (

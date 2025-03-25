@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 type ThemeMode = 'dark' | 'light' | 'system';
@@ -113,6 +112,14 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
       root.classList.add('no-animations');
     }
   }, [animationsEnabled]);
+
+  // Set sidebar width CSS variable
+  useEffect(() => {
+    document.documentElement.style.setProperty(
+      "--sidebar-width", 
+      sidebarCollapsed ? "80px" : "256px"
+    );
+  }, [sidebarCollapsed]);
 
   const value = {
     mode,

@@ -28,7 +28,7 @@ import RiskAssessment from "./pages/RiskAssessment";
 import Documents from "./pages/Documents";
 import Notifications from "./pages/Notifications";
 import Training from "./pages/Training";
-import Audits from "./pages/audits";
+import Audits from "./pages/Audits";
 import Admin from "./pages/Admin";
 
 // Layout
@@ -74,7 +74,7 @@ const App = () => {
                       <OnboardingCheck>
                         <div className="flex h-screen w-full overflow-hidden bg-background">
                           <Sidebar />
-                          <div className="flex-1 flex flex-col overflow-hidden">
+                          <div className="flex-1 flex flex-col overflow-hidden ml-[var(--sidebar-width,0px)]">
                             <Navbar />
                             <Routes>
                               <Route path="/" element={<Navigate to="/dashboard" replace />} />

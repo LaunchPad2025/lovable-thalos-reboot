@@ -20,7 +20,7 @@ const DesktopNav: React.FC<DesktopNavProps> = ({
 }) => {
   return (
     <div
-      className={`fixed top-0 left-0 z-10 h-screen border-r border-border bg-sidebar transition-all duration-200 ${
+      className={`fixed top-0 left-0 z-40 h-screen border-r border-border bg-sidebar transition-all duration-200 ${
         expanded ? "w-64" : "w-20"
       }`}
     >
