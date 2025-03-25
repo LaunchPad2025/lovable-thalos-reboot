@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -19,7 +18,7 @@ const Violations = () => {
   const { data: models = [], isLoading: modelsLoading, error, refetch } = useMLModels();
   const [activeTab, setActiveTab] = useState<string>("upload");
   const [analysisResults, setAnalysisResults] = useState<TestResult | null>(null);
-  const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(true);
+  const [isLoadingOverride, setIsLoadingOverride] = useState<boolean>(false);
   const { user } = useAuth();
   const [modelInitError, setModelInitError] = useState<string | null>(null);
   
@@ -63,18 +62,6 @@ const Violations = () => {
     setAnalysisResults(null);
     setActiveTab("upload");
   };
-  
-  useEffect(() => {
-    if (modelsLoading) {
-      const timer = setTimeout(() => {
-        setIsLoadingOverride(false);
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setIsLoadingOverride(false);
-    }
-  }, [modelsLoading]);
   
   useEffect(() => {
     if (error) {

@@ -1,5 +1,5 @@
 
-import React, { createContext, useContext, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode, useState } from 'react';
 import { useViolationAnalysis } from '@/hooks/useViolationAnalysis';
 
 type ViolationAnalysisContextType = {
@@ -19,24 +19,36 @@ export const useViolationAnalysisContext = () => {
 
 interface ViolationAnalysisProviderProps {
   children: ReactNode;
+  defaultIndustry?: string;
 }
 
-export const ViolationAnalysisProvider = ({ children }: ViolationAnalysisProviderProps) => {
-  // Default to 'Construction' industry if not specified
-  const { isAnalyzing, analyzeImage } = useViolationAnalysis('Construction');
+export const ViolationAnalysisProvider = ({ 
+  children, 
+  defaultIndustry = 'Construction' 
+}: ViolationAnalysisProviderProps) => {
+  const [currentIndustry, setCurrentIndustry] = useState<string>(defaultIndustry);
+  const { isAnalyzing, analyzeImage: analyzeViolation } = useViolationAnalysis(currentIndustry);
+  
+  const analyzeImage = async (image: File, industry: string) => {
+    try {
+      // Update current industry if it's different
+      if (industry !== currentIndustry) {
+        setCurrentIndustry(industry);
+      }
+      
+      // Call the analyze function with the image and return results
+      return await analyzeViolation(image);
+    } catch (error) {
+      console.error('Error in ViolationAnalysisProvider:', error);
+      throw error;
+    }
+  };
   
   return (
     <ViolationAnalysisContext.Provider
       value={{
         isAnalyzing,
-        analyzeImage: async (image: File, industry: string) => {
-          try {
-            return await analyzeImage(image);
-          } catch (error) {
-            console.error('Error in ViolationAnalysisProvider:', error);
-            throw error;
-          }
-        }
+        analyzeImage
       }}
     >
       {children}

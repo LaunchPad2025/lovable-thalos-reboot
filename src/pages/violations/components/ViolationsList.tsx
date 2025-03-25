@@ -2,7 +2,7 @@
 import React from 'react';
 import ViolationsTable from '@/components/violations/ViolationsTable';
 import { Button } from '@/components/ui/button';
-import { ShieldAlert } from 'lucide-react';
+import { ShieldAlert, Plus } from 'lucide-react';
 
 interface ViolationsListProps {
   violations: any[];
@@ -26,7 +26,8 @@ const ViolationsList = ({ violations, onSelectViolation, onUpload }: ViolationsL
           onClick={onUpload}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center"
         >
-          <span className="mr-2">+</span> Detect New Violations
+          <Plus size={16} className="mr-2" />
+          Detect New Violations
         </Button>
       </div>
       
