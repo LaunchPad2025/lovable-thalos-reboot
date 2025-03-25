@@ -3,7 +3,7 @@ import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
-import { useSidebar } from "../../../context"
+import { useSidebar } from "../../context"
 
 const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
