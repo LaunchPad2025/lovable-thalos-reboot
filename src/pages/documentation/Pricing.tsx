@@ -5,6 +5,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import { Shield, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { plans } from '@/data/subscriptionPlans';
 
 const Pricing = () => {
   const handleContactSales = () => {
@@ -21,30 +22,29 @@ const Pricing = () => {
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          {/* Standard Plan */}
+          {/* Basic Plan */}
           <Card className="border-border">
             <CardHeader>
               <div className="mb-4 p-2 w-fit rounded-full bg-blue-100 dark:bg-blue-900/30">
                 <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />
               </div>
-              <CardTitle className="text-2xl">Standard</CardTitle>
+              <CardTitle className="text-2xl">Basic</CardTitle>
               <CardDescription>
-                For small businesses with basic safety needs
+                For small teams getting started with safety management
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">$249</span>
-                <span className="text-muted-foreground ml-2">/ month per site</span>
+                <span className="text-4xl font-bold">$99</span>
+                <span className="text-muted-foreground ml-2">/ month</span>
               </div>
               
               <ul className="space-y-3">
-                <PricingFeature>Up to 25 users</PricingFeature>
-                <PricingFeature>AI violation detection</PricingFeature>
-                <PricingFeature>Basic task management</PricingFeature>
-                <PricingFeature>Standard risk assessment templates</PricingFeature>
-                <PricingFeature>Limited analytics</PricingFeature>
+                <PricingFeature>Up to 10 users</PricingFeature>
+                <PricingFeature>Basic incident reporting</PricingFeature>
+                <PricingFeature>Standard compliance checklists</PricingFeature>
                 <PricingFeature>Email support</PricingFeature>
+                <PricingFeature>Basic analytics</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -52,7 +52,7 @@ const Pricing = () => {
             </CardFooter>
           </Card>
           
-          {/* Professional Plan */}
+          {/* Pro Plan */}
           <Card className="border-blue-600 dark:border-blue-500 shadow-lg relative">
             <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 text-xs font-medium rounded-bl-lg rounded-tr-lg">
               MOST POPULAR
@@ -68,18 +68,17 @@ const Pricing = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">$499</span>
-                <span className="text-muted-foreground ml-2">/ month per site</span>
+                <span className="text-4xl font-bold">$149</span>
+                <span className="text-muted-foreground ml-2">/ month</span>
               </div>
               
               <ul className="space-y-3">
-                <PricingFeature>Unlimited users</PricingFeature>
-                <PricingFeature>Advanced AI violation detection</PricingFeature>
-                <PricingFeature>Comprehensive task management</PricingFeature>
-                <PricingFeature>Custom risk assessment templates</PricingFeature>
-                <PricingFeature>Full analytics suite</PricingFeature>
-                <PricingFeature>Paulie AI assistant</PricingFeature>
-                <PricingFeature>Priority support</PricingFeature>
+                <PricingFeature>Up to 50 users</PricingFeature>
+                <PricingFeature>Advanced incident reporting</PricingFeature>
+                <PricingFeature>Custom compliance checklists</PricingFeature>
+                <PricingFeature>Priority email & phone support</PricingFeature>
+                <PricingFeature>Advanced analytics</PricingFeature>
+                <PricingFeature>Custom workflows</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
@@ -100,18 +99,18 @@ const Pricing = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">Custom</span>
-                <span className="text-muted-foreground ml-2">pricing</span>
+                <span className="text-4xl font-bold">$350</span>
+                <span className="text-muted-foreground ml-2">/ month</span>
               </div>
               
               <ul className="space-y-3">
-                <PricingFeature>Everything in Professional</PricingFeature>
-                <PricingFeature>Multi-site management</PricingFeature>
-                <PricingFeature>Custom AI model training</PricingFeature>
-                <PricingFeature>API access</PricingFeature>
-                <PricingFeature>SSO authentication</PricingFeature>
-                <PricingFeature>Dedicated customer success manager</PricingFeature>
-                <PricingFeature>SLA guarantees</PricingFeature>
+                <PricingFeature>Unlimited users</PricingFeature>
+                <PricingFeature>Enterprise incident reporting</PricingFeature>
+                <PricingFeature>Custom compliance & auditing</PricingFeature>
+                <PricingFeature>Dedicated support team</PricingFeature>
+                <PricingFeature>Advanced analytics & reporting</PricingFeature>
+                <PricingFeature>Custom workflows & integrations</PricingFeature>
+                <PricingFeature>AI safety assistant</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
