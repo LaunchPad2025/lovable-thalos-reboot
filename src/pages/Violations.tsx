@@ -30,7 +30,7 @@ const Violations = () => {
   return (
     <PageContainer
       title="Safety Violations"
-      description="Upload images or describe safety violations to detect and analyze them using AI."
+      subtitle="Upload images or describe safety violations to detect and analyze them using AI."
     >
       <div className="grid gap-4">
         {error && (
@@ -71,7 +71,7 @@ const Violations = () => {
                   
                   <TabsContent value="results">
                     {analysisResults && (
-                      <ViolationResults result={analysisResults} onReset={handleReset} />
+                      <ViolationResults results={analysisResults} onSave={handleReset} />
                     )}
                   </TabsContent>
                 </Tabs>
