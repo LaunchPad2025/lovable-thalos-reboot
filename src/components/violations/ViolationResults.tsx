@@ -18,6 +18,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ClipboardList, AlertTriangle, Shield, HardHat, FlagTriangleLeft } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import { getSeverityBadgeClass } from './utils/violationHelpers';
 
 export interface ViolationResult {
   id: string;
@@ -37,21 +38,6 @@ export interface ViolationResultsProps {
   results: ViolationResult[];
   onSave?: () => void;
 }
-
-const getSeverityColor = (severity: string) => {
-  switch (severity) {
-    case 'critical':
-      return 'bg-red-900/50 text-red-300 border border-red-800';
-    case 'high':
-      return 'bg-orange-900/50 text-orange-300 border border-orange-800';
-    case 'medium':
-      return 'bg-yellow-900/50 text-yellow-300 border border-yellow-800';
-    case 'low':
-      return 'bg-blue-900/50 text-blue-300 border border-blue-800';
-    default:
-      return 'bg-gray-900/50 text-gray-300 border border-gray-800';
-  }
-};
 
 const getSeverityText = (severity: string) => {
   switch (severity) {
@@ -105,59 +91,53 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
       <CardHeader className="border-b border-gray-800 p-4">
         <CardTitle className="text-lg flex items-center">
           <Shield className="mr-2 h-5 w-5 text-red-400" />
-          Safety Violations
+          Identified Violations
         </CardTitle>
       </CardHeader>
-      <CardContent className="p-4">
+      <CardContent className="p-0">
         {results.map((result) => (
-          <div key={result.id} className="space-y-4">
+          <div key={result.id}>
             {result.detections && result.detections.length > 0 ? (
-              <div className="space-y-4">
-                {result.detections.map((detection, index) => (
-                  <div key={index} className="bg-[#161b22] rounded-md border border-gray-700 p-3">
-                    <div className="flex items-start">
-                      <div className="flex items-center justify-center h-6 w-6 rounded-full bg-gray-700 text-white text-xs mr-3">
-                        {index + 1}
-                      </div>
-                      <div className="flex-1">
-                        <h4 className="text-white font-medium mb-1">
-                          {detection.label ? detection.label.replace(/_/g, ' ') : `Violation ${index + 1}`}
-                        </h4>
-                        
-                        <div className="flex items-center mt-1 mb-2 space-x-2">
-                          <Badge className={getSeverityColor(result.severity)}>
-                            {getSeverityText(result.severity)}
-                          </Badge>
-                          {detection.confidence && (
-                            <Badge variant="outline" className="text-blue-300 border-blue-800">
-                              {(detection.confidence * 100).toFixed(0)}% confidence
+              <div>
+                <div className="flex items-center justify-between p-3 bg-[#161b22] border-b border-gray-700">
+                  <div className="flex items-center">
+                    <span className="text-white font-medium">All Violations ({result.detections.length})</span>
+                  </div>
+                </div>
+                <div className="px-4 pb-4">
+                  {result.detections.map((detection, index) => (
+                    <div key={index} className="mt-3 bg-[#161b22] rounded-md border border-gray-700 p-3">
+                      <div className="flex items-start">
+                        <div className="flex-1">
+                          <div className="flex justify-between">
+                            <h4 className="text-white font-medium">
+                              {detection.label ? detection.label.replace(/_/g, ' ') : `Violation ${index + 1}`}
+                            </h4>
+                            <Badge className="ml-2 bg-blue-600 text-white">
+                              {detection.confidence ? `${(detection.confidence * 100).toFixed(0)}%` : 'medium'}
                             </Badge>
-                          )}
-                        </div>
-                        
-                        {result.regulationIds && result.regulationIds[index] && (
-                          <div className="mt-3 bg-[#0d1117] p-2 rounded-md border border-gray-800">
-                            <p className="text-xs text-gray-400 mb-1">Applicable Regulation:</p>
-                            <div className="flex items-center">
-                              <FlagTriangleLeft className="mr-1 h-4 w-4 text-yellow-500" />
-                              <p className="text-sm text-yellow-300">{result.regulationIds[index]}</p>
-                            </div>
-                            <p className="text-xs text-gray-500 mt-1">{getRegulationDescription(result.regulationIds[index])}</p>
                           </div>
-                        )}
-                        
-                        <div className="mt-3 text-xs text-gray-400">
-                          Location: {result.location || "Work Area"} • 
-                          Detected: {formatDistanceToNow(new Date(result.timestamp), { addSuffix: true })}
+                          
+                          {result.regulationIds && result.regulationIds[index] && (
+                            <div className="mt-2 text-sm">
+                              <div className="text-gray-300 font-medium">{result.regulationIds[index]}</div>
+                              <div className="text-gray-400">Location: {result.location || "Work area"}</div>
+                            </div>
+                          )}
+                          
+                          <p className="mt-2 text-sm text-gray-300">
+                            {detection.remediationSteps || 
+                              `Workers are potentially exposed to hazards related to ${detection.label?.replace(/_/g, ' ') || 'safety violations'}, creating a serious safety risk.`}
+                          </p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ) : (
               <Table>
-                <TableHeader className="bg-[#161f2c] rounded-t-md">
+                <TableHeader className="bg-[#161b22] rounded-t-md">
                   <TableRow className="border-gray-800">
                     <TableHead className="text-gray-400 font-medium">Severity</TableHead>
                     <TableHead className="text-gray-400 font-medium">Description</TableHead>
@@ -168,7 +148,7 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
                 <TableBody>
                   <TableRow className="border-gray-800">
                     <TableCell>
-                      <Badge className={getSeverityColor(result.severity)}>
+                      <Badge className={getSeverityBadgeClass(result.severity)}>
                         {getSeverityText(result.severity)}
                       </Badge>
                     </TableCell>
@@ -190,19 +170,7 @@ const ViolationResults = ({ results, onSave }: ViolationResultsProps) => {
           </div>
         ))}
 
-        <div className="mt-6">
-          <div className="flex items-center mb-3">
-            <HardHat className="mr-2 h-4 w-4 text-yellow-500" />
-            <h4 className="text-sm font-medium text-yellow-300">Recommended Actions</h4>
-          </div>
-          
-          <ul className="text-sm text-gray-400 space-y-2 mb-6 ml-6 list-disc">
-            <li>Immediately address all high and critical violations</li>
-            <li>Document corrective actions taken with photos</li>
-            <li>Conduct safety briefing with all workers</li>
-            <li>Schedule follow-up inspection within 48 hours</li>
-          </ul>
-          
+        <div className="p-4 pt-3 border-t border-gray-700">
           {onSave && (
             <Button 
               onClick={onSave} 

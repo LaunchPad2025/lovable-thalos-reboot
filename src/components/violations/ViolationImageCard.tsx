@@ -3,8 +3,9 @@ import React, { useRef, useEffect } from 'react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Download, Save, AlertCircle, HardHat, FlagTriangleLeft } from 'lucide-react';
+import { Download, Save, AlertCircle, HardHat, FlagTriangleLeft, Clock } from 'lucide-react';
 import { TestResult } from '@/hooks/useModelTest';
+import { getSeverityBadgeClass } from './utils/violationHelpers';
 
 interface ViolationImageCardProps {
   results: TestResult;
@@ -183,25 +184,47 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
       }
     }
   };
+
+  // Format date to display in a readable format
+  const formatDate = () => {
+    return new Date().toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
+  };
   
   return (
-    <Card className="bg-[#0d1117] border-gray-800">
+    <Card className="bg-[#0d1117] border-gray-800 overflow-hidden">
       <CardHeader className="bg-[#0f1419] border-b border-gray-800 flex flex-row items-center justify-between p-4">
         <div>
-          <CardTitle className="text-white">Violation Analysis</CardTitle>
-          <p className="text-sm text-gray-400">
-            Location: {results.location || 'Work Site'} | 
-            Severity: {results.severity?.toUpperCase() || 'MEDIUM'}
-          </p>
+          <CardTitle className="text-white flex items-center">
+            <span className="bg-yellow-500 text-[#0f1419] rounded-full w-6 h-6 inline-flex items-center justify-center mr-2">
+              <HardHat className="h-4 w-4" />
+            </span>
+            Violation Analysis
+          </CardTitle>
+          <div className="flex flex-wrap mt-1 gap-2 text-sm text-gray-400">
+            <span className="flex items-center">
+              Industry: {results.industry || 'Construction'}
+            </span>
+            <span className="flex items-center ml-3">
+              <Clock className="h-3 w-3 mr-1 opacity-70" />
+              {formatDate()}
+            </span>
+            <span className="flex items-center ml-3">
+              Location: {results.location || 'Work Area'}
+            </span>
+          </div>
         </div>
         <div>
-          <Badge className={`${violationsCount > 0 ? 'bg-red-900/50 text-red-300 border border-red-800' : 'bg-green-900/50 text-green-300 border border-green-800'}`}>
+          <Badge className={`${violationsCount > 0 ? getSeverityBadgeClass(results.severity) : 'bg-green-900/50 text-green-300 border border-green-800'}`}>
             {violationsCount > 0 ? `${violationsCount} ${violationsCount === 1 ? 'Violation' : 'Violations'} Detected` : 'No Violations'}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="p-6">
-        <div className="mb-5">
+        <div className="mb-6">
           {results.detections && results.detections.length > 0 ? (
             <div className="relative rounded-md border border-gray-700 overflow-hidden">
               <canvas 
@@ -241,7 +264,7 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           
           {results.detections && results.detections.length > 0 && (
             <div className="mb-4">
-              <h4 className="text-sm font-medium text-gray-300 mb-2">Detected Violations:</h4>
+              <h4 className="text-sm font-medium text-gray-300 mb-2">Identified Violations:</h4>
               <ul className="space-y-3">
                 {results.detections.map((detection, index) => (
                   <li key={index} className="p-3 bg-gray-800/50 rounded-md border border-gray-700">
@@ -253,7 +276,7 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
                         <p className="text-gray-200 font-medium">
                           {detection.label ? detection.label.replace(/_/g, ' ') : 'Violation'}
                         </p>
-                        <div className="flex items-center mt-1 space-x-3">
+                        <div className="flex flex-wrap items-center mt-1 space-x-3">
                           {results.regulationIds && results.regulationIds[index] && (
                             <Badge variant="outline" className="text-green-400 border-green-800 bg-green-900/20">
                               <FlagTriangleLeft className="mr-1 h-3 w-3" />
@@ -266,6 +289,9 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
                             </Badge>
                           )}
                         </div>
+                        <p className="mt-2 text-gray-400 text-sm">
+                          {detection.remediationSteps || 'Remediation steps not available.'}
+                        </p>
                       </div>
                     </div>
                   </li>
@@ -275,18 +301,32 @@ const ViolationImageCard = ({ results, violationsCount, onSave }: ViolationImage
           )}
         </div>
         
-        <div className="mt-4 flex justify-end space-x-2">
-          <Button variant="outline" className="border-gray-700 text-gray-300" onClick={downloadImage}>
-            <Download size={16} className="mr-1" />
-            Export Report
-          </Button>
+        <div className="mt-5 pt-5 border-t border-gray-800">
+          <div className="flex items-center mb-3">
+            <HardHat className="mr-2 h-4 w-4 text-yellow-500" />
+            <h4 className="text-sm font-medium text-yellow-300">Recommended Actions</h4>
+          </div>
           
-          {results.detections && results.detections.length > 0 && (
-            <Button className="bg-blue-600 hover:bg-blue-700" onClick={onSave}>
-              <Save size={16} className="mr-1" />
-              Create Remediation Task
+          <ul className="text-sm text-gray-400 space-y-2 mb-6 ml-6 list-disc">
+            <li>Immediately address all high and critical violations</li>
+            <li>Document corrective actions taken with photos</li>
+            <li>Conduct safety briefing with all workers</li>
+            <li>Schedule follow-up inspection within 48 hours</li>
+          </ul>
+          
+          <div className="flex justify-end space-x-2">
+            <Button variant="outline" className="border-gray-700 text-gray-300" onClick={downloadImage}>
+              <Download size={16} className="mr-1" />
+              Export Report
             </Button>
-          )}
+            
+            {results.detections && results.detections.length > 0 && (
+              <Button className="bg-blue-600 hover:bg-blue-700" onClick={onSave}>
+                <Save size={16} className="mr-1" />
+                Create Remediation Task
+              </Button>
+            )}
+          </div>
         </div>
       </CardContent>
     </Card>

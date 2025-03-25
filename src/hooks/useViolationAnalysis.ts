@@ -26,7 +26,7 @@ export interface AnalysisResult {
   id: string;
   regulationIds?: string[];
   relevanceScores?: number[];
-  location?: string;
+  location: string;
 }
 
 export function useViolationAnalysis(industry: string) {
@@ -113,6 +113,18 @@ export function useViolationAnalysis(industry: string) {
         severity = 'low';
       }
       
+      // Determine a more specific location based on detection content
+      let locationDetail = 'Work Area';
+      if (violationsWithSteps.some(v => v.label?.toLowerCase().includes('ladder'))) {
+        locationDetail = 'Elevated Work Area';
+      } else if (violationsWithSteps.some(v => v.label?.toLowerCase().includes('scaffold'))) {
+        locationDetail = 'Scaffolding Zone';
+      } else if (violationsWithSteps.some(v => v.label?.toLowerCase().includes('electrical'))) {
+        locationDetail = 'Electrical Installation Area';
+      } else if (violationsWithSteps.some(v => v.label?.toLowerCase().includes('tripping'))) {
+        locationDetail = 'Walkway/Access Route';
+      }
+      
       // Create an analysis result with a unique ID and additional information
       const analysisResult: AnalysisResult = {
         ...result,
@@ -125,7 +137,7 @@ export function useViolationAnalysis(industry: string) {
         regulationIds: regulationIds,
         relevanceScores: relevanceScores,
         description: description,
-        location: 'Work Area'
+        location: locationDetail
       };
       
       console.log('Analysis completed successfully:', analysisResult);

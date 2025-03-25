@@ -2,15 +2,19 @@
 import React from 'react';
 import { Card, CardHeader, CardContent } from '@/components/ui/card';
 import ViolationsTabs from './ViolationsTabs';
-import { TestResult } from '@/hooks/useModelTest';
+import { getSeverityBadgeClass } from './utils/violationHelpers';
 
 interface ViolationsListProps {
   detections: any[];
   violationsCount: number;
-  renderSeverityClass: (severity: string) => string;
 }
 
-const ViolationsList = ({ detections, violationsCount, renderSeverityClass }: ViolationsListProps) => {
+const ViolationsList = ({ detections, violationsCount }: ViolationsListProps) => {
+  // Helper function for rendering severity classes
+  const renderSeverityClass = (severity: string): string => {
+    return getSeverityBadgeClass(severity);
+  };
+
   return (
     <Card className="bg-[#0d1117] border-gray-800">
       <CardHeader className="bg-[#0f1419] border-b border-gray-800 px-6 py-4">

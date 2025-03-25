@@ -31,7 +31,7 @@ const ViolationResultsView = ({
       test_name: 'Safety Violation Analysis',
       result: 'Violation Detected',
       severity: testResults?.severity || 'medium',
-      location: testResults?.industry || 'Unknown', // Use industry as location if not available
+      location: testResults?.location || 'Work Area', // Use industry as location if not available
       timestamp: new Date().toISOString(),
       image_url: testResults?.imagePreview || undefined,
       description: testResults?.description,
@@ -95,7 +95,10 @@ const ViolationResultsView = ({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <div className="md:col-span-2">
             <ViolationImageCard 
-              results={testResults} 
+              results={{
+                ...testResults,
+                location: testResults.location || 'Work Area'
+              }} 
               violationsCount={violationsCount} 
               onSave={handleSaveViolation} 
             />
