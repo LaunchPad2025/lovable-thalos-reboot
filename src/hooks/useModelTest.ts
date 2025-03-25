@@ -31,6 +31,23 @@ export function useModelTest() {
   const [testResult, setTestResult] = useState<TestResult | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   
+  // Initialize the violations bucket
+  const initializeStorageBucket = async () => {
+    try {
+      // Call our edge function to ensure the storage bucket exists
+      const { data, error } = await supabase.functions.invoke('create-storage-buckets');
+      
+      if (error) {
+        console.error('Error initializing storage bucket:', error);
+      }
+      
+      return !error;
+    } catch (error) {
+      console.error('Failed to initialize storage bucket:', error);
+      return false;
+    }
+  };
+  
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -58,6 +75,12 @@ export function useModelTest() {
     setIsSubmitting(true);
     
     try {
+      // First, make sure the storage bucket is initialized
+      const bucketInitialized = await initializeStorageBucket();
+      if (!bucketInitialized && image) {
+        throw new Error('Storage bucket could not be initialized. Please try again.');
+      }
+      
       // If there's an image, upload it to Supabase Storage first
       let uploadedImageUrl = '';
       
