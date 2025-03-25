@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -29,6 +30,7 @@ import Notifications from "./pages/Notifications";
 import Training from "./pages/Training";
 import Audits from "./pages/Audits";
 import Admin from "./pages/Admin";
+import Index from "./pages/Index";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -68,6 +70,7 @@ function App() {
                   <Route path="/auth" element={<Auth />} />
                   <Route path="/legal" element={<Legal />} />
                   <Route path="/onboarding" element={<Onboarding />} />
+                  <Route path="/" element={<Index />} />
 
                   {/* Protected routes with layout */}
                   <Route element={<ProtectedRoute />}>

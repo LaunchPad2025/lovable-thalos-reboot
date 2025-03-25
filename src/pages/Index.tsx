@@ -2,7 +2,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Shield, CheckCircle, AlertTriangle, FileText, Clock } from 'lucide-react';
+import { Shield, CheckCircle, AlertTriangle, FileText } from 'lucide-react';
 
 const Index = () => {
   const navigate = useNavigate();
