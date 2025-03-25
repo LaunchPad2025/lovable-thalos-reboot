@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -23,6 +22,7 @@ import Onboarding from "./pages/Onboarding";
 import Regulations from "./pages/Regulations";
 import Models from "./pages/Models";
 import Legal from "./pages/Legal";
+import SidebarExamples from "./pages/SidebarExamples";
 
 // Layout
 import Sidebar from "./components/layout/Sidebar";
@@ -80,6 +80,7 @@ const App = () => {
                               <Route path="/regulations" element={<Regulations />} />
                               <Route path="/regulations/:id" element={<Regulations />} />
                               <Route path="/models" element={<Models />} />
+                              <Route path="/sidebar-examples" element={<SidebarExamples />} />
                               <Route path="/coming-soon" element={<ComingSoon />} />
                               <Route path="/legal" element={<Legal />} />
                               <Route path="*" element={<NotFound />} />
