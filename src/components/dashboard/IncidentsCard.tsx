@@ -18,7 +18,7 @@ const IncidentsCard = () => {
           <p className="text-red-500 text-sm mt-1">This month</p>
         </div>
         
-        <div className="flex justify-start mt-10">
+        <div className="flex justify-start mt-6">
           <Button variant="link" className="text-blue-400 p-0 h-auto flex items-center">
             View incident reports
             <ArrowUpRight className="ml-1 h-4 w-4" />

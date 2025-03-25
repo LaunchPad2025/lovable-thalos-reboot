@@ -15,11 +15,7 @@ const RecentDocuments = () => {
             <h3 className="font-medium">Recent Documents</h3>
           </div>
           <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800">
-              <Timer className="h-3 w-3 mr-1" />
-              Coming Soon
-            </Badge>
-            <span className="bg-gray-800 text-gray-300 px-2 py-0.5 rounded text-xs">Pro+</span>
+            <span className="bg-purple-900/30 text-purple-300 border border-purple-800 px-2 py-0.5 rounded text-xs">Pro+</span>
           </div>
         </div>
         

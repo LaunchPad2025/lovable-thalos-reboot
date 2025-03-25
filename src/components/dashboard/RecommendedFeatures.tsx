@@ -2,8 +2,6 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Timer } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
 
 const RecommendedFeatures = () => {
   return (
@@ -17,10 +15,6 @@ const RecommendedFeatures = () => {
             <div className="flex items-center space-x-2 mb-2">
               <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">Pro</span>
               <span className="text-sm font-medium">Risk Assessment</span>
-              <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
-                <Timer className="h-3 w-3 mr-1" />
-                Coming Soon
-              </Badge>
             </div>
             <p className="text-gray-400 text-sm">Comprehensive risk assessment tools for your entire organization</p>
           </div>
@@ -29,10 +23,6 @@ const RecommendedFeatures = () => {
             <div className="flex items-center space-x-2 mb-2">
               <span className="bg-blue-900 text-blue-300 px-2 py-0.5 rounded text-xs">Pro</span>
               <span className="text-sm font-medium">Advanced Analytics</span>
-              <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
-                <Timer className="h-3 w-3 mr-1" />
-                Coming Soon
-              </Badge>
             </div>
             <p className="text-gray-400 text-sm">Detailed compliance analytics and reporting capabilities</p>
           </div>
@@ -41,16 +31,12 @@ const RecommendedFeatures = () => {
             <div className="flex items-center space-x-2 mb-2">
               <span className="bg-purple-900 text-purple-300 px-2 py-0.5 rounded text-xs">Enterprise</span>
               <span className="text-sm font-medium">AI Remediation</span>
-              <Badge variant="outline" className="bg-purple-900/30 text-purple-300 border-purple-800 ml-auto">
-                <Timer className="h-3 w-3 mr-1" />
-                Coming Soon
-              </Badge>
             </div>
             <p className="text-gray-400 text-sm">Automated AI-powered compliance remediation suggestions</p>
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white opacity-80" disabled>
+        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
           Upgrade Your Plan
         </Button>
       </CardContent>

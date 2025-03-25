@@ -85,6 +85,13 @@ const App = () => {
                               <Route path="/models" element={<Models />} />
                               <Route path="/sidebar-examples" element={<SidebarExamples />} />
                               <Route path="/notifications" element={<ComingSoon />} />
+                              <Route path="/risk-assessment" element={<ComingSoon />} />
+                              <Route path="/documents" element={<ComingSoon />} />
+                              <Route path="/audits" element={<ComingSoon />} />
+                              <Route path="/reports" element={<ComingSoon />} />
+                              <Route path="/training" element={<ComingSoon />} />
+                              <Route path="/admin" element={<ComingSoon />} />
+                              <Route path="/help" element={<ComingSoon />} />
                               <Route path="/coming-soon" element={<ComingSoon />} />
                               <Route path="/legal" element={<Legal />} />
                               <Route path="*" element={<NotFound />} />
