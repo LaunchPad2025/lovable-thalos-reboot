@@ -4,8 +4,20 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { Switch } from '@/components/ui/switch';
+import { useTheme } from '@/providers/ThemeProvider';
+import { useToast } from '@/hooks/use-toast';
 
 const AppearanceSettings = () => {
+  const { mode, setMode, density, setDensity, sidebarCollapsed, setSidebarCollapsed, animationsEnabled, setAnimationsEnabled } = useTheme();
+  const { toast } = useToast();
+
+  const handleSavePreferences = () => {
+    toast({
+      title: "Settings saved",
+      description: "Your appearance preferences have been updated.",
+    });
+  };
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +28,7 @@ const AppearanceSettings = () => {
       {/* Theme Selection */}
       <div className="space-y-4">
         <h3 className="text-lg font-medium">Theme</h3>
-        <RadioGroup defaultValue="dark" className="space-y-3">
+        <RadioGroup value={mode} onValueChange={(value) => setMode(value as 'dark' | 'light' | 'system')} className="space-y-3">
           <div className="flex items-center space-x-3">
             <RadioGroupItem value="dark" id="theme-dark" />
             <Label htmlFor="theme-dark">Dark (Default)</Label>
@@ -35,7 +47,7 @@ const AppearanceSettings = () => {
       {/* Density Settings */}
       <div className="pt-6 border-t border-gray-800 space-y-4">
         <h3 className="text-lg font-medium">Display Density</h3>
-        <RadioGroup defaultValue="comfortable" className="space-y-3">
+        <RadioGroup value={density} onValueChange={(value) => setDensity(value as 'comfortable' | 'compact')} className="space-y-3">
           <div className="flex items-center space-x-3">
             <RadioGroupItem value="comfortable" id="density-comfortable" />
             <Label htmlFor="density-comfortable">Comfortable</Label>
@@ -54,7 +66,7 @@ const AppearanceSettings = () => {
             <h3 className="text-lg font-medium">Sidebar</h3>
             <p className="text-sm text-gray-400">Auto-collapse sidebar on small screens</p>
           </div>
-          <Switch defaultChecked />
+          <Switch checked={sidebarCollapsed} onCheckedChange={setSidebarCollapsed} />
         </div>
       </div>
       
@@ -65,13 +77,13 @@ const AppearanceSettings = () => {
             <h3 className="text-lg font-medium">Animations</h3>
             <p className="text-sm text-gray-400">Enable UI animations and transitions</p>
           </div>
-          <Switch defaultChecked />
+          <Switch checked={animationsEnabled} onCheckedChange={setAnimationsEnabled} />
         </div>
       </div>
       
       {/* Save Button */}
       <div className="flex justify-end pt-4">
-        <Button className="bg-thalos-blue hover:bg-blue-600">
+        <Button onClick={handleSavePreferences} className="bg-thalos-blue hover:bg-blue-600">
           Save Preferences
         </Button>
       </div>

@@ -8,6 +8,7 @@ import { useState } from "react";
 import { AuthProvider } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import Navbar from "@/components/layout/Navbar";
+import { ThemeProvider } from "@/providers/ThemeProvider";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -33,49 +34,51 @@ const App = () => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/legal" element={<Legal />} />
+      <ThemeProvider>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/legal" element={<Legal />} />
 
-              {/* Protected routes with sidebar layout */}
-              <Route element={<ProtectedRoute />}>
-                <Route
-                  path="/*"
-                  element={
-                    <div className="flex h-screen w-full">
-                      <Sidebar userRole={userRole} />
-                      <div className="flex-1 overflow-hidden flex flex-col">
-                        <Navbar />
-                        <Routes>
-                          <Route path="/" element={<Dashboard />} />
-                          <Route path="/violations" element={<Violations />} />
-                          <Route path="/violations/:id" element={<Violations />} />
-                          <Route path="/tasks" element={<Tasks />} />
-                          <Route path="/chatbot" element={<Chatbot />} />
-                          <Route path="/subscription" element={<Subscription />} />
-                          <Route path="/settings" element={<Settings />} />
-                          <Route path="/regulations" element={<Regulations />} />
-                          <Route path="/regulations/:id" element={<Regulations />} />
-                          <Route path="/models" element={<Models />} />
-                          <Route path="/coming-soon" element={<ComingSoon />} />
-                          <Route path="/legal" element={<Legal />} />
-                          <Route path="*" element={<NotFound />} />
-                        </Routes>
+                {/* Protected routes with sidebar layout */}
+                <Route element={<ProtectedRoute />}>
+                  <Route
+                    path="/*"
+                    element={
+                      <div className="flex h-screen w-full">
+                        <Sidebar userRole={userRole} />
+                        <div className="flex-1 overflow-hidden flex flex-col">
+                          <Navbar />
+                          <Routes>
+                            <Route path="/" element={<Dashboard />} />
+                            <Route path="/violations" element={<Violations />} />
+                            <Route path="/violations/:id" element={<Violations />} />
+                            <Route path="/tasks" element={<Tasks />} />
+                            <Route path="/chatbot" element={<Chatbot />} />
+                            <Route path="/subscription" element={<Subscription />} />
+                            <Route path="/settings" element={<Settings />} />
+                            <Route path="/regulations" element={<Regulations />} />
+                            <Route path="/regulations/:id" element={<Regulations />} />
+                            <Route path="/models" element={<Models />} />
+                            <Route path="/coming-soon" element={<ComingSoon />} />
+                            <Route path="/legal" element={<Legal />} />
+                            <Route path="*" element={<NotFound />} />
+                          </Routes>
+                        </div>
                       </div>
-                    </div>
-                  }
-                />
-              </Route>
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
-      </AuthProvider>
+                    }
+                  />
+                </Route>
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 };
