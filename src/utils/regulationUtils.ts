@@ -76,31 +76,29 @@ export async function checkRegulationExists(title: string, referenceNumber?: str
   try {
     // Check by reference number if provided
     if (referenceNumber) {
-      // Explicitly type the query response
-      const { data: refData, error: refError } = await supabase
+      const result = await supabase
         .from('regulations')
         .select('id')
         .eq('reference_number', referenceNumber)
         .limit(1);
       
-      if (refError) throw refError;
+      if (result.error) throw result.error;
       
-      if (refData && refData.length > 0) {
+      if (result.data && result.data.length > 0) {
         return true;
       }
     }
     
-    // Check by title with explicit typing
-    const { data: titleData, error: titleError } = await supabase
+    // Check by title
+    const result = await supabase
       .from('regulations')
       .select('id')
       .eq('title', title)
       .limit(1);
     
-    if (titleError) throw titleError;
+    if (result.error) throw result.error;
     
-    // Simple boolean return without conditional operator
-    return titleData !== null && titleData.length > 0;
+    return (result.data !== null && result.data.length > 0);
   } catch (error) {
     console.error('Error checking regulation existence:', error);
     return false;
