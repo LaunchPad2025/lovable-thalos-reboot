@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { PlusCircle } from 'lucide-react';
+import { PlusCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import NewTaskModal from '@/components/tasks/NewTaskModal';
 import { useQueryClient } from '@tanstack/react-query';
@@ -24,17 +24,17 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
   const { toast: uiToast } = useToast();
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const { organization, isLoading: isLoadingOrg, hasOrganization } = useOrganization();
+  const { organization, isLoading: isLoadingOrg } = useOrganization();
 
   // For debugging
   useEffect(() => {
     console.log("TaskCreation component:", {
-      user: !!user,
-      organization,
-      isLoadingOrg,
-      hasOrganization
+      user: user?.id,
+      organization: organization?.organization_id,
+      orgName: organization?.organizations?.name,
+      isLoadingOrg
     });
-  }, [user, organization, isLoadingOrg, hasOrganization]);
+  }, [user, organization, isLoadingOrg]);
 
   useEffect(() => {
     if (violationId) {
@@ -50,8 +50,8 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
       return;
     }
 
-    // Use organization data if available, otherwise fall back to a default
-    const organizationId = organization?.organization_id || "00000000-0000-0000-0000-000000000000";
+    // Always use the organization ID from the context
+    const organizationId = organization?.organization_id;
     console.log("Creating task with organization ID:", organizationId);
     
     setIsSubmitting(true);
@@ -115,21 +115,24 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
     }
   };
 
-  if (isLoadingOrg) {
-    return <Button className="bg-gray-400 cursor-not-allowed" disabled>
-      <PlusCircle size={16} className="mr-2" />
-      Loading...
-    </Button>;
-  }
-
   return (
     <>
       <Button 
         className="bg-blue-600 hover:bg-blue-700" 
         onClick={() => setIsModalOpen(true)}
+        disabled={isLoadingOrg}
       >
-        <PlusCircle size={16} className="mr-2" />
-        Create Task
+        {isLoadingOrg ? (
+          <>
+            <Loader2 size={16} className="mr-2 animate-spin" />
+            Loading...
+          </>
+        ) : (
+          <>
+            <PlusCircle size={16} className="mr-2" />
+            Create Task
+          </>
+        )}
       </Button>
       
       <NewTaskModal 

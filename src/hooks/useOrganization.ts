@@ -7,12 +7,21 @@ import { toast } from 'sonner';
 export function useOrganization() {
   const { user } = useAuth();
 
+  const defaultOrg = {
+    organization_id: "00000000-0000-0000-0000-000000000000",
+    role: "member",
+    organizations: {
+      id: "00000000-0000-0000-0000-000000000000",
+      name: "Default Organization"
+    }
+  };
+
   const { data: organization, isLoading, error } = useQuery({
-    queryKey: ['organization'],
+    queryKey: ['organization', user?.id],
     queryFn: async () => {
       if (!user) {
-        console.log("No user found in useOrganization");
-        return null;
+        console.log("No user found in useOrganization, returning default org");
+        return defaultOrg;
       }
 
       try {
@@ -21,43 +30,30 @@ export function useOrganization() {
           .from('organization_members')
           .select('organization_id, role, organizations(id, name)')
           .eq('user_id', user.id)
-          .maybeSingle(); // Use maybeSingle instead of single to prevent errors when no data
+          .maybeSingle();
 
         if (error) {
           console.error("Error fetching organization:", error);
-          toast("Could not load organization data. Using default values.");
-          return null;
+          toast.error("Could not load organization data. Using default values.");
+          return defaultOrg;
         }
 
         if (!orgMember) {
           console.log("No organization membership found for user:", user.id);
-          // If the user isn't in an organization, we'll create a default one for development
-          return {
-            organization_id: "00000000-0000-0000-0000-000000000000",
-            role: "member",
-            organizations: {
-              id: "00000000-0000-0000-0000-000000000000",
-              name: "Default Organization"
-            }
-          };
+          // Creating automatic org for demo purposes
+          toast.info("Using default organization for demo purposes");
+          return defaultOrg;
         }
 
         console.log("Successfully fetched organization:", orgMember);
         return orgMember;
       } catch (err) {
         console.error("Exception in organization fetch:", err);
-        // Return a default organization for development
-        return {
-          organization_id: "00000000-0000-0000-0000-000000000000",
-          role: "member",
-          organizations: {
-            id: "00000000-0000-0000-0000-000000000000",
-            name: "Default Organization"
-          }
-        };
+        toast.error("Error loading organization. Using default values.");
+        return defaultOrg;
       }
     },
-    enabled: !!user,
+    enabled: true, // Always try to fetch, using default if needed
     retry: 3,
     retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
     refetchOnWindowFocus: false,
@@ -65,7 +61,7 @@ export function useOrganization() {
   });
 
   return {
-    organization,
+    organization: organization || defaultOrg, // Always return at least the default
     isLoading,
     error,
     hasOrganization: !!organization
