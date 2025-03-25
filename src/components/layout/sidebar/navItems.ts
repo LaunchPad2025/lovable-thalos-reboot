@@ -6,14 +6,13 @@ import {
   Settings, 
   CheckSquare, 
   AlertTriangle, 
-  Layout, 
   FileQuestion,
   ClipboardList,
-  BookOpen,
   BarChart2,
-  Headphones,
+  BookOpen,
   Users,
-  HelpCircle
+  HelpCircle,
+  MessageSquare
 } from "lucide-react";
 import { NavItem } from "./types";
 
@@ -40,14 +39,14 @@ export const getNavItems = (): NavItem[] => [
     title: "Risk Assessment",
     path: "/risk-assessment",
     icon: FileQuestion,
-    roles: ["admin", "safety_officer"],
+    roles: ["admin", "safety_officer", "worker"],
     comingSoon: true
   },
   {
     title: "Documents",
     path: "/documents",
     icon: FileText,
-    roles: ["admin", "safety_officer"],
+    roles: ["admin", "safety_officer", "worker"],
     comingSoon: true
   },
   {
@@ -61,14 +60,14 @@ export const getNavItems = (): NavItem[] => [
     title: "Audits",
     path: "/audits",
     icon: ClipboardList,
-    roles: ["admin", "safety_officer"],
+    roles: ["admin", "safety_officer", "worker"],
     comingSoon: true
   },
   {
     title: "Reports",
     path: "/reports",
     icon: BarChart2,
-    roles: ["admin", "safety_officer"],
+    roles: ["admin", "safety_officer", "worker"],
     comingSoon: true
   },
   {
@@ -86,6 +85,13 @@ export const getNavItems = (): NavItem[] => [
     comingSoon: true
   },
   {
+    title: "Copilot",
+    path: "/chatbot",
+    icon: MessageSquare,
+    roles: ["admin", "safety_officer", "worker"],
+    badge: "AI"
+  },
+  {
     title: "Settings",
     path: "/settings",
     icon: Settings,
@@ -97,11 +103,5 @@ export const getNavItems = (): NavItem[] => [
     icon: HelpCircle,
     roles: ["admin", "safety_officer", "worker"],
     comingSoon: true
-  },
-  {
-    title: "Sidebar Examples",
-    path: "/sidebar-examples",
-    icon: Layout,
-    roles: ["admin", "safety_officer", "worker"]
   }
 ];

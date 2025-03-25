@@ -6,9 +6,8 @@ import ViolationsTable from '@/components/violations/ViolationsTable';
 import ViolationDetails from '@/components/violations/ViolationDetails';
 import ViolationUpload from '@/components/violations/ViolationUpload';
 import ViolationResults from '@/components/violations/ViolationResults';
-import PageTitle from '@/components/ui/PageTitle';
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { InfoIcon } from 'lucide-react';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon, ShieldAlert } from 'lucide-react';
 
 // Mock data with fixed status types
 const mockViolations = [
@@ -154,21 +153,26 @@ const Violations = () => {
   };
   
   return (
-    <PageContainer>
+    <PageContainer className="bg-[#070b11] text-white">
       {currentView === 'list' && (
         <>
-          <PageTitle 
-            title="Safety Violations"
-            subtitle="View and manage safety violations"
-            action={
-              <button 
-                onClick={() => setCurrentView('upload')}
-                className="bg-thalos-blue hover:bg-blue-600 text-white px-4 py-2 rounded flex items-center"
-              >
-                <span className="mr-2">+</span> Detect New Violations
-              </button>
-            }
-          />
+          <div className="mb-6">
+            <h1 className="text-2xl font-medium text-white mb-1 flex items-center">
+              <ShieldAlert className="mr-2 h-6 w-6 text-red-500" />
+              Safety Violations
+            </h1>
+            <p className="text-gray-400">View and manage safety violations</p>
+          </div>
+          
+          <div className="flex justify-end mb-6">
+            <button 
+              onClick={() => setCurrentView('upload')}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded flex items-center"
+            >
+              <span className="mr-2">+</span> Detect New Violations
+            </button>
+          </div>
+          
           <ViolationsTable 
             violations={mockViolations} 
             onSelectViolation={handleSelectViolation}
@@ -185,23 +189,26 @@ const Violations = () => {
       
       {currentView === 'upload' && (
         <>
-          <PageTitle 
-            title="Safety Violation Detection"
-            subtitle="Upload images to automatically detect and analyze workplace safety violations using AI"
-            action={
-              <button 
-                onClick={handleViewViolationsList}
-                className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded flex items-center"
-              >
-                View All Violations
-              </button>
-            }
-          />
+          <div className="mb-6">
+            <h1 className="text-2xl font-medium text-white mb-1 flex items-center">
+              <ShieldAlert className="mr-2 h-6 w-6 text-yellow-500" />
+              Safety Violation Detection
+            </h1>
+            <p className="text-gray-400">Upload images to automatically detect and analyze workplace safety violations using AI</p>
+          </div>
           
-          <Alert className="mb-6 bg-blue-50 border-blue-100">
-            <InfoIcon className="h-4 w-4 text-blue-500 mr-2" />
-            <AlertTitle className="text-blue-700">Information</AlertTitle>
-            <AlertDescription className="text-blue-600">
+          <div className="flex justify-end mb-6">
+            <button 
+              onClick={handleViewViolationsList}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
+            >
+              View All Violations
+            </button>
+          </div>
+          
+          <Alert className="mb-6 bg-blue-900/30 border border-blue-800 text-blue-200">
+            <InfoIcon className="h-4 w-4 text-blue-400 mr-2" />
+            <AlertDescription>
               Our AI analyzes your workplace images to identify safety violations and suggest corrective actions. 
               If no violations are detected, you'll receive a safety compliance confirmation. 
               Remember that AI analysis should supplement, not replace, regular physical safety inspections.
@@ -214,26 +221,25 @@ const Violations = () => {
       
       {currentView === 'results' && testResults && (
         <>
-          <PageTitle 
-            title="Analysis Results"
-            subtitle="AI-detected safety violations"
-            action={
-              <div className="flex space-x-2">
-                <button 
-                  onClick={handleBackToUpload}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded flex items-center"
-                >
-                  New Analysis
-                </button>
-                <button 
-                  onClick={handleViewViolationsList}
-                  className="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded flex items-center"
-                >
-                  View All Violations
-                </button>
-              </div>
-            }
-          />
+          <div className="mb-6">
+            <h1 className="text-2xl font-medium text-white mb-1">Analysis Results</h1>
+            <p className="text-gray-400">AI-detected safety violations</p>
+          </div>
+          
+          <div className="flex justify-end mb-6 space-x-2">
+            <button 
+              onClick={handleBackToUpload}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
+            >
+              New Analysis
+            </button>
+            <button 
+              onClick={handleViewViolationsList}
+              className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded flex items-center"
+            >
+              View All Violations
+            </button>
+          </div>
           
           <ViolationResults 
             results={testResults} 

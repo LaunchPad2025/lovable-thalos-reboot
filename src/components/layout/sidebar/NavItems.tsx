@@ -43,6 +43,11 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole }) => {
                   Soon
                 </span>
               )}
+              {item.badge && (
+                <span className="ml-auto text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-md">
+                  {item.badge}
+                </span>
+              )}
             </NavLink>
           </li>
         );

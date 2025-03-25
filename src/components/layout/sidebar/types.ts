@@ -7,4 +7,5 @@ export interface NavItem {
   icon: LucideIcon;
   roles: ("admin" | "safety_officer" | "worker")[];
   comingSoon?: boolean;
+  badge?: string;
 }
