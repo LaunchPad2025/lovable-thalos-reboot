@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Facebook, Twitter, Linkedin, Github } from 'lucide-react';
+import { Shield } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -35,7 +35,7 @@ const Footer = () => {
           <div>
             <h4 className="text-white font-medium mb-4">Resources</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link to="/documentation/blog" className="hover:text-white transition-colors">Blog</Link></li>
+              {/* Blog link removed */}
               <li><Link to="/documentation/help-center" className="hover:text-white transition-colors">Help Center</Link></li>
               <li><Link to="/documentation/guides" className="hover:text-white transition-colors">Guides</Link></li>
               <li><Link to="/documentation/api-docs" className="hover:text-white transition-colors">API Docs</Link></li>

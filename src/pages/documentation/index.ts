@@ -3,7 +3,7 @@ export { default as Features } from './Features';
 export { default as Pricing } from './Pricing';
 export { default as Integrations } from './Integrations';
 export { default as Updates } from './Updates';
-export { default as Blog } from './Blog';
+// Blog removed
 export { default as HelpCenter } from './HelpCenter';
 export { default as Guides } from './Guides';
 export { default as ApiDocs } from './ApiDocs';
