@@ -5,3 +5,4 @@ export { DueDateField } from './DueDateField';
 export { AssigneeField } from './AssigneeField';
 export { PriorityField } from './PriorityField';
 export { ViolationField } from './ViolationField';
+export { StatusField } from './StatusField';
