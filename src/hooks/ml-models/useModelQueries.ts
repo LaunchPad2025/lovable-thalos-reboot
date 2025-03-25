@@ -1,7 +1,9 @@
-import { useQuery } from '@tanstack/react-query';
+
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { MLModel } from './types';
 import { defaultModels } from './defaultModels';
+import { mapViolationsToRegulations } from '@/utils/violationAnalysis';
 
 /**
  * Hook to fetch a single ML model by ID
