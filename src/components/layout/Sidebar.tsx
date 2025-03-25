@@ -11,7 +11,7 @@ import DesktopNav from "./sidebar/DesktopNav";
 const Sidebar = () => {
   const location = useLocation();
   const isMobile = useMobile();
-  const { sidebarCollapsed } = useTheme();
+  const { sidebarCollapsed, setSidebarCollapsed } = useTheme();
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -28,6 +28,13 @@ const Sidebar = () => {
 
   const toggleMobileSidebar = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+    if (setSidebarCollapsed) {
+      setSidebarCollapsed(!sidebarCollapsed);
+    }
   };
 
   // Close mobile sidebar when location changes
@@ -53,6 +60,7 @@ const Sidebar = () => {
           expanded={expanded}
           navItems={navItems}
           userRole={userRole}
+          toggleExpanded={toggleExpanded}
         />
       )}
     </>
