@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom';
 import { Shield, Facebook, Twitter, Linkedin, Github } from 'lucide-react';
 
 const Footer = () => {
-  const currentYear = 2025;
-  
   return (
     <footer className="bg-[#0d1117] border-t border-gray-800 py-12 text-gray-400">
       <div className="container mx-auto px-6">
@@ -70,7 +68,7 @@ const Footer = () => {
         
         <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm">
-            © {currentYear} Steel Toe Technologies. All rights reserved.
+            © 2025 Steel Toe Technologies. All rights reserved.
           </div>
           
           <div className="mt-4 md:mt-0 flex space-x-6">

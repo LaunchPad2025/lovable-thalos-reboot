@@ -6,7 +6,6 @@ import WelcomeSection from '@/components/dashboard/WelcomeSection';
 import StatsCards from '@/components/dashboard/StatsCards';
 import DetailCards from '@/components/dashboard/DetailCards';
 import RecommendedFeatures from '@/components/dashboard/RecommendedFeatures';
-import Footer from '@/components/layout/Footer';
 import ChatPopup from '@/components/chatbot/ChatPopup';
 
 const DashboardLayout = () => {
@@ -33,8 +32,7 @@ const DashboardLayout = () => {
         <RecommendedFeatures />
       </main>
 
-      {/* Footer - moved outside of the main content */}
-      <Footer />
+      {/* Footer removed from dashboard */}
       
       {/* Chat Popup - Fixed positioning ensures it doesn't affect scroll */}
       <ChatPopup />
