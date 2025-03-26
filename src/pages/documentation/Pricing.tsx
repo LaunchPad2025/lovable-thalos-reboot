@@ -9,7 +9,7 @@ import { plans } from '@/data/subscriptionPlans';
 
 const Pricing = () => {
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/thalos-sales/30min";
+    window.location.href = "https://cal.com/annieeser/30min";
   };
 
   return (
