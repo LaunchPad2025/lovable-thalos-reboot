@@ -69,7 +69,7 @@ export default function Auth() {
         
         <div className="mt-6 pt-4 border-t border-gray-800 text-center">
           <p className="text-xs text-gray-500">
-            Thalos - powered by Steel Toe
+            Thalos Technologies Inc.
           </p>
         </div>
       </div>
