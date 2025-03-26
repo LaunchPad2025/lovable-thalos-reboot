@@ -22,7 +22,7 @@ const ContactForm = () => {
     email: '',
     phone: '',
     company: '',
-    reason: '',
+    subject: '',
     message: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,7 +33,7 @@ const ContactForm = () => {
   };
 
   const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, reason: value }));
+    setFormData((prev) => ({ ...prev, subject: value }));
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -42,9 +42,8 @@ const ContactForm = () => {
 
     try {
       // In a real implementation, you would send this data to your backend
-      // For now, we'll simulate a successful form submission
+      // This is where the email would be sent to contact@steeltoetech.io
       console.log("Form submitted with data:", formData);
-      console.log("Will be sent to: contact@steeltoetech.io and annie.eser@steeltoetech.io");
       
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -61,7 +60,7 @@ const ContactForm = () => {
         email: '',
         phone: '',
         company: '',
-        reason: '',
+        subject: '',
         message: ''
       });
     } catch (error) {
@@ -143,17 +142,16 @@ const ContactForm = () => {
           </div>
           
           <div className="space-y-2">
-            <Label htmlFor="reason">Reason for contacting</Label>
-            <Select value={formData.reason} onValueChange={handleSelectChange}>
+            <Label htmlFor="subject">Subject</Label>
+            <Select value={formData.subject} onValueChange={handleSelectChange}>
               <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select a reason" />
+                <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="general">General Inquiry</SelectItem>
                 <SelectItem value="sales">Sales Inquiry</SelectItem>
-                <SelectItem value="support">Customer Support</SelectItem>
+                <SelectItem value="support">Technical Support</SelectItem>
                 <SelectItem value="partnership">Partnership Opportunity</SelectItem>
-                <SelectItem value="careers">Careers</SelectItem>
-                <SelectItem value="media">Media Inquiry</SelectItem>
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
