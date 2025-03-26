@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -32,8 +31,7 @@ const LandingNavbar = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center group transition-all duration-300">
-              <span className="text-2xl font-bold text-white mr-2 group-hover:text-blue-400 transition-colors">Thalos</span>
-              <span className="text-blue-500">.</span>
+              <span className="text-2xl font-bold text-white mr-0 group-hover:text-blue-400 transition-colors">Thalos<span className="text-blue-500">.</span></span>
               <HardHat size={20} className="text-blue-500 ml-1" aria-hidden="true" />
               <span className="sr-only">Thalos - Workplace Safety Compliance</span>
             </Link>
@@ -114,7 +112,6 @@ const LandingNavbar = () => {
               Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Button>
             
-            {/* Mobile menu button */}
             <Button 
               variant="ghost" 
               className="md:hidden" 
@@ -132,7 +129,6 @@ const LandingNavbar = () => {
           </div>
         </div>
         
-        {/* Mobile menu */}
         {isMenuOpen && (
           <div 
             id="mobile-menu"
