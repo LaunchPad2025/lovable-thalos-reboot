@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
+import { supabase } from '@/integrations/supabase/client';
 
 const ContactForm = () => {
   const { toast } = useToast();
@@ -41,13 +42,17 @@ const ContactForm = () => {
     setIsSubmitting(true);
 
     try {
-      // In a real implementation, you would send this data to your backend
-      // This is where the email would be sent to contact@steeltoetech.io
       console.log("Form submitted with data:", formData);
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      // Call the Supabase Edge Function to send the email
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
       toast({
         title: "Message sent successfully",
         description: "Thank you for contacting us. We'll get back to you soon!",
