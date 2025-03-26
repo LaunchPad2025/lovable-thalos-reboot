@@ -23,7 +23,7 @@ export default function Legal() {
     <PageContainer>
       <PageTitle 
         title="Legal Documents"
-        subtitle="Steel Toe Technologies legal documentation for Thalos platform"
+        subtitle="Thalos Technologies Inc. legal documentation for Thalos platform"
       />
       
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
@@ -75,7 +75,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">1. AGREEMENT TO TERMS</h3>
                       <p>
-                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and Steel Toe Technologies, Inc. ("Company", "we", "us", or "our"), concerning your access to and use of the Thalos platform as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the "Site").
+                        These Terms of Service constitute a legally binding agreement made between you, whether personally or on behalf of an entity ("you") and Thalos Technologies Inc. ("Company", "we", "us", or "our"), concerning your access to and use of the Thalos platform as well as any other media form, media channel, mobile website or mobile application related, linked, or otherwise connected thereto (collectively, the "Site").
                       </p>
                     </section>
                     
@@ -103,7 +103,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">CONTACT US</h3>
                       <p>
-                        If you have any questions about these Terms of Service, please contact us at: legal@steeltoetech.com
+                        If you have any questions about these Terms of Service, please contact us at: legal@thalostech.io
                       </p>
                     </section>
                   </div>
@@ -135,7 +135,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">CONTACT US</h3>
                       <p>
-                        If you have questions or comments about this privacy policy, please contact us at: privacy@steeltoetech.com
+                        If you have questions or comments about this privacy policy, please contact us at: privacy@thalostech.io
                       </p>
                     </section>
                   </div>
@@ -167,7 +167,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">CONTACT US</h3>
                       <p>
-                        If you have questions about our Cookie Policy, please contact us at: privacy@steeltoetech.com
+                        If you have questions about our Cookie Policy, please contact us at: privacy@thalostech.io
                       </p>
                     </section>
                   </div>
@@ -178,7 +178,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">1. SCOPE AND DEFINITIONS</h3>
                       <p>
-                        This Data Processing Agreement ("DPA") forms part of the agreement for the provision of the Thalos platform between Steel Toe Technologies Inc. ("Processor") and the customer ("Controller") as identified in such agreement ("Principal Agreement").
+                        This Data Processing Agreement ("DPA") forms part of the agreement for the provision of the Thalos platform between Thalos Technologies Inc. ("Processor") and the customer ("Controller") as identified in such agreement ("Principal Agreement").
                       </p>
                     </section>
                     
@@ -199,7 +199,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">CONTACT US</h3>
                       <p>
-                        If you have questions about this DPA, please contact us at: legal@steeltoetech.com
+                        If you have questions about this DPA, please contact us at: legal@thalostech.io
                       </p>
                     </section>
                   </div>
@@ -231,7 +231,7 @@ export default function Legal() {
                     <section>
                       <h3 className="text-white font-medium mb-2">CONTACT US</h3>
                       <p>
-                        If you have questions about our Acceptable Use Policy, please contact us at: legal@steeltoetech.com
+                        If you have questions about our Acceptable Use Policy, please contact us at: legal@thalostech.io
                       </p>
                     </section>
                   </div>
@@ -243,7 +243,7 @@ export default function Legal() {
       </Tabs>
       
       <div className="text-center mt-8 text-sm text-gray-500">
-        <p>© {new Date().getFullYear()} Steel Toe Technologies, Inc. All rights reserved.</p>
+        <p>© {new Date().getFullYear()} Thalos Technologies Inc. All rights reserved.</p>
       </div>
     </PageContainer>
   );

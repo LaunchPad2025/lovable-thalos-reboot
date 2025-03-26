@@ -33,7 +33,7 @@ const Legal = () => {
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <h2>Terms of Service</h2>
               
-              <p>Welcome to Thalos, provided by Steel Toe Technologies, Inc. ("Steel Toe," "we," "us," or "our"). By accessing or using our services, you agree to be bound by these Terms of Service ("Terms").</p>
+              <p>Welcome to Thalos, provided by Thalos Technologies Inc. ("Thalos," "we," "us," or "our"). By accessing or using our services, you agree to be bound by these Terms of Service ("Terms").</p>
               
               <h3>1. Acceptance of Terms</h3>
               <p>By accessing or using Thalos, you agree to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, please do not use our services.</p>
@@ -58,7 +58,7 @@ const Legal = () => {
               <p>Our collection and use of your data is governed by our Privacy Policy. By using Thalos, you consent to our collection, use, and processing of your data as described in the Privacy Policy.</p>
               
               <h3>6. Intellectual Property</h3>
-              <p>Thalos and all related intellectual property rights are owned by Steel Toe or its licensors. Nothing in these Terms grants you any rights to our intellectual property except for the limited license described above.</p>
+              <p>Thalos and all related intellectual property rights are owned by Thalos Technologies Inc. or its licensors. Nothing in these Terms grants you any rights to our intellectual property except for the limited license described above.</p>
               
               <h3>7. Confidentiality</h3>
               <p>You agree to keep confidential any non-public information about Thalos that we disclose to you. You will not use or disclose this information except as necessary to use Thalos as permitted under these Terms.</p>
@@ -73,10 +73,10 @@ const Legal = () => {
               <p>Thalos is provided "as is" and "as available" without warranties of any kind, either express or implied, including, but not limited to, implied warranties of merchantability, fitness for a particular purpose, or non-infringement.</p>
               
               <h3>11. Limitation of Liability</h3>
-              <p>To the maximum extent permitted by law, Steel Toe will not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of Thalos.</p>
+              <p>To the maximum extent permitted by law, Thalos Technologies Inc. will not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of or relating to your use of Thalos.</p>
               
               <h3>12. Indemnification</h3>
-              <p>You agree to indemnify and hold harmless Steel Toe and its officers, directors, employees, and agents from any claims, damages, liabilities, costs, and expenses arising out of or related to your use of Thalos or violation of these Terms.</p>
+              <p>You agree to indemnify and hold harmless Thalos Technologies Inc. and its officers, directors, employees, and agents from any claims, damages, liabilities, costs, and expenses arising out of or related to your use of Thalos or violation of these Terms.</p>
               
               <h3>13. Governing Law</h3>
               <p>These Terms will be governed by and construed in accordance with the laws of the Commonwealth of Massachusetts, without regard to its conflict of laws principles.</p>
@@ -85,7 +85,7 @@ const Legal = () => {
               <p>We may update these Terms from time to time. If we make material changes, we will notify you through Thalos or by other means. Your continued use of Thalos after the changes are effective constitutes your acceptance of the revised Terms.</p>
               
               <h3>15. Contact Information</h3>
-              <p>If you have any questions about these Terms, please contact us at legal@steeltoetech.com.</p>
+              <p>If you have any questions about these Terms, please contact us at legal@thalostech.io.</p>
             </div>
           </TabsContent>
           
@@ -93,7 +93,7 @@ const Legal = () => {
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <h2>Privacy Policy</h2>
               
-              <p>Steel Toe Technologies, Inc. ("Steel Toe," "we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Thalos platform.</p>
+              <p>Thalos Technologies Inc. ("Thalos," "we," "us," or "our") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you use our Thalos platform.</p>
               
               <h3>1. Information We Collect</h3>
               <p>We collect the following types of information:</p>
@@ -142,7 +142,7 @@ const Legal = () => {
                 <li>The right to data portability</li>
                 <li>The right to withdraw consent</li>
               </ul>
-              <p>To exercise these rights, please contact us at privacy@steeltoetech.com.</p>
+              <p>To exercise these rights, please contact us at privacy@thalostech.io.</p>
               
               <h3>7. Children's Privacy</h3>
               <p>Thalos is not intended for use by individuals under the age of 18. We do not knowingly collect personal information from children.</p>
@@ -154,7 +154,7 @@ const Legal = () => {
               <p>We may update this Privacy Policy from time to time. If we make material changes, we will notify you through Thalos or by other means. Your continued use of Thalos after the changes are effective constitutes your acceptance of the revised Privacy Policy.</p>
               
               <h3>10. Contact Information</h3>
-              <p>If you have any questions about this Privacy Policy, please contact us at privacy@steeltoetech.com.</p>
+              <p>If you have any questions about this Privacy Policy, please contact us at privacy@thalostech.io.</p>
             </div>
           </TabsContent>
           
@@ -162,7 +162,7 @@ const Legal = () => {
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <h2>Cookie Policy</h2>
               
-              <p>This Cookie Policy explains how Steel Toe Technologies, Inc. ("Steel Toe," "we," "us," or "our") uses cookies and similar technologies on the Thalos platform.</p>
+              <p>This Cookie Policy explains how Thalos Technologies Inc. ("Thalos," "we," "us," or "our") uses cookies and similar technologies on the Thalos platform.</p>
               
               <h3>1. What Are Cookies</h3>
               <p>Cookies are small text files that are stored on your browser or device when you visit a website. Cookies allow websites to recognize your browser or device and remember certain information about your visit.</p>
@@ -186,7 +186,7 @@ const Legal = () => {
               <p>We may update this Cookie Policy from time to time. If we make material changes, we will notify you through Thalos or by other means. Your continued use of Thalos after the changes are effective constitutes your acceptance of the revised Cookie Policy.</p>
               
               <h3>6. Contact Information</h3>
-              <p>If you have any questions about this Cookie Policy, please contact us at privacy@steeltoetech.com.</p>
+              <p>If you have any questions about this Cookie Policy, please contact us at privacy@thalostech.io.</p>
             </div>
           </TabsContent>
           
@@ -194,7 +194,7 @@ const Legal = () => {
             <div className="prose prose-sm dark:prose-invert max-w-none">
               <h2>Data Processing Agreement</h2>
               
-              <p>This Data Processing Agreement ("DPA") forms part of the Terms of Service between Steel Toe Technologies, Inc. ("Processor") and the customer ("Controller") for the use of the Thalos platform.</p>
+              <p>This Data Processing Agreement ("DPA") forms part of the Terms of Service between Thalos Technologies Inc. ("Processor") and the customer ("Controller") for the use of the Thalos platform.</p>
               
               <h3>1. Definitions</h3>
               <p>The terms "Controller," "Processor," "Data Subject," "Personal Data," "Processing," "Appropriate Technical and Organizational Measures," and "Supervisory Authority" shall have the meanings given to them in applicable data protection laws, including the General Data Protection Regulation (GDPR) and the California Consumer Privacy Act (CCPA).</p>
@@ -239,7 +239,7 @@ const Legal = () => {
               <p>We may update this DPA from time to time. If we make material changes, we will notify you through Thalos or by other means. Your continued use of Thalos after the changes are effective constitutes your acceptance of the revised DPA.</p>
               
               <h3>13. Contact Information</h3>
-              <p>If you have any questions about this DPA, please contact us at legal@steeltoetech.com.</p>
+              <p>If you have any questions about this DPA, please contact us at legal@thalostech.io.</p>
             </div>
           </TabsContent>
         </Tabs>
