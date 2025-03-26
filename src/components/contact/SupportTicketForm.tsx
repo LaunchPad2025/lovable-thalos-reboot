@@ -15,6 +15,7 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { AlertCircle } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const SupportTicketForm = () => {
   const { toast } = useToast();
@@ -45,13 +46,30 @@ const SupportTicketForm = () => {
     setIsSubmitting(true);
 
     try {
-      // In a real implementation, you would send this data to your backend
-      // For now, we'll simulate a successful form submission
       console.log("Support ticket submitted with data:", formData);
-      console.log("Will be sent to: contact@steeltoetech.io and annie.eser@steeltoetech.io");
       
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Call the Supabase Edge Function to send the email
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: {
+          firstName: formData.name.split(' ')[0] || formData.name,
+          lastName: formData.name.split(' ').slice(1).join(' ') || '',
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          subject: `Support Ticket: ${formData.subject} (${formData.urgency} priority)`,
+          message: `
+Support Tier: ${formData.supportTier}
+Issue Type: ${formData.issueType}
+Urgency: ${formData.urgency}
+
+${formData.description}
+          `
+        },
+      });
+      
+      if (error) {
+        throw new Error(error.message);
+      }
       
       toast({
         title: "Support ticket submitted",
@@ -228,7 +246,7 @@ const SupportTicketForm = () => {
           
           <div className="flex items-center text-sm text-muted-foreground p-3 bg-muted rounded-md">
             <AlertCircle className="h-4 w-4 mr-2 text-blue-500" />
-            <p>All support tickets are sent to our support team at contact@steeltoetech.io</p>
+            <p>Our support team will respond as soon as possible</p>
           </div>
           
           <Button type="submit" className="w-full" disabled={isSubmitting}>

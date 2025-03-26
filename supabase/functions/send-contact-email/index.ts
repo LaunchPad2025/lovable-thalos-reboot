@@ -30,7 +30,7 @@ serve(async (req) => {
     
     // Send email using Resend
     const { data, error } = await resend.emails.send({
-      from: "Contact Form <onboarding@resend.dev>",
+      from: "Steel Toe Tech <onboarding@resend.dev>",
       to: ["contact@steeltoetech.io"],
       subject: `Contact Form: ${formData.subject}`,
       html: `
