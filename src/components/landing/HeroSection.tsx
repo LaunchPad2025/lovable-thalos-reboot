@@ -21,12 +21,7 @@ const HeroSection = () => {
         
         <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
           Safe Workplaces,<br />
-          <span className="relative">
-            Smarter Compliance
-            <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 300 10" xmlns="http://www.w3.org/2000/svg">
-              <path d="M1 5C50 0 100 10 150 5C200 0 250 10 299 5" stroke="#3b82f6" strokeWidth="2" fill="none" strokeLinecap="round" />
-            </svg>
-          </span>
+          Smarter Compliance
         </h1>
         
         <p className="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
