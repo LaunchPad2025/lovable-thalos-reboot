@@ -8,13 +8,13 @@ const CompanyInfo = () => {
   return (
     <Card className="h-full">
       <CardHeader>
-        <CardTitle>Thalos by Steel Toe Technologies</CardTitle>
+        <CardTitle>Thalos Technologies Inc.</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         <ContactItem 
           icon={<Mail className="h-5 w-5" />} 
           title="Email"
-          text="contact@steeltoetech.io"
+          text="contact@thalostech.io"
         />
         
         <ContactItem 
@@ -38,12 +38,12 @@ const CompanyInfo = () => {
         <ContactItem 
           icon={<Globe className="h-5 w-5" />} 
           title="Website"
-          text="www.steeltoetech.io"
+          text="www.thalostech.io"
         />
         
         <div className="pt-4 text-sm text-muted-foreground">
           <p>
-            All support requests are sent to our dedicated team at contact@steeltoetech.io and annie.eser@steeltoetech.io.
+            All support requests are sent to our dedicated team at contact@thalostech.io and annie.eser@thalostech.io.
           </p>
         </div>
       </CardContent>

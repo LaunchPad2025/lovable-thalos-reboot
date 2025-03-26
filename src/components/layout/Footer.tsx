@@ -13,7 +13,7 @@ const Footer = () => {
               <Shield className="h-8 w-8 text-blue-500" />
               <div>
                 <span className="text-xl font-semibold text-white">Thalos</span>
-                <span className="text-xs text-gray-400 block">powered by Steel Toe</span>
+                <span className="text-xs text-gray-400 block">by Thalos Technologies</span>
               </div>
             </div>
             <p className="text-sm mb-6">
@@ -55,7 +55,7 @@ const Footer = () => {
         
         <div className="mt-8 pt-6 border-t border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <div className="text-sm">
-            © {new Date().getFullYear()} Steel Toe Technologies. All rights reserved.
+            © {new Date().getFullYear()} Thalos Technologies Inc. All rights reserved.
           </div>
           
           <div className="mt-4 md:mt-0 flex space-x-6">

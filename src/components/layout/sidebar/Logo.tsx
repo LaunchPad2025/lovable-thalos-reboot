@@ -11,7 +11,7 @@ const Logo: React.FC = () => (
       <HardHat size={20} className="text-primary" />
     </div>
     <p className="text-sm text-muted-foreground">
-      powered by Steel Toe
+      by Thalos Technologies
     </p>
   </div>
 );

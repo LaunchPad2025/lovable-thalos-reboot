@@ -12,7 +12,7 @@ const AboutUs = () => {
     <PageContainer>
       <div className="max-w-6xl mx-auto">
         <PageTitle 
-          title="About Steel Toe Technologies" 
+          title="About Thalos Technologies Inc." 
           subtitle="Creating safer workplaces through innovation and technology"
           className="mb-12"
         />
@@ -108,9 +108,9 @@ const AboutUs = () => {
               </div>
               <div>
                 <div className="font-bold text-blue-600 dark:text-blue-400 mb-2">2025</div>
-                <h3 className="text-xl font-bold mb-2">Steel Toe Technologies Origins</h3>
+                <h3 className="text-xl font-bold mb-2">Thalos Technologies Inc. Origins</h3>
                 <p className="text-muted-foreground">
-                  Steel Toe Technologies was founded by a team of safety professionals and AI experts who recognized the 
+                  Thalos Technologies Inc. was founded by a team of safety professionals and AI experts who recognized the 
                   need for innovation in workplace safety management. Our team developed the first prototype of Thalos, 
                   focusing on AI-powered violation detection for construction sites. We're now working on expanding our 
                   platform to serve customers across construction, manufacturing, healthcare, and logistics industries 
@@ -125,7 +125,7 @@ const AboutUs = () => {
         <div className="bg-card border border-border rounded-lg p-8 text-center">
           <h2 className="text-2xl font-bold mb-4">Get in touch with us</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Want to learn more about Steel Toe Technologies and how Thalos can transform your safety program?
+            Want to learn more about Thalos Technologies Inc. and how Thalos can transform your safety program?
             Our team is ready to answer your questions.
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
