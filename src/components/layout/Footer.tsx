@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield } from 'lucide-react';
@@ -13,7 +12,6 @@ const Footer = () => {
               <Shield className="h-8 w-8 text-blue-500" />
               <div>
                 <span className="text-xl font-semibold text-white">Thalos</span>
-                <span className="text-xs text-gray-400 block">by Thalos Technologies</span>
               </div>
             </div>
             <p className="text-sm mb-6">
