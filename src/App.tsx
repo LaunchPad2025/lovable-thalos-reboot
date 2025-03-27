@@ -1,6 +1,4 @@
-
 import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
@@ -8,7 +6,7 @@ import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/context/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import { isProduction } from "@/utils/environmentUtils";
+import DemoDashboard from './components/DemoDashboard'; // Import the new component
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -49,54 +47,38 @@ import {
 } from "./pages/documentation";
 
 // Layout
-import Sidebar from "./components/layout/Sidebar";
-import Navbar from "./components/layout/Navbar";
+import AppLayout from "./components/layout/AppLayout";
 
 const queryClient = new QueryClient();
 
 // Onboarding check wrapper
 const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
-  
+
   if (loading) return null;
-  
-  // If user is logged in but hasn't completed onboarding, redirect to onboarding
-  if (user && user.user_metadata && user.user_metadata.onboarded === false) {
+
+  if (user && !user.metadata?.onboarded) {
     return <Navigate to="/onboarding" replace />;
   }
-  
+
   return <>{children}</>;
 };
 
-// Chat popup is handled in individual components
-import ChatPopup from "./components/chatbot/ChatPopup";
-
 function App() {
-  // Remove console.log statements in production
-  if (!isProduction()) {
-    console.log("Thalos app rendering");
-  }
-  
+  console.log("Thalos app rendering");
   const [appReady, setAppReady] = useState(false);
   
   // Ensure app is ready after a short delay
   useEffect(() => {
-    if (!isProduction()) {
-      console.log("Thalos app mounting");
-    }
-    
+    console.log("Thalos app mounting");
     const timer = setTimeout(() => {
-      if (!isProduction()) {
-        console.log("Thalos app ready");
-      }
+      console.log("Thalos app ready");
       setAppReady(true);
     }, 200);
     
     return () => {
       clearTimeout(timer);
-      if (!isProduction()) {
-        console.log("Thalos app unmounting");
-      }
+      console.log("Thalos app unmounting");
     };
   }, []);
   
@@ -107,7 +89,6 @@ function App() {
           <AuthProvider>
             <TooltipProvider>
               <Toaster />
-              <Sonner />
               <BrowserRouter>
                 <AppLayout>
                   <Routes>
@@ -116,6 +97,7 @@ function App() {
                     <Route path="/auth" element={<Auth />} />
                     <Route path="/legal" element={<Legal />} />
                     <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/demo" element={<DemoDashboard />} />
                     
                     {/* Documentation routes */}
                     <Route path="/documentation/features" element={<Features />} />
@@ -130,52 +112,6 @@ function App() {
                     <Route path="/documentation/contact" element={<Contact />} />
                     <Route path="/documentation/legal" element={<LegalDocs />} />
 
-<<<<<<< HEAD
-                  {/* Protected routes with layout */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route
-                      path="/*"
-                      element={
-                        <OnboardingCheck>
-                          <div className="flex h-screen w-full bg-background">
-                            <Sidebar />
-                            <div className="flex-1 flex flex-col overflow-y-auto ml-[var(--sidebar-width,0px)]">
-                              <Navbar />
-                              <Routes>
-                                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                                <Route path="/dashboard" element={<Dashboard />} />
-                                <Route path="/violations" element={<Violations />} />
-                                <Route path="/violations/:id" element={<Violations />} />
-                                <Route path="/tasks" element={<Tasks />} />
-                                <Route path="/tasks/:id" element={<Tasks />} />
-                                <Route path="/risk-assessment" element={<RiskAssessment />} />
-                                <Route path="/risk-assessment/:id" element={<RiskAssessment />} />
-                                <Route path="/documents" element={<Documents />} />
-                                <Route path="/notifications" element={<Notifications />} />
-                                <Route path="/chatbot" element={<Chatbot />} />
-                                <Route path="/subscription" element={<Subscription />} />
-                                <Route path="/settings" element={<Settings />} />
-                                <Route path="/regulations" element={<Regulations />} />
-                                <Route path="/regulations/:id" element={<Regulations />} />
-                                <Route path="/models" element={<Models />} />
-                                <Route path="/sidebar-examples" element={<SidebarExamples />} />
-                                <Route path="/audits" element={<Audits />} />
-                                <Route path="/reports" element={<ComingSoon />} />
-                                <Route path="/training" element={<Training />} />
-                                <Route path="/admin" element={<Admin />} />
-                                <Route path="/help" element={<ComingSoon />} />
-                                <Route path="/coming-soon" element={<ComingSoon />} />
-                                <Route path="/legal" element={<Legal />} />
-                                <Route path="*" element={<NotFound />} />
-                              </Routes>
-                            </div>
-                          </div>
-                        </OnboardingCheck>
-                      }
-                    />
-                  </Route>
-                </Routes>
-=======
                     {/* Protected routes with layout */}
                     <Route element={<ProtectedRoute />}>
                       <Route
@@ -189,7 +125,6 @@ function App() {
                     </Route>
                   </Routes>
                 </AppLayout>
->>>>>>> e7c49ee (feat: add demo environment, empty signup state, and layout improvements)
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>
