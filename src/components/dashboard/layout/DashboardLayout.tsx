@@ -12,7 +12,7 @@ const DashboardLayout = () => {
   const [activeTab, setActiveTab] = useState('personal');
   
   return (
-    <div className="flex flex-col w-full min-h-screen bg-[#0b0f14]">
+    <div className="flex flex-col w-full h-full bg-[#0b0f14]">
       <DashboardHeader />
 
       <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto">

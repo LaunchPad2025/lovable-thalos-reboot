@@ -67,9 +67,6 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Chat popup is handled in individual components
-import ChatPopup from "./components/chatbot/ChatPopup";
-
 function App() {
   console.log("Thalos app rendering");
   const [appReady, setAppReady] = useState(false);
@@ -125,7 +122,7 @@ function App() {
                         <OnboardingCheck>
                           <div className="flex h-screen w-full bg-background">
                             <Sidebar />
-                            <div className="flex-1 flex flex-col overflow-y-auto ml-[var(--sidebar-width,0px)]">
+                            <div className="flex-1 flex flex-col overflow-y-auto ml-[var(--sidebar-width,64px)]">
                               <Navbar />
                               <Routes>
                                 <Route path="/" element={<Navigate to="/dashboard" replace />} />

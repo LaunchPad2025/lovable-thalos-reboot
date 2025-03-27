@@ -8,9 +8,8 @@ export function useTaskDetails(id: string | undefined) {
   // Get the hasRealData flag from the tasks hook
   const { hasRealData } = useTasks();
   
-  // Check if we should bypass task queries due to the RLS issues
-  const shouldBypassTaskQueries = typeof window !== 'undefined' && 
-    window.localStorage.getItem('bypass_task_query') === 'true';
+  // Force to false to avoid bypass mode
+  const shouldBypassTaskQueries = false;
 
   const {
     data: taskDetails,
