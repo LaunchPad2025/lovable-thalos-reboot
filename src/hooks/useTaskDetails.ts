@@ -2,8 +2,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/models';
+import { useTasks } from '@/hooks/useTasks';
 
 export function useTaskDetails(id: string | undefined) {
+  // Get the hasRealData flag from the tasks hook
+  const { hasRealData } = useTasks();
+
   const {
     data: taskDetails,
     isLoading,
@@ -22,8 +26,8 @@ export function useTaskDetails(id: string | undefined) {
         
         if (error) {
           console.error("Error fetching task details:", error);
-          // If we're trying to get details for one of our mock tasks
-          if (id.startsWith('task-')) {
+          // If we're trying to get details for one of our mock tasks and no real data exists
+          if (id.startsWith('task-') && !hasRealData) {
             // Return a mock task that matches the id
             return {
               id,

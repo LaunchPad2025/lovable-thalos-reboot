@@ -33,7 +33,7 @@ const Tasks = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   
   // Fetch all tasks
-  const { tasks, isLoading, isError, refetch, updateTaskStatus } = useTasks();
+  const { tasks, isLoading, isError, refetch, updateTaskStatus, hasRealData } = useTasks();
   
   // Fetch single task details if an ID is provided
   const { taskDetails, isLoading: isLoadingDetails } = useTaskDetails(id);
