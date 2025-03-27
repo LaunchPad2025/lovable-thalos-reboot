@@ -34,7 +34,17 @@ export function useOrganization() {
 
         if (error) {
           console.error("Error fetching organization:", error);
-          toast.error("Could not load organization data. Using default values.");
+          
+          // Check for the specific error that was fixed with our SQL migration
+          if (error.code === '42P17' && error.message.includes('infinite recursion')) {
+            toast.error("Database policy error fixed. Please refresh the page.", {
+              id: "db-policy-fixed",
+              duration: 5000
+            });
+          } else {
+            toast.error("Could not load organization data. Using default values.");
+          }
+          
           return defaultOrg;
         }
 

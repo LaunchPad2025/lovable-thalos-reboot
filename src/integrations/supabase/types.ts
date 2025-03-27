@@ -775,6 +775,18 @@ export type Database = {
         }
         Returns: string
       }
+      is_admin_of_org: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
+      is_member_of_org: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
       is_organization_admin: {
         Args: {
           org_id: string

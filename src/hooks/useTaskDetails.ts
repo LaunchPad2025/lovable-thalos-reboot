@@ -22,7 +22,7 @@ export function useTaskDetails(id: string | undefined) {
           .from('tasks')
           .select('*')
           .eq('id', id)
-          .single();
+          .maybeSingle(); // Using maybeSingle instead of single to avoid errors
         
         if (error) {
           console.error("Error fetching task details:", error);

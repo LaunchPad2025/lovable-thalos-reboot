@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/models';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 import { mockTasks } from './mockTasks';
 
@@ -29,9 +29,9 @@ export function useTaskFetcher() {
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
           
-          // More specific error handling for the recursive policy error
+          // Check for the specific error that was fixed with our SQL migration
           if (error.code === '42P17' && error.message.includes('infinite recursion')) {
-            toast.error("Database policy error detected. We're working on a fix.", {
+            toast.error("Database policy error detected. Please refresh the page to apply the fix.", {
               id: "db-policy-error",
               duration: 5000
             });
@@ -88,18 +88,12 @@ export function useTaskFetcher() {
     setRetryCount(prev => prev + 1);
   };
 
-  // Log error to console
-  useEffect(() => {
-    if (error) {
-      console.error("Task query error:", error);
-    }
-  }, [error]);
-
   return {
     tasks: tasks || [],
     hasRealData,
     isLoading,
     isError,
+    error,
     refetch,
     retryConnection
   };
