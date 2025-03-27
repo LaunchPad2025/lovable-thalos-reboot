@@ -18,29 +18,27 @@ const Sidebar = () => {
   // Get user role from auth context
   const userRole = user?.user_metadata?.role || "worker";
 
-  // The initial state is expanded on desktop, closed on mobile
-  const [expanded, setExpanded] = useState(!isMobile);
+  // The initial state depends on screen size and theme settings
+  const [expanded, setExpanded] = useState(!isMobile && !sidebarCollapsed);
 
-  // Update expanded state when screen size changes
+  // Update expanded state when screen size or theme changes
   useEffect(() => {
-    if (!isMobile) {
-      setExpanded(true);
-      if (setSidebarCollapsed) {
-        setSidebarCollapsed(false);
-      }
-    } else {
+    if (isMobile) {
       setExpanded(false);
+    } else {
+      setExpanded(!sidebarCollapsed);
     }
-  }, [isMobile, setSidebarCollapsed]);
+  }, [isMobile, sidebarCollapsed]);
 
   const toggleMobileSidebar = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const toggleExpanded = () => {
-    setExpanded(!expanded);
+    const newValue = !expanded;
+    setExpanded(newValue);
     if (setSidebarCollapsed) {
-      setSidebarCollapsed(!sidebarCollapsed);
+      setSidebarCollapsed(!newValue);
     }
   };
 
@@ -54,8 +52,8 @@ const Sidebar = () => {
 
   // Log sidebar state for debugging
   useEffect(() => {
-    console.log("Sidebar state:", { expanded, isMobile, mobileOpen });
-  }, [expanded, isMobile, mobileOpen]);
+    console.log("Sidebar state:", { expanded, isMobile, mobileOpen, sidebarCollapsed });
+  }, [expanded, isMobile, mobileOpen, sidebarCollapsed]);
 
   return (
     <>

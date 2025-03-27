@@ -21,10 +21,11 @@ const TasksErrorState: React.FC<TasksErrorStateProps> = ({ onRetry, error }) => 
       
       {isRecursionError ? (
         <div className="mb-6 text-gray-400 text-sm p-4 bg-gray-800/50 rounded">
-          <p className="font-medium text-amber-400 mb-2">Database Policy Update</p>
+          <p className="font-medium text-amber-400 mb-2">Database Policy Issue</p>
           <p>
-            The database policies have been updated to fix the recursive queries issue.
-            Please try refreshing your connection to see if the problem is resolved.
+            We're experiencing an issue with database policies affecting organization memberships.
+            Our team has been notified and is working on a fix. In the meantime, 
+            you can continue to use the application with demo data.
           </p>
         </div>
       ) : (

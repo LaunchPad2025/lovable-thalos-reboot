@@ -24,23 +24,31 @@ export function useTaskFetcher() {
       try {
         console.log("Fetching tasks from Supabase...");
         
-        // First try to see if the RLS error is fixed
-        // If there's still an RLS error, this will throw and we'll catch it
-        const { data: testRLS, error: rlsError } = await supabase
-          .from('organization_members')
-          .select('organization_id')
-          .limit(1);
-          
-        if (rlsError && rlsError.message.includes('infinite recursion')) {
-          console.error("Still experiencing RLS recursion errors. Using mock data:", rlsError);
-          toast.error("Database policy error. Using demo data until fixed.", { 
-            id: "rls-error",
-            duration: 10000
-          });
-          return hasRealData ? [] : mockTasks;
+        // Handle RLS errors with a more robust approach
+        try {
+          // First attempt to check if the database connection works
+          const { data: testConnection, error: connectionError } = await supabase
+            .from('tasks')
+            .select('count')
+            .limit(1)
+            .single();
+            
+          if (connectionError) {
+            console.error("Error with database connection:", connectionError);
+            
+            if (connectionError.message.includes('infinite recursion')) {
+              toast.error("Database policy error detected. Using demo data.", {
+                id: "rls-error",
+                duration: 10000
+              });
+              return hasRealData ? [] : mockTasks;
+            }
+          }
+        } catch (connErr) {
+          console.error("Exception testing connection:", connErr);
         }
         
-        // If RLS check passed, fetch the actual tasks
+        // If connection check passed or error wasn't recursion, fetch the actual tasks
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
