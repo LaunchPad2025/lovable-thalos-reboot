@@ -769,6 +769,12 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_org_user_role_safe: {
+        Args: {
+          org_id: string
+        }
+        Returns: string
+      }
       get_user_role: {
         Args: {
           org_id: string
@@ -806,6 +812,18 @@ export type Database = {
         Returns: boolean
       }
       is_member_of_organization: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
+      is_org_admin_safe: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
+      is_org_member_safe: {
         Args: {
           org_id: string
         }

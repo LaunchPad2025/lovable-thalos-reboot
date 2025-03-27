@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
@@ -9,7 +10,7 @@ import { formatTasksForList } from '@/utils/taskFormatters';
 import { Task } from '@/types/models';
 import NewTaskModal from '@/components/tasks/NewTaskModal';
 
-// Import our new components
+// Import our components
 import TasksHeader from '@/components/tasks/list/TasksHeader';
 import TasksSearch from '@/components/tasks/list/TasksSearch';
 import TasksFilters from '@/components/tasks/list/TasksFilters';
