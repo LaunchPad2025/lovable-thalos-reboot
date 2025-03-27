@@ -7,9 +7,11 @@ import StatsCards from '@/components/dashboard/StatsCards';
 import DetailCards from '@/components/dashboard/DetailCards';
 import RecommendedFeatures from '@/components/dashboard/RecommendedFeatures';
 import { toast } from 'sonner';
+import { useTasks } from '@/hooks/useTasks';
 
 const DashboardLayout = () => {
   const [activeTab, setActiveTab] = useState('personal');
+  const { tasks, isLoading, isError } = useTasks();
   
   // Check database connection on component mount
   useEffect(() => {
@@ -20,13 +22,20 @@ const DashboardLayout = () => {
       // Set the flag to avoid showing the toast multiple times per session
       sessionStorage.setItem('db_connection_checked', 'true');
       
-      // Show a toast indicating database connection has been fixed
-      toast.success("Database connection is now active", {
-        description: "You can now create and view real data in the application",
-        duration: 5000,
-      });
+      // After 2 seconds, check if we've successfully loaded tasks
+      const timer = setTimeout(() => {
+        if (!isLoading && !isError && tasks) {
+          // Show a toast indicating database connection has been fixed
+          toast.success("Database connection is now active", {
+            description: "You can now create and view real data in the application",
+            duration: 5000,
+          });
+        }
+      }, 2000);
+      
+      return () => clearTimeout(timer);
     }
-  }, []);
+  }, [isLoading, isError, tasks]);
   
   return (
     <div className="flex flex-col w-full h-full">

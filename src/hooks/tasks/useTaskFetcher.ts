@@ -10,9 +10,7 @@ export function useTaskFetcher() {
   const [hasRealData, setHasRealData] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   
-  // With fixed database policies, we should no longer need to bypass
-  const shouldBypassTaskQueries = false;
-
+  // Create a query to fetch tasks
   const {
     data: tasks,
     isLoading,
@@ -22,12 +20,6 @@ export function useTaskFetcher() {
   } = useQuery({
     queryKey: ['tasks', retryCount],
     queryFn: async () => {
-      // If we're bypassing queries due to RLS issues, just return mock data
-      if (shouldBypassTaskQueries) {
-        console.log("Using bypass mode for tasks query");
-        return mockTasks;
-      }
-      
       try {
         console.log("Fetching tasks from Supabase...");
         const { data, error } = await supabase
@@ -44,7 +36,7 @@ export function useTaskFetcher() {
             duration: 5000
           });
           
-          // Only return mock data if we haven't found real data yet
+          // Return mock data if we haven't found real data yet
           return hasRealData ? [] : mockTasks;
         }
         

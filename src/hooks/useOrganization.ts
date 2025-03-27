@@ -27,8 +27,7 @@ export function useOrganization() {
       try {
         console.log("Fetching organization for user:", user.id);
         
-        // Now that we've fixed the infinite recursion in RLS policy,
-        // we should be able to query organization_members directly
+        // Now using the security definer functions, we should have fixed the infinite recursion
         const { data: orgMember, error } = await supabase
           .from('organization_members')
           .select('organization_id, role, organizations(id, name)')
