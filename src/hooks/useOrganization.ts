@@ -1,6 +1,5 @@
-
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/auth';
 import { toast } from 'sonner';
 
@@ -27,13 +26,8 @@ export function useOrganization() {
       try {
         console.log("Fetching organization for user:", user.id);
         
-        // Temporary workaround - bypass the organization_members table if we're still having issues
-        // Just return the default organization for now until the database policies take effect
-        if (window.localStorage.getItem('bypass_org_query') === 'true') {
-          console.log("Using bypass mode for organization query");
-          return defaultOrg;
-        }
-        
+        // Now that we've fixed the infinite recursion in RLS policy,
+        // we should be able to query organization_members directly
         const { data: orgMember, error } = await supabase
           .from('organization_members')
           .select('organization_id, role, organizations(id, name)')
@@ -43,19 +37,8 @@ export function useOrganization() {
         if (error) {
           console.error("Error fetching organization:", error);
           
-          // Check for the specific error that was fixed with our SQL migration
-          if (error.code === '42P17' && error.message.includes('infinite recursion')) {
-            toast.error("Database policy error still present. Using fallback mode.", {
-              id: "db-policy-fixed",
-              duration: 5000
-            });
-            
-            // Set a flag to bypass this query next time
-            window.localStorage.setItem('bypass_org_query', 'true');
-          } else {
-            toast.error("Could not load organization data. Using default values.");
-          }
-          
+          // We still keep the fallback logic for robustness
+          toast.error("Could not load organization data. Using default values.");
           return defaultOrg;
         }
 
@@ -67,7 +50,7 @@ export function useOrganization() {
         }
 
         console.log("Successfully fetched organization:", orgMember);
-        // Clear the bypass flag if the query succeeded
+        // Clear any bypass flags since we can now query successfully
         window.localStorage.removeItem('bypass_org_query');
         return orgMember;
       } catch (err) {
