@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useMobile } from "@/hooks/useMobile";
@@ -18,16 +19,17 @@ const Sidebar = () => {
   const userRole = user?.user_metadata?.role || "worker";
 
   // The initial state is expanded on desktop, closed on mobile
-  // Force it to be expanded for now to ensure sidebar visibility
-  const [expanded, setExpanded] = useState(true);
+  const [expanded, setExpanded] = useState(!isMobile);
 
-  // Update expanded state when screen size changes, but keep it expanded by default
+  // Update expanded state when screen size changes
   useEffect(() => {
     if (!isMobile) {
       setExpanded(true);
       if (setSidebarCollapsed) {
         setSidebarCollapsed(false);
       }
+    } else {
+      setExpanded(false);
     }
   }, [isMobile, setSidebarCollapsed]);
 
@@ -49,6 +51,11 @@ const Sidebar = () => {
 
   // Get navigation items
   const navItems = getNavItems();
+
+  // Log sidebar state for debugging
+  useEffect(() => {
+    console.log("Sidebar state:", { expanded, isMobile, mobileOpen });
+  }, [expanded, isMobile, mobileOpen]);
 
   return (
     <>
