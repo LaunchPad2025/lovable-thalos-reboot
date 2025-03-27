@@ -166,8 +166,6 @@ function App() {
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
-      
-      {/* Debug info has been removed */}
     </div>
   );
 }

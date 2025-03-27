@@ -7,6 +7,10 @@ import { useTasks } from '@/hooks/useTasks';
 export function useTaskDetails(id: string | undefined) {
   // Get the hasRealData flag from the tasks hook
   const { hasRealData } = useTasks();
+  
+  // Check if we should bypass task queries due to the RLS issues
+  const shouldBypassTaskQueries = typeof window !== 'undefined' && 
+    window.localStorage.getItem('bypass_task_query') === 'true';
 
   const {
     data: taskDetails,
@@ -16,6 +20,26 @@ export function useTaskDetails(id: string | undefined) {
     queryKey: ['task', id],
     queryFn: async () => {
       if (!id) return null;
+      
+      // If we're bypassing queries due to RLS issues and this is a mock task, return mock data
+      if (shouldBypassTaskQueries && id.startsWith('task-')) {
+        console.log("Using bypass mode for task details query");
+        return {
+          id,
+          title: id === 'task-1' ? 'Inspect scaffolding on east wing' : 
+                 id === 'task-2' ? 'Replace damaged PPE equipment' : 
+                 'Update fire evacuation plan',
+          description: 'Task details unavailable in fallback mode.',
+          due_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+          status: 'open',
+          assignee_id: 'Unassigned',
+          priority: 'medium',
+          organization_id: 'org-1',
+          created_by: 'user-1',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        } as Task;
+      }
       
       try {
         const { data, error } = await supabase
