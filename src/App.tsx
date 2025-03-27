@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -165,11 +166,6 @@ function App() {
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
-      
-      {/* Add debug info to help troubleshoot */}
-      <div className="fixed bottom-0 left-0 bg-black/70 text-white text-xs p-1 z-50 pointer-events-none">
-        Debug: Thalos loaded {appReady ? '✓' : '...'} | Route: index
-      </div>
     </div>
   );
 }
