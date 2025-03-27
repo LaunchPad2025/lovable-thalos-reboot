@@ -1,10 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
 import ConnectionStatus from './upload/ConnectionStatus';
 import UploadFormLayout from './upload/UploadFormLayout';
 import { useViolationAnalysisContext } from './ViolationAnalysisProvider';
-import { useMLModelsByIndustry } from '@/hooks/ml-models';
+import { useMLModelsByIndustry } from '@/hooks/ml-models/useModelQueries';
 
 interface ViolationUploadProps {
   onUploadComplete: (results: any) => void;

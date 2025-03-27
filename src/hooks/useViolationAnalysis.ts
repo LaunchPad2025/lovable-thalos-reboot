@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { useMLModelsByIndustry, useAnalyzeViolation } from './ml-models';
+import { useMLModelsByIndustry, useAnalyzeViolation } from './ml-models/useModelQueries';
 import { generateRemediationSteps } from '@/utils/violationAnalysis';
 import { toast } from 'sonner';
 

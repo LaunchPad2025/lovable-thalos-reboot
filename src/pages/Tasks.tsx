@@ -10,13 +10,12 @@ import { formatTasksForList } from '@/utils/taskFormatters';
 import { Task } from '@/types/models';
 import NewTaskModal from '@/components/tasks/NewTaskModal';
 
-// Import our components
+// Import our new components
 import TasksHeader from '@/components/tasks/list/TasksHeader';
 import TasksSearch from '@/components/tasks/list/TasksSearch';
 import TasksFilters from '@/components/tasks/list/TasksFilters';
 import TasksErrorState from '@/components/tasks/list/TasksErrorState';
 import TasksListTitle from '@/components/tasks/list/TasksListTitle';
-import TasksEmptyState from '@/components/tasks/list/TasksEmptyState';
 
 const Tasks = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,7 +33,7 @@ const Tasks = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   
   // Fetch all tasks
-  const { tasks, isLoading, isError, refetch, updateTaskStatus, hasRealData, retryConnection, error } = useTasks();
+  const { tasks, isLoading, isError, refetch, updateTaskStatus } = useTasks();
   
   // Fetch single task details if an ID is provided
   const { taskDetails, isLoading: isLoadingDetails } = useTaskDetails(id);
@@ -73,9 +72,8 @@ const Tasks = () => {
   };
 
   const handleCreateTask = (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
+    // Task creation logic handled inside TaskCreation component
     closeNewTaskModal();
-    // After creation, try to refresh tasks to show new data
-    setTimeout(() => refetch(), 500);
   };
 
   const resetFilters = () => {
@@ -83,7 +81,6 @@ const Tasks = () => {
     setAssigneeFilter('all');
     setStatusFilter('all');
     setPriorityFilter('all');
-    setSearchTerm('');
   };
 
   const handleSearchChange = (value: string) => {
@@ -93,7 +90,7 @@ const Tasks = () => {
   if (isError) {
     return (
       <PageContainer>
-        <TasksErrorState onRetry={retryConnection} error={error} />
+        <TasksErrorState onRetry={refetch} />
       </PageContainer>
     );
   }
@@ -126,18 +123,12 @@ const Tasks = () => {
           <div className="flex items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
           </div>
-        ) : filteredTasks && filteredTasks.length > 0 ? (
+        ) : (
           <TasksList 
-            tasks={filteredTasks} 
+            tasks={filteredTasks || []} 
             onTaskSelect={(task) => navigate(`/tasks/${task.id}`)}
             selectedTaskId={selectedTask?.id}
             onAddNewTask={() => setIsNewTaskModalOpen(true)}
-          />
-        ) : (
-          <TasksEmptyState 
-            onAddNewTask={() => setIsNewTaskModalOpen(true)} 
-            type="all" 
-            hasRealData={hasRealData}
           />
         )}
       </div>

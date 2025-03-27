@@ -15,19 +15,15 @@ const Sidebar = () => {
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Get user role from auth context with fallback
+  // Get user role from auth context
   const userRole = user?.user_metadata?.role || "worker";
 
-  // The initial state depends on screen size and theme settings
+  // The initial state is expanded on desktop, closed on mobile
   const [expanded, setExpanded] = useState(!isMobile && !sidebarCollapsed);
 
-  // Update expanded state when screen size or theme changes
+  // Update expanded state when screen size or sidebarCollapsed changes
   useEffect(() => {
-    if (isMobile) {
-      setExpanded(false);
-    } else {
-      setExpanded(!sidebarCollapsed);
-    }
+    setExpanded(!isMobile && !sidebarCollapsed);
   }, [isMobile, sidebarCollapsed]);
 
   const toggleMobileSidebar = () => {
@@ -35,10 +31,9 @@ const Sidebar = () => {
   };
 
   const toggleExpanded = () => {
-    const newValue = !expanded;
-    setExpanded(newValue);
+    setExpanded(!expanded);
     if (setSidebarCollapsed) {
-      setSidebarCollapsed(!newValue);
+      setSidebarCollapsed(!sidebarCollapsed);
     }
   };
 
@@ -49,9 +44,6 @@ const Sidebar = () => {
 
   // Get navigation items
   const navItems = getNavItems();
-  
-  // Add console log for debugging
-  console.log("Sidebar rendering", { isMobile, expanded, mobileOpen, navItems });
 
   return (
     <>

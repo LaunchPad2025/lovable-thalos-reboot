@@ -1,17 +1,14 @@
 
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { AuthMessage } from "@/components/auth/AuthMessage";
 import { useAuthForm } from "@/hooks/useAuthForm";
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
 
 export default function Auth() {
-  const { user, loading } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
-  const [isReady, setIsReady] = useState(false);
   const {
     isLogin,
     authError,
@@ -21,55 +18,20 @@ export default function Auth() {
     onSignupSubmit
   } = useAuthForm();
 
-  useEffect(() => {
-    console.log("Auth page - auth state:", { user: !!user, loading, isReady });
-    
-    // Add a small delay before setting ready to ensure DOM has updated
-    const timer = setTimeout(() => {
-      setIsReady(true);
-    }, 500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
   // Handle successful login and redirect to appropriate page
-  useEffect(() => {
-    // Only redirect if user is logged in and done loading and component is ready
-    if (user && !loading && isReady) {
-      console.log("User authenticated, redirecting...");
-      // Check if user has completed onboarding
-      if (user?.user_metadata?.onboarded === false) {
-        navigate("/onboarding");
-      } else {
-        navigate("/dashboard");
-      }
+  const handleSuccessfulAuth = () => {
+    // Check if user has completed onboarding
+    if (user?.user_metadata?.onboarded === false) {
+      navigate("/onboarding");
+    } else {
+      navigate("/dashboard");
     }
-  }, [user, loading, isReady, navigate]);
+  };
 
-  // Show loading state while authentication state is being determined
-  if (loading || !isReady) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
-        <div className="flex flex-col items-center justify-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-          <p className="mt-4 text-gray-400">
-            {loading ? "Loading authentication..." : "Preparing application..."}
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  // If user is already logged in, useEffect will handle redirect
+  // Redirect if user is already logged in
   if (user) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
-        <div className="flex flex-col items-center justify-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-          <p className="mt-4 text-gray-400">Redirecting to dashboard...</p>
-        </div>
-      </div>
-    );
+    handleSuccessfulAuth();
+    return null;
   }
 
   return (

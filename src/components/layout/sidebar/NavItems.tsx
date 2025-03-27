@@ -11,9 +11,6 @@ interface NavItemsProps {
 }
 
 export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded = true }) => {
-  // Add console log for debugging
-  console.log("NavItems rendering", { navItems, userRole, expanded });
-  
   return (
     <ul className="space-y-1">
       {navItems.map((item) => {
@@ -37,7 +34,6 @@ export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded
                 if (isDisabled) {
                   e.preventDefault();
                 }
-                console.log(`NavItem clicked: ${item.title}, path: ${item.path}`);
               }}
             >
               {item.icon && (

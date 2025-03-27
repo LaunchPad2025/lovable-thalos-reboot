@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -48,7 +47,8 @@ import {
 } from "./pages/documentation";
 
 // Layout
-import AppLayout from "./components/layout/AppLayout";
+import Sidebar from "./components/layout/Sidebar";
+import Navbar from "./components/layout/Navbar";
 
 const queryClient = new QueryClient();
 
@@ -65,6 +65,9 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
   
   return <>{children}</>;
 };
+
+// Chat popup is handled in individual components
+import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
   console.log("Thalos app rendering");
@@ -113,36 +116,48 @@ function App() {
                   <Route path="/documentation/contact" element={<Contact />} />
                   <Route path="/documentation/legal" element={<LegalDocs />} />
 
-                  {/* Protected routes - now using AppLayout directly in ProtectedRoute */}
+                  {/* Protected routes with layout */}
                   <Route element={<ProtectedRoute />}>
-                    <Route element={<OnboardingCheck>
-                      <AppLayout />
-                    </OnboardingCheck>}>
-                      <Route index element={<Navigate to="/dashboard" replace />} />
-                      <Route path="/dashboard" element={<Dashboard />} />
-                      <Route path="/violations" element={<Violations />} />
-                      <Route path="/violations/:id" element={<Violations />} />
-                      <Route path="/tasks" element={<Tasks />} />
-                      <Route path="/tasks/:id" element={<Tasks />} />
-                      <Route path="/risk-assessment" element={<RiskAssessment />} />
-                      <Route path="/risk-assessment/:id" element={<RiskAssessment />} />
-                      <Route path="/documents" element={<Documents />} />
-                      <Route path="/notifications" element={<Notifications />} />
-                      <Route path="/chatbot" element={<Chatbot />} />
-                      <Route path="/subscription" element={<Subscription />} />
-                      <Route path="/settings" element={<Settings />} />
-                      <Route path="/regulations" element={<Regulations />} />
-                      <Route path="/regulations/:id" element={<Regulations />} />
-                      <Route path="/models" element={<Models />} />
-                      <Route path="/sidebar-examples" element={<SidebarExamples />} />
-                      <Route path="/audits" element={<Audits />} />
-                      <Route path="/reports" element={<ComingSoon />} />
-                      <Route path="/training" element={<Training />} />
-                      <Route path="/admin" element={<Admin />} />
-                      <Route path="/help" element={<ComingSoon />} />
-                      <Route path="/coming-soon" element={<ComingSoon />} />
-                      <Route path="*" element={<NotFound />} />
-                    </Route>
+                    <Route
+                      path="/*"
+                      element={
+                        <OnboardingCheck>
+                          <div className="flex h-screen w-full bg-background">
+                            <Sidebar />
+                            <div className="flex-1 flex flex-col overflow-y-auto ml-[var(--sidebar-width,0px)]">
+                              <Navbar />
+                              <Routes>
+                                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/violations" element={<Violations />} />
+                                <Route path="/violations/:id" element={<Violations />} />
+                                <Route path="/tasks" element={<Tasks />} />
+                                <Route path="/tasks/:id" element={<Tasks />} />
+                                <Route path="/risk-assessment" element={<RiskAssessment />} />
+                                <Route path="/risk-assessment/:id" element={<RiskAssessment />} />
+                                <Route path="/documents" element={<Documents />} />
+                                <Route path="/notifications" element={<Notifications />} />
+                                <Route path="/chatbot" element={<Chatbot />} />
+                                <Route path="/subscription" element={<Subscription />} />
+                                <Route path="/settings" element={<Settings />} />
+                                <Route path="/regulations" element={<Regulations />} />
+                                <Route path="/regulations/:id" element={<Regulations />} />
+                                <Route path="/models" element={<Models />} />
+                                <Route path="/sidebar-examples" element={<SidebarExamples />} />
+                                <Route path="/audits" element={<Audits />} />
+                                <Route path="/reports" element={<ComingSoon />} />
+                                <Route path="/training" element={<Training />} />
+                                <Route path="/admin" element={<Admin />} />
+                                <Route path="/help" element={<ComingSoon />} />
+                                <Route path="/coming-soon" element={<ComingSoon />} />
+                                <Route path="/legal" element={<Legal />} />
+                                <Route path="*" element={<NotFound />} />
+                              </Routes>
+                            </div>
+                          </div>
+                        </OnboardingCheck>
+                      }
+                    />
                   </Route>
                 </Routes>
               </BrowserRouter>
@@ -150,6 +165,11 @@ function App() {
           </AuthProvider>
         </ThemeProvider>
       </QueryClientProvider>
+      
+      {/* Add debug info to help troubleshoot */}
+      <div className="fixed bottom-0 left-0 bg-black/70 text-white text-xs p-1 z-50 pointer-events-none">
+        Debug: Thalos loaded {appReady ? '✓' : '...'} | Route: index
+      </div>
     </div>
   );
 }

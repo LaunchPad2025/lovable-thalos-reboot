@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from "@/components/ui/drawer";
 import PageContainer from "@/components/layout/PageContainer";
-import { useMLModels } from "@/hooks/ml-models";
+import { useMLModels, useMLModelsByIndustry } from "@/hooks/useMLModels";
 import ModelForm from "@/components/models/ModelForm";
 import ModelDetails from "@/components/models/ModelDetails";
 import TestModelForm from "@/components/models/TestModelForm";

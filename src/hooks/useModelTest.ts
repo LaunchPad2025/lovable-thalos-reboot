@@ -1,7 +1,8 @@
+
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
-import { MLModel } from '@/hooks/ml-models'; // Updated import path
+import { MLModel } from '@/hooks/useMLModels';
 import { z } from 'zod';
 import { TestResult, Detection } from './model-testing/types';
 import { useMockAnalysis } from './model-testing/useMockAnalysis';

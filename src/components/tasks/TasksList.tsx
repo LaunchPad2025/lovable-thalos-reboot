@@ -4,7 +4,6 @@ import { Task } from '@/types/models';
 import TasksEmptyState from './list/TasksEmptyState';
 import TaskListTabs from './list/TaskListTabs';
 import TaskListTable from './list/TaskListTable';
-import { useTasks } from '@/hooks/useTasks';
 
 export interface TasksListProps {
   tasks: Task[];
@@ -16,7 +15,6 @@ export interface TasksListProps {
 const TasksList = ({ tasks, onTaskSelect, selectedTaskId, onAddNewTask }: TasksListProps) => {
   const [activeTab, setActiveTab] = useState('all');
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null);
-  const { hasRealData } = useTasks();
   
   // Filter tasks based on the active tab
   const displayedTasks = tasks.filter(task => {
@@ -33,11 +31,7 @@ const TasksList = ({ tasks, onTaskSelect, selectedTaskId, onAddNewTask }: TasksL
   
   // If there are no tasks to display, show the empty state
   if (displayedTasks.length === 0) {
-    return <TasksEmptyState 
-             onAddNewTask={onAddNewTask} 
-             type={activeTab as 'all' | 'my' | 'completed'} 
-             hasRealData={hasRealData}
-           />;
+    return <TasksEmptyState onAddNewTask={onAddNewTask} type={activeTab as 'all' | 'my' | 'completed'} />;
   }
   
   return (

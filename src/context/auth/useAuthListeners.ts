@@ -1,6 +1,6 @@
 
 import { useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { UseAuthListenersProps } from './types';
 
@@ -16,7 +16,7 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
         
         if (mounted) {
           setSession(newSession);
-          setUser(newSession?.user || null);
+          setUser(newSession?.user ?? null);
           
           if (event === 'SIGNED_IN') {
             console.log("User signed in successfully");
@@ -27,6 +27,10 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
             // Clear state immediately
             setUser(null);
             setSession(null);
+          } else if (event === 'TOKEN_REFRESHED') {
+            console.log('Auth token refreshed');
+          } else if (event === 'USER_UPDATED') {
+            console.log('User profile updated');
           }
         }
       }
@@ -38,7 +42,7 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
       
       if (mounted) {
         setSession(initialSession);
-        setUser(initialSession?.user || null);
+        setUser(initialSession?.user ?? null);
         setLoading(false);
       }
     }).catch(error => {
@@ -50,7 +54,6 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
     });
 
     return () => {
-      console.log("Cleaning up auth listener");
       mounted = false;
       subscription.unsubscribe();
     };

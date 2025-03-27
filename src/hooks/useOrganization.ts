@@ -1,6 +1,6 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/auth';
 import { toast } from 'sonner';
 
@@ -26,63 +26,42 @@ export function useOrganization() {
 
       try {
         console.log("Fetching organization for user:", user.id);
-        
-        // Use direct query with no nested selects to avoid recursion issues
         const { data: orgMember, error } = await supabase
           .from('organization_members')
-          .select('organization_id, role')
+          .select('organization_id, role, organizations(id, name)')
           .eq('user_id', user.id)
           .maybeSingle();
 
         if (error) {
           console.error("Error fetching organization:", error);
-          toast.error("Could not load organization data: " + error.message);
+          toast.error("Could not load organization data. Using default values.");
           return defaultOrg;
         }
 
         if (!orgMember) {
           console.log("No organization membership found for user:", user.id);
+          // Creating automatic org for demo purposes
           toast.info("Using default organization for demo purposes");
           return defaultOrg;
         }
 
-        // Then make a separate query for the organization details
-        const { data: orgData, error: orgError } = await supabase
-          .from('organizations')
-          .select('id, name')
-          .eq('id', orgMember.organization_id)
-          .single();
-
-        if (orgError) {
-          console.error("Error fetching organization details:", orgError);
-          return {
-            ...orgMember,
-            organizations: {
-              id: orgMember.organization_id,
-              name: "Unknown Organization"
-            }
-          };
-        }
-
-        console.log("Successfully fetched organization:", orgMember, "with details:", orgData);
-        return {
-          ...orgMember,
-          organizations: orgData
-        };
+        console.log("Successfully fetched organization:", orgMember);
+        return orgMember;
       } catch (err) {
         console.error("Exception in organization fetch:", err);
         toast.error("Error loading organization. Using default values.");
         return defaultOrg;
       }
     },
-    enabled: !!user,
-    retry: 1,
+    enabled: true, // Always try to fetch, using default if needed
+    retry: 3,
+    retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return {
-    organization: organization || defaultOrg,
+    organization: organization || defaultOrg, // Always return at least the default
     isLoading,
     error,
     hasOrganization: !!organization
