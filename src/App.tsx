@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/context/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
+import { isProduction } from "@/utils/environmentUtils";
 
 // Pages
 import Dashboard from "./pages/Dashboard";
@@ -71,20 +72,31 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
 import ChatPopup from "./components/chatbot/ChatPopup";
 
 function App() {
-  console.log("Thalos app rendering");
+  // Remove console.log statements in production
+  if (!isProduction()) {
+    console.log("Thalos app rendering");
+  }
+  
   const [appReady, setAppReady] = useState(false);
   
   // Ensure app is ready after a short delay
   useEffect(() => {
-    console.log("Thalos app mounting");
+    if (!isProduction()) {
+      console.log("Thalos app mounting");
+    }
+    
     const timer = setTimeout(() => {
-      console.log("Thalos app ready");
+      if (!isProduction()) {
+        console.log("Thalos app ready");
+      }
       setAppReady(true);
     }, 200);
     
     return () => {
       clearTimeout(timer);
-      console.log("Thalos app unmounting");
+      if (!isProduction()) {
+        console.log("Thalos app unmounting");
+      }
     };
   }, []);
   

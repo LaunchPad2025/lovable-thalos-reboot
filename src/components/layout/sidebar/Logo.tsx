@@ -1,6 +1,7 @@
 
 import React from "react";
 import { HardHat } from "lucide-react";
+import { isProduction } from "@/utils/environmentUtils";
 
 const Logo: React.FC = () => (
   <div className="px-4 py-6 flex">
