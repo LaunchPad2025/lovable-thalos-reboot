@@ -21,8 +21,8 @@ export function useAuthForm() {
       setIsSubmitting(true);
       console.log("Attempting to sign in with:", values.email);
       
-      const result = await signIn(values.email, values.password);
-      console.log("Sign in result:", result ? "success" : "no result");
+      await signIn(values.email, values.password);
+      console.log("Sign in completed");
       
       // Auth component will handle redirect after successful login
     } catch (error: any) {
