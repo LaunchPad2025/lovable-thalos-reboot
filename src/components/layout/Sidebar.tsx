@@ -50,11 +50,6 @@ const Sidebar = () => {
   // Get navigation items
   const navItems = getNavItems();
 
-  // Log sidebar state for debugging
-  useEffect(() => {
-    console.log("Sidebar state:", { expanded, isMobile, mobileOpen, sidebarCollapsed });
-  }, [expanded, isMobile, mobileOpen, sidebarCollapsed]);
-
   return (
     <>
       {isMobile ? (

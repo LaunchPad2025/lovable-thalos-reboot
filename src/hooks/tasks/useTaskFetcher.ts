@@ -36,7 +36,9 @@ export function useTaskFetcher() {
           if (connectionError) {
             console.error("Error with database connection:", connectionError);
             
-            if (connectionError.message.includes('infinite recursion')) {
+            if (connectionError.message.includes('infinite recursion') || 
+                connectionError.message.includes('policy for relation') ||
+                connectionError.message.includes('organization_members')) {
               toast.error("Database policy error detected. Using demo data.", {
                 id: "rls-error",
                 duration: 10000
@@ -56,6 +58,17 @@ export function useTaskFetcher() {
         
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
+          
+          // Check specifically for RLS policy issues
+          if (error.message.includes('infinite recursion') || 
+              error.message.includes('policy for relation') ||
+              error.message.includes('organization_members')) {
+            toast.error("Database policy error detected. Using demo data.", {
+              id: "rls-error",
+              duration: 10000
+            });
+            return hasRealData ? [] : mockTasks;
+          }
           
           // Show a toast notification about the error
           toast.error("Error fetching tasks: " + error.message, {
