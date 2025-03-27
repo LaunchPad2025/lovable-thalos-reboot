@@ -20,7 +20,10 @@ export function useAuthForm() {
       setAuthError(null);
       setIsSubmitting(true);
       console.log("Attempting to sign in with:", values.email);
-      await signIn(values.email, values.password);
+      
+      const result = await signIn(values.email, values.password);
+      console.log("Sign in result:", result ? "success" : "no result");
+      
       // Auth component will handle redirect after successful login
     } catch (error: any) {
       console.error("Login error:", error);
@@ -39,7 +42,11 @@ export function useAuthForm() {
       setAuthError(null);
       setIsSubmitting(true);
       console.log("Attempting to sign up with:", values.email);
+      
       await signUp(values.email, values.password, values.name);
+      console.log("Sign up completed");
+      
+      setIsLogin(true); // Switch to login form after successful signup
       setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
       toast.success("Account created! Please check your email.");
     } catch (error: any) {

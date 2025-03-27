@@ -5,12 +5,13 @@ import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { AuthMessage } from "@/components/auth/AuthMessage";
 import { useAuthForm } from "@/hooks/useAuthForm";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
 export default function Auth() {
   const { user, loading } = useAuth();
   const navigate = useNavigate();
+  const [isReady, setIsReady] = useState(false);
   const {
     isLogin,
     authError,
@@ -20,10 +21,21 @@ export default function Auth() {
     onSignupSubmit
   } = useAuthForm();
 
+  useEffect(() => {
+    console.log("Auth page - auth state:", { user: !!user, loading, isReady });
+    
+    // Add a small delay before setting ready to ensure DOM has updated
+    const timer = setTimeout(() => {
+      setIsReady(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   // Handle successful login and redirect to appropriate page
   useEffect(() => {
-    // Only redirect if user is logged in and done loading
-    if (user && !loading) {
+    // Only redirect if user is logged in and done loading and component is ready
+    if (user && !loading && isReady) {
       console.log("User authenticated, redirecting...");
       // Check if user has completed onboarding
       if (user?.user_metadata?.onboarded === false) {
@@ -32,15 +44,17 @@ export default function Auth() {
         navigate("/dashboard");
       }
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, isReady, navigate]);
 
   // Show loading state while authentication state is being determined
-  if (loading) {
+  if (loading || !isReady) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
         <div className="flex flex-col items-center justify-center">
           <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
-          <p className="mt-4 text-gray-400">Loading authentication...</p>
+          <p className="mt-4 text-gray-400">
+            {loading ? "Loading authentication..." : "Preparing application..."}
+          </p>
         </div>
       </div>
     );
