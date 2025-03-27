@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { Task } from '@/types/models';
@@ -30,22 +29,20 @@ export function useTaskFetcher() {
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
           
-          // Check if this is a recursive policy error
+          // More specific error handling for the recursive policy error
           if (error.code === '42P17' && error.message.includes('infinite recursion')) {
-            toast.error("Database policy error. Please contact support.", {
+            toast.error("Database policy error detected. We're working on a fix.", {
               id: "db-policy-error",
               duration: 5000
             });
-            return hasRealData ? [] : mockTasks;
+          } else {
+            // Show a toast notification about using mock data
+            toast("Using demo data since we couldn't connect to the database", {
+              id: "using-mock-data" // Use an ID to prevent duplicate toasts
+            });
           }
           
-          console.log("Returning fallback data");
-          // Show a toast notification about using mock data
-          toast("Using demo data since we couldn't connect to the database", {
-            id: "using-mock-data" // Use an ID to prevent duplicate toasts
-          });
-          
-          // Return fallback data when Supabase fails
+          // Only return mock data if we haven't found real data yet
           return hasRealData ? [] : mockTasks;
         }
         
@@ -70,16 +67,17 @@ export function useTaskFetcher() {
         return [] as Task[];
       } catch (err) {
         console.error("Exception in task fetch:", err);
-        console.log("Returning fallback data due to exception");
+        
         // Show a toast notification about using mock data
         toast.error("Error connecting to database. Using demo data instead.", {
           id: "db-connection-error" // Use an ID to prevent duplicate toasts
         });
+        
         // Return fallback data for any other errors, but only if no real data exists
         return hasRealData ? [] : mockTasks;
       }
     },
-    retry: 2, // Reduced retry count to prevent excessive retries
+    retry: 1, // Reduced retry count to prevent excessive retries when there's a policy error
     retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000 // 2 minutes

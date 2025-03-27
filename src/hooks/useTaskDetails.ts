@@ -26,6 +26,12 @@ export function useTaskDetails(id: string | undefined) {
         
         if (error) {
           console.error("Error fetching task details:", error);
+          
+          // If we have real data but this specific task isn't found, don't fall back to mock data
+          if (hasRealData) {
+            return null;
+          }
+          
           // If we're trying to get details for one of our mock tasks and no real data exists
           if (id.startsWith('task-') && !hasRealData) {
             // Return a mock task that matches the id

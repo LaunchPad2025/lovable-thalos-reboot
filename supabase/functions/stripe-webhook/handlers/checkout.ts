@@ -57,8 +57,7 @@ export async function handleCheckoutComplete(session) {
       throw new Error('Failed to update subscription in database');
     }
     
-    // Also update the user's tier in their profile or organization settings if needed
-    // This depends on your application's specific structure
+    // Also update the user's subscription_tier in their profile
     const userUpdateResponse = await fetch(`${supabaseUrl}/rest/v1/profiles?id=eq.${userId}`, {
       method: 'PATCH',
       headers: {
