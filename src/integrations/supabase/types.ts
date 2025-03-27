@@ -775,13 +775,31 @@ export type Database = {
         }
         Returns: string
       }
+      get_user_role_safe: {
+        Args: {
+          org_id: string
+        }
+        Returns: string
+      }
       is_admin_of_org: {
         Args: {
           org_id: string
         }
         Returns: boolean
       }
+      is_admin_of_org_safe: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
       is_member_of_org: {
+        Args: {
+          org_id: string
+        }
+        Returns: boolean
+      }
+      is_member_of_org_safe: {
         Args: {
           org_id: string
         }

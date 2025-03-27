@@ -10,7 +10,7 @@ export function useTaskFetcher() {
   const [hasRealData, setHasRealData] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   
-  // Always set to false to ensure we try to fetch real data
+  // With fixed database policies, we should no longer need to bypass
   const shouldBypassTaskQueries = false;
 
   const {
@@ -29,7 +29,7 @@ export function useTaskFetcher() {
       }
       
       try {
-        console.log("Fetching tasks...");
+        console.log("Fetching tasks from Supabase...");
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
@@ -38,18 +38,11 @@ export function useTaskFetcher() {
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
           
-          // Check for the specific error that was fixed with our SQL migration
-          if (error.code === '42P17' && error.message.includes('infinite recursion')) {
-            toast.error("Database policy error detected. Please check Supabase RLS policies.", {
-              id: "db-policy-error",
-              duration: 5000
-            });
-          } else {
-            // Show a toast notification about using mock data
-            toast("Using demo data since we couldn't connect to the database", {
-              id: "using-mock-data" // Use an ID to prevent duplicate toasts
-            });
-          }
+          // Show a toast notification about the error
+          toast.error("Error fetching tasks: " + error.message, {
+            id: "task-fetch-error",
+            duration: 5000
+          });
           
           // Only return mock data if we haven't found real data yet
           return hasRealData ? [] : mockTasks;
@@ -67,7 +60,7 @@ export function useTaskFetcher() {
         if (!hasRealData) {
           console.log("No tasks found, returning demo data");
           toast.info("No tasks found. Showing demo data until you create tasks.", {
-            id: "no-tasks-found" // Use an ID to prevent duplicate toasts
+            id: "no-tasks-found"
           });
           return mockTasks;
         }
@@ -79,14 +72,14 @@ export function useTaskFetcher() {
         
         // Show a toast notification about using mock data
         toast.error("Error connecting to database. Using demo data instead.", {
-          id: "db-connection-error" // Use an ID to prevent duplicate toasts
+          id: "db-connection-error"
         });
         
         // Return fallback data for any other errors, but only if no real data exists
         return hasRealData ? [] : mockTasks;
       }
     },
-    retry: 1, // Reduced retry count to prevent excessive retries when there's a policy error
+    retry: 1,
     retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000 // 2 minutes
@@ -94,7 +87,6 @@ export function useTaskFetcher() {
 
   // Function to manually retry connection with a fresh query key
   const retryConnection = () => {
-    window.localStorage.removeItem('bypass_task_query');
     setRetryCount(prev => prev + 1);
   };
 

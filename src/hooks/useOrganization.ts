@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/context/auth';
@@ -36,9 +37,7 @@ export function useOrganization() {
 
         if (error) {
           console.error("Error fetching organization:", error);
-          
-          // We still keep the fallback logic for robustness
-          toast.error("Could not load organization data. Using default values.");
+          toast.error("Could not load organization data: " + error.message);
           return defaultOrg;
         }
 
@@ -50,8 +49,6 @@ export function useOrganization() {
         }
 
         console.log("Successfully fetched organization:", orgMember);
-        // Clear any bypass flags since we can now query successfully
-        window.localStorage.removeItem('bypass_org_query');
         return orgMember;
       } catch (err) {
         console.error("Exception in organization fetch:", err);
@@ -59,15 +56,14 @@ export function useOrganization() {
         return defaultOrg;
       }
     },
-    enabled: true, // Always try to fetch, using default if needed
-    retry: 1, // Reduce retries to avoid flooding with errors
-    retryDelay: attempt => Math.min(attempt > 1 ? 2000 : 1000, 30 * 1000),
+    enabled: !!user,
+    retry: 1,
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return {
-    organization: organization || defaultOrg, // Always return at least the default
+    organization: organization || defaultOrg,
     isLoading,
     error,
     hasOrganization: !!organization
