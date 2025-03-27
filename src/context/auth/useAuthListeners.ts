@@ -15,8 +15,13 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
         console.log("Auth state change:", event, newSession?.user?.id);
         
         if (mounted) {
-          setSession(newSession);
-          setUser(newSession?.user ?? null);
+          if (newSession) {
+            setSession(newSession);
+            setUser(newSession.user);
+          } else {
+            setSession(null);
+            setUser(null);
+          }
           
           if (event === 'SIGNED_IN') {
             console.log("User signed in successfully");
@@ -27,10 +32,6 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
             // Clear state immediately
             setUser(null);
             setSession(null);
-          } else if (event === 'TOKEN_REFRESHED') {
-            console.log('Auth token refreshed');
-          } else if (event === 'USER_UPDATED') {
-            console.log('User profile updated');
           }
         }
       }
@@ -41,8 +42,10 @@ export function useAuthListeners({ setUser, setSession, setLoading }: UseAuthLis
       console.log("Got existing session:", initialSession?.user?.id);
       
       if (mounted) {
-        setSession(initialSession);
-        setUser(initialSession?.user ?? null);
+        if (initialSession) {
+          setSession(initialSession);
+          setUser(initialSession.user);
+        }
         setLoading(false);
       }
     }).catch(error => {

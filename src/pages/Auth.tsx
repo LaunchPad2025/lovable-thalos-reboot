@@ -1,13 +1,15 @@
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
 import { AuthMessage } from "@/components/auth/AuthMessage";
 import { useAuthForm } from "@/hooks/useAuthForm";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
 
 export default function Auth() {
-  const { user } = useAuth();
+  const { user, loading } = useAuth();
   const navigate = useNavigate();
   const {
     isLogin,
@@ -19,19 +21,41 @@ export default function Auth() {
   } = useAuthForm();
 
   // Handle successful login and redirect to appropriate page
-  const handleSuccessfulAuth = () => {
-    // Check if user has completed onboarding
-    if (user?.user_metadata?.onboarded === false) {
-      navigate("/onboarding");
-    } else {
-      navigate("/dashboard");
+  useEffect(() => {
+    // Only redirect if user is logged in and done loading
+    if (user && !loading) {
+      console.log("User authenticated, redirecting...");
+      // Check if user has completed onboarding
+      if (user?.user_metadata?.onboarded === false) {
+        navigate("/onboarding");
+      } else {
+        navigate("/dashboard");
+      }
     }
-  };
+  }, [user, loading, navigate]);
 
-  // Redirect if user is already logged in
+  // Show loading state while authentication state is being determined
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
+        <div className="flex flex-col items-center justify-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+          <p className="mt-4 text-gray-400">Loading authentication...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If user is already logged in, useEffect will handle redirect
   if (user) {
-    handleSuccessfulAuth();
-    return null;
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
+        <div className="flex flex-col items-center justify-center">
+          <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
+          <p className="mt-4 text-gray-400">Redirecting to dashboard...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
