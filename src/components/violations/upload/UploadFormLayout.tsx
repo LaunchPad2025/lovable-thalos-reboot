@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { MLModel } from '@/hooks/useMLModels';
+import { MLModel } from '@/hooks/ml-models';
 import ViolationForm from './ViolationForm';
 import ImageUploader from './ImageUploader';
 import AnalysisButtons from './AnalysisButtons';
