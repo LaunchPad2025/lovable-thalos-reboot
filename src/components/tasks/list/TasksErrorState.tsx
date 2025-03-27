@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { AlertCircle, RefreshCw } from 'lucide-react';
+import { AlertCircle, RefreshCw, Info } from 'lucide-react';
 
 interface TasksErrorStateProps {
   onRetry: () => void;
@@ -10,29 +10,44 @@ interface TasksErrorStateProps {
 
 const TasksErrorState: React.FC<TasksErrorStateProps> = ({ onRetry, error }) => {
   const errorMessage = error?.message || "There was an error loading the tasks";
-  const isRecursionError = errorMessage.includes("infinite recursion") || 
-                           errorMessage.includes("organization_members") ||
-                           errorMessage.includes("policy for relation");
+  
+  // Check for specific database policy errors
+  const isRLSError = 
+    errorMessage.includes("infinite recursion") || 
+    errorMessage.includes("organization_members") ||
+    errorMessage.includes("policy for relation") ||
+    errorMessage.includes("violates row-level security policy");
   
   return (
     <div className="p-6 text-center bg-[#0d1117] border border-gray-800 rounded-lg">
       <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-      <h2 className="text-xl font-bold mb-2 text-white">Database Policy Issue Detected</h2>
+      <h2 className="text-xl font-bold mb-2 text-white">
+        {isRLSError ? "Database Policy Issue Detected" : "Error Loading Tasks"}
+      </h2>
       <p className="mb-4 text-gray-400">{errorMessage}</p>
       
-      {isRecursionError ? (
+      {isRLSError ? (
         <div className="mb-6 text-gray-400 text-sm p-4 bg-gray-800/50 rounded">
           <p className="font-medium text-amber-400 mb-2">Row Level Security Policy Issue</p>
           <p>
-            We're experiencing an issue with database policies affecting organization memberships.
-            This is a common issue when first setting up RLS policies. The application is using
+            We're experiencing an issue with database security policies affecting data access.
+            This is a common issue when first setting up RLS policies. The application will use
             demo data until the issue is resolved.
           </p>
-          <p className="mt-2 text-gray-300">
-            If you're the database administrator, please check the Postgres logs for 
-            "infinite recursion detected in policy" errors and update your RLS policies to use
-            security definer functions.
-          </p>
+          <div className="mt-3 flex flex-col gap-2 text-gray-300">
+            <p className="text-left flex items-start">
+              <Info className="mr-2 h-4 w-4 mt-0.5 text-blue-400 flex-shrink-0" />
+              <span>Check Postgres logs for policy recursion errors and update RLS policies to use security definer functions.</span>
+            </p>
+            <p className="text-left flex items-start">
+              <Info className="mr-2 h-4 w-4 mt-0.5 text-blue-400 flex-shrink-0" />
+              <span>Verify that all necessary tables have the appropriate RLS policies.</span>
+            </p>
+            <p className="text-left flex items-start">
+              <Info className="mr-2 h-4 w-4 mt-0.5 text-blue-400 flex-shrink-0" />
+              <span>Ensure proper organization membership checking to prevent permission errors.</span>
+            </p>
+          </div>
         </div>
       ) : (
         <p className="mb-6 text-gray-400 text-sm">

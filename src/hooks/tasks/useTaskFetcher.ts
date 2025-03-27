@@ -24,59 +24,41 @@ export function useTaskFetcher() {
       try {
         console.log("Fetching tasks from Supabase...");
         
-        // Handle RLS errors with a more robust approach
-        try {
-          // First attempt to check if the database connection works
-          const { data: testConnection, error: connectionError } = await supabase
-            .from('tasks')
-            .select('count')
-            .limit(1)
-            .single();
-            
-          if (connectionError) {
-            console.error("Error with database connection:", connectionError);
-            
-            if (connectionError.message.includes('infinite recursion') || 
-                connectionError.message.includes('policy for relation') ||
-                connectionError.message.includes('organization_members')) {
-              toast.error("Database policy error detected. Using demo data.", {
-                id: "rls-error",
-                duration: 10000
-              });
-              return hasRealData ? [] : mockTasks;
-            }
+        // First check if there's a policy error without doing a full query
+        const { error: policyCheckError } = await supabase
+          .from('tasks')
+          .select('count')
+          .limit(1);
+          
+        if (policyCheckError) {
+          console.error("Policy check error:", policyCheckError.message);
+          
+          // Check specifically for RLS issues
+          if (isPolicyError(policyCheckError.message)) {
+            console.warn("RLS policy error detected, falling back to demo data");
+            return fallbackToMockData(hasRealData);
           }
-        } catch (connErr) {
-          console.error("Exception testing connection:", connErr);
         }
         
-        // If connection check passed or error wasn't recursion, fetch the actual tasks
+        // If policy check passed, fetch the actual tasks
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
           .order('created_at', { ascending: false });
         
         if (error) {
-          console.error("Error fetching tasks from Supabase:", error);
+          console.error("Error fetching tasks:", error.message);
           
-          // Check specifically for RLS policy issues
-          if (error.message.includes('infinite recursion') || 
-              error.message.includes('policy for relation') ||
-              error.message.includes('organization_members')) {
-            toast.error("Database policy error detected. Using demo data.", {
-              id: "rls-error",
-              duration: 10000
-            });
-            return hasRealData ? [] : mockTasks;
+          // Handle RLS policy issues
+          if (isPolicyError(error.message)) {
+            return fallbackToMockData(hasRealData);
           }
           
-          // Show a toast notification about the error
           toast.error("Error fetching tasks: " + error.message, {
             id: "task-fetch-error",
             duration: 5000
           });
           
-          // Return mock data if we haven't found real data yet
           return hasRealData ? [] : mockTasks;
         }
         
@@ -99,15 +81,17 @@ export function useTaskFetcher() {
         
         // Otherwise return empty array
         return [] as Task[];
-      } catch (err) {
+      } catch (err: any) {
         console.error("Exception in task fetch:", err);
         
-        // Show a toast notification about using mock data
+        if (err.message && isPolicyError(err.message)) {
+          return fallbackToMockData(hasRealData);
+        }
+        
         toast.error("Error connecting to database. Using demo data instead.", {
           id: "db-connection-error"
         });
         
-        // Return fallback data for any other errors, but only if no real data exists
         return hasRealData ? [] : mockTasks;
       }
     },
@@ -116,6 +100,24 @@ export function useTaskFetcher() {
     refetchOnWindowFocus: false,
     staleTime: 2 * 60 * 1000 // 2 minutes
   });
+
+  // Helper function to check for policy related errors
+  function isPolicyError(message: string): boolean {
+    return message.includes('infinite recursion') || 
+           message.includes('policy for relation') ||
+           message.includes('organization_members') ||
+           message.includes('violates row-level security policy');
+  }
+  
+  // Helper function to handle fallback to mock data
+  function fallbackToMockData(hasExistingData: boolean): Task[] {
+    toast.error("Database policy error detected. Using demo data.", {
+      id: "rls-error",
+      duration: 10000
+    });
+    
+    return hasExistingData ? [] : mockTasks;
+  }
 
   // Function to manually retry connection with a fresh query key
   const retryConnection = () => {

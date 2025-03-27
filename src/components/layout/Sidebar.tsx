@@ -15,7 +15,7 @@ const Sidebar = () => {
   const { user } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  // Get user role from auth context
+  // Get user role from auth context with fallback
   const userRole = user?.user_metadata?.role || "worker";
 
   // The initial state depends on screen size and theme settings
