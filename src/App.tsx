@@ -47,7 +47,7 @@ import {
 } from "./pages/documentation";
 
 // Layout
-import AppLayout from "./components/layout/AppLayout";
+import AppLayout from "./layouts/AppLayout";
 
 const queryClient = new QueryClient();
 
