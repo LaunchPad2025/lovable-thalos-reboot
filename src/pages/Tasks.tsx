@@ -71,7 +71,6 @@ const Tasks = () => {
   };
 
   const handleCreateTask = (newTask: Omit<Task, 'id' | 'created_at' | 'updated_at'>) => {
-    // Task creation logic handled inside TaskCreation component
     closeNewTaskModal();
   };
 
