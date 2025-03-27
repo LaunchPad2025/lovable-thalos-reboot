@@ -1,6 +1,7 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+import { Resend } from "https://esm.sh/resend@1.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -25,6 +26,9 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
+    
+    // Initialize the Resend client
+    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
     // Get the authorization header from the request
     const authHeader = req.headers.get("Authorization");
@@ -74,7 +78,7 @@ serve(async (req) => {
     }
 
     // Generate a unique token for the invitation
-    const token = crypto.randomUUID();
+    const inviteToken = crypto.randomUUID();
 
     // Create the invitation in the database
     const { data: invitation, error: invitationError } = await supabaseClient
@@ -85,7 +89,7 @@ serve(async (req) => {
         department,
         organization_id,
         invited_by: user.id,
-        token,
+        token: inviteToken,
         status: "pending",
       })
       .select()
@@ -99,12 +103,62 @@ serve(async (req) => {
       );
     }
 
-    // In a real application, you would send an email here
-    // For this example, we'll just log the invitation details
-    console.log(`Invitation created for ${email} with role ${role}`);
-    console.log(`Invitation token: ${token}`);
+    // Get the admin's profile info to include in the email
+    const { data: adminProfile } = await supabaseClient
+      .from("profiles")
+      .select("name, company")
+      .eq("id", user.id)
+      .single();
 
-    // TODO: In production, integrate with a real email service like Resend.com or SendGrid
+    const companyName = adminProfile?.company || "Thalos";
+    const inviterName = adminProfile?.name || "An administrator";
+
+    // Create the invitation link
+    const origin = req.headers.get("origin") || "https://app.thalos.tech";
+    const invitationLink = `${origin}/auth?invitation=${inviteToken}`;
+
+    // Send the invitation email
+    try {
+      const { data: emailData, error: emailError } = await resend.emails.send({
+        from: "Thalos <no-reply@thalos.tech>",
+        to: [email],
+        subject: `Invitation to join ${companyName} on Thalos`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+            <h2>You've been invited to join ${companyName}</h2>
+            <p>${inviterName} has invited you to join their organization on Thalos as a ${getRoleName(role)}.</p>
+            
+            ${department ? `<p>Department: ${department}</p>` : ''}
+            
+            <p>Thalos is a compliance management platform that helps organizations maintain safety standards and track regulatory compliance.</p>
+            
+            <div style="margin: 25px 0;">
+              <a href="${invitationLink}" style="background-color: #0091FF; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                Accept Invitation
+              </a>
+            </div>
+            
+            <p>Or copy and paste this link into your browser:</p>
+            <p style="word-break: break-all; color: #5a5a5a;">${invitationLink}</p>
+            
+            <p style="margin-top: 25px; font-size: 12px; color: #666;">
+              If you weren't expecting this invitation, you can ignore this email.
+            </p>
+          </div>
+        `,
+      });
+
+      if (emailError) {
+        console.error("Error sending invitation email:", emailError);
+        // Even if the email fails, we've created the invitation in the database
+        // so we'll still return success but log the error
+      } else {
+        console.log("Invitation email sent successfully to", email);
+      }
+    } catch (emailSendError) {
+      console.error("Exception sending invitation email:", emailSendError);
+      // We'll still return success as the invitation was created
+    }
 
     return new Response(
       JSON.stringify({ success: true, data: invitation }),
@@ -118,3 +172,17 @@ serve(async (req) => {
     );
   }
 });
+
+// Helper function to get a human-readable role name
+function getRoleName(role: string): string {
+  switch (role) {
+    case 'admin':
+      return 'Administrator';
+    case 'safety_officer':
+      return 'Safety Officer';
+    case 'worker':
+      return 'Team Member';
+    default:
+      return role.charAt(0).toUpperCase() + role.slice(1);
+  }
+}
