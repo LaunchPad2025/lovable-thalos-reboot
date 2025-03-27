@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { supabase } from '@/lib/supabase';
@@ -74,6 +73,7 @@ export function useImageHandler() {
         toast.error('Image upload failed', {
           description: 'Using local image for analysis instead.'
         });
+        throw uploadError;
       } else {
         const { data: { publicUrl } } = supabase.storage
           .from('violations')

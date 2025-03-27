@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,39 +13,41 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/integrations/supabase/client';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+const formSchema = z.object({
+  firstName: z.string().nonempty("First name is required"),
+  lastName: z.string().nonempty("Last name is required"),
+  email: z.string().email("Invalid email address"),
+  phone: z.string().optional(),
+  company: z.string().optional(),
+  subject: z.string().nonempty("Subject is required"),
+  message: z.string().nonempty("Message is required"),
+});
+
+type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
-  const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    company: '',
-    subject: '',
-    message: ''
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { id, value } = e.target;
-    setFormData((prev) => ({ ...prev, [id]: value }));
-  };
-
-  const handleSelectChange = (value: string) => {
-    setFormData((prev) => ({ ...prev, subject: value }));
-  };
-
-  const handleSubmit = async (event: React.FormEvent) => {
-    event.preventDefault();
+  const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
 
     try {
-      console.log("Form submitted with data:", formData);
+      console.log("Form submitted with data:", data);
       
       // Call the Supabase Edge Function to send the email
-      const { data, error } = await supabase.functions.invoke('send-contact-email', {
-        body: formData,
+      const { data: responseData, error } = await supabase.functions.invoke('send-contact-email', {
+        body: data,
       });
 
       if (error) {
@@ -59,15 +60,7 @@ const ContactForm = () => {
       });
       
       // Reset form
-      setFormData({
-        firstName: '',
-        lastName: '',
-        email: '',
-        phone: '',
-        company: '',
-        subject: '',
-        message: ''
-      });
+      reset();
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
@@ -89,27 +82,29 @@ const ContactForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <form className="space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input 
                 id="firstName" 
                 placeholder="John"
-                value={formData.firstName}
-                onChange={handleInputChange}
+                {...register('firstName')}
+                className="...existing styles..."
                 required
               />
+              {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
               <Input 
                 id="lastName" 
                 placeholder="Doe"
-                value={formData.lastName}
-                onChange={handleInputChange}
+                {...register('lastName')}
+                className="...existing styles..."
                 required
               />
+              {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
             </div>
           </div>
           
@@ -119,19 +114,19 @@ const ContactForm = () => {
               <Input 
                 id="email" 
                 type="email" 
-                placeholder="john.doe@example.com"
-                value={formData.email}
-                onChange={handleInputChange}
+                {...register('email')}
+                className="...existing styles..."
                 required
               />
+              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone (optional)</Label>
               <Input 
                 id="phone" 
                 placeholder="+1 (555) 123-4567"
-                value={formData.phone}
-                onChange={handleInputChange}
+                {...register('phone')}
+                className="...existing styles..."
               />
             </div>
           </div>
@@ -141,8 +136,8 @@ const ContactForm = () => {
             <Input 
               id="company" 
               placeholder="Acme Corporation"
-              value={formData.company}
-              onChange={handleInputChange}
+              {...register('company')}
+              className="...existing styles..."
             />
           </div>
           
@@ -160,6 +155,7 @@ const ContactForm = () => {
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
+            {errors.subject && <p className="text-red-500 text-sm">{errors.subject.message}</p>}
           </div>
           
           <div className="space-y-2">
@@ -168,10 +164,11 @@ const ContactForm = () => {
               id="message" 
               placeholder="Please provide details about your inquiry..."
               rows={5}
-              value={formData.message}
-              onChange={handleInputChange}
+              {...register('message')}
+              className="...existing styles..."
               required
             />
+            {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
           </div>
           
           <Button type="submit" className="w-full" disabled={isSubmitting}>

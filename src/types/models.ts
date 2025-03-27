@@ -1,4 +1,3 @@
-
 export interface User {
   id: string;
   email: string;
@@ -16,7 +15,7 @@ export interface Violation {
   detected_at: string;
   organization_id: string;
   status?: 'open' | 'in-progress' | 'resolved' | 'pending';
-  severity: string;
+  severity: 'low' | 'medium' | 'high' | 'critical'; // Updated type
   regulation?: string;
   confidence?: number;
   worksite_id?: string;

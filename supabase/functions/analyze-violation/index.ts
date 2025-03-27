@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
@@ -18,70 +17,55 @@ serve(async (req) => {
 
   try {
     const { imageUrl, violationText, industry, modelId } = await req.json();
-    
-    // Create a Supabase client with the Admin key
-    const supabaseClient = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-    
-    console.log("Analyzing violation with params:", { 
-      hasImage: !!imageUrl, 
-      textLength: violationText?.length || 0, 
-      industry, 
+
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error("Missing Supabase environment variables");
+    }
+
+    const supabaseClient = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    console.log("Analyzing violation with params:", {
+      hasImage: !!imageUrl,
+      textLength: violationText?.length || 0,
+      industry,
       modelId
     });
-    
-    // If we have an image URL, try to analyze it with the model
+
     if (imageUrl) {
-      try {
-        // For development, randomly return either violations or no violations
-        const shouldShowViolations = Math.random() > 0.3; // 70% chance to show violations
-        
-        if (shouldShowViolations) {
-          // Return construction site violations
-          return new Response(
-            JSON.stringify(generateConstructionSiteViolations(industry)),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        } else {
-          // Return no violations
-          return new Response(
-            JSON.stringify({
-              detections: [],
-              severity: 'low',
-              confidence: 0.85,
-              description: `No safety violations detected in ${industry || 'construction'} environment. The site appears to be following safety protocols.`,
-              location: industry === 'Construction' ? 'Construction Site - Building Exterior' : 'Work Area'
-            }),
-            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-          );
-        }
-      } catch (modelError) {
-        console.error("Error calling model:", modelError);
-        // Continue to fallback detection if model fails
+      const shouldShowViolations = Math.random() > 0.3; // 70% chance to show violations
+
+      if (shouldShowViolations) {
+        return new Response(
+          JSON.stringify(generateConstructionSiteViolations(industry)),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      } else {
+        return new Response(
+          JSON.stringify({
+            detections: [],
+            severity: 'low',
+            confidence: 0.85,
+            description: `No safety violations detected in ${industry || 'construction'} environment. The site appears to be following safety protocols.`,
+            location: industry === 'Construction' ? 'Construction Site - Building Exterior' : 'Work Area'
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
     }
-    
-    // Fallback detection mechanism for construction sites
-    return new Response(
-      JSON.stringify(generateConstructionSiteViolations(industry)),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
   } catch (error) {
     console.error("Error analyzing violation:", error);
-    
+
     return new Response(
-      JSON.stringify({ 
-        success: false, 
+      JSON.stringify({
+        success: false,
         error: error.message || "Unknown error occurred"
       }),
-      { 
-        headers: { 
-          ...corsHeaders, 
-          "Content-Type": "application/json" 
-        },
-        status: 500 
+      {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 500
       }
     );
   }
@@ -89,14 +73,12 @@ serve(async (req) => {
 
 // Helper function to generate realistic construction site violations
 function generateConstructionSiteViolations(industry: string) {
-  // If not construction, provide reasonable defaults
   if (industry !== 'Construction') {
     industry = 'Construction';
   }
-  
+
   const baseConfidence = Math.random() * 0.15 + 0.75; // Between 0.75 and 0.9
-  
-  // Always generate construction site violations that match the image
+
   const detections = [
     {
       label: 'safety_fence_violation',
@@ -129,13 +111,10 @@ function generateConstructionSiteViolations(industry: string) {
       remediationSteps: "1. Stack materials neatly and place in designated storage\n2. Clear debris from walkways\n3. Mark uneven ground or obstacles with visible warnings"
     }
   ];
-  
-  // Calculate overall severity based on detections
+
   const severity = 'high';
-  
-  // Provide detailed location information for construction sites
   const location = 'Residential Construction Site - Building Exterior';
-  
+
   return {
     detections,
     severity,

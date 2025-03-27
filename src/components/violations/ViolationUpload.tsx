@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { toast } from 'sonner';
@@ -8,7 +7,7 @@ import { useViolationAnalysisContext } from './ViolationAnalysisProvider';
 import { useMLModelsByIndustry } from '@/hooks/ml-models/useModelQueries';
 
 interface ViolationUploadProps {
-  onUploadComplete: (results: any) => void;
+  onUploadComplete: (results: { imagePreview: string | null }) => void;
   userIndustry?: string;
   hideModelSelection?: boolean;
   modelInitError?: string | null;
@@ -51,7 +50,7 @@ const ViolationUpload = ({
     if (modelsError || modelInitError) {
       setConnectionStatus('error');
       console.error("Model connection error:", modelsError || modelInitError);
-    } else if (!modelsLoading && models.length > 0) {
+    } else if (!modelsLoading && Array.isArray(models) && models.length > 0) {
       setConnectionStatus('connected');
     } else {
       setConnectionStatus('connecting');

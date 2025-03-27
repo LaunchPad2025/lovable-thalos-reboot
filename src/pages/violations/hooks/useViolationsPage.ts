@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useMLModels } from "@/hooks/ml-models";
 import { useAuth } from "@/context/auth";
@@ -70,7 +69,7 @@ export function useViolationsPage() {
   };
   
   const isLoading = modelsLoading && isLoadingOverride;
-  const hasWorkingModels = models.length > 0 && !error;
+  const hasWorkingModels = Array.isArray(models) && models.length > 0 && !error;
   
   return {
     activeTab,

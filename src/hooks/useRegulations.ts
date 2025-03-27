@@ -1,4 +1,3 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
@@ -26,39 +25,32 @@ interface Regulation {
 }
 
 export function useRegulations() {
-  return useQuery({
-    queryKey: ['regulations'],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('regulations')
-        .select('*')
-        .order('created_at', { ascending: false });
-      
-      if (error) throw error;
-      // Use as assertion to handle potential missing fields
-      return data as unknown as Regulation[];
-    }
+  const { data, error, isLoading } = useQuery(['regulations'], async () => {
+    const { data, error } = await supabase.from('regulations').select('*');
+    if (error) throw new Error(error.message);
+    return data;
   });
+
+  if (error) {
+    console.error('Error fetching regulations:', error.message);
+  }
+
+  return { data, error, isLoading };
 }
 
 export function useRegulationDetails(id: string | undefined) {
-  return useQuery({
-    queryKey: ['regulation', id],
-    queryFn: async () => {
-      if (!id) return null;
-      
-      const { data, error } = await supabase
-        .from('regulations')
-        .select('*')
-        .eq('id', id)
-        .single();
-      
-      if (error) throw error;
-      // Use as assertion to handle potential missing fields
-      return data as unknown as Regulation;
-    },
-    enabled: !!id
+  const { data, error, isLoading } = useQuery(['regulationDetails', id], async () => {
+    if (!id) return null;
+    const { data, error } = await supabase.from('regulations').select('*').eq('id', id).single();
+    if (error) throw new Error(error.message);
+    return data;
   });
+
+  if (error) {
+    console.error('Error fetching regulation details:', error.message);
+  }
+
+  return { data, error, isLoading };
 }
 
 // Define simple primitive types for filters to avoid deep nesting
