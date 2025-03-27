@@ -109,26 +109,28 @@ function App() {
               <Toaster />
               <Sonner />
               <BrowserRouter>
-                <Routes>
-                  {/* Public routes - ensure these are at the top */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  
-                  {/* Documentation routes */}
-                  <Route path="/documentation/features" element={<Features />} />
-                  <Route path="/documentation/pricing" element={<Pricing />} />
-                  <Route path="/documentation/integrations" element={<Integrations />} />
-                  <Route path="/documentation/updates" element={<Updates />} />
-                  <Route path="/documentation/help-center" element={<HelpCenter />} />
-                  <Route path="/documentation/guides" element={<Guides />} />
-                  <Route path="/documentation/api-docs" element={<ApiDocs />} />
-                  <Route path="/documentation/about-us" element={<AboutUs />} />
-                  <Route path="/documentation/careers" element={<Careers />} />
-                  <Route path="/documentation/contact" element={<Contact />} />
-                  <Route path="/documentation/legal" element={<LegalDocs />} />
+                <AppLayout>
+                  <Routes>
+                    {/* Public routes - ensure these are at the top */}
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/legal" element={<Legal />} />
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    
+                    {/* Documentation routes */}
+                    <Route path="/documentation/features" element={<Features />} />
+                    <Route path="/documentation/pricing" element={<Pricing />} />
+                    <Route path="/documentation/integrations" element={<Integrations />} />
+                    <Route path="/documentation/updates" element={<Updates />} />
+                    <Route path="/documentation/help-center" element={<HelpCenter />} />
+                    <Route path="/documentation/guides" element={<Guides />} />
+                    <Route path="/documentation/api-docs" element={<ApiDocs />} />
+                    <Route path="/documentation/about-us" element={<AboutUs />} />
+                    <Route path="/documentation/careers" element={<Careers />} />
+                    <Route path="/documentation/contact" element={<Contact />} />
+                    <Route path="/documentation/legal" element={<LegalDocs />} />
 
+<<<<<<< HEAD
                   {/* Protected routes with layout */}
                   <Route element={<ProtectedRoute />}>
                     <Route
@@ -173,6 +175,21 @@ function App() {
                     />
                   </Route>
                 </Routes>
+=======
+                    {/* Protected routes with layout */}
+                    <Route element={<ProtectedRoute />}>
+                      <Route
+                        path="/*"
+                        element={
+                          <OnboardingCheck>
+                            <AppLayout />
+                          </OnboardingCheck>
+                        }
+                      />
+                    </Route>
+                  </Routes>
+                </AppLayout>
+>>>>>>> e7c49ee (feat: add demo environment, empty signup state, and layout improvements)
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>

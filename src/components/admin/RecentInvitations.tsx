@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -22,8 +21,9 @@ const RecentInvitations = () => {
   const [invitations, setInvitations] = useState<UserInvitation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { user } = useAuth();
+  const [page, setPage] = useState(1);
 
-  const fetchInvitations = async () => {
+  const fetchInvitations = async (page: number) => {
     if (!user) return;
 
     try {
@@ -32,7 +32,7 @@ const RecentInvitations = () => {
         .from("user_invitations")
         .select("*")
         .order("created_at", { ascending: false })
-        .limit(10);
+        .range((page - 1) * 10, page * 10 - 1); // Fetch 10 invitations per page
 
       if (error) throw error;
 
@@ -46,8 +46,11 @@ const RecentInvitations = () => {
   };
 
   useEffect(() => {
-    fetchInvitations();
-  }, [user]);
+    fetchInvitations(page);
+  }, [user, page]);
+
+  const handleNextPage = () => setPage((prev) => prev + 1);
+  const handlePreviousPage = () => setPage((prev) => Math.max(prev - 1, 1));
 
   const resendInvitation = async (invitationId: string, email: string) => {
     try {
@@ -94,7 +97,7 @@ const RecentInvitations = () => {
         <Button
           variant="outline"
           size="sm"
-          onClick={fetchInvitations}
+          onClick={() => fetchInvitations(page)}
           disabled={isLoading}
         >
           <RotateCw className="h-4 w-4 mr-1" />
@@ -163,6 +166,14 @@ const RecentInvitations = () => {
             <li>Users must complete onboarding after registration</li>
             <li>You can resend invitations if they expire</li>
           </ul>
+        </div>
+        <div className="flex justify-between mt-4">
+          <Button onClick={handlePreviousPage} disabled={page === 1}>
+            Previous
+          </Button>
+          <Button onClick={handleNextPage}>
+            Next
+          </Button>
         </div>
       </CardContent>
     </Card>

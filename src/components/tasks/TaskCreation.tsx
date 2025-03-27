@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -52,7 +51,6 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
 
     // Always use the organization ID from the context
     const organizationId = organization?.organization_id;
-    console.log("Creating task with organization ID:", organizationId);
     
     setIsSubmitting(true);
     try {
@@ -69,15 +67,12 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         updated_at: new Date().toISOString()
       };
 
-      console.log("Inserting task:", taskToInsert);
-
       const { data, error } = await supabase
         .from('tasks')
         .insert(taskToInsert)
         .select();
       
       if (error) {
-        console.error("Error inserting task:", error);
         toast.error(error.message || "Failed to create task");
         return;
       }
@@ -93,11 +88,9 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
               });
               
             if (relationError) {
-              console.error("Error linking task to violation:", relationError);
               toast.warning("Task created, but couldn't link it to the violation");
             }
           } catch (relationError) {
-            console.error("Exception linking task to violation:", relationError);
           }
         }
         
@@ -108,7 +101,6 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
         navigate(`/tasks/${data[0].id}`);
       }
     } catch (error: any) {
-      console.error("Error creating task:", error);
       toast.error("Failed to create task");
     } finally {
       setIsSubmitting(false);
