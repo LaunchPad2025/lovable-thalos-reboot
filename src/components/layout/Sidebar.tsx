@@ -49,6 +49,9 @@ const Sidebar = () => {
 
   // Get navigation items
   const navItems = getNavItems();
+  
+  // Add console log for debugging
+  console.log("Sidebar rendering", { isMobile, expanded, mobileOpen, navItems });
 
   return (
     <>
