@@ -11,7 +11,7 @@ import { useTasks } from '@/hooks/useTasks';
 
 const DashboardLayout = () => {
   const [activeTab, setActiveTab] = useState('personal');
-  const { tasks, isLoading, isError } = useTasks();
+  const { tasks, isLoading, isError, error, retryConnection } = useTasks();
   
   // Check database connection on component mount
   useEffect(() => {
@@ -24,7 +24,17 @@ const DashboardLayout = () => {
       
       // After 2 seconds, check if we've successfully loaded tasks
       const timer = setTimeout(() => {
-        if (!isLoading && !isError && tasks) {
+        if (isError) {
+          // Show error and provide retry button
+          toast.error("Database connection issue detected", {
+            description: "Check your organization policies and try again",
+            action: {
+              label: "Retry",
+              onClick: () => retryConnection()
+            },
+            duration: 10000,
+          });
+        } else if (!isLoading && tasks) {
           // Show a toast indicating database connection has been fixed
           toast.success("Database connection is now active", {
             description: "You can now create and view real data in the application",
@@ -35,7 +45,7 @@ const DashboardLayout = () => {
       
       return () => clearTimeout(timer);
     }
-  }, [isLoading, isError, tasks]);
+  }, [isLoading, isError, tasks, retryConnection]);
   
   return (
     <div className="flex flex-col w-full h-full">

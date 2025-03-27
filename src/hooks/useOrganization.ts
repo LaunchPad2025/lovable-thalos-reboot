@@ -27,10 +27,10 @@ export function useOrganization() {
       try {
         console.log("Fetching organization for user:", user.id);
         
-        // Now using the security definer functions, we should have fixed the infinite recursion
+        // Use direct query with no nested selects to avoid recursion issues
         const { data: orgMember, error } = await supabase
           .from('organization_members')
-          .select('organization_id, role, organizations(id, name)')
+          .select('organization_id, role')
           .eq('user_id', user.id)
           .maybeSingle();
 
@@ -42,13 +42,33 @@ export function useOrganization() {
 
         if (!orgMember) {
           console.log("No organization membership found for user:", user.id);
-          // Creating automatic org for demo purposes
           toast.info("Using default organization for demo purposes");
           return defaultOrg;
         }
 
-        console.log("Successfully fetched organization:", orgMember);
-        return orgMember;
+        // Then make a separate query for the organization details
+        const { data: orgData, error: orgError } = await supabase
+          .from('organizations')
+          .select('id, name')
+          .eq('id', orgMember.organization_id)
+          .single();
+
+        if (orgError) {
+          console.error("Error fetching organization details:", orgError);
+          return {
+            ...orgMember,
+            organizations: {
+              id: orgMember.organization_id,
+              name: "Unknown Organization"
+            }
+          };
+        }
+
+        console.log("Successfully fetched organization:", orgMember, "with details:", orgData);
+        return {
+          ...orgMember,
+          organizations: orgData
+        };
       } catch (err) {
         console.error("Exception in organization fetch:", err);
         toast.error("Error loading organization. Using default values.");

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import PageContainer from '@/components/layout/PageContainer';
@@ -33,7 +32,7 @@ const Tasks = () => {
   const [priorityFilter, setPriorityFilter] = useState<string>('all');
   
   // Fetch all tasks
-  const { tasks, isLoading, isError, refetch, updateTaskStatus, hasRealData } = useTasks();
+  const { tasks, isLoading, isError, refetch, updateTaskStatus, hasRealData, retryConnection, error } = useTasks();
   
   // Fetch single task details if an ID is provided
   const { taskDetails, isLoading: isLoadingDetails } = useTaskDetails(id);
@@ -90,7 +89,7 @@ const Tasks = () => {
   if (isError) {
     return (
       <PageContainer>
-        <TasksErrorState onRetry={refetch} />
+        <TasksErrorState onRetry={retryConnection} error={error} />
       </PageContainer>
     );
   }

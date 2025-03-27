@@ -1,3 +1,4 @@
+
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Task } from '@/types/models';
@@ -22,6 +23,24 @@ export function useTaskFetcher() {
     queryFn: async () => {
       try {
         console.log("Fetching tasks from Supabase...");
+        
+        // First try to see if the RLS error is fixed
+        // If there's still an RLS error, this will throw and we'll catch it
+        const { data: testRLS, error: rlsError } = await supabase
+          .from('organization_members')
+          .select('organization_id')
+          .limit(1);
+          
+        if (rlsError && rlsError.message.includes('infinite recursion')) {
+          console.error("Still experiencing RLS recursion errors. Using mock data:", rlsError);
+          toast.error("Database policy error. Using demo data until fixed.", { 
+            id: "rls-error",
+            duration: 10000
+          });
+          return hasRealData ? [] : mockTasks;
+        }
+        
+        // If RLS check passed, fetch the actual tasks
         const { data, error } = await supabase
           .from('tasks')
           .select('*')
@@ -80,6 +99,7 @@ export function useTaskFetcher() {
   // Function to manually retry connection with a fresh query key
   const retryConnection = () => {
     setRetryCount(prev => prev + 1);
+    toast.info("Retrying database connection...");
   };
 
   return {
