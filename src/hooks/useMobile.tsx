@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { useMobileDetection } from './useMobileDetection';
 
 export function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -20,7 +21,12 @@ export function useMediaQuery(query: string): boolean {
 }
 
 export const useMobile = () => {
-  return useMediaQuery('(max-width: 768px)');
+  const isSmallScreen = useMediaQuery('(max-width: 768px)');
+  const { isMobileApp } = useMobileDetection();
+  
+  // Consider the app as in mobile mode if either it's on a small screen
+  // or running in the Capacitor container
+  return isSmallScreen || isMobileApp;
 };
 
 export default useMobile;
