@@ -10,9 +10,8 @@ export function useTaskFetcher() {
   const [hasRealData, setHasRealData] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
   
-  // Check if we should bypass task queries due to the RLS issues
-  const shouldBypassTaskQueries = typeof window !== 'undefined' && 
-    window.localStorage.getItem('bypass_task_query') === 'true';
+  // Always set to false to ensure we try to fetch real data
+  const shouldBypassTaskQueries = false;
 
   const {
     data: tasks,
@@ -41,13 +40,10 @@ export function useTaskFetcher() {
           
           // Check for the specific error that was fixed with our SQL migration
           if (error.code === '42P17' && error.message.includes('infinite recursion')) {
-            toast.error("Database policy error still present. Using fallback mode.", {
+            toast.error("Database policy error detected. Please check Supabase RLS policies.", {
               id: "db-policy-error",
               duration: 5000
             });
-            
-            // Set a flag to bypass this query next time
-            window.localStorage.setItem('bypass_task_query', 'true');
           } else {
             // Show a toast notification about using mock data
             toast("Using demo data since we couldn't connect to the database", {
@@ -60,9 +56,6 @@ export function useTaskFetcher() {
         }
         
         console.log(`Successfully fetched ${data?.length} tasks`);
-        
-        // Clear the bypass flag if the query succeeded
-        window.localStorage.removeItem('bypass_task_query');
         
         // If tasks were found, set the flag to true
         if (data && data.length > 0) {
@@ -101,7 +94,6 @@ export function useTaskFetcher() {
 
   // Function to manually retry connection with a fresh query key
   const retryConnection = () => {
-    // Clear the bypass flag before retrying
     window.localStorage.removeItem('bypass_task_query');
     setRetryCount(prev => prev + 1);
   };

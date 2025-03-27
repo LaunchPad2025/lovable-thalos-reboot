@@ -13,14 +13,22 @@ export function useTaskCreator() {
     mutationFn: async (taskData: Partial<Task>) => {
       console.log("Creating new task:", taskData);
       
+      // Make sure we have a title - it's required by TypeScript and the database
+      if (!taskData.title) {
+        throw new Error("Task title is required");
+      }
+      
       const newTask = {
-        ...taskData,
+        title: taskData.title,
+        description: taskData.description || '',
+        due_date: taskData.due_date,
+        assignee_id: taskData.assignee_id,
+        worksite_id: taskData.worksite_id,
         created_by: user?.id || null,
-        organization_id: taskData.organization_id || 'default-org', // This should be replaced with the user's actual org
+        organization_id: taskData.organization_id || 'default-org',
         status: taskData.status || 'pending',
         priority: taskData.priority || 'medium',
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
       };
       
       const { data, error } = await supabase
