@@ -4,6 +4,17 @@ import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/context/auth';
 import { toast } from 'sonner';
 
+export interface Organization {
+  organization_id: string;
+  role: string;
+  organizations: {
+    id: string;
+    name: string;
+    industry?: string | null;
+    size?: string | null;
+  };
+}
+
 export function useOrganization() {
   const { user } = useAuth();
 
@@ -16,7 +27,7 @@ export function useOrganization() {
     }
   };
 
-  const { data: organization, isLoading, error } = useQuery({
+  const { data: organization, isLoading, error, refetch } = useQuery({
     queryKey: ['organization', user?.id],
     queryFn: async () => {
       if (!user) {
@@ -28,7 +39,7 @@ export function useOrganization() {
         console.log("Fetching organization for user:", user.id);
         const { data: orgMember, error } = await supabase
           .from('organization_members')
-          .select('organization_id, role, organizations(id, name)')
+          .select('organization_id, role, organizations(id, name, industry, size)')
           .eq('user_id', user.id)
           .maybeSingle();
 
@@ -64,6 +75,7 @@ export function useOrganization() {
     organization: organization || defaultOrg, // Always return at least the default
     isLoading,
     error,
-    hasOrganization: !!organization
+    hasOrganization: !!organization && organization.organization_id !== defaultOrg.organization_id,
+    refetchOrganization: refetch
   };
 }

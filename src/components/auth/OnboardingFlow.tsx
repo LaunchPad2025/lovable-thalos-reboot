@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useOrganization } from "@/hooks/useOrganization";
+import { Loader2 } from "lucide-react";
 
 type UserRole = 'admin' | 'safety_officer' | 'worker';
 
@@ -59,14 +62,57 @@ export function OnboardingFlow() {
   const [organization, setOrganization] = useState<string>("");
   const [companyEmail, setCompanyEmail] = useState<string>("");
   const [size, setSize] = useState<string>("");
-  const [createOrg, setCreateOrg] = useState<boolean>(false);
+  const [createOrg, setCreateOrg] = useState<boolean>(true);
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [existingOrganization, setExistingOrganization] = useState<any>(null);
+  const [checkingOrganization, setCheckingOrganization] = useState<boolean>(true);
   
   const { user, updateUserProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { organization: userOrg } = useOrganization();
+
+  // Check if the user should be merged into an existing organization
+  useEffect(() => {
+    const checkExistingOrganization = async () => {
+      if (!user?.email) return;
+      
+      setCheckingOrganization(true);
+      
+      try {
+        // Extract domain from user email
+        const domain = user.email.split('@')[1];
+        
+        // Check if there's an organization with this domain
+        const { data, error } = await supabase
+          .rpc('find_organization_by_email_domain', { user_email: user.email });
+        
+        if (error) throw error;
+        
+        if (data) {
+          // Found an existing organization with the same email domain
+          const { data: orgData, error: orgError } = await supabase
+            .from('organizations')
+            .select('*')
+            .eq('id', data)
+            .single();
+            
+          if (orgError) throw orgError;
+          
+          setExistingOrganization(orgData);
+          setCreateOrg(false);
+        }
+      } catch (error: any) {
+        console.error("Error checking organization:", error);
+      } finally {
+        setCheckingOrganization(false);
+      }
+    };
+    
+    checkExistingOrganization();
+  }, [user?.email]);
 
   const handleIndustrySelect = (industry: string) => {
     if (selectedIndustries.includes(industry)) {
@@ -98,6 +144,7 @@ export function OnboardingFlow() {
     setIsSubmitting(true);
     
     try {
+      // Update user profile
       await updateUserProfile({
         role,
         industries: selectedIndustries,
@@ -105,30 +152,58 @@ export function OnboardingFlow() {
         onboarded: true
       });
       
-      if (createOrg && organization) {
+      let organizationId;
+      
+      if (existingOrganization) {
+        // User will be merged into the existing organization
+        organizationId = existingOrganization.id;
+        
+        // Add user to organization_members with default role
+        await supabase
+          .from('organization_members')
+          .insert({
+            organization_id: organizationId,
+            user_id: user.id,
+            role: 'member' // Default role for merged users
+          });
+          
+        toast({
+          title: "Joined existing organization!",
+          description: `You've been added to ${existingOrganization.name} because of your email domain.`,
+        });
+      } else if (createOrg && organization) {
+        // Create a new organization
         const { data, error } = await supabase
           .from('organizations')
           .insert({
             name: organization,
-            created_by: user.id,
-            industries: selectedIndustries,
             size: size || null,
+            industries: selectedIndustries,
           })
           .select();
           
         if (error) throw error;
         
         if (data && data[0]) {
+          organizationId = data[0].id;
+          
+          // Add user as admin to the new organization
           await supabase
             .from('organization_members')
             .insert({
-              organization_id: data[0].id,
+              organization_id: organizationId,
               user_id: user.id,
-              role: 'admin'
+              role: 'admin' // Creator becomes admin
             });
         }
+        
+        toast({
+          title: "Organization created!",
+          description: `${organization} has been successfully created.`,
+        });
       }
       
+      // Onboarding complete notification
       toast({
         title: "Onboarding complete!",
         description: "Your profile has been set up successfully. You're now on a free trial.",
@@ -146,6 +221,19 @@ export function OnboardingFlow() {
       setIsSubmitting(false);
     }
   };
+
+  if (checkingOrganization) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0b0f14] p-4">
+        <Card className="w-full max-w-md border-gray-800 bg-[#131920] text-white">
+          <CardContent className="pt-6 flex flex-col items-center">
+            <Loader2 className="h-8 w-8 animate-spin text-blue-500 mb-4" />
+            <p className="text-gray-400">Checking organization information...</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14] p-4">
@@ -178,64 +266,74 @@ export function OnboardingFlow() {
                 </Select>
               </div>
               
-              <div className="space-y-2">
-                <div className="flex items-center space-x-2">
-                  <Checkbox 
-                    id="create-org" 
-                    checked={createOrg}
-                    onCheckedChange={(checked) => setCreateOrg(checked as boolean)}
-                  />
-                  <Label htmlFor="create-org">Create a new organization</Label>
+              {existingOrganization ? (
+                <div className="space-y-2 p-4 bg-blue-900/20 border border-blue-800 rounded-md">
+                  <h3 className="font-medium text-blue-400">Organization Match Found</h3>
+                  <p className="text-sm text-gray-300">
+                    Based on your email domain, you'll be joined to the existing organization:
+                  </p>
+                  <p className="font-medium text-white">{existingOrganization.name}</p>
                 </div>
-                
-                {createOrg && (
-                  <div className="space-y-4 pt-2">
-                    <div>
-                      <Label htmlFor="organization">Organization Name</Label>
-                      <Input
-                        id="organization"
-                        placeholder="Enter organization name"
-                        value={organization}
-                        onChange={(e) => setOrganization(e.target.value)}
-                        className="bg-[#1a2330] border-gray-700 mt-1"
-                      />
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="companyEmail">Company Email Domain</Label>
-                      <Input
-                        id="companyEmail"
-                        placeholder="company.com"
-                        value={companyEmail}
-                        onChange={(e) => setCompanyEmail(e.target.value)}
-                        className="bg-[#1a2330] border-gray-700 mt-1"
-                      />
-                      <p className="text-xs text-gray-400 mt-1">
-                        Used for verifying new team members
-                      </p>
-                    </div>
-
-                    <div>
-                      <Label htmlFor="size">Company Size</Label>
-                      <Select 
-                        onValueChange={setSize}
-                        value={size}
-                      >
-                        <SelectTrigger className="bg-[#1a2330] border-gray-700 mt-1">
-                          <SelectValue placeholder="Select company size" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-[#1a2330] border-gray-700">
-                          {companySize.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex items-center space-x-2">
+                    <Checkbox 
+                      id="create-org" 
+                      checked={createOrg}
+                      onCheckedChange={(checked) => setCreateOrg(checked as boolean)}
+                    />
+                    <Label htmlFor="create-org">Create a new organization</Label>
                   </div>
-                )}
-              </div>
+                  
+                  {createOrg && (
+                    <div className="space-y-4 pt-2">
+                      <div>
+                        <Label htmlFor="organization">Organization Name</Label>
+                        <Input
+                          id="organization"
+                          placeholder="Enter organization name"
+                          value={organization}
+                          onChange={(e) => setOrganization(e.target.value)}
+                          className="bg-[#1a2330] border-gray-700 mt-1"
+                        />
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="companyEmail">Company Email Domain</Label>
+                        <Input
+                          id="companyEmail"
+                          placeholder="company.com"
+                          value={companyEmail}
+                          onChange={(e) => setCompanyEmail(e.target.value)}
+                          className="bg-[#1a2330] border-gray-700 mt-1"
+                        />
+                        <p className="text-xs text-gray-400 mt-1">
+                          Used for verifying new team members
+                        </p>
+                      </div>
+
+                      <div>
+                        <Label htmlFor="size">Company Size</Label>
+                        <Select 
+                          onValueChange={setSize}
+                          value={size}
+                        >
+                          <SelectTrigger className="bg-[#1a2330] border-gray-700 mt-1">
+                            <SelectValue placeholder="Select company size" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-[#1a2330] border-gray-700">
+                            {companySize.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           )}
 
@@ -295,6 +393,7 @@ export function OnboardingFlow() {
             <Button 
               onClick={handleNext}
               className="bg-thalos-blue hover:bg-blue-600 ml-auto"
+              disabled={step === 1 && createOrg && !organization}
             >
               Next
             </Button>
