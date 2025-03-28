@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
@@ -33,6 +32,7 @@ import {
   QueryClientProvider,
 } from '@tanstack/react-query'
 import PaulieFeedback from './pages/feedback/PaulieFeedback';
+import FinetuningExport from './pages/feedback/FinetuningExport';
 
 const queryClient = new QueryClient()
 
@@ -68,6 +68,7 @@ function App() {
                 <Route path="/legal" element={<Legal />} />
                 <Route path="/coming-soon" element={<ComingSoon />} />
                 <Route path="/feedback" element={<PaulieFeedback />} />
+                <Route path="/feedback/export" element={<FinetuningExport />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <Toaster />
