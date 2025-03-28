@@ -19,7 +19,6 @@ interface PaulieQueryRow {
   message_id: string | null;
   user_id: string | null;
   timestamp: string | null;
-  // Adding the new fields that exist in the database but weren't in the type
   training_status: 'approved' | 'rejected' | 'rewritten' | null;
   improved_response: string | null;
   rejection_reason: string | null;
@@ -65,8 +64,9 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (error) throw error;
       
-      // Format data for UI, now with proper typing
-      const formattedData: TrainingReviewItem[] = (queryData as unknown as PaulieQueryRow[] || []).map(item => {
+      // Format data for UI with explicit type casting to avoid deep type instantiation
+      const rawData = queryData || [];
+      const formattedData: TrainingReviewItem[] = (rawData as any[]).map(item => {
         // Define status with proper type checking
         let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
         
