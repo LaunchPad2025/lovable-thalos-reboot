@@ -1,4 +1,3 @@
-
 /**
  * Regulation search functionality
  */
@@ -7,12 +6,47 @@ import { extractKeyTerms } from './keywordExtraction';
 import { formatRegulationsResponse } from './responseFormatters';
 import { logRegulationMatchFailure } from './loggingOperations';
 import { findRegulationsByIndustry } from './industrySearch';
+import { isDirectRegulationCitation, extractRegulationNumber } from './citationMatcher';
 
 /**
  * Find regulations based on keyword matching from the database
  */
 export const findRegulationsByKeywords = async (query: string, userId?: string): Promise<string | null> => {
   try {
+    // First check for direct citation - this should take highest priority
+    if (isDirectRegulationCitation(query)) {
+      const regulationCode = extractRegulationNumber(query);
+      if (regulationCode) {
+        console.log('Detected direct regulation citation:', regulationCode);
+        
+        // Try to find the regulation by code
+        const { data: regulationByCode, error: codeError } = await supabase
+          .from('regulations')
+          .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry')
+          .or(`code.eq.${regulationCode},alt_phrases.cs.{${regulationCode}}`)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+          
+        if (!codeError && regulationByCode && regulationByCode.length > 0) {
+          // We found a direct match by code
+          return formatRegulationsResponse(regulationByCode, query, [regulationCode], []);
+        }
+        
+        // Also try looking in title (many regulations have their code in the title)
+        const { data: regulationByTitle, error: titleError } = await supabase
+          .from('regulations')
+          .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry')
+          .ilike('title', `%${regulationCode}%`)
+          .order('updated_at', { ascending: false })
+          .limit(1);
+          
+        if (!titleError && regulationByTitle && regulationByTitle.length > 0) {
+          return formatRegulationsResponse(regulationByTitle, query, [regulationCode], []);
+        }
+      }
+    }
+    
+    // Continue with regular keyword search if no direct citation match
     const keyTerms = extractKeyTerms(query);
     console.log('Extracted key terms:', keyTerms);
     
@@ -25,7 +59,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     // Now also checking alt_phrases for better conversational matching
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry, industry_tags')
+      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry')
       .or(`keywords.cs.{${keyTerms.join(',')}},alt_phrases.cs.{${keyTerms.join(',')}}`)
       .order('updated_at', { ascending: false });
     
@@ -35,7 +69,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
       // If the alt_phrases column doesn't exist or query fails, fallback to just checking keywords
       const { data: fallbackRegulations, error: fallbackError } = await supabase
         .from('regulations')
-        .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry, industry_tags')
+        .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry')
         .filter('keywords', 'cs', `{${keyTerms.join(',')}}`)
         .order('updated_at', { ascending: false });
       
@@ -44,6 +78,23 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
         
         // Log the failed match to regulation_match_failures table
         await logRegulationMatchFailure(query, keyTerms, userId);
+        
+        // Log a special entry for citation failures
+        if (isDirectRegulationCitation(query)) {
+          const code = extractRegulationNumber(query);
+          try {
+            await supabase.from('regulation_match_failures').insert({
+              question: query,
+              user_id: userId,
+              matched_keywords: keyTerms,
+              notes: `Citation match failure: ${code}`,
+              timestamp: new Date().toISOString(),
+              reviewed: false
+            });
+          } catch (logError) {
+            console.error('Error logging citation match failure:', logError);
+          }
+        }
         
         return null;
       }

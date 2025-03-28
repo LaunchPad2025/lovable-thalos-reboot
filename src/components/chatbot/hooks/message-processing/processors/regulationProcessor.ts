@@ -30,11 +30,11 @@ export const processRegulationQuery = async (
     const regulationNumber = extractRegulationNumber(content);
     if (regulationNumber) {
       try {
-        // Search for the regulation by citation in alt_phrases or title
+        // Search for the regulation by citation in code, alt_phrases or title
         const { data: regulations, error } = await supabase
           .from('regulations')
           .select('id, title, description, document_type, authority, source_url, category, keywords')
-          .or(`alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
+          .or(`code.eq.${regulationNumber},alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
           .order('updated_at', { ascending: false })
           .limit(1);
         
@@ -47,10 +47,7 @@ export const processRegulationQuery = async (
 ${regulation.description || 'This regulation establishes requirements for workplace safety and health.'}
 
 Key requirements include:
-- Regular inspections and documentation
-- Employee training on requirements and procedures
-- Implementation of proper hazard controls
-- Documentation of compliance activities
+- ${extractRequirements(regulation.description, regulation.keywords).join('\n- ')}
 ${regulation.authority ? `\nEnforced by: ${regulation.authority}` : ''}
 
 Would you like more specific information about implementing this regulation or documentation requirements?`;
@@ -76,6 +73,19 @@ Would you like more specific information about implementing this regulation or d
               `Are there any exceptions to ${regulationNumber}?`
             ]
           };
+        } else {
+          // Log the failed citation match
+          try {
+            await supabase.from('regulation_match_failures').insert({
+              question: content,
+              notes: `Citation not found: ${regulationNumber}`,
+              matched_keywords: [regulationNumber],
+              timestamp: new Date().toISOString(),
+              reviewed: false
+            });
+          } catch (logError) {
+            console.error('Error logging citation match failure:', logError);
+          }
         }
       } catch (error) {
         console.error('Error fetching regulation by citation:', error);
@@ -159,4 +169,70 @@ Would you like more specific information about implementing this regulation or d
     response: null,
     followUpSuggestions: []
   };
+};
+
+/**
+ * Extract requirements from regulation description and keywords
+ */
+const extractRequirements = (description: string | null, keywords: string[] | null): string[] => {
+  // Default requirements if we can't extract specific ones
+  const defaultRequirements = [
+    "Regular inspections and documentation",
+    "Employee training on hazard recognition and safe work practices",
+    "Implementation of engineering and administrative controls",
+    "Appropriate personal protective equipment (PPE)"
+  ];
+  
+  // If we have specific keywords for HAZWOPER
+  if (keywords && (keywords.includes('HAZWOPER') || keywords.includes('hazardous waste operations'))) {
+    return [
+      "HAZWOPER training (40 hours for hazardous waste workers)",
+      "Site-specific health and safety plans",
+      "Medical surveillance program for exposed workers",
+      "Emergency response procedures",
+      "Air monitoring and hazard assessment"
+    ];
+  }
+  
+  // If we have a detailed description, try to extract key requirements
+  if (description && description.length > 100) {
+    const requirements: string[] = [];
+    const sentences = description.split(/\.\s+/);
+    
+    // Find sentences that likely contain requirements
+    for (const sentence of sentences) {
+      if (
+        sentence.includes('require') ||
+        sentence.includes('must') ||
+        sentence.includes('shall') ||
+        sentence.includes('implement') ||
+        sentence.includes('establish')
+      ) {
+        // Clean and format the requirement
+        let requirement = sentence.trim();
+        if (requirement.length > 10 && requirement.length < 100) {
+          // Remove starting phrases like "Employers must"
+          requirement = requirement
+            .replace(/^(Employers|The employer|This standard|OSHA)(s)?\s(must|shall|require|requires|mandates)\s/i, '')
+            .replace(/^(It is required that|It is necessary for)\s/i, '');
+          
+          // Capitalize first letter
+          requirement = requirement.charAt(0).toUpperCase() + requirement.slice(1);
+          
+          requirements.push(requirement);
+          
+          // Limit to 4 requirements
+          if (requirements.length >= 4) break;
+        }
+      }
+    }
+    
+    // If we found enough requirements, return them
+    if (requirements.length >= 3) {
+      return requirements;
+    }
+  }
+  
+  // Fall back to default requirements
+  return defaultRequirements;
 };

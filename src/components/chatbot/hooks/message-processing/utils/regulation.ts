@@ -10,7 +10,15 @@ import { formatRegulationsResponse, formatRegulationResponse } from './regulatio
 import { findStaticRegulationMatch } from './regulation/staticRegulations';
 import { checkRegulationExists } from '@/utils/regulationUtils';
 import { logRegulationMatchFailure } from './regulation/loggingOperations';
-import { handleFallProtectionQuery, isDirectRegulationCitation, extractRegulationNumber } from './regulation/fallProtection';
+import { 
+  handleFallProtectionQuery, 
+  isDirectRegulationCitation, 
+  extractRegulationNumber 
+} from './regulation/fallProtection';
+import { 
+  formatCitation,
+  parseCitationParts
+} from './regulation/citationMatcher';
 
 // Export all the components for backward compatibility
 export {
@@ -26,5 +34,7 @@ export {
   logRegulationMatchFailure,
   handleFallProtectionQuery,
   isDirectRegulationCitation,
-  extractRegulationNumber
+  extractRegulationNumber,
+  formatCitation,
+  parseCitationParts
 };
