@@ -65,18 +65,82 @@ export const findExactRegulationMatch = async (query: string, userId?: string): 
 };
 
 /**
+ * Extract key terms from user query for better matching
+ */
+const extractKeyTerms = (query: string): string[] => {
+  const stopWords = ['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with', 'about', 'is', 'are', 'how', 'what', 'when', 'where', 'why', 'can', 'do', 'does', 'should', 'would', 'could', 'will'];
+  
+  // Remove punctuation and normalize
+  const normalizedQuery = query.toLowerCase()
+    .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+  
+  // Split into words and filter out stop words
+  const words = normalizedQuery.split(' ').filter(word => 
+    word.length > 2 && !stopWords.includes(word)
+  );
+  
+  // Find potential industry-specific terms
+  const industryTerms = findIndustryTerms(normalizedQuery);
+  
+  return [...new Set([...words, ...industryTerms])];
+};
+
+/**
+ * Find industry-specific terms in query
+ */
+const findIndustryTerms = (query: string): string[] => {
+  const industryTerms: Record<string, string[]> = {
+    'construction': ['scaffold', 'ladder', 'fall', 'harness', 'excavation', 'trench'],
+    'chemical': ['hazardous', 'chemical', 'toxic', 'ventilation', 'spill'],
+    'electrical': ['electrical', 'voltage', 'circuit', 'lockout', 'tagout'],
+    'healthcare': ['needle', 'bloodborne', 'pathogen', 'biohazard'],
+    'manufacturing': ['machine', 'guard', 'robot', 'conveyor', 'amputation']
+  };
+  
+  const result: string[] = [];
+  
+  // Check for industry category matches
+  Object.keys(industryTerms).forEach(industry => {
+    if (query.toLowerCase().includes(industry)) {
+      result.push(industry);
+    }
+    
+    // Check for terms within each industry
+    industryTerms[industry].forEach(term => {
+      if (query.toLowerCase().includes(term)) {
+        result.push(term);
+        // Also include the parent industry for better context
+        if (!result.includes(industry)) {
+          result.push(industry);
+        }
+      }
+    });
+  });
+  
+  return result;
+};
+
+/**
  * Find regulations based on keyword matching from the database
  */
 export const findRegulationsByKeywords = async (query: string, userId?: string): Promise<string | null> => {
   try {
-    const queryLower = query.toLowerCase();
-    const matchedKeywords: string[] = [];
+    const keyTerms = extractKeyTerms(query);
+    console.log('Extracted key terms:', keyTerms);
     
-    // Get all available keywords from the database to match against
+    if (keyTerms.length === 0) {
+      console.log('No key terms extracted from query');
+      return null;
+    }
+    
+    // Get regulations with keywords that overlap with our key terms
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, category')
-      .not('keywords', 'is', null);
+      .select('id, title, description, document_type, citation, authority, source_url, keywords, category, updated_at')
+      .filter('keywords', 'cs', `{${keyTerms.join(',')}}`)
+      .order('updated_at', { ascending: false });
     
     if (error) {
       console.error('Error fetching regulations with keywords:', error);
@@ -84,66 +148,48 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     }
     
     if (!regulations || regulations.length === 0) {
-      console.log('No regulations with keywords found in database');
+      console.log('No regulations with matching keywords found in database');
       return null;
     }
     
-    // Find matching regulations based on keywords
-    const matchingRegulations = regulations.filter(reg => {
-      if (!reg.keywords || !Array.isArray(reg.keywords)) return false;
+    // Calculate relevance score based on number of keyword matches
+    const scoredRegulations = regulations.map(reg => {
+      if (!reg.keywords || !Array.isArray(reg.keywords)) {
+        return { ...reg, score: 0 };
+      }
       
-      const keywordMatches = reg.keywords.filter(keyword => {
-        if (typeof keyword !== 'string') return false;
-        const match = queryLower.includes(keyword.toLowerCase());
-        if (match && !matchedKeywords.includes(keyword)) {
-          matchedKeywords.push(keyword);
-        }
-        return match;
-      });
+      // Count how many query terms match with the regulation keywords
+      const matchCount = keyTerms.filter(term => 
+        reg.keywords.some(keyword => 
+          keyword.toLowerCase().includes(term.toLowerCase()) || 
+          term.toLowerCase().includes(keyword.toLowerCase())
+        )
+      ).length;
       
-      return keywordMatches.length > 0;
+      return { ...reg, score: matchCount };
     });
     
-    if (matchingRegulations.length === 0) {
-      console.log('No keyword matches found in query:', query);
-      return null;
-    }
-    
-    // If we have multiple matches, sort by number of keyword matches (most relevant first)
-    matchingRegulations.sort((a, b) => {
-      const aMatches = a.keywords.filter(k => queryLower.includes(k.toLowerCase())).length;
-      const bMatches = b.keywords.filter(k => queryLower.includes(k.toLowerCase())).length;
-      return bMatches - aMatches;
-    });
+    // Sort by score (highest first) and take top 3
+    scoredRegulations.sort((a, b) => b.score - a.score);
+    const topRegulations = scoredRegulations.slice(0, 3);
     
     // Log the query for learning purposes
     try {
       await supabase.from('paulie_queries').insert({
         question: query,
-        matched_keywords: matchedKeywords,
-        matched_category: matchingRegulations[0]?.category,
-        matched_regulation_id: matchingRegulations[0]?.id,
-        user_id: userId
+        matched_keywords: keyTerms,
+        matched_regulation_ids: topRegulations.map(r => r.id),
+        user_id: userId,
+        created_at: new Date().toISOString()
       });
     } catch (logError) {
       console.error('Error logging query:', logError);
       // Don't fail if logging fails
     }
     
-    // If we have a single match, provide detailed information
-    if (matchingRegulations.length === 1) {
-      const regulation = matchingRegulations[0];
-      return formatRegulationResponse(regulation, matchedKeywords);
-    } 
-    
-    // If we have multiple relevant results, offer a summary
-    if (matchingRegulations.length > 1) {
-      const firstReg = matchingRegulations[0];
-      let response = formatRegulationResponse(firstReg, matchedKeywords);
-      
-      response += "\n\nI found several regulations that may apply to your question. Would you like to see a summary of each?";
-      
-      return response;
+    // If we have matches, format the response
+    if (topRegulations.length > 0) {
+      return formatRegulationsResponse(topRegulations, query, keyTerms);
     }
     
     return null;
@@ -154,7 +200,65 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
 };
 
 /**
- * Format a regulation into a conversational response
+ * Format multiple regulations into a conversational response
+ */
+const formatRegulationsResponse = (
+  regulations: any[], 
+  query: string,
+  matchedKeywords: string[]
+): string => {
+  const mainKeyword = matchedKeywords[0] || regulations[0].category || "this topic";
+  
+  // Create a conversational opener
+  const openingPhrases = [
+    `Great question about ${mainKeyword}! I found some relevant regulations that apply:`,
+    `I've identified ${regulations.length} relevant regulations about ${mainKeyword}:`,
+    `Here's what the safety regulations say about ${mainKeyword}:`,
+    `Based on your question, these regulations apply to ${mainKeyword}:`
+  ];
+  
+  const opening = openingPhrases[Math.floor(Math.random() * openingPhrases.length)];
+  
+  // Format each regulation
+  let content = '';
+  
+  regulations.forEach((reg, index) => {
+    content += `\n\n**${reg.title || 'Safety Regulation'}**`;
+    
+    if (reg.citation) {
+      content += ` (${reg.citation})`;
+    }
+    
+    if (reg.description) {
+      // Truncate description if it's too long
+      const maxLength = 150;
+      const description = reg.description.length > maxLength
+        ? reg.description.substring(0, maxLength) + '...'
+        : reg.description;
+      
+      content += `\n${description}`;
+    }
+    
+    if (reg.source_url) {
+      content += `\n[Source document](${reg.source_url})`;
+    }
+  });
+  
+  // Add a conversational closer
+  const closingPhrases = [
+    `\n\nWould you like me to explain any of these regulations in more detail?`,
+    `\n\nCan I help you implement these requirements in your workplace?`,
+    `\n\nIs there a specific aspect of these regulations you'd like me to focus on?`,
+    `\n\nWould you like practical tips for complying with these regulations?`
+  ];
+  
+  const closing = closingPhrases[Math.floor(Math.random() * closingPhrases.length)];
+  
+  return opening + content + closing;
+};
+
+/**
+ * Format a single regulation into a conversational response
  */
 const formatRegulationResponse = (
   regulation: any, 

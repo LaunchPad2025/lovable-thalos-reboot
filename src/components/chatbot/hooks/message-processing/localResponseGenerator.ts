@@ -2,7 +2,6 @@
 import { Message } from '../../types';
 import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { isFollowUpQuestion, handleFollowUpQuestion } from './utils/follow-up';
-import { findExactRegulationMatch } from './utils/regulationMatching';
 import { getResponseForCommonTopic } from './utils/commonTopics';
 import { getDefaultResponse, getPracticalSafetyGuidance } from './utils/fallbackResponses';
 
