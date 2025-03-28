@@ -1,5 +1,6 @@
+
 /**
- * Enhance AI response with additional context if needed
+ * Enhance AI response with additional context and practical advice if needed
  */
 export const enhanceResponse = (
   originalResponse: string,
@@ -47,7 +48,8 @@ export const enhanceResponse = (
   if (originalResponse.length < 50 || 
       originalResponse.includes("I don't have specific information") ||
       originalResponse.includes("I don't know") ||
-      originalResponse.includes("I'm not sure")) {
+      originalResponse.includes("I'm not sure") ||
+      originalResponse.includes("check with your safety")) {
     
     console.log("Response too generic, enhancing with local knowledge base");
     
@@ -74,7 +76,7 @@ export const enhanceResponse = (
 };
 
 /**
- * Add conversational elements to make responses more natural
+ * Add conversational and practical elements to make responses more helpful
  */
 const addConversationalElements = (response: string): string => {
   // Add practical advice if not already present
@@ -85,29 +87,42 @@ const addConversationalElements = (response: string): string => {
       response.length > 150) {
     
     const practicalTips = [
-      "\n\nPractical tip: Make sure to document all inspections and keep records easily accessible.",
-      "\n\nQuick tip: Creating a simple checklist can help ensure consistency in your safety protocols.",
-      "\n\nHelpful hint: Training your team on proper procedures is just as important as having the right equipment.",
-      "\n\nPro tip: Consider appointing a safety coordinator to oversee compliance with these requirements."
+      "\n\nPractical tip: Create standardized forms for all safety processes to ensure consistency and completeness in your documentation.",
+      "\n\nQuick tip: Digital safety management systems can help automate record-keeping and send alerts when inspections or training are due.",
+      "\n\nHelpful hint: Training employees on why safety procedures matter, not just how to follow them, leads to better compliance and fewer incidents.",
+      "\n\nPro tip: Consider using QR codes on equipment that link to digital maintenance and inspection records for easier tracking."
     ];
     
     response += practicalTips[Math.floor(Math.random() * practicalTips.length)];
   }
   
-  // Replace "Would you like to see X?" with more specific offers
+  // Replace generic offers with more specific, action-oriented ones
   response = response.replace(
     /Would you like to see (a|the) (.+?)\?/gi,
     (match, article, item) => {
-      return `I can show you a quick guide for ${item}. Want to see that?`;
+      return `I can provide a practical template for ${item}. Would that be helpful?`;
     }
   );
   
-  // Ensure responses about inspections are specific
+  response = response.replace(
+    /Would you like more information about (.+?)\?/gi,
+    (match, topic) => {
+      return `I can share some best practices for implementing ${topic} in your workplace. Interested?`;
+    }
+  );
+  
+  // Make inspection guidance more specific and practical
   if (response.includes("inspect") && !response.includes("before each use") && !response.includes("annually")) {
     response = response.replace(
       /should be inspected/gi,
-      "should be inspected before each use and periodically by a competent person"
+      "should be inspected before each use and documented with standardized forms"
     );
+  }
+  
+  // Add documentation guidance to regulatory information
+  if ((response.includes("CFR") || response.includes("OSHA requires")) && 
+      !response.includes("document") && !response.includes("record")) {
+    response += "\n\nRemember to document your compliance efforts with dates, responsible parties, and specific actions taken.";
   }
   
   return response;
@@ -131,7 +146,7 @@ const similarityCheck = (current: string, previous: string): boolean => {
 };
 
 /**
- * Reformulate a response to avoid repetition
+ * Reformulate a response to avoid repetition while adding practical advice
  */
 const reformulateResponse = (response: string): string => {
   // Split into sentences
@@ -142,15 +157,21 @@ const reformulateResponse = (response: string): string => {
   
   if (sentences.length > 3) {
     const randomMiddleIdx = 1 + Math.floor(Math.random() * (sentences.length - 2));
-    reformed += "To put it another way, " + sentences[randomMiddleIdx].toLowerCase() + ". ";
+    reformed += "In other words, " + sentences[randomMiddleIdx].toLowerCase() + ". ";
   }
   
   if (sentences.length > 1) {
     reformed += sentences[sentences.length - 1] + ".";
   }
   
-  // Add practical advice
-  reformed += "\n\nHere's a practical approach: focus on consistent documentation and regular training for your team.";
+  // Add practical implementation advice
+  const practicalImplementation = [
+    "\n\nHere's how to put this into practice: Focus on clear documentation, regular training, and consistent implementation. Start with a written program that outlines responsibilities and procedures.",
+    "\n\nTo implement this effectively: Create standardized forms, train all affected employees, and conduct regular audits to ensure compliance is maintained.",
+    "\n\nFor practical application: Develop a step-by-step procedure, assign clear responsibilities, and document all activities with dates and signatures."
+  ];
+  
+  reformed += practicalImplementation[Math.floor(Math.random() * practicalImplementation.length)];
   
   return reformed;
 };

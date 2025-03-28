@@ -4,6 +4,7 @@ import { processWithHuggingFace, suggestFollowUpQuestions } from '@/utils/huggin
 
 /**
  * Process message using Hugging Face API with improved context handling
+ * and practical workplace safety focus
  */
 export const processWithAI = async (
   content: string, 
@@ -31,6 +32,7 @@ export const processWithAI = async (
 
 /**
  * Generate follow-up suggestions based on conversation context
+ * with a focus on practical next steps
  */
 export const generateSuggestions = (
   content: string,
@@ -40,7 +42,8 @@ export const generateSuggestions = (
 };
 
 /**
- * Simple check if this is likely a follow-up question
+ * Enhanced check if this is likely a follow-up question
+ * with special handling for practical workplace safety questions
  */
 const isFollowUpQuestion = (content: string, messages: Message[]): boolean => {
   if (messages.length < 2) return false;
@@ -57,5 +60,8 @@ const isFollowUpQuestion = (content: string, messages: Message[]): boolean => {
   const startsWithQuestion = /^(how|what|when|where|why|who|is|are|can|should|would|do|does)/i.test(content.trim());
   const hasReferenceWords = /\b(it|this|that|these|those|they|them)\b/i.test(content);
   
-  return shortQuestion || (startsWithQuestion && hasReferenceWords);
+  // Check for practical workplace safety questions
+  const isPracticalQuestion = /\b(how\s+do\s+I|what\s+should|best\s+way|example|template|document|record)\b/i.test(content);
+  
+  return shortQuestion || (startsWithQuestion && hasReferenceWords) || isPracticalQuestion;
 };

@@ -4,10 +4,10 @@ import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { isFollowUpQuestion, handleFollowUpQuestion } from './utils/followUp';
 import { findExactRegulationMatch } from './utils/regulationMatching';
 import { getResponseForCommonTopic } from './utils/commonTopics';
-import { getDefaultResponse } from './utils/fallbackResponses';
+import { getDefaultResponse, getPracticalSafetyGuidance } from './utils/fallbackResponses';
 
 /**
- * Enhanced AI response logic with more contextual awareness and conversational tone
+ * Enhanced AI response logic with more contextual awareness, practical guidance and conversational tone
  */
 export const generateAIResponse = (message: string, allMessages: Message[]): string => {
   const query = message.toLowerCase();
@@ -33,6 +33,10 @@ export const generateAIResponse = (message: string, allMessages: Message[]): str
   // First, check for exact matches in our regulatory database
   const exactMatchResponse = findExactRegulationMatch(query);
   if (exactMatchResponse) return exactMatchResponse;
+  
+  // Check for practical guidance based on common workplace safety topics
+  const practicalGuidance = getPracticalSafetyGuidance(query);
+  if (practicalGuidance) return practicalGuidance;
   
   // Enhanced fallback responses for common safety topics with specific regulatory details
   const commonTopicResponse = getResponseForCommonTopic(query);

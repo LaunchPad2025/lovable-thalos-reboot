@@ -1,60 +1,75 @@
 
-// Safety-related keyword map for generating contextual follow-up questions
+// Safety-related keyword map for generating contextual and actionable follow-up questions
 const safetyKeywords = {
   'ppe': [
-    'What specific PPE is required for my industry?', 
-    'How often should we replace PPE items?',
-    'What training is needed for proper PPE use?'
+    'Would you like a PPE selection guide for your industry?', 
+    'Should I help you create a PPE training checklist?',
+    'Do you need a template for documenting PPE inspections?'
   ],
   'chemical': [
-    'What are the storage requirements for flammable chemicals?', 
-    'Do you have a template for a chemical inventory list?',
-    'What should our chemical spill procedure include?'
+    'Would you like a sample chemical inventory spreadsheet?', 
+    'Should I help you create a chemical storage compatibility chart?',
+    'Do you need a template for a chemical spill response plan?'
   ],
   'training': [
-    'How often should we conduct refresher training?', 
-    'What should be included in our training documentation?',
-    'Are there specific training requirements for supervisors?'
+    'Would you like a training documentation template?', 
+    'Should I help you develop a training effectiveness evaluation?',
+    'Do you need a sample training matrix for your team?'
   ],
   'fall': [
-    'What are the requirements for temporary guardrails?', 
-    'How often should fall protection equipment be inspected?',
-    'What documentation is needed for our fall protection program?'
+    'Would you like a fall protection inspection checklist?', 
+    'Should I help you create a fall protection plan template?',
+    'Do you need a harness inspection guide for your team?'
   ],
   'hazard': [
-    'What should be included in our hazard assessment?',
-    'How often should hazard assessments be updated?',
-    'What are the most commonly overlooked workplace hazards?'
+    'Would you like a hazard assessment template?',
+    'Should I help you create a job safety analysis form?',
+    'Do you need a guide for prioritizing hazard controls?'
   ],
   'violation': [
-    'What\'s the process for contesting an OSHA citation?',
-    'How should we document our violation abatement efforts?',
-    'What are the most common violations in our industry?'
+    'Would you like a violation abatement tracking template?',
+    'Should I help you create a corrective action plan?',
+    'Do you need a guide for preparing violation contest documentation?'
   ],
   'regulations': [
-    'Are there any upcoming changes to this regulation?',
-    'Is there a simplified guide for implementing this requirement?',
-    'What documentation would an inspector look for regarding this?'
+    'Would you like a compliance calendar for upcoming deadlines?',
+    'Should I help you create a regulatory requirements tracker?',
+    'Do you need a documentation preparation checklist for inspections?'
   ],
   'fine': [
-    'What factors increase or decrease potential fines?',
-    'Are there any penalty reduction programs available?',
-    'What\'s the typical timeline for resolving citations?'
+    'Would you like a guide on penalty reduction programs?',
+    'Should I help you develop a financial impact assessment for violations?',
+    'Do you need tips for developing an effective abatement strategy?'
   ],
   'inspection': [
-    'What areas do OSHA inspectors focus on most?',
-    'What rights do we have during an inspection?',
-    'How should we prepare for an upcoming safety inspection?'
+    'Would you like an inspection preparation checklist?',
+    'Should I help you create a self-inspection program?',
+    'Do you need templates for documenting inspection findings?'
   ],
   'employee': [
-    'What safety rights do temporary workers have?',
-    'How should we handle employee safety complaints?',
-    'What safety responsibilities do employees have?'
+    'Would you like a template for documenting employee safety concerns?',
+    'Should I help you create an employee safety suggestion system?',
+    'Do you need a safety responsibilities checklist by role?'
+  ],
+  'document': [
+    'Would you like a safety documentation organization guide?',
+    'Should I help you create a documentation retention schedule?',
+    'Do you need templates for common safety records?'
+  ],
+  'incident': [
+    'Would you like an incident investigation form template?',
+    'Should I help you create a near-miss reporting system?',
+    'Do you need a root cause analysis worksheet?'
+  ],
+  'audit': [
+    'Would you like a pre-audit preparation checklist?',
+    'Should I help you create an audit findings tracking system?',
+    'Do you need a template for developing corrective action plans?'
   ]
 };
 
 /**
- * Generate relevant follow-up questions based on the conversation
+ * Generate relevant and actionable follow-up questions based on the conversation
  * @param userQuery Last user message
  * @param aiResponse Last AI response
  * @returns Array of follow-up question suggestions
@@ -79,31 +94,31 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
     });
   }
   
-  // If no specific keywords matched, analyze the intent and provide relevant follow-ups
+  // If no specific keywords matched, analyze the intent and provide relevant actionable follow-ups
   if (suggestions.length === 0) {
     if (combinedText.includes('osha') || combinedText.includes('regulation')) {
-      suggestions.push('How should we document compliance with this regulation?');
+      suggestions.push('Would you like a compliance documentation checklist for this regulation?');
     } else if (combinedText.includes('accident') || combinedText.includes('incident')) {
-      suggestions.push('What should be included in our incident report forms?');
+      suggestions.push('Would you like an incident investigation form template?');
     } else if (combinedText.includes('inspect') || combinedText.includes('audit')) {
-      suggestions.push('How often should we conduct internal safety audits?');
+      suggestions.push('Would you like a ready-to-use inspection form for this topic?');
     } else {
-      // Generic but still helpful follow-ups
+      // Generic but still actionable follow-ups
       suggestions.push(
-        'What are the top safety concerns in our industry?',
-        'How can we improve employee engagement in safety programs?'
+        'Would you like me to create a simple checklist for this topic?',
+        'Should I help you develop a written procedure for this?'
       );
     }
   }
   
   // Ensure we have at least 2 suggestions
   if (suggestions.length < 2) {
-    suggestions.push('Would you like to see a sample safety checklist for this topic?');
+    suggestions.push('Would you like a sample document template for this topic?');
   }
   
   // Add a specific practical follow-up
   if (!suggestions.some(s => s.includes("train"))) {
-    suggestions.push('What training should our employees receive on this topic?');
+    suggestions.push('Would you like a quick training outline on this topic?');
   }
   
   // Make sure we're not repeating suggestions
