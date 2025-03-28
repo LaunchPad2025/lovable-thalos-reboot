@@ -3,7 +3,6 @@
  * Handles keyword-based regulation search functionality
  */
 import { supabase } from '@/lib/supabase';
-import { formatRegulationsResponse } from '../responseFormatters';
 
 /**
  * Search for regulations by keywords

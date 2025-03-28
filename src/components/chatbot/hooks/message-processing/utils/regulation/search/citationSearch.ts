@@ -1,72 +1,64 @@
 
 /**
- * Handles direct regulation citation search functionality
+ * Citation-based regulation search functionality
  */
 import { supabase } from '@/lib/supabase';
+import { formatRegulationResponse } from '../responseFormatters';
 import { isDirectRegulationCitation, extractRegulationNumber } from '../citationMatcher';
-import { formatRegulationsResponse } from '../responseFormatters';
 
 /**
- * Search for regulations by direct citation (e.g., 1910.119)
+ * Search for regulations by citation reference
  */
-export const searchByCitation = async (
-  query: string
-): Promise<{ 
+export const searchByCitation = async (query: string): Promise<{ 
   found: boolean; 
-  regulations?: any[];
-  regulationCode?: string;
   response?: string;
+  regulation?: any;
 }> => {
-  // Check if the query contains a direct citation
   if (!isDirectRegulationCitation(query)) {
     return { found: false };
   }
-
-  const regulationCode = extractRegulationNumber(query);
-  if (!regulationCode) {
+  
+  const regulationNumber = extractRegulationNumber(query);
+  if (!regulationNumber) {
     return { found: false };
   }
-
-  console.log('Detected direct regulation citation:', regulationCode);
   
   try {
-    // Try to find the regulation by code
-    const { data: regulationByCode, error: codeError } = await supabase
+    // Search for the regulation by code, alt_phrases, or title
+    const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry')
-      .or(`code.eq.${regulationCode},alt_phrases.cs.{${regulationCode}}`)
+      .select('id, title, description, document_type, authority, source_url, keywords, category')
+      .or(`code.eq.${regulationNumber},alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
       .order('updated_at', { ascending: false })
       .limit(1);
-      
-    if (!codeError && regulationByCode && regulationByCode.length > 0) {
-      // We found a direct match by code
-      return { 
-        found: true, 
-        regulations: regulationByCode,
-        regulationCode,
-        response: formatRegulationsResponse(regulationByCode, query, [regulationCode], [])
-      };
+    
+    if (error || !regulations || regulations.length === 0) {
+      console.log('No regulation found for citation:', regulationNumber);
+      return { found: false };
     }
     
-    // Also try looking in title (many regulations have their code in the title)
-    const { data: regulationByTitle, error: titleError } = await supabase
-      .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry')
-      .ilike('title', `%${regulationCode}%`)
-      .order('updated_at', { ascending: false })
-      .limit(1);
-      
-    if (!titleError && regulationByTitle && regulationByTitle.length > 0) {
-      return { 
-        found: true,
-        regulations: regulationByTitle,
-        regulationCode,
-        response: formatRegulationsResponse(regulationByTitle, query, [regulationCode], []) 
-      };
-    }
+    // Create formatted response for the regulation
+    const regulation = regulations[0];
+    const response = `**${regulation.document_type || 'OSHA'} ${regulationNumber} - ${regulation.title || 'Regulation'}**
+
+${regulation.description || 'This regulation establishes requirements for workplace safety and health.'}
+
+Key requirements include:
+- Regular inspections and documentation
+- Employee training on hazard recognition
+- Implementation of engineering controls
+- Documentation of compliance efforts
+${regulation.authority ? `\nEnforced by: ${regulation.authority}` : ''}
+
+Would you like more specific information about implementing this regulation?`;
+    
+    return {
+      found: true,
+      response,
+      regulation
+    };
   } catch (error) {
-    console.error('Error searching by citation:', error);
+    console.error('Error in searchByCitation:', error);
+    return { found: false };
   }
-  
-  return { found: false, regulationCode };
 };

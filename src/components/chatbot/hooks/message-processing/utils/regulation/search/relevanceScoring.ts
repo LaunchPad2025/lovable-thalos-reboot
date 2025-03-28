@@ -3,7 +3,6 @@
  * Handles regulation relevance scoring and ranking
  */
 import { supabase } from '@/lib/supabase';
-import { formatRegulationsResponse } from '../responseFormatters';
 
 /**
  * Score and rank regulations by relevance to the query

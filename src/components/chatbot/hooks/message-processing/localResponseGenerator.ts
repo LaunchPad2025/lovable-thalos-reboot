@@ -9,11 +9,11 @@ import { handleFallProtectionQuery } from './utils/regulationMatching';
 /**
  * Enhanced AI response logic with more contextual awareness, practical guidance and conversational tone
  */
-export const generateAIResponse = (message: string, allMessages: Message[]): string => {
+export const generateAIResponse = async (message: string, allMessages: Message[]): Promise<string> => {
   const query = message.toLowerCase();
   
   // First check for fall protection-specific queries (highest priority)
-  const fallProtectionResponse = handleFallProtectionQuery(query);
+  const fallProtectionResponse = await handleFallProtectionQuery(query);
   if (fallProtectionResponse) return fallProtectionResponse;
   
   // Extract topics from conversation history to provide more relevant context
