@@ -33,7 +33,7 @@ const ViolationUploadSection = ({
       confidence: results.confidence || 0.75,
       severity: results.severity || 'medium',
       imagePreview: results.imagePreview || '',
-      timestamp: results.timestamp || new Date().toISOString(),
+      // Don't include timestamp as it's not in the TestResult type
     };
     
     onUploadComplete(testResults);
