@@ -10,6 +10,8 @@ export interface FeedbackItem {
   matched_keywords?: string[];
   matched_regulation_ids?: string[];
   message_id: string;
+  review_status?: 'needs_review' | 'improved' | 'escalated';
+  review_label?: 'unclear' | 'incomplete' | 'off_topic';
 }
 
 export interface KeywordStat {
@@ -24,4 +26,5 @@ export interface FeedbackData {
   downvotes: number;
   topDownvoted: FeedbackItem[];
   keywords: KeywordStat[];
+  needsReview: FeedbackItem[];
 }

@@ -4,15 +4,17 @@ import { supabase } from '@/lib/supabase';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import MockDataAlert from '@/components/ui/MockDataAlert';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { TabsContent, Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { DownloadIcon, ThumbsDown, ThumbsUp, Filter } from 'lucide-react';
+import { DownloadIcon } from 'lucide-react';
 import FeedbackStats from '@/components/feedback/FeedbackStats';
 import TopDownvotedTable from '@/components/feedback/TopDownvotedTable';
 import CategoryBreakdown from '@/components/feedback/CategoryBreakdown';
 import { FeedbackData } from '@/components/feedback/types';
 import LoadingState from '@/components/feedback/LoadingState';
+import NeedsReviewTable from '@/components/feedback/NeedsReviewTable';
+import TrainingDatasetExport from '@/components/feedback/TrainingDatasetExport';
 
 const PaulieFeedback = () => {
   const [feedbackData, setFeedbackData] = useState<FeedbackData | null>(null);
@@ -36,13 +38,20 @@ const PaulieFeedback = () => {
 
       if (error) throw error;
 
+      const processedData = data || [];
+      
       setFeedbackData({
-        rawData: data || [],
-        totalQueries: data?.length || 0,
-        upvotes: data?.filter(item => item.helpful === true).length || 0,
-        downvotes: data?.filter(item => item.helpful === false).length || 0,
-        topDownvoted: data?.filter(item => item.helpful === false).slice(0, 10) || [],
-        keywords: processKeywords(data || [])
+        rawData: processedData,
+        totalQueries: processedData.length || 0,
+        upvotes: processedData.filter(item => item.helpful === true).length || 0,
+        downvotes: processedData.filter(item => item.helpful === false).length || 0,
+        topDownvoted: processedData.filter(item => item.helpful === false).slice(0, 10) || [],
+        keywords: processKeywords(processedData),
+        needsReview: processedData.filter(item => 
+          item.helpful === false && 
+          item.notes && 
+          (!item.review_status || item.review_status === 'needs_review')
+        ) || []
       });
     } catch (err) {
       console.error('Error fetching feedback data:', err);
@@ -78,7 +87,8 @@ const PaulieFeedback = () => {
       'Helpful', 
       'Notes', 
       'Created At',
-      'Keywords'
+      'Keywords',
+      'Regulations'
     ];
     
     const dataRows = feedbackData.rawData.map(item => [
@@ -87,7 +97,8 @@ const PaulieFeedback = () => {
       item.helpful ? 'Yes' : 'No',
       `"${item.notes?.replace(/"/g, '""') || ''}"`,
       new Date(item.created_at).toLocaleString(),
-      (item.matched_keywords || []).join(', ')
+      `"${(item.matched_keywords || []).join(', ')}"`,
+      `"${(item.matched_regulation_ids || []).join(', ')}"`
     ]);
     
     const csvContent = [
@@ -142,6 +153,8 @@ const PaulieFeedback = () => {
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="downvoted">Top Downvoted</TabsTrigger>
               <TabsTrigger value="categories">Categories</TabsTrigger>
+              <TabsTrigger value="review">Needs Review</TabsTrigger>
+              <TabsTrigger value="training">Training Dataset</TabsTrigger>
             </TabsList>
             
             <TabsContent value="overview" className="space-y-6">
@@ -154,6 +167,14 @@ const PaulieFeedback = () => {
             
             <TabsContent value="categories" className="space-y-6">
               {feedbackData && <CategoryBreakdown feedbackData={feedbackData} />}
+            </TabsContent>
+            
+            <TabsContent value="review" className="space-y-6">
+              {feedbackData && <NeedsReviewTable feedbackData={feedbackData} onRefresh={fetchFeedbackData} />}
+            </TabsContent>
+            
+            <TabsContent value="training" className="space-y-6">
+              {feedbackData && <TrainingDatasetExport feedbackData={feedbackData} />}
             </TabsContent>
           </Tabs>
         )}
