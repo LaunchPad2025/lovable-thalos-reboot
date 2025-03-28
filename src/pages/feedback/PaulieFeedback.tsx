@@ -42,18 +42,18 @@ const PaulieFeedback = () => {
       const processedData: FeedbackItem[] = (data || []).map(item => ({
         id: item.id,
         message_id: item.message_id || item.id,
-        question: item.question,
+        question: item.question || '',
         response: item.response || '',
         helpful: item.helpful === true,
         notes: item.notes,
         created_at: item.created_at || item.timestamp || new Date().toISOString(),
         user_id: item.user_id,
-        matched_keywords: item.matched_keywords,
-        matched_regulation_ids: Array.isArray(item.matched_regulation_id) 
-          ? item.matched_regulation_id 
-          : (item.matched_regulation_id ? [item.matched_regulation_id] : []),
+        matched_category: item.matched_category,
+        matched_keywords: item.matched_keywords || [],
+        matched_regulation_id: item.matched_regulation_id,
         review_status: item.review_status,
-        review_label: item.review_label
+        review_label: item.review_label,
+        timestamp: item.timestamp
       }));
       
       setFeedbackData({

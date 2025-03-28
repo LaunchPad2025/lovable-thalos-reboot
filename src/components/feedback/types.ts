@@ -7,11 +7,13 @@ export interface FeedbackItem {
   notes?: string;
   created_at: string;
   user_id?: string;
+  matched_category?: string;
   matched_keywords?: string[];
-  matched_regulation_ids?: string[];
+  matched_regulation_id?: string;
   message_id: string;
   review_status?: 'needs_review' | 'improved' | 'escalated';
   review_label?: 'unclear' | 'incomplete' | 'off_topic';
+  timestamp?: string; // Keep for backward compatibility
 }
 
 export interface KeywordStat {

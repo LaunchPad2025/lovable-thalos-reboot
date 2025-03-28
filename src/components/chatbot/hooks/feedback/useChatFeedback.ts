@@ -122,6 +122,7 @@ export const useChatFeedback = () => {
         response: response,
         helpful: helpful,
         notes: notes,
+        created_at: new Date().toISOString(),
         matched_keywords: matchedKeywords,
         review_status: !helpful && notes ? 'needs_review' : null
       });
