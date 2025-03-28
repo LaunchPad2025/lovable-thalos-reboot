@@ -1,3 +1,4 @@
+
 import { Message } from '@/components/chatbot/types';
 
 // Maximum number of messages to keep in context
@@ -97,7 +98,7 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
     ],
     'fine': [
       'Are you concerned about a specific citation?',
-      'Would you like to know about OSHA's penalty reduction policies?',
+      'Would you like to know about OSHA\'s penalty reduction policies?',
       'Are you preparing for an OSHA inspection?'
     ]
   };
