@@ -6,6 +6,33 @@ import { supabase } from '@/lib/supabase';
 import { generateFollowUpSuggestions } from './followUpGenerator';
 
 /**
+ * Helper function to detect industry context from query content
+ */
+const detectIndustryContext = (content: string): string | null => {
+  const industryKeywords = {
+    'construction': ['construction', 'building', 'contractor', 'scaffold', 'excavation'],
+    'manufacturing': ['manufacturing', 'factory', 'production', 'assembly', 'fabrication'],
+    'healthcare': ['healthcare', 'hospital', 'medical', 'patient', 'clinic'],
+    'oil_gas': ['oil', 'gas', 'petroleum', 'drilling', 'refinery'],
+    'mining': ['mining', 'quarry', 'excavation', 'ore', 'mineral'],
+    'agriculture': ['agriculture', 'farm', 'crop', 'livestock', 'harvest'],
+    'retail': ['retail', 'store', 'shop', 'customer', 'merchandise'],
+    'laboratory': ['laboratory', 'lab', 'research', 'experiment', 'chemical'],
+    'logistics': ['logistics', 'warehouse', 'shipping', 'transportation', 'distribution'],
+    'food_processing': ['food', 'processing', 'packaging', 'beverage', 'production']
+  };
+  
+  // Check for industry keywords in the content
+  for (const [industry, keywords] of Object.entries(industryKeywords)) {
+    if (keywords.some(keyword => content.toLowerCase().includes(keyword.toLowerCase()))) {
+      return industry;
+    }
+  }
+  
+  return null;
+};
+
+/**
  * Main function to find regulation matches
  */
 export const findRegulationMatch = async (
