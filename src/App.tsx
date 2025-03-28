@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
@@ -33,6 +34,7 @@ import {
 } from '@tanstack/react-query'
 import PaulieFeedback from './pages/feedback/PaulieFeedback';
 import FinetuningExport from './pages/feedback/FinetuningExport';
+import TrainingReview from './pages/training/TrainingReview';
 
 const queryClient = new QueryClient()
 
@@ -57,7 +59,8 @@ function App() {
                 <Route path="/docs" element={<Documents />} />
                 <Route path="/audits" element={<Audits />} />
                 <Route path="/risk-assessment" element={<RiskAssessment />} />
-                <Route path="/training" element={<Training />} />
+                <Route path="/training" element={<TrainingReview />} />
+                <Route path="/training/overview" element={<Training />} />
                 <Route path="/models" element={<Models />} />
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/settings" element={<Settings />} />

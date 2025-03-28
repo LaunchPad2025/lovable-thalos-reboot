@@ -1,4 +1,6 @@
 
 import Training from '../Training';
+import TrainingReview from './TrainingReview';
 
-export default Training;
+// Export the review page as the default for the /training route
+export default TrainingReview;
