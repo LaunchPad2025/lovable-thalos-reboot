@@ -7,14 +7,17 @@
  * Industry-specific terms for better matching
  */
 export const industryTerms: Record<string, string[]> = {
-  'construction': ['construction', 'building', 'contractor', 'scaffold', 'excavation'],
-  'manufacturing': ['manufacturing', 'factory', 'production', 'assembly', 'fabrication'],
-  'healthcare': ['healthcare', 'hospital', 'medical', 'patient', 'clinic'],
-  'oil_gas': ['oil', 'gas', 'petroleum', 'drilling', 'refinery'],
-  'mining': ['mining', 'quarry', 'excavation', 'ore', 'mineral'],
-  'agriculture': ['agriculture', 'farm', 'crop', 'livestock', 'harvest'],
-  'retail': ['retail', 'store', 'shop', 'customer', 'merchandise'],
-  'laboratory': ['laboratory', 'lab', 'research', 'experiment', 'chemical'],
-  'logistics': ['logistics', 'warehouse', 'shipping', 'transportation', 'distribution'],
-  'food_processing': ['food', 'processing', 'packaging', 'beverage', 'production']
+  'construction': ['construction', 'building', 'contractor', 'scaffold', 'excavation', 'crane', 'jobsite'],
+  'manufacturing': ['manufacturing', 'factory', 'production', 'assembly', 'fabrication', 'machine shop'],
+  'healthcare': ['healthcare', 'hospital', 'medical', 'patient', 'clinic', 'nursing'],
+  'oil_gas': [
+    'oil', 'gas', 'petroleum', 'drilling', 'refinery', 'pipeline', 'rig', 'offshore',
+    'process safety', 'psm', 'h2s', 'hazwoper', 'midstream', 'upstream', 'downstream'
+  ],
+  'mining': ['mining', 'quarry', 'excavation', 'ore', 'mineral', 'underground'],
+  'agriculture': ['agriculture', 'farm', 'crop', 'livestock', 'harvest', 'pesticide', 'tractor'],
+  'retail': ['retail', 'store', 'shop', 'customer', 'merchandise', 'sales floor'],
+  'laboratory': ['laboratory', 'lab', 'research', 'experiment', 'chemical', 'testing'],
+  'logistics': ['logistics', 'warehouse', 'shipping', 'transportation', 'distribution', 'forklift'],
+  'food_processing': ['food', 'processing', 'packaging', 'beverage', 'production', 'meat processing']
 };

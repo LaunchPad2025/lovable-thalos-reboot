@@ -3,7 +3,7 @@
  * Main follow-up suggestion generator
  */
 import { findMatchingKeywords, getKeywordBasedSuggestions } from './keywordAnalysis';
-import { detectIndustryContext, getIndustrySpecificSuggestions } from './industryDetection';
+import { detectIndustryContext, getIndustrySpecificSuggestions } from './industry';
 import { generateFallbackSuggestions, ensurePracticalFollowUp } from './fallbackSuggestions';
 
 /**

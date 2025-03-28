@@ -1,5 +1,8 @@
 
-import { detectIndustryContext, formatIndustryFallbackResponse } from '@/utils/conversation/follow-up-suggestions/industryDetection';
+import { 
+  detectIndustryContext, 
+  formatIndustryFallbackResponse 
+} from '@/utils/conversation/follow-up-suggestions/industry';
 
 /**
  * Detect industry context from user query and format an appropriate response
