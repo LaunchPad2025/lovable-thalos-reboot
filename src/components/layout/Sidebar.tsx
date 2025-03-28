@@ -1,11 +1,11 @@
 
 import React from 'react';
 import { Sidebar as SidebarUI } from '@/components/ui/sidebar';
-import { NavSection, NavItem } from './sidebar/types';
-import NavItems from './sidebar/NavItems';
+import { NavSection } from './sidebar/types';
 import Logo from './sidebar/Logo';
 import DesktopNav from './sidebar/DesktopNav';
 import MobileNav from './sidebar/MobileNav';
+import { LayoutDashboard, BarChart2, Users, Folder } from 'lucide-react';
 
 interface SidebarProps {
   children?: React.ReactNode;
@@ -21,12 +21,12 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         {
           title: 'Overview',
           path: '/dashboard',
-          icon: () => <span>📊</span>,
+          icon: LayoutDashboard,
         },
         {
           title: 'Analytics',
           path: '/analytics',
-          icon: () => <span>📈</span>,
+          icon: BarChart2,
         },
       ],
     },
@@ -36,33 +36,32 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
         {
           title: 'Users',
           path: '/users',
-          icon: () => <span>👥</span>,
+          icon: Users,
         },
         {
           title: 'Projects',
           path: '/projects',
-          icon: () => <span>📁</span>,
+          icon: Folder,
         },
       ],
     },
   ];
 
   return (
-    <SidebarUI.Root>
-      <SidebarUI.Header>
-        <Logo />
-      </SidebarUI.Header>
-      <SidebarUI.Nav>
-        <DesktopNav sections={demoNavItems} />
-        <MobileNav sections={demoNavItems} />
-      </SidebarUI.Nav>
-      <SidebarUI.Footer>
-        {/* Add footer content here if needed */}
-      </SidebarUI.Footer>
-      <SidebarUI.Content>
+    <div className="flex h-screen overflow-hidden">
+      <aside className="w-64 bg-gray-900 text-white">
+        <div className="h-20 flex items-center px-4 border-b border-gray-800">
+          <Logo />
+        </div>
+        <div className="p-4">
+          <DesktopNav sections={demoNavItems} />
+          <MobileNav sections={demoNavItems} />
+        </div>
+      </aside>
+      <main className="flex-1 overflow-auto">
         {children}
-      </SidebarUI.Content>
-    </SidebarUI.Root>
+      </main>
+    </div>
   );
 };
 
