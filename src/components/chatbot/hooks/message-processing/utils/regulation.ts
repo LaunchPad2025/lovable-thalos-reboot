@@ -2,17 +2,21 @@
 /**
  * Main regulation matching module that brings together all sub-modules
  */
-import { findExactRegulationMatch, findRegulationsByKeywords, logRegulationMatchFailure } from './regulation/databaseOperations';
+import { findExactRegulationMatch } from './regulation/exactMatch';
+import { findRegulationsByKeywords } from './regulation/regulationSearch';
+import { findRegulationsByIndustry } from './regulation/industrySearch';
 import { extractKeyTerms, findIndustryTerms } from './regulation/keywordExtraction';
 import { formatRegulationsResponse, formatRegulationResponse } from './regulation/responseFormatters';
 import { findStaticRegulationMatch } from './regulation/staticRegulations';
 import { checkRegulationExists } from '@/utils/regulationUtils';
-import { handleFallProtectionQuery } from './regulationMatching';
+import { logRegulationMatchFailure } from './regulation/loggingOperations';
+import { handleFallProtectionQuery, isDirectRegulationCitation, extractRegulationNumber } from './regulation/fallProtection';
 
-// Re-export for backward compatibility
+// Export all the components for backward compatibility
 export {
   findExactRegulationMatch,
   findRegulationsByKeywords,
+  findRegulationsByIndustry,
   extractKeyTerms,
   findIndustryTerms,
   formatRegulationsResponse,
@@ -20,5 +24,7 @@ export {
   findStaticRegulationMatch,
   checkRegulationExists,
   logRegulationMatchFailure,
-  handleFallProtectionQuery
+  handleFallProtectionQuery,
+  isDirectRegulationCitation,
+  extractRegulationNumber
 };
