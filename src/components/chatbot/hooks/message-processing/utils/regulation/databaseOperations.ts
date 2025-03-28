@@ -83,6 +83,7 @@ export const logRegulationMatchFailure = async (
   userId?: string
 ): Promise<void> => {
   try {
+    // Use the newly created regulation_match_failures table
     await supabase.from('regulation_match_failures').insert({
       question,
       user_id: userId,

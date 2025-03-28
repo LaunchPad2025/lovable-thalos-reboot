@@ -355,8 +355,45 @@ export type Database = {
           },
         ]
       }
+      regulation_match_failures: {
+        Row: {
+          feedback_given: boolean | null
+          id: string
+          matched_keywords: string[] | null
+          notes: string | null
+          question: string
+          reviewed: boolean | null
+          suggested_category: string | null
+          timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          feedback_given?: boolean | null
+          id?: string
+          matched_keywords?: string[] | null
+          notes?: string | null
+          question: string
+          reviewed?: boolean | null
+          suggested_category?: string | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          feedback_given?: boolean | null
+          id?: string
+          matched_keywords?: string[] | null
+          notes?: string | null
+          question?: string
+          reviewed?: boolean | null
+          suggested_category?: string | null
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       regulations: {
         Row: {
+          alt_phrases: string[] | null
           applicable_to: string[] | null
           authority: string | null
           category: string | null
@@ -383,6 +420,7 @@ export type Database = {
           version: string | null
         }
         Insert: {
+          alt_phrases?: string[] | null
           applicable_to?: string[] | null
           authority?: string | null
           category?: string | null
@@ -409,6 +447,7 @@ export type Database = {
           version?: string | null
         }
         Update: {
+          alt_phrases?: string[] | null
           applicable_to?: string[] | null
           authority?: string | null
           category?: string | null
