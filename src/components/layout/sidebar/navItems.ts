@@ -1,113 +1,166 @@
-
-import { 
-  Home, 
-  FileText, 
-  Bell, 
-  Settings, 
-  CheckSquare, 
-  AlertTriangle, 
-  FileQuestion,
-  ClipboardList,
-  BarChart2,
-  BookOpen,
+import {
+  Home,
+  LayoutDashboard,
   Users,
-  HelpCircle,
+  ShieldAlert,
   MessageSquare,
+  ListChecks,
+  FileText,
+  Calendar,
+  Settings,
+  Book,
+  AlertTriangle,
+  TrendingUp,
+  Package,
+  HelpCircle,
+  BarChart2,
+  PieChart,
   ShieldCheck,
-  CreditCard
+  File,
+  MessageSquarePlus
 } from "lucide-react";
-import { NavItem } from "./types";
 
-export const getNavItems = (): NavItem[] => [
+export const navItems = [
   {
-    title: "Dashboard",
-    path: "/dashboard",
-    icon: Home,
-    roles: ["admin", "safety_officer", "worker"]
+    title: "Main",
+    items: [
+      {
+        title: "Dashboard",
+        href: "/dashboard",
+        icon: LayoutDashboard,
+        description: "Get an overview of your account",
+      },
+    ],
   },
   {
-    title: "Violations",
-    path: "/violations",
-    icon: AlertTriangle,
-    roles: ["admin", "safety_officer", "worker"]
+    title: "AI",
+    items: [
+      {
+        title: "AI Assistant",
+        href: "/chatbot",
+        icon: MessageSquarePlus,
+        description: "Interact with the AI assistant",
+      },
+    ],
   },
   {
-    title: "Tasks",
-    path: "/tasks",
-    icon: CheckSquare,
-    roles: ["admin", "safety_officer", "worker"]
+    title: "Safety",
+    items: [
+      {
+        title: "Violations",
+        href: "/violations",
+        icon: ShieldAlert,
+        description: "Manage safety violations",
+      },
+      {
+        title: "Tasks",
+        href: "/tasks",
+        icon: ListChecks,
+        description: "Manage safety tasks",
+      },
+      {
+        title: "Regulations",
+        href: "/regulations",
+        icon: Book,
+        description: "View safety regulations",
+      },
+    ],
   },
   {
-    title: "Risk Assessment",
-    path: "/risk-assessment",
-    icon: FileQuestion,
-    roles: ["admin", "safety_officer", "worker"]
-  },
-  {
-    title: "Documents",
-    path: "/documents",
-    icon: FileText,
-    roles: ["admin", "safety_officer", "worker"]
-  },
-  {
-    title: "Notifications",
-    path: "/notifications",
-    icon: Bell,
-    roles: ["admin", "safety_officer", "worker"]
-  },
-  {
-    title: "Audits",
-    path: "/audits",
-    icon: ClipboardList,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
-  },
-  {
-    title: "Reports",
-    path: "/reports",
-    icon: BarChart2,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
-  },
-  {
-    title: "Training",
-    path: "/training",
-    icon: BookOpen,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
+    title: "Content",
+    items: [
+      {
+        title: "Documents",
+        href: "/docs",
+        icon: FileText,
+        description: "Manage documents",
+      },
+      {
+        title: "Audits",
+        href: "/audits",
+        icon: AlertTriangle,
+        description: "Manage audits",
+      },
+      {
+        title: "Training",
+        href: "/training",
+        icon: Calendar,
+        description: "Manage training",
+      },
+    ],
   },
   {
     title: "Admin",
-    path: "/admin",
-    icon: ShieldCheck,
-    roles: ["admin"],
-    badge: "Soon"
+    items: [
+      {
+        title: "Users",
+        href: "/admin",
+        icon: Users,
+        description: "Manage users",
+      },
+      {
+        title: "Models",
+        href: "/models",
+        icon: Package,
+        description: "Manage models",
+      },
+      {
+        title: "Settings",
+        href: "/settings",
+        icon: Settings,
+        description: "Manage settings",
+      },
+    ],
   },
   {
-    title: "Copilot",
-    path: "/chatbot",
-    icon: MessageSquare,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "AI"
+    title: "Reports",
+    icon: "bar-chart-2",
+    href: "",
+    items: [
+      {
+        title: "Analytics",
+        href: "/coming-soon?feature=Analytics",
+        icon: "pie-chart"
+      },
+      {
+        title: "Compliance",
+        href: "/coming-soon?feature=Compliance+Reports",
+        icon: "shield-check"
+      },
+      {
+        title: "Export",
+        href: "/coming-soon?feature=Report+Export",
+        icon: "file-text"
+      },
+      {
+        title: "Paulie Feedback",
+        href: "/feedback",
+        icon: "message-square"
+      }
+    ]
   },
   {
     title: "Subscription",
-    path: "/subscription",
-    icon: CreditCard,
-    roles: ["admin"],
-    badge: "Soon"
+    items: [
+      {
+        title: "Subscription",
+        href: "/subscription",
+        icon: TrendingUp,
+        description: "Manage subscription",
+      },
+    ],
   },
   {
-    title: "Settings",
-    path: "/settings",
-    icon: Settings,
-    roles: ["admin", "safety_officer", "worker"]
+    title: "Help",
+    items: [
+      {
+        title: "Documentation",
+        href: "/documentation",
+        icon: HelpCircle,
+        description: "View documentation",
+      },
+    ],
   },
-  {
-    title: "Help & Tour",
-    path: "/help",
-    icon: HelpCircle,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
-  }
 ];
+
+export type NavItem = (typeof navItems)[0];

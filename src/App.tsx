@@ -1,146 +1,80 @@
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from "@/components/theme-provider"
+import Home from './pages/Home';
+import Signup from './pages/Signup';
+import Auth from './pages/Auth';
+import Onboarding from './pages/Onboarding';
+import Dashboard from './pages/Dashboard';
+import Admin from './pages/Admin';
+import Chatbot from './pages/Chatbot';
+import ViolationsPage from './pages/ViolationsPage';
+import Tasks from './pages/Tasks';
+import Regulations from './pages/Regulations';
+import Documents from './pages/Documents';
+import Audits from './pages/Audits';
+import RiskAssessment from './pages/RiskAssessment';
+import Training from './pages/Training';
+import Models from './pages/Models';
+import Notifications from './pages/Notifications';
+import Settings from './pages/Settings';
+import Subscription from './pages/Subscription';
+import DocumentationRoutes from './pages/documentation/DocumentationRoutes';
+import SidebarExamples from './pages/SidebarExamples';
+import Demo from './pages/DemoDashboard';
+import Legal from './pages/Legal';
+import ComingSoon from './pages/ComingSoon';
+import NotFound from './pages/NotFound';
+import { AuthProvider } from './contexts/AuthContext';
+import { Toaster } from "@/components/ui/toaster"
+import {
+  QueryClient,
+  QueryClientProvider,
+} from '@tanstack/react-query'
+import PaulieFeedback from './pages/feedback/PaulieFeedback';
 
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { AuthProvider, useAuth } from "@/context/auth";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
-import { ThemeProvider } from "@/providers/ThemeProvider";
-import DemoDashboard from './components/DemoDashboard'; 
-
-// Pages
-import Dashboard from "./pages/Dashboard";
-import Violations from "./pages/violations";
-import Tasks from "./pages/Tasks";
-import Chatbot from "./pages/Chatbot";
-import Subscription from "./pages/Subscription";
-import ComingSoon from "./pages/ComingSoon";
-import NotFound from "./pages/NotFound";
-import Settings from "./pages/Settings";
-import Auth from "./pages/Auth";
-import Onboarding from "./pages/Onboarding";
-import Regulations from "./pages/Regulations";
-import Models from "./pages/Models";
-import Legal from "./pages/Legal";
-import SidebarExamples from "./pages/SidebarExamples";
-import RiskAssessment from "./pages/RiskAssessment";
-import Documents from "./pages/Documents";
-import Notifications from "./pages/Notifications";
-import Training from "./pages/Training";
-import Audits from "./pages/Audits";
-import Admin from "./pages/Admin";
-import Index from "./pages/Index";
-
-// Documentation Pages
-import { 
-  Features, 
-  Pricing, 
-  Integrations, 
-  Updates, 
-  HelpCenter, 
-  Guides, 
-  ApiDocs, 
-  AboutUs, 
-  Careers, 
-  Contact,
-  Legal as LegalDocs
-} from "./pages/documentation";
-
-// Layout
-import AppLayout from "./layouts/AppLayout";
-
-const queryClient = new QueryClient();
-
-// Onboarding check wrapper
-const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return null;
-
-  // Fix: Access onboarded property from user_metadata instead of directly on user
-  if (user && user.user_metadata?.onboarded === false) {
-    return <Navigate to="/onboarding" replace />;
-  }
-
-  return <>{children}</>;
-};
+const queryClient = new QueryClient()
 
 function App() {
-  console.log("Thalos app rendering");
-  const [appReady, setAppReady] = useState(false);
-  
-  // Ensure app is ready after a short delay
-  useEffect(() => {
-    console.log("Thalos app mounting");
-    const timer = setTimeout(() => {
-      console.log("Thalos app ready");
-      setAppReady(true);
-    }, 200);
-    
-    return () => {
-      clearTimeout(timer);
-      console.log("Thalos app unmounting");
-    };
-  }, []);
-  
   return (
-    <div className="app">
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider attribute="class" defaultTheme="dark">
+        <div className="app-container">
           <AuthProvider>
-            <TooltipProvider>
+            <QueryClientProvider client={queryClient}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/login" element={<Auth />} />
+                <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/chatbot" element={<Chatbot />} />
+                <Route path="/violations" element={<ViolationsPage />} />
+                <Route path="/tasks" element={<Tasks />} />
+                <Route path="/regulations" element={<Regulations />} />
+                <Route path="/docs" element={<Documents />} />
+                <Route path="/audits" element={<Audits />} />
+                <Route path="/risk-assessment" element={<RiskAssessment />} />
+                <Route path="/training" element={<Training />} />
+                <Route path="/models" element={<Models />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/subscription" element={<Subscription />} />
+                <Route path="/documentation/*" element={<DocumentationRoutes />} />
+                <Route path="/sidebar-examples" element={<SidebarExamples />} />
+                <Route path="/demo" element={<Demo />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/coming-soon" element={<ComingSoon />} />
+                <Route path="/feedback" element={<PaulieFeedback />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
               <Toaster />
-              <BrowserRouter>
-                <Routes>
-                  {/* Public routes - These don't use AppLayout */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/demo" element={<DemoDashboard />} />
-                  
-                  {/* Documentation routes */}
-                  <Route path="/documentation/features" element={<Features />} />
-                  <Route path="/documentation/pricing" element={<Pricing />} />
-                  <Route path="/documentation/integrations" element={<Integrations />} />
-                  <Route path="/documentation/updates" element={<Updates />} />
-                  <Route path="/documentation/help-center" element={<HelpCenter />} />
-                  <Route path="/documentation/guides" element={<Guides />} />
-                  <Route path="/documentation/api-docs" element={<ApiDocs />} />
-                  <Route path="/documentation/about-us" element={<AboutUs />} />
-                  <Route path="/documentation/careers" element={<Careers />} />
-                  <Route path="/documentation/contact" element={<Contact />} />
-                  <Route path="/documentation/legal" element={<LegalDocs />} />
-
-                  {/* Protected routes with layout */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route element={<AppLayout />}>
-                      <Route path="dashboard" element={<OnboardingCheck><Dashboard /></OnboardingCheck>} />
-                      <Route path="violations" element={<OnboardingCheck><Violations /></OnboardingCheck>} />
-                      <Route path="tasks" element={<OnboardingCheck><Tasks /></OnboardingCheck>} />
-                      <Route path="risk-assessment" element={<OnboardingCheck><RiskAssessment /></OnboardingCheck>} />
-                      <Route path="documents" element={<OnboardingCheck><Documents /></OnboardingCheck>} />
-                      <Route path="notifications" element={<OnboardingCheck><Notifications /></OnboardingCheck>} />
-                      <Route path="audits" element={<OnboardingCheck><Audits /></OnboardingCheck>} />
-                      <Route path="training" element={<OnboardingCheck><Training /></OnboardingCheck>} />
-                      <Route path="chatbot" element={<OnboardingCheck><Chatbot /></OnboardingCheck>} />
-                      <Route path="subscription" element={<OnboardingCheck><Subscription /></OnboardingCheck>} />
-                      <Route path="settings" element={<OnboardingCheck><Settings /></OnboardingCheck>} />
-                      <Route path="admin" element={<OnboardingCheck><Admin /></OnboardingCheck>} />
-                      <Route path="regulations" element={<OnboardingCheck><Regulations /></OnboardingCheck>} />
-                      <Route path="models" element={<OnboardingCheck><Models /></OnboardingCheck>} />
-                      <Route path="sidebar-examples" element={<OnboardingCheck><SidebarExamples /></OnboardingCheck>} />
-                      <Route path="*" element={<NotFound />} />
-                    </Route>
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
+            </QueryClientProvider>
           </AuthProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </div>
+        </div>
+      </ThemeProvider>
+    </BrowserRouter>
   );
 }
 
