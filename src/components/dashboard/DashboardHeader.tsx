@@ -2,12 +2,14 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { HelpCircle } from 'lucide-react';
+import { HelpCircle, MessageCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardHeader = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
@@ -26,6 +28,10 @@ const DashboardHeader = () => {
       duration: 3000,
     });
   };
+  
+  const handleChatWithPaulie = () => {
+    navigate('/chatbot');
+  };
 
   return (
     <header className="bg-[#0d1117] border-b border-gray-800 p-6">
@@ -37,6 +43,14 @@ const DashboardHeader = () => {
               <p className="text-gray-400 text-sm">Overview of your safety compliance status</p>
             </div>
             <div className="flex gap-3">
+              <Button 
+                variant="outline" 
+                className="border-gray-700 text-gray-300 hover:bg-blue-900/20 hover:text-blue-300"
+                onClick={handleChatWithPaulie}
+              >
+                <MessageCircle className="h-5 w-5 mr-2" />
+                Chat with Paulie
+              </Button>
               <Button variant="outline" 
                 className="border-gray-700 text-gray-300" 
                 size="icon"

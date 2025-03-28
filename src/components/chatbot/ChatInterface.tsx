@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useRef } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import MessageList from '@/components/chatbot/messages/MessageList';
 import MessageInput from '@/components/chatbot/input/MessageInput';
@@ -12,6 +12,25 @@ interface ChatInterfaceProps {
 
 const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
   const { messages, isLoading, handleSendMessage } = useChatMessages();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileSelect = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Clear the input value so the same file can be uploaded again if needed
+      e.target.value = '';
+      
+      // Add a default message if the user is only uploading an image without text
+      const defaultMessage = "Can you analyze this image for safety violations?";
+      handleSendMessage(defaultMessage, file);
+    }
+  };
 
   return (
     <Card className="flex flex-col h-full border-none shadow-none bg-transparent">
@@ -19,7 +38,18 @@ const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
         <div className="flex-1 overflow-auto mb-4">
           <MessageList messages={messages} isLoading={isLoading} />
         </div>
-        <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
+        <MessageInput 
+          onSendMessage={handleSendMessage} 
+          isLoading={isLoading} 
+          onFileSelect={handleFileSelect}
+        />
+        <input
+          type="file"
+          ref={fileInputRef}
+          onChange={handleFileChange}
+          accept="image/*"
+          className="hidden"
+        />
       </CardContent>
     </Card>
   );
