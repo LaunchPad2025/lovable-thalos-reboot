@@ -51,13 +51,10 @@ export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: st
       setIsSubmitting(true);
       
       // Include selected plan in user metadata if applicable
-      const metadata = {
-        name: values.name,
-        ...(selectedPlan ? { selectedPlan } : {})
-      };
+      const additionalMetadata = selectedPlan ? { selectedPlan } : {};
       
-      // Call signUp with the correct parameter order
-      await signUp(values.email, values.password, values.name, metadata);
+      // Call signUp with the correct parameter count
+      await signUp(values.email, values.password, values.name, additionalMetadata);
       
       setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
       // Don't navigate yet, let them confirm their email first
