@@ -72,7 +72,9 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (queryData) {
         // Transform the data to a known type
-        for (const item of queryData) {
+        const typedQueryData = queryData as unknown as PaulieQueryRow[];
+        
+        for (const item of typedQueryData) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           

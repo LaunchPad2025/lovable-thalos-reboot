@@ -2,20 +2,18 @@
 import React, { useState } from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
-import { HelpCircle, MessageCircle } from 'lucide-react';
+import { HelpCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
-import { useNavigate } from 'react-router-dom';
 
 const DashboardHeader = () => {
   const [activeTab, setActiveTab] = useState('personal');
   const { toast } = useToast();
-  const navigate = useNavigate();
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);
     // In a real implementation, this would fetch different data
     toast({
-      title: `${value === 'personal' ? 'Personal' : 'Organization'} dashboard selected`,
+      title: `${value === 'personal' ? 'My Dashboard' : 'Organization'} selected`,
       description: "This would load different data in a production environment.",
       duration: 3000,
     });
@@ -27,10 +25,6 @@ const DashboardHeader = () => {
       description: "This would start an interactive tour of the dashboard features.",
       duration: 3000,
     });
-  };
-  
-  const handleChatWithPaulie = () => {
-    navigate('/chatbot');
   };
 
   return (
@@ -45,11 +39,9 @@ const DashboardHeader = () => {
             <div className="flex gap-3">
               <Button 
                 variant="outline" 
-                className="border-gray-700 text-gray-300 hover:bg-blue-900/20 hover:text-blue-300"
-                onClick={handleChatWithPaulie}
+                className="bg-blue-600 hover:bg-blue-700 text-white"
               >
-                <MessageCircle className="h-5 w-5 mr-2" />
-                Chat with Paulie
+                Upgrade Plan
               </Button>
               <Button variant="outline" 
                 className="border-gray-700 text-gray-300" 
