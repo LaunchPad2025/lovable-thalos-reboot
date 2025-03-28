@@ -19,6 +19,12 @@ export interface UseAuthMethodsProps {
   setUser: (user: User | null) => void;
 }
 
+export interface UseAuthListenersProps {
+  setUser: (user: User | null) => void;
+  setSession: (session: Session | null) => void;
+  setLoading: (loading: boolean) => void;
+}
+
 export interface AuthContextType {
   user: User | null;
   session: Session | null;
