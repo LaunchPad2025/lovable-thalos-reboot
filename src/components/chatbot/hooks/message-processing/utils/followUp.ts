@@ -71,5 +71,5 @@ export const handleFollowUpQuestion = (recentTopics: string[], query: string, pr
   return null;
 };
 
-// Import from the file we'll create next
-import { safetyRegulationResponses } from '../../data/safetyRegulationData';
+// Import from the proper location
+import { safetyRegulationResponses } from '../../../data/safetyRegulationData';

@@ -1,5 +1,6 @@
 
-import { safetyRegulationResponses } from '../../data/safetyRegulationData';
+// Import from the proper location
+import { safetyRegulationResponses } from '../../../data/safetyRegulationData';
 
 /**
  * Check for exact matches in regulatory database

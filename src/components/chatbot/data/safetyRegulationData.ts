@@ -1,5 +1,6 @@
 
-// This file simulates data that would be fed from our AI models and regulatory database
+// This file was missing in the previous refactoring
+// Moving it from the root to the appropriate location
 
 export interface SafetyRegulation {
   id: string;
