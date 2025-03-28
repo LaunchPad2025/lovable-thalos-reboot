@@ -3,9 +3,9 @@
  * Process the message content to make it more conversational and friendly
  * Enhances formal responses with more natural phrases
  */
-import { getConversationStarter, needsConversationStarter } from './conversationalStarters';
-import { replaceFormalPhrases } from './formalPhraseReplacer';
-import { getHelpfulClosing, needsHelpfulClosing } from './helpfulClosings';
+import { getConversationStarter, needsConversationStarter } from './starters';
+import { replaceFormalPhrases } from './phrases';
+import { getHelpfulClosing, needsHelpfulClosing } from './closings';
 
 export function enhanceResponseTone(content: string): string {
   // If the response is very short, it might be an error message, so leave it as is
