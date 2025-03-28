@@ -27,18 +27,31 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) =
     cancelFeedback 
   } = useChatFeedback();
 
+  // Extract regulation citations if present in AI responses
+  const hasCitation = !isUser && 
+    (message.content.includes('CFR') || 
+     message.content.includes('OSHA') || 
+     message.content.includes('1910.'));
+
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 last:mb-2`}>
-      <div className={`flex max-w-[80%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`flex items-center justify-center h-8 w-8 rounded-full flex-shrink-0 ${isUser ? 'ml-2 bg-blue-600' : 'mr-2 bg-gray-700'}`}>
+      <div className={`flex max-w-[85%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
+        <div className={`flex items-center justify-center h-8 w-8 rounded-full flex-shrink-0 ${isUser ? 'ml-2 bg-blue-600' : 'mr-2 bg-yellow-500'}`}>
           {isUser ? <User className="h-4 w-4 text-white" /> : <Bot className="h-4 w-4 text-white" />}
         </div>
         
-        <div className={`px-4 py-2 rounded-lg ${isUser ? 'bg-blue-600 text-white' : 'bg-gray-800 text-gray-100'}`}>
+        <div className={`px-4 py-3 rounded-lg ${
+          isUser 
+            ? 'bg-blue-600 text-white' 
+            : 'bg-gray-800 text-gray-100 border border-gray-700'
+        }`}>
           {isUser ? (
             <p className="whitespace-pre-wrap break-words">{message.content}</p>
           ) : (
             <>
+              {hasCitation && (
+                <div className="text-xs text-yellow-500 mb-1">Contains regulatory citations</div>
+              )}
               <ReactMarkdown 
                 components={{
                   a: ({ node, ...props }) => (
@@ -63,6 +76,9 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) =
                   ),
                   pre: ({ node, ...props }) => (
                     <pre {...props} className="bg-gray-900 p-2 rounded my-2 overflow-x-auto" />
+                  ),
+                  strong: ({ node, ...props }) => (
+                    <strong {...props} className="font-bold text-yellow-400" />
                   ),
                 }}
               >

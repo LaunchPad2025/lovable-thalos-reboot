@@ -7,11 +7,11 @@ const Chatbot = () => {
   return (
     <PageContainer>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-white">Chat with Paulie</h1>
-        <p className="text-gray-400">Ask questions about workplace safety regulations, compliance, and get personalized guidance.</p>
+        <h1 className="text-2xl font-bold text-white">Paulie</h1>
+        <p className="text-gray-400">Your AI assistant for safety regulations and compliance guidance</p>
       </div>
       
-      <div className="h-[calc(100vh-12rem)] bg-[#0d1117] border border-gray-800 rounded-lg p-4">
+      <div className="h-[calc(100vh-12rem)] bg-[#0d1117] border border-gray-800 rounded-lg overflow-hidden">
         <ChatInterface />
       </div>
     </PageContainer>
