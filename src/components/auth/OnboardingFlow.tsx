@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
@@ -22,7 +21,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 import { useOrganization } from "@/hooks/useOrganization";
 import { Loader2 } from "lucide-react";
 
@@ -85,23 +84,18 @@ export function OnboardingFlow() {
         // Extract domain from user email
         const domain = user.email.split('@')[1];
         
-        // Check if there's an organization with this domain
+        // Check if there's an organization with this domain using a direct query instead of RPC
         const { data, error } = await supabase
-          .rpc('find_organization_by_email_domain', { user_email: user.email });
+          .from('organizations')
+          .select('id, name')
+          .ilike('domain', `%${domain}%`)
+          .maybeSingle();
         
         if (error) throw error;
         
         if (data) {
           // Found an existing organization with the same email domain
-          const { data: orgData, error: orgError } = await supabase
-            .from('organizations')
-            .select('*')
-            .eq('id', data)
-            .single();
-            
-          if (orgError) throw orgError;
-          
-          setExistingOrganization(orgData);
+          setExistingOrganization(data);
           setCreateOrg(false);
         }
       } catch (error: any) {
@@ -179,6 +173,7 @@ export function OnboardingFlow() {
             name: organization,
             size: size || null,
             industries: selectedIndustries,
+            domain: companyEmail || null
           })
           .select();
           
