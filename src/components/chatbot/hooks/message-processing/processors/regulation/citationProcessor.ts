@@ -5,6 +5,7 @@ import {
   extractRegulationNumber 
 } from '../../utils/regulation';
 import { extractRequirements } from './requirementExtractor';
+import { generateOshaSourceLink } from '../../utils/regulation/responseFormatters';
 
 /**
  * Process direct regulation citations (e.g., 1910.119)
@@ -29,7 +30,7 @@ export const processCitation = async (
     // Search for the regulation by citation in code, alt_phrases or title
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, category, keywords')
+      .select('id, title, description, document_type, authority, source_url, category, keywords, code')
       .or(`code.eq.${regulationNumber},alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
       .order('updated_at', { ascending: false })
       .limit(1);
@@ -37,10 +38,14 @@ export const processCitation = async (
     if (!error && regulations && regulations.length > 0) {
       const regulation = regulations[0];
       
+      // Generate OSHA source link
+      const oshaLink = generateOshaSourceLink(regulationNumber);
+      const sourceLink = oshaLink ? `\n\n**[See full regulation: ${regulationNumber}](${oshaLink})**` : '';
+      
       // Create a detailed response with citation format
       const response = `**${regulation.document_type || 'OSHA'} ${regulationNumber} - ${regulation.title || 'Regulation'}**
 
-${regulation.description || 'This regulation establishes requirements for workplace safety and health.'}
+${regulation.description || 'This regulation establishes requirements for workplace safety and health.'}${sourceLink}
 
 Key requirements include:
 - ${extractRequirements(regulation.description, regulation.keywords).join('\n- ')}

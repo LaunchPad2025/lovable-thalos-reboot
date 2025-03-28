@@ -4,6 +4,20 @@
  */
 
 /**
+ * Generate OSHA source link based on regulation code
+ */
+export const generateOshaSourceLink = (code: string | null): string | null => {
+  if (!code) return null;
+  
+  // Extract the main parts of the code (e.g., 1910.120)
+  const match = code.match(/(\d+)\.(\d+)/);
+  if (!match) return null;
+  
+  const [_, part, section] = match;
+  return `https://www.osha.gov/laws-regs/regulations/standardnumber/${part}/${part}.${section}`;
+};
+
+/**
  * Format multiple regulations into a conversational response
  */
 export const formatRegulationsResponse = (
@@ -64,8 +78,14 @@ export const formatRegulationsResponse = (
       content += `\n${description}`;
     }
     
-    if (reg.source_url) {
-      content += `\n[Source document](${reg.source_url})`;
+    // Add regulation source link if available
+    if (reg.code) {
+      const oshaLink = generateOshaSourceLink(reg.code);
+      if (oshaLink) {
+        content += `\n\n**[See full regulation: ${reg.code}](${oshaLink})**`;
+      }
+    } else if (reg.source_url) {
+      content += `\n\n**[Source document](${reg.source_url})**`;
     }
   });
   
@@ -157,6 +177,16 @@ export const formatRegulationResponse = (
   
   if (regulation.description) {
     content += `\n\n${regulation.description}`;
+  }
+  
+  // Add regulation source link if available
+  if (regulation.code) {
+    const oshaLink = generateOshaSourceLink(regulation.code);
+    if (oshaLink) {
+      content += `\n\n**[See full regulation: ${regulation.code}](${oshaLink})**`;
+    }
+  } else if (regulation.source_url) {
+    content += `\n\n**[Source document](${regulation.source_url})**`;
   }
   
   if (regulation.authority) {

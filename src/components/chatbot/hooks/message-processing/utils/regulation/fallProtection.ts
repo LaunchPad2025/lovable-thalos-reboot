@@ -5,6 +5,7 @@
  */
 import { supabase } from '@/lib/supabase';
 import { isDirectRegulationCitation, extractRegulationNumber } from './citationMatcher';
+import { generateOshaSourceLink } from './responseFormatters';
 
 // Export the citation detection functions
 export { isDirectRegulationCitation, extractRegulationNumber };
@@ -44,7 +45,7 @@ export const handleFallProtectionQuery = async (query: string): Promise<string |
         // Try to find exact match by code
         const { data: regulations, error } = await supabase
           .from('regulations')
-          .select('id, title, description, document_type, authority, source_url, category')
+          .select('id, title, description, document_type, authority, source_url, category, code')
           .or(`code.eq.${code},alt_phrases.cs.{${code}}`)
           .limit(1);
           
@@ -73,9 +74,13 @@ const isFallProtectionCitation = (code: string): boolean => {
  * Format a response for a specific fall protection regulation
  */
 const formatFallProtectionResponse = (regulation: any, code: string): string => {
+  // Generate OSHA source link
+  const oshaLink = generateOshaSourceLink(code);
+  const sourceLink = oshaLink ? `\n\n**[See full regulation: ${code}](${oshaLink})**` : '';
+
   return `**${regulation.document_type || 'OSHA'} ${code} - ${regulation.title || 'Fall Protection Standard'}**
 
-${regulation.description || 'This regulation addresses requirements for fall protection in construction and general industry.'}
+${regulation.description || 'This regulation addresses requirements for fall protection in construction and general industry.'}${sourceLink}
 
 Key requirements include:
 - Use of fall protection systems at heights of 6 feet or more in construction (4 feet in general industry)
@@ -91,9 +96,19 @@ Would you like more information about implementing a fall protection program or 
  * Generate a general response for fall protection queries
  */
 const generateGeneralFallProtectionResponse = (query: string): string => {
+  // Generate OSHA source links for common fall protection standards
+  const constructionLink = generateOshaSourceLink('1926.501');
+  const generalIndustryLink = generateOshaSourceLink('1910.28');
+  
+  const constructionSource = constructionLink ? 
+    `\n\n**[See OSHA Construction Fall Protection Standard: 1926.501](${constructionLink})**` : '';
+  
+  const generalIndustrySource = generalIndustryLink ? 
+    `\n\n**[See OSHA General Industry Fall Protection Standard: 1910.28](${generalIndustryLink})**` : '';
+
   return `**OSHA Fall Protection Requirements**
 
-OSHA requires fall protection at heights of 6 feet or more in construction (OSHA 1926.501) and 4 feet in general industry (OSHA 1910.28).
+OSHA requires fall protection at heights of 6 feet or more in construction (OSHA 1926.501) and 4 feet in general industry (OSHA 1910.28).${constructionSource}${generalIndustrySource}
 
 Key requirements include:
 - Guardrail systems, safety net systems, or personal fall arrest systems
