@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -30,7 +31,10 @@ export function TaskCreation({ violationId, autoOpen = false }: TaskCreationProp
     console.log("TaskCreation component:", {
       user: user?.id,
       organization: organization?.organization_id,
-      orgName: organization?.organizations?.name,
+      // Fix the type issue by safely accessing the name property
+      orgName: organization?.organizations && 'name' in organization.organizations 
+        ? organization.organizations.name 
+        : 'Unknown',
       isLoadingOrg
     });
   }, [user, organization, isLoadingOrg]);
