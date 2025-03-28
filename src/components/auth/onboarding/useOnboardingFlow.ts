@@ -59,11 +59,15 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
     setIsSubmitting(true);
     
     try {
+      const onboardedAt = new Date().toISOString();
+      
       await updateUserProfile({
         role,
         industries: selectedIndustries,
         preferredModules: selectedModules,
-        onboarded: true
+        onboarded: true,
+        onboardedAt, // Add timestamp when user completes onboarding
+        subscriptionStatus: 'trial' // Set initial subscription status as trial
       });
       
       let organizationId;
@@ -116,7 +120,7 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
       
       toast({
         title: "Onboarding complete!",
-        description: "Your profile has been set up successfully. You're now on a free trial.",
+        description: "Your profile has been set up successfully. You're now on a 14-day free trial with full access.",
       });
       
       navigate(redirectUrl);
