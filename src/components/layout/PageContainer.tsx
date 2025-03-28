@@ -1,7 +1,5 @@
 
 import React, { ReactNode } from 'react';
-import { useTheme } from '@/providers/ThemeProvider';
-import { useMobile } from '@/hooks/useMobile';
 import Footer from './Footer';
 
 interface PageContainerProps {
@@ -12,9 +10,6 @@ interface PageContainerProps {
 }
 
 const PageContainer = ({ children, title, subtitle, className }: PageContainerProps) => {
-  const { sidebarCollapsed } = useTheme();
-  const isMobile = useMobile();
-  
   return (
     <div className={`flex-1 overflow-y-auto bg-background flex flex-col min-h-screen relative ${className || ''}`}>
       {(title || subtitle) && (
