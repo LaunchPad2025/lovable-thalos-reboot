@@ -5,23 +5,15 @@
 import { supabase } from '@/lib/supabase';
 import { formatRegulationsResponse } from './responseFormatters';
 import { logRegulationMatchFailure } from './loggingOperations';
+import { detectIndustryFromQuery, fetchIndustryRegulations } from './industry/industryDetector';
 
 /**
  * Find regulations by industry when no direct keyword matches are found
  */
 export const findRegulationsByIndustry = async (query: string, keyTerms: string[], userId?: string): Promise<string | null> => {
   try {
-    // Extract industry from query
-    const industryTerms = ['construction', 'manufacturing', 'healthcare', 'oil & gas', 'oil and gas', 'mining', 'agriculture', 'retail', 'laboratory', 'logistics', 'food processing'];
-    
-    let detectedIndustry = null;
-    
-    for (const industry of industryTerms) {
-      if (query.toLowerCase().includes(industry.toLowerCase())) {
-        detectedIndustry = industry;
-        break;
-      }
-    }
+    // Detect industry from the query
+    const detectedIndustry = detectIndustryFromQuery(query);
     
     if (!detectedIndustry) {
       // No industry detected, can't find industry-specific regulations
@@ -29,27 +21,12 @@ export const findRegulationsByIndustry = async (query: string, keyTerms: string[
       return null;
     }
     
-    // Standardize certain industry names
-    if (detectedIndustry === 'oil & gas' || detectedIndustry === 'oil and gas') {
-      detectedIndustry = 'oil_gas';
-    } else if (detectedIndustry === 'food processing') {
-      detectedIndustry = 'food_processing';
-    }
+    // Fetch regulations for the detected industry
+    const industryRegulations = await fetchIndustryRegulations(detectedIndustry);
     
-    // Try to find regulations by industry or industry_tags array
-    const { data: industryRegulations, error } = await supabase
-      .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry, industry_tags')
-      .or(`industry.ilike.%${detectedIndustry}%,industry_tags.cs.{${detectedIndustry}}`)
-      .order('updated_at', { ascending: false })
-      .limit(3);
-    
-    if (error || !industryRegulations || industryRegulations.length === 0) {
-      console.log('No industry-specific regulations found:', error || 'Empty result');
-      
+    if (!industryRegulations) {
       // Log the failure for industry match as well
       await logRegulationMatchFailure(query, keyTerms, userId, detectedIndustry);
-      
       return null;
     }
     

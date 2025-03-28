@@ -20,8 +20,8 @@ export {
 export const handleFallProtectionQuery = async (query: string): Promise<string | null> => {
   // This is an async version that calls the async implementation
   try {
-    // Call the async function - removing the query parameter here since it's not expected
-    const result = await handleFallProtectionQueryImpl();
+    // Call the async function with the query parameter
+    const result = await handleFallProtectionQueryImpl(query);
     if (result) {
       return result;
     }

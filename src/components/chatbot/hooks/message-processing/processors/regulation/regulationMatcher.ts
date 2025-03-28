@@ -8,7 +8,7 @@ import { generateFollowUpSuggestions } from './followUpGenerator';
 /**
  * Helper function to detect industry context from query content
  */
-const detectIndustryContext = (content: string): string | null => {
+export const detectIndustryContext = (content: string): string | null => {
   const industryKeywords = {
     'construction': ['construction', 'building', 'contractor', 'scaffold', 'excavation'],
     'manufacturing': ['manufacturing', 'factory', 'production', 'assembly', 'fabrication'],
