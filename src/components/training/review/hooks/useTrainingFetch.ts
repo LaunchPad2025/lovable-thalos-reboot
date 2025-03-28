@@ -3,6 +3,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { TrainingReviewItem, TrainingFilters } from '../types';
+import { PostgrestFilterBuilder } from '@supabase/supabase-js';
 
 // Define an interface that matches what's actually coming back from Supabase
 interface PaulieQueryRow {
@@ -33,53 +34,45 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Using "let" to build up the query instead of chaining, which reduces type complexity
-      let query = supabase.from('paulie_queries');
-      
-      // First select operation
-      query = query.select('*');
-      
-      // Basic filter condition
-      query = query.or('helpful.eq.false,review_status.eq.needs_review');
+      // Start with the base query - this will be a proper PostgrestFilterBuilder type
+      const query = supabase
+        .from('paulie_queries')
+        .select('*')
+        .or('helpful.eq.false,review_status.eq.needs_review');
       
       // Apply status filter
       if (filters.status && filters.status !== 'all') {
         if (filters.status === 'pending') {
-          query = query.is('training_status', null);
+          query.is('training_status', null);
         } else {
-          query = query.eq('training_status', filters.status);
+          query.eq('training_status', filters.status);
         }
       }
       
       // Apply industry filter
       if (filters.industry) {
-        query = query.eq('matched_category', filters.industry);
+        query.eq('matched_category', filters.industry);
       }
       
       // Apply regulation filter
       if (filters.regulation) {
-        query = query.eq('matched_regulation_id', filters.regulation);
+        query.eq('matched_regulation_id', filters.regulation);
       }
       
       // Apply search filter
       if (filters.searchQuery) {
-        query = query.or(`question.ilike.%${filters.searchQuery}%,response.ilike.%${filters.searchQuery}%`);
+        query.or(`question.ilike.%${filters.searchQuery}%,response.ilike.%${filters.searchQuery}%`);
       }
       
-      // Cast the query result to a known type to prevent TypeScript from calculating deep types
-      // This avoids the "excessively deep and possibly infinite" error
-      const result = await query;
-      const { data: queryData, error } = result as unknown as { 
-        data: PaulieQueryRow[] | null;
-        error: any;
-      };
+      // Execute the query
+      const { data: queryData, error } = await query;
       
       if (error) throw error;
       
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        for (const item of queryData) {
+        for (const item of queryData as PaulieQueryRow[]) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           
