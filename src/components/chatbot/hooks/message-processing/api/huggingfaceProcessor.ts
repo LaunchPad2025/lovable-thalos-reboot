@@ -2,7 +2,7 @@
 import { Message } from '../../../types';
 import { processWithHuggingFace, suggestFollowUpQuestions } from '@/utils/huggingfaceUtils';
 import { isFollowUpQuestion } from '../utils/follow-up';
-import { generateFollowUpQuestions } from '@/utils/conversation/followUpSuggestions';
+import { generateFollowUpQuestions } from '@/utils/conversationUtils';
 
 /**
  * Process message using Hugging Face API with improved context handling

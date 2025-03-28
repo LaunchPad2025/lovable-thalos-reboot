@@ -1,6 +1,6 @@
 
 import { prepareConversationContext } from './conversation/formatContext';
-import { enhanceResponseTone } from './conversation/enhanceTone';
+import { enhanceResponseTone } from './conversation/tone/enhanceTone';
 import { generateFollowUpQuestions } from './conversation/follow-up-suggestions';
 import { extractSafetyTopics } from './conversation/topicExtraction';
 
