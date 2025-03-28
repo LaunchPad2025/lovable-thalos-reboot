@@ -18,6 +18,35 @@ const DemoPage = () => {
     setImagePreview(results.imagePreview);
   };
 
+  // Create a mock violation result that matches the expected format
+  const createMockViolationResult = (imageUrl: string | null) => {
+    return [
+      {
+        id: "demo-violation-1",
+        severity: "medium",
+        timestamp: new Date().toISOString(),
+        description: "Simulated safety violation analysis for demo purposes.",
+        image_url: imageUrl,
+        detections: imageUrl ? [
+          {
+            id: "detection-1",
+            label: "missing_hardhat",
+            confidence: 0.89,
+            bbox: [50, 30, 100, 150]
+          },
+          {
+            id: "detection-2",
+            label: "unsafe_ladder_position",
+            confidence: 0.76,
+            bbox: [200, 180, 120, 90]
+          }
+        ] : [],
+        location: "Construction Site - Demo",
+        industry: "Construction"
+      }
+    ];
+  };
+
   return (
     <PageContainer>
       <div className="fixed top-0 left-0 w-full bg-yellow-500 text-center py-1 z-50">
@@ -76,7 +105,10 @@ const DemoPage = () => {
                 hideModelSelection={true}
               />
             ) : (
-              <ViolationResults imagePreview={imagePreview} onReset={() => setUploadComplete(false)} />
+              <ViolationResults 
+                results={createMockViolationResult(imagePreview)} 
+                onSave={() => setUploadComplete(false)} 
+              />
             )}
           </div>
         </ViolationAnalysisProvider>
