@@ -63,6 +63,28 @@ export const safetyKeywords: Record<string, string[]> = {
     "What testing is required before confined space entry?",
     "Who needs to be involved in a confined space entry?",
     "What rescue provisions are required for confined spaces?"
+  ],
+  
+  // Regulation citation related keywords
+  '1910.119': [
+    "What are the 14 elements of PSM required by 1910.119?",
+    "How do we implement Process Safety Information for 1910.119?",
+    "What Management of Change procedures are required by 1910.119?"
+  ],
+  '1926.501': [
+    "What are the guardrail specifications in 1926.501?",
+    "What fall protection is required for roofing work under 1926.501?",
+    "How do we document fall protection training for 1926.501 compliance?"
+  ],
+  '1910.1200': [
+    "What are the SDS requirements in 1910.1200?",
+    "How do we implement GHS labeling under 1910.1200?",
+    "What employee training is required by 1910.1200?"
+  ],
+  '1910.147': [
+    "What are the key elements of a compliant lockout/tagout program?",
+    "What periodic inspections are required for 1910.147 compliance?",
+    "Who needs to be trained on LOTO procedures under 1910.147?"
   ]
 };
 
