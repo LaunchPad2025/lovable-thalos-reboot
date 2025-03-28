@@ -64,37 +64,33 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (error) throw error;
       
-      // Simplify the type handling to avoid deep instantiation issues
+      // Transform the data without deep type recursion
       const formattedData: TrainingReviewItem[] = [];
       
-      // Use simple for-of loop to avoid complex type mapping
       if (queryData) {
-        for (const item of queryData) {
-          // Cast item to any to avoid type checking issues
-          const rawItem = item as any;
-          
+        for (const item of queryData as PaulieQueryRow[]) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           
-          if (rawItem.training_status === 'approved' || 
-              rawItem.training_status === 'rejected' || 
-              rawItem.training_status === 'rewritten') {
-            status = rawItem.training_status;
+          if (item.training_status === 'approved' || 
+              item.training_status === 'rejected' || 
+              item.training_status === 'rewritten') {
+            status = item.training_status;
           }
           
           formattedData.push({
-            id: rawItem.id,
-            question: rawItem.question || '',
-            response: rawItem.response || '',
-            matched_regulation: rawItem.matched_regulation_id || '',
-            industry: rawItem.matched_category || '',
-            feedback: rawItem.notes || '',
+            id: item.id,
+            question: item.question || '',
+            response: item.response || '',
+            matched_regulation: item.matched_regulation_id || '',
+            industry: item.matched_category || '',
+            feedback: item.notes || '',
             status: status,
-            review_status: rawItem.review_status as 'needs_review' | 'improved' | 'escalated' | null,
-            matched_keywords: rawItem.matched_keywords || [],
-            created_at: rawItem.created_at,
-            improved_response: rawItem.improved_response || '',
-            rejection_reason: rawItem.rejection_reason
+            review_status: item.review_status as 'needs_review' | 'improved' | 'escalated' | null,
+            matched_keywords: item.matched_keywords || [],
+            created_at: item.created_at,
+            improved_response: item.improved_response || '',
+            rejection_reason: item.rejection_reason
           });
         }
       }

@@ -10,11 +10,11 @@ import {
   SelectValue 
 } from '@/components/ui/select';
 import { RefreshCw, Search } from 'lucide-react';
-import { MediaViolationFilters } from './types';
+import type { MediaViolationFilters as MediaViolationFiltersType } from './types';
 
 interface FiltersProps {
-  filters: MediaViolationFilters;
-  onFilterChange: (filters: Partial<MediaViolationFilters>) => void;
+  filters: MediaViolationFiltersType;
+  onFilterChange: (filters: Partial<MediaViolationFiltersType>) => void;
   onRefresh: () => void;
   loading: boolean;
   industries: string[];
