@@ -38,7 +38,7 @@ const HeroSection = () => {
           </Button>
           
           <Button 
-            onClick={() => window.open('https://cal.com/annieeser/30min', '_blank')}
+            onClick={() => window.open('https://cal.com/annieeser/30min', '_blank', 'noopener,noreferrer')}
             variant="outline" 
             className="border-blue-700/50 text-white hover:bg-blue-900/30 px-8 py-6 rounded-md flex items-center justify-center text-lg"
           >
