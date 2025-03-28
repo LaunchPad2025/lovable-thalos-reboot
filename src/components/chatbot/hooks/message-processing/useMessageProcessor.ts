@@ -33,9 +33,11 @@ export const useMessageProcessor = () => {
         console.log("Using local fallback response generator");
       }
       
-      // Check if response needs enhancement
+      // Generate local response for comparison/enhancement
       const localResponse = generateAIResponse(content, allMessages);
-      aiResponse = enhanceResponse(aiResponse, localResponse);
+      
+      // Check if response needs enhancement, now passing conversation history for context
+      aiResponse = enhanceResponse(aiResponse, localResponse, allMessages);
       
       // Add AI response to messages
       const assistantMessage: Message = {

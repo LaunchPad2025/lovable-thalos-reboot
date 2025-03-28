@@ -101,6 +101,11 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
     suggestions.push('Would you like to see a sample safety checklist for this topic?');
   }
   
+  // Add a specific practical follow-up
+  if (!suggestions.some(s => s.includes("train"))) {
+    suggestions.push('What training should our employees receive on this topic?');
+  }
+  
   // Make sure we're not repeating suggestions
   return [...new Set(suggestions)].slice(0, 3); 
 }
