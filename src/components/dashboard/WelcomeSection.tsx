@@ -10,7 +10,7 @@ const WelcomeSection = () => {
   
   return (
     <div className="bg-[#0d1117] border border-gray-800 rounded-lg p-6">
-      <h2 className="text-xl font-bold text-white mb-2">Welcome back, {displayName} Eser!</h2>
+      <h2 className="text-xl font-bold text-white mb-2">Welcome back, {displayName}!</h2>
       <p className="text-gray-400">Here's an overview of your safety compliance status and tasks</p>
     </div>
   );
