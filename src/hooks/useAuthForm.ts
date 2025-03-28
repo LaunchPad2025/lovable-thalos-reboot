@@ -51,17 +51,14 @@ export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: st
       setIsSubmitting(true);
       
       // Include selected plan in user metadata if applicable
-      const metadata: Record<string, any> = {
-        name: values.name
+      const metadata = {
+        name: values.name,
+        ...(selectedPlan ? { selectedPlan } : {})
       };
       
-      if (selectedPlan) {
-        // Add selectedPlan to metadata
-        metadata.selectedPlan = selectedPlan;
-      }
-      
-      // Call signUp with correct parameter order
+      // Call signUp with the correct parameter order
       await signUp(values.email, values.password, values.name, metadata);
+      
       setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
       // Don't navigate yet, let them confirm their email first
     } catch (error: any) {
