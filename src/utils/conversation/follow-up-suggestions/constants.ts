@@ -45,6 +45,31 @@ export const safetyKeywords = {
     'Should I help you create a chemical storage compatibility chart?',
     'Do you need a template for a chemical spill response plan?'
   ],
+  'hazcom': [
+    'Would you like a chemical labeling compliance guide?',
+    'Should I help you create an SDS management system?',
+    'Do you need a GHS pictogram quick reference chart?'
+  ],
+  'confined space': [
+    'Would you like a confined space entry permit template?',
+    'Should I help you develop atmospheric testing procedures?',
+    'Do you need a confined space rescue plan outline?'
+  ],
+  'respiratory': [
+    'Would you like a respirator selection flowchart?',
+    'Should I help you create a respiratory protection program?',
+    'Do you need a fit testing documentation form?'
+  ],
+  'excavation': [
+    'Would you like a daily excavation inspection form?',
+    'Should I help you create a soil classification guide?',
+    'Do you need protective system selection guidance?'
+  ],
+  'bloodborne': [
+    'Would you like an exposure control plan template?',
+    'Should I help you create a sharps injury log?',
+    'Do you need bloodborne pathogens training materials?'
+  ],
   'training': [
     'Would you like a downloadable training documentation template?', 
     'Should I help you develop a training effectiveness evaluation form?',
@@ -129,18 +154,39 @@ export const safetyKeywords = {
     'Would you like a downloadable annual safety training calendar template?',
     'Should I help you organize your training schedule by priority?',
     'Do you need a regulatory-based training frequency guide?'
+  ],
+  'ladder': [
+    'Would you like a ladder inspection checklist?',
+    'Should I help you create a ladder safety training guide?',
+    'Do you need a poster showing proper ladder setup angles?'
+  ],
+  'electrical': [
+    'Would you like an electrical safety program template?',
+    'Should I help you create a lockout/tagout procedure for electrical equipment?',
+    'Do you need an arc flash hazard assessment guide?'
+  ],
+  'fire': [
+    'Would you like a fire extinguisher inspection log?',
+    'Should I help you create an emergency evacuation plan?',
+    'Do you need a fire prevention plan template?'
+  ],
+  'recordkeeping': [
+    'Would you like an OSHA recordkeeping decision flowchart?',
+    'Should I help you create an injury and illness log template?',
+    'Do you need guidance on determining work-relatedness?'
   ]
 };
 
 // Industry-specific recommendations for more targeted follow-ups
 export const industrySpecificKeywords = {
-  'construction': ['fall protection', 'scaffolding', 'trenching', 'silica', 'crane', 'ladder'],
-  'healthcare': ['bloodborne', 'patient handling', 'sharps', 'hazardous drugs', 'radiation'],
-  'manufacturing': ['machine guarding', 'lockout', 'ergonomics', 'confined space', 'robotics'],
-  'warehouse': ['forklift', 'pallet jack', 'racking', 'ergonomics', 'loading dock'],
-  'food': ['sanitation', 'food handling', 'allergens', 'slip prevention', 'knife safety'],
-  'energy': ['confined space', 'excavation', 'hot work', 'electrical', 'fall protection'],
-  'transportation': ['driver safety', 'hours of service', 'pre-trip inspection', 'cargo securement']
+  'construction': ['fall protection', 'scaffolding', 'trenching', 'silica', 'crane', 'ladder', 'steel erection', 'demolition', 'concrete', 'rebar'],
+  'healthcare': ['bloodborne', 'patient handling', 'sharps', 'hazardous drugs', 'radiation', 'infectious waste', 'needle safety', 'ergonomics'],
+  'manufacturing': ['machine guarding', 'lockout', 'ergonomics', 'confined space', 'robotics', 'forklift', 'electrical', 'noise', 'dust control'],
+  'warehouse': ['forklift', 'pallet jack', 'racking', 'ergonomics', 'loading dock', 'material handling', 'pedestrian safety', 'floor marking'],
+  'food': ['sanitation', 'food handling', 'allergens', 'slip prevention', 'knife safety', 'food equipment', 'hot surfaces', 'refrigeration'],
+  'energy': ['confined space', 'excavation', 'hot work', 'electrical', 'fall protection', 'process safety', 'hazardous energy', 'radiation'],
+  'transportation': ['driver safety', 'hours of service', 'pre-trip inspection', 'cargo securement', 'vehicle maintenance', 'fatigue management'],
+  'oil and gas': ['process safety', 'h2s', 'hot work', 'confined space', 'fall protection', 'explosion protection', 'drilling safety']
 };
 
 // Industry-specific suggestion templates
@@ -179,5 +225,11 @@ export const industrySpecificSuggestions = {
     'Would you like a driver qualification file checklist?',
     'Need a pre-trip inspection form template?',
     'Should I create a hours-of-service tracking log?'
+  ],
+  'oil and gas': [
+    'Would you like a H2S safety program template?',
+    'Need a hot work permit system for drilling operations?',
+    'Should I create a process safety management audit form?'
   ]
 };
+
