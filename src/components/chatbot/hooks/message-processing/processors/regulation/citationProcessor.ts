@@ -27,11 +27,12 @@ export const processCitation = async (
   }
 
   try {
-    // Search for the regulation by citation in code, alt_phrases or title
+    // Search for the regulation by citation in title or relevant fields
+    // Since 'code' column doesn't exist, search in title and alt_phrases
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, category, keywords, code')
-      .or(`code.eq.${regulationNumber},alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
+      .select('id, title, description, document_type, authority, source_url, category, keywords')
+      .or(`title.ilike.%${regulationNumber}%,alt_phrases.cs.{${regulationNumber}}`)
       .order('updated_at', { ascending: false })
       .limit(1);
     

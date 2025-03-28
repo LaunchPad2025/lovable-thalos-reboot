@@ -25,11 +25,12 @@ export const searchByCitation = async (query: string): Promise<{
   }
   
   try {
-    // Search for the regulation by code, alt_phrases, or title
+    // Search for the regulation by title or alt_phrases instead of 'code'
+    // since the 'code' column doesn't exist in the regulations table
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, category, code')
-      .or(`code.eq.${regulationNumber},alt_phrases.cs.{${regulationNumber}},title.ilike.%${regulationNumber}%`)
+      .select('id, title, description, document_type, authority, source_url, keywords, category')
+      .or(`title.ilike.%${regulationNumber}%,alt_phrases.cs.{${regulationNumber}}`)
       .order('updated_at', { ascending: false })
       .limit(1);
     
