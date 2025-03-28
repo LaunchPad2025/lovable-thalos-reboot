@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft } from 'lucide-react';
@@ -10,8 +10,8 @@ import ViolationResults from '@/components/violations/ViolationResults';
 import { ViolationAnalysisProvider } from '@/components/violations/ViolationAnalysisProvider';
 
 const DemoPage = () => {
-  const [uploadComplete, setUploadComplete] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [uploadComplete, setUploadComplete] = React.useState(false);
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null);
 
   const handleUploadComplete = (results: { imagePreview: string | null }) => {
     setUploadComplete(true);

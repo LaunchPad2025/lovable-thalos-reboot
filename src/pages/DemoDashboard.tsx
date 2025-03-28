@@ -10,7 +10,7 @@ const DemoDashboard = () => {
     navigate('/demo');
   }, [navigate]);
   
-  return <div>Redirecting...</div>;
+  return <div className="flex items-center justify-center h-screen bg-black text-white">Redirecting to demo...</div>;
 };
 
 export default DemoDashboard;

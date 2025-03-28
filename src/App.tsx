@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from "@/components/theme-provider"
@@ -21,7 +22,7 @@ import Settings from './pages/Settings';
 import Subscription from './pages/Subscription';
 import DocumentationRoutes from './pages/documentation/DocumentationRoutes';
 import SidebarExamples from './pages/SidebarExamples';
-import Demo from './pages/DemoDashboard';
+import Demo from './pages/Demo';
 import Legal from './pages/Legal';
 import ComingSoon from './pages/ComingSoon';
 import NotFound from './pages/NotFound';
