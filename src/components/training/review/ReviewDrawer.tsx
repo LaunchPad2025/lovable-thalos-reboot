@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { 
   Sheet, 
@@ -21,7 +20,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { format } from 'date-fns';
-import { CheckCircle, XCircle, Pencil, CheckCircle2, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Pencil, CheckCircle2 } from 'lucide-react';
 import { useTrainingData } from './hooks/useTrainingData';
 import { TrainingReviewItem, REJECTION_REASONS } from './types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -40,9 +39,8 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
   const [activeTab, setActiveTab] = useState('review');
   const [improvedResponse, setImprovedResponse] = useState('');
   const [rejectionReason, setRejectionReason] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
   
-  const { updateReviewItem } = useTrainingData();
+  const { updateReviewItem, updating } = useTrainingData();
 
   // Reset form state when item changes
   React.useEffect(() => {
@@ -56,15 +54,10 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
 
   // Handle approve action
   const handleApprove = async () => {
-    setIsSubmitting(true);
-    try {
-      const success = await updateReviewItem(item.id, 'approved');
-      if (success) {
-        onClose();
-        await onRefresh();
-      }
-    } finally {
-      setIsSubmitting(false);
+    const success = await updateReviewItem(item.id, 'approved');
+    if (success) {
+      onClose();
+      await onRefresh();
     }
   };
 
@@ -75,15 +68,10 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
       return;
     }
     
-    setIsSubmitting(true);
-    try {
-      const success = await updateReviewItem(item.id, 'rejected', undefined, rejectionReason);
-      if (success) {
-        onClose();
-        await onRefresh();
-      }
-    } finally {
-      setIsSubmitting(false);
+    const success = await updateReviewItem(item.id, 'rejected', undefined, rejectionReason);
+    if (success) {
+      onClose();
+      await onRefresh();
     }
   };
 
@@ -94,15 +82,10 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
       return;
     }
     
-    setIsSubmitting(true);
-    try {
-      const success = await updateReviewItem(item.id, 'rewritten', improvedResponse);
-      if (success) {
-        onClose();
-        await onRefresh();
-      }
-    } finally {
-      setIsSubmitting(false);
+    const success = await updateReviewItem(item.id, 'rewritten', improvedResponse);
+    if (success) {
+      onClose();
+      await onRefresh();
     }
   };
 
@@ -208,7 +191,7 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
                   <Pencil className="mr-2 h-4 w-4" />
                   Rewrite
                 </Button>
-                <Button onClick={handleApprove} disabled={isSubmitting}>
+                <Button onClick={handleApprove} disabled={updating}>
                   <CheckCircle className="mr-2 h-4 w-4" />
                   Approve
                 </Button>
@@ -243,7 +226,7 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
                 <Button variant="secondary" onClick={() => setActiveTab('review')}>
                   Cancel
                 </Button>
-                <Button onClick={handleRewrite} disabled={isSubmitting}>
+                <Button onClick={handleRewrite} disabled={updating}>
                   <CheckCircle2 className="mr-2 h-4 w-4" />
                   Save Rewrite
                 </Button>
@@ -281,7 +264,7 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
                 <Button 
                   variant="destructive" 
                   onClick={handleReject} 
-                  disabled={isSubmitting || !rejectionReason}
+                  disabled={updating || !rejectionReason}
                 >
                   <XCircle className="mr-2 h-4 w-4" />
                   Confirm Rejection
