@@ -7,12 +7,15 @@ import { PlanData } from '@/data/subscriptionPlans';
 
 export const useCheckout = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
   const handleSubscribe = async (selectedPlan: string, billingCycle: 'monthly' | 'annual', plans: PlanData[]) => {
     try {
       setIsLoading(true);
+      setError(null);
+      
       const plan = plans.find(p => p.id === selectedPlan);
       if (!plan) {
         throw new Error("Selected plan not found");
@@ -26,7 +29,7 @@ export const useCheckout = () => {
           description: "Please sign in to subscribe to a plan.",
           variant: "destructive",
         });
-        navigate('/auth');
+        navigate('/auth?redirect=subscription');
         return;
       }
       
@@ -43,6 +46,8 @@ export const useCheckout = () => {
       if (!priceId) {
         throw new Error(`No price ID available for ${plan.name} with ${billingCycle} billing cycle`);
       }
+      
+      console.log(`Creating checkout for user ${userId}, plan ${plan.name}, price ${priceId}`);
       
       // Call our Supabase Edge Function to create a checkout session
       const { data, error } = await supabase.functions.invoke('create-checkout', {
@@ -65,14 +70,14 @@ export const useCheckout = () => {
       } else {
         throw new Error('No checkout URL returned from server');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating checkout session:', error);
+      setError(error.message || "An error occurred during checkout. Please try again.");
       toast({
         title: "Checkout failed",
         description: error.message || "An error occurred during checkout. Please try again.",
         variant: "destructive",
       });
-      throw error; // Re-throw to allow the component to handle it
     } finally {
       setIsLoading(false);
     }
@@ -80,6 +85,7 @@ export const useCheckout = () => {
   
   return {
     isLoading,
+    error,
     handleSubscribe
   };
 };

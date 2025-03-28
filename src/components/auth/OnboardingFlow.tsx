@@ -27,6 +27,10 @@ import { Loader2 } from "lucide-react";
 
 type UserRole = 'admin' | 'safety_officer' | 'worker';
 
+interface OnboardingFlowProps {
+  redirectUrl?: string;
+}
+
 const industries = [
   "Construction",
   "Manufacturing",
@@ -55,7 +59,7 @@ const companySize = [
   { value: "1000+", label: "1000+ employees" },
 ];
 
-export function OnboardingFlow() {
+export function OnboardingFlow({ redirectUrl = '/dashboard' }: OnboardingFlowProps) {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<UserRole>("worker");
   const [organization, setOrganization] = useState<string>("");
@@ -73,7 +77,6 @@ export function OnboardingFlow() {
   const { toast } = useToast();
   const { organization: userOrg } = useOrganization();
 
-  // Check if the user should be merged into an existing organization
   useEffect(() => {
     const checkExistingOrganization = async () => {
       if (!user?.email) return;
@@ -81,10 +84,8 @@ export function OnboardingFlow() {
       setCheckingOrganization(true);
       
       try {
-        // Extract domain from user email
         const domain = user.email.split('@')[1];
         
-        // Check if there's an organization with this domain using a direct query instead of RPC
         const { data, error } = await supabase
           .from('organizations')
           .select('id, name')
@@ -94,7 +95,6 @@ export function OnboardingFlow() {
         if (error) throw error;
         
         if (data) {
-          // Found an existing organization with the same email domain
           setExistingOrganization(data);
           setCreateOrg(false);
         }
@@ -138,7 +138,6 @@ export function OnboardingFlow() {
     setIsSubmitting(true);
     
     try {
-      // Update user profile
       await updateUserProfile({
         role,
         industries: selectedIndustries,
@@ -149,16 +148,14 @@ export function OnboardingFlow() {
       let organizationId;
       
       if (existingOrganization) {
-        // User will be merged into the existing organization
         organizationId = existingOrganization.id;
         
-        // Add user to organization_members with default role
         await supabase
           .from('organization_members')
           .insert({
             organization_id: organizationId,
             user_id: user.id,
-            role: 'member' // Default role for merged users
+            role: 'member'
           });
           
         toast({
@@ -166,7 +163,6 @@ export function OnboardingFlow() {
           description: `You've been added to ${existingOrganization.name} because of your email domain.`,
         });
       } else if (createOrg && organization) {
-        // Create a new organization
         const { data, error } = await supabase
           .from('organizations')
           .insert({
@@ -182,13 +178,12 @@ export function OnboardingFlow() {
         if (data && data[0]) {
           organizationId = data[0].id;
           
-          // Add user as admin to the new organization
           await supabase
             .from('organization_members')
             .insert({
               organization_id: organizationId,
               user_id: user.id,
-              role: 'admin' // Creator becomes admin
+              role: 'admin'
             });
         }
         
@@ -198,13 +193,12 @@ export function OnboardingFlow() {
         });
       }
       
-      // Onboarding complete notification
       toast({
         title: "Onboarding complete!",
         description: "Your profile has been set up successfully. You're now on a free trial.",
       });
       
-      navigate("/dashboard");
+      navigate(redirectUrl);
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast({

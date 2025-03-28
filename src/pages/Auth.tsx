@@ -1,5 +1,5 @@
 
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
@@ -9,6 +9,12 @@ import { useAuthForm } from "@/hooks/useAuthForm";
 export default function Auth() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Extract redirect URL from query params if present
+  const searchParams = new URLSearchParams(location.search);
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  
   const {
     isLogin,
     authError,
@@ -16,22 +22,16 @@ export default function Auth() {
     toggleAuthMode,
     onLoginSubmit,
     onSignupSubmit
-  } = useAuthForm();
-
-  // Handle successful login and redirect to appropriate page
-  const handleSuccessfulAuth = () => {
-    // Check if user has completed onboarding
-    if (user?.user_metadata?.onboarded === false) {
-      navigate("/onboarding");
-    } else {
-      navigate("/dashboard");
-    }
-  };
+  } = useAuthForm(redirectUrl);
 
   // Redirect if user is already logged in
   if (user) {
-    handleSuccessfulAuth();
-    return null;
+    // Check if user has completed onboarding
+    if (user?.user_metadata?.onboarded === false) {
+      return <Navigate to={`/onboarding?redirect=${encodeURIComponent(redirectUrl)}`} replace />;
+    } else {
+      return <Navigate to={redirectUrl} replace />;
+    }
   }
 
   return (

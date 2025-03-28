@@ -4,7 +4,7 @@ import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
 import { LoginFormValues, SignupFormValues } from "@/components/auth/schemas";
 
-export function useAuthForm() {
+export function useAuthForm(redirectUrl: string = '/dashboard') {
   const [isLogin, setIsLogin] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -21,7 +21,7 @@ export function useAuthForm() {
       setAuthError(null);
       setIsSubmitting(true);
       await signIn(values.email, values.password);
-      // Let the user be redirected by the main Auth component
+      // Auth.tsx will handle redirects based on onboarding status
     } catch (error: any) {
       console.error("Login error:", error);
       setAuthError(

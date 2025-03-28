@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from 'react';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 import OnboardingFlow from '@/components/auth/OnboardingFlow';
 import { Loader2 } from 'lucide-react';
@@ -8,7 +8,12 @@ import { Loader2 } from 'lucide-react';
 export default function Onboarding() {
   const { user, loading, session } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [isReady, setIsReady] = useState(false);
+  
+  // Extract redirect URL from query params if present
+  const searchParams = new URLSearchParams(location.search);
+  const redirectUrl = searchParams.get('redirect') || '/dashboard';
   
   useEffect(() => {
     // Add a short delay to ensure auth state is properly loaded
@@ -23,17 +28,17 @@ export default function Onboarding() {
     if (isReady) {
       // If user is not logged in, redirect to auth page
       if (!loading && !user) {
-        navigate('/auth');
+        navigate(`/auth?redirect=${encodeURIComponent('/onboarding')}`);
         return;
       }
       
-      // If user has already completed onboarding, redirect to dashboard
+      // If user has already completed onboarding, redirect to dashboard or specified redirect
       if (user?.user_metadata?.onboarded) {
-        navigate('/dashboard');
+        navigate(redirectUrl);
         return;
       }
     }
-  }, [user, loading, navigate, isReady]);
+  }, [user, loading, navigate, isReady, redirectUrl]);
   
   // If still loading or not ready, show loading spinner
   if (loading || !isReady) {
@@ -52,5 +57,5 @@ export default function Onboarding() {
     return null;
   }
   
-  return <OnboardingFlow />;
+  return <OnboardingFlow redirectUrl={redirectUrl} />;
 }
