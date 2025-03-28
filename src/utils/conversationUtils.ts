@@ -1,4 +1,3 @@
-
 import { Message } from '@/components/chatbot/types';
 
 // Maximum number of messages to keep in context
@@ -117,7 +116,7 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
       'What are the most commonly overlooked workplace hazards?'
     ],
     'violation': [
-      'What's the process for contesting an OSHA citation?',
+      'What\'s the process for contesting an OSHA citation?',
       'How should we document our violation abatement efforts?',
       'What are the most common violations in our industry?'
     ],
@@ -129,7 +128,7 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
     'fine': [
       'What factors increase or decrease potential fines?',
       'Are there any penalty reduction programs available?',
-      'What's the typical timeline for resolving citations?'
+      'What\'s the typical timeline for resolving citations?'
     ],
     'inspection': [
       'What areas do OSHA inspectors focus on most?',
