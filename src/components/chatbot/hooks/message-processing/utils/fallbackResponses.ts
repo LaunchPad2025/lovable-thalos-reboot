@@ -17,14 +17,14 @@ export const getDefaultResponse = (): string => {
   
   // Updated to provide practical advice instead of redirecting
   const practicalAdvice = [
-    "Document everything thoroughly with dates, names, and specifics. Create standardized forms for consistency and maintain records for at least 5 years. Regular audits of your documentation can help identify gaps before an inspection occurs.",
-    "Implement a systematic approach with clear responsibilities, regular training, and thorough documentation. Digital safety management systems can help streamline these processes and ensure nothing falls through the cracks.",
-    "Develop written procedures that are easy to understand, train employees thoroughly, and audit your processes regularly. Consistency is key to maintaining a strong safety culture and compliance program."
+    "**Documentation Best Practices:**\n1. Create standardized forms for consistency\n2. Include dates, names, and specific details on all records\n3. Maintain documentation for at least 5 years\n4. Perform regular audits of your documentation\n5. Establish a clear filing system (digital or physical)",
+    "**Safety Program Implementation:**\n1. Assign clear responsibilities to qualified staff\n2. Develop written procedures using plain language\n3. Conduct comprehensive employee training\n4. Document all safety activities thoroughly\n5. Perform regular program evaluations",
+    "**Compliance Management System:**\n1. Create a written safety program with clear procedures\n2. Train employees thoroughly with verification of understanding\n3. Document all safety activities consistently\n4. Conduct regular self-inspections\n5. Address and document all corrective actions"
   ];
   
   const closings = [
-    "\n\nWould you like me to suggest some specific steps for your situation?",
-    "\n\nCan I help you develop a specific plan for implementing this?",
+    "\n\nWould you like me to provide a downloadable template for this?",
+    "\n\nCan I help you develop a specific plan or checklist for implementing this?",
     "\n\nIs there a particular aspect of this you'd like more detailed guidance on?"
   ];
   
@@ -38,98 +38,216 @@ export const getDefaultResponse = (): string => {
 
 /**
  * Provide practical best practices for common safety documentation questions
+ * with improved formatting and organizational structure
  */
 export const getPracticalSafetyGuidance = (topic: string): string | null => {
   const practicalGuidance: Record<string, string> = {
-    'inspect': `Based on OSHA best practices, here's how to document inspections effectively:
+    'inspect': `**Equipment Inspection Documentation Best Practices:**
 
 1. Create standardized inspection forms for each equipment type
-2. Include date, time, inspector name, and equipment identifiers
-3. Document pass/fail for each inspection point with details on deficiencies
-4. Note any corrective actions taken or needed
-5. Maintain records chronologically and by equipment 
-6. Keep inspection records for at least 5 years (or as specified by your industry)
-7. Use digital tools to streamline documentation and reporting
+2. Include these essential elements:
+   - Date and time of inspection
+   - Inspector name and qualification/certification
+   - Equipment identifiers (serial number, asset tag)
+   - Pass/fail for each inspection point
+   - Details on any deficiencies found
+   - Corrective actions taken or needed
+3. Maintain records by:
+   - Organizing chronologically and by equipment type
+   - Keeping accessible but secure documentation
+   - Retaining records for at least 5 years
+4. Use digital tools to streamline documentation and reporting
 
-Would you like a sample inspection checklist format?`,
+Would you like a downloadable inspection checklist template that you can customize for your workplace?`,
 
-    'training': `Here's how safety professionals typically handle training documentation:
+    'training': `**Safety Training Documentation System:**
 
-1. Maintain a master training matrix showing requirements by position
+1. Maintain a master training matrix showing:
+   - Required training by job position
+   - Frequency of refresher requirements
+   - Certification/recertification dates
+   - Regulatory standards covered
+
 2. For each training session, document:
    - Date, location, and duration
-   - Topics covered and materials used
    - Instructor name and qualifications
-   - Attendee names and signatures
+   - Topics covered and materials used
+   - Attendee names with signatures
    - Test scores or competency verification
-3. Keep records of certifications with expiration dates
-4. Set up automated reminders for refresher training
-5. Store records for length of employment plus 3 years
 
-Would you like help creating a training documentation system?`,
+3. Best practices for record management:
+   - Track certification expiration dates
+   - Set up automated reminders for refreshers
+   - Store records for employment duration plus 3 years
+   - Make records accessible for regulatory inspection
 
-    'audit': `Here's how to prepare for an OSHA inspection or safety audit:
+Would you like me to provide a downloadable training matrix template that you can adapt for your team?`,
 
-1. Conduct regular self-inspections using OSHA checklists
-2. Maintain organized documentation of:
-   - Written safety programs and procedures
-   - Training records with verification of understanding
-   - Equipment inspection logs
-   - Incident reports and investigations
-   - Hazard assessments and corrective actions
-3. Address all known hazards promptly
-4. Train employees on what to expect during an inspection
-5. Prepare an inspection kit with key documents
+    'audit': `**OSHA Inspection Preparation Guide:**
 
-Would you like a pre-audit checklist for your workplace?`,
+1. Documentation preparation:
+   - Organize written safety programs and procedures
+   - Compile training records with verification signatures
+   - Gather equipment inspection logs
+   - Collect incident reports and investigations
+   - Assemble hazard assessments and corrective actions
 
-    'incident': `For effective incident and near-miss reporting, safety professionals recommend:
+2. Facility preparation:
+   - Conduct a thorough self-inspection using OSHA checklists
+   - Address all identified hazards immediately
+   - Ensure required signage and labels are in place
+   - Verify emergency equipment is accessible and functional
 
-1. Create a simple, accessible reporting system (paper and digital)
-2. Collect key details:
-   - Date, time, and location
-   - People involved or witnesses
-   - Description of what happened
-   - Contributing factors
-   - Potential outcomes (if it were worse)
-3. Establish a no-blame culture to encourage reporting
-4. Review incidents weekly to identify trends
-5. Document corrective actions and follow up
-6. Share learnings (anonymized) with all employees
+3. Staff preparation:
+   - Train employees on what to expect during inspection
+   - Review their rights and responsibilities
+   - Designate staff for specific roles during inspection
 
-Would you like a template for near-miss reporting?`,
+Would you like a pre-audit checklist template that you can use to prepare your workplace for inspection?`,
 
-    'hazard': `For effective hazard assessment documentation, follow these best practices:
+    'incident': `**Incident and Near-Miss Reporting System:**
 
-1. Use a standardized form that includes:
+1. Program components:
+   - Simple, accessible reporting forms (paper and digital)
+   - Clear definitions of incidents vs. near-misses
+   - Non-blame culture focused on prevention
+   - Regular review process to identify trends
+
+2. Essential information to collect:
+   - Date, time, and specific location
+   - People involved and witnesses
+   - Detailed description of what happened
+   - Contributing factors and root causes
+   - Potential severity (if outcome had been worse)
+   - Immediate and long-term corrective actions
+
+3. Program management:
+   - Review incidents weekly to identify patterns
+   - Track corrective actions to completion
+   - Share learnings (anonymized) across organization
+   - Calculate metrics to measure program effectiveness
+
+Would you like a downloadable near-miss reporting template or incident investigation form?`,
+
+    'hazard': `**Hazard Assessment Documentation Framework:**
+
+1. Standard assessment format:
    - Area/process being assessed
-   - Date and assessor names
-   - Hazards identified with risk ratings
-   - Current controls in place
+   - Assessment date and team members
+   - Hazard identification with risk ratings
+   - Current controls evaluation
    - Recommended additional controls
-   - Action items with responsible persons and due dates
-2. Include photos when possible
-3. Review assessments at least annually
-4. Involve employees from the area being assessed
-5. Maintain records of completed corrective actions
+   - Action items with responsibilities and due dates
 
-Would you like a sample hazard assessment format?`,
+2. Assessment best practices:
+   - Include photographs of hazards when possible
+   - Involve employees from the area being assessed
+   - Use a consistent risk ranking methodology
+   - Review assessments at least annually
+   - Update after process or equipment changes
 
-    'ppe': `For proper PPE management and documentation, safety professionals recommend:
+3. Documentation management:
+   - Maintain records of completed assessments
+   - Track corrective actions to completion
+   - Make assessments accessible to affected employees
+   - Use findings to update training materials
 
-1. Document your hazard assessment justifying PPE selection
-2. Maintain inventory records with:
+Would you like a sample hazard assessment template with risk ranking guidelines?`,
+
+    'ppe': `**Personal Protective Equipment (PPE) Management System:**
+
+1. Assessment and selection:
+   - Document hazard assessments justifying PPE selection
+   - Select PPE based on specific workplace hazards
+   - Consider comfort, fit, and compatibility factors
+   - Maintain certification documentation from manufacturers
+
+2. Inventory and distribution tracking:
    - Types and models of PPE available
-   - Sizes and quantities
+   - Sizes and quantities in inventory
+   - Assignment records with employee signatures
    - Expiration dates where applicable
-3. Create a PPE training program covering:
-   - Selection, fitting, and adjustment
-   - Proper use and limitations
-   - Maintenance and replacement criteria
-4. Document employee PPE assignments with signatures
-5. Establish inspection schedules for critical PPE
 
-Would you like a PPE assessment template?`
+3. Training program elements:
+   - Selection, fitting, and adjustment procedures
+   - Proper use and limitations of equipment
+   - Maintenance, cleaning, and storage requirements
+   - Inspection and replacement criteria
+   - Documentation of training with signatures
+
+Would you like a PPE assessment template or employee PPE assignment form?`,
+
+    'forklift': `**Forklift Operator Certification Tracking System:**
+
+1. Operator qualification documentation:
+   - Initial training completion with date and instructor
+   - Skills evaluation results with evaluator signature
+   - Written test scores with passing threshold
+   - Specific equipment models employee is certified on
+   - Certification expiration date (3 years maximum)
+
+2. Recertification requirements:
+   - Refresher training (every 3 years minimum)
+   - Evaluation after any accident or near-miss
+   - Assessment when new equipment is introduced
+   - Documentation of remedial training if needed
+
+3. Daily inspection records:
+   - Pre-shift inspection checklist completion
+   - Identified issues and maintenance requests
+   - Equipment-specific inspection points
+   - Operator verification signature
+
+Would you like a downloadable forklift certification tracking spreadsheet or operator daily checklist?`,
+
+    'matrix': `**Comprehensive Safety Training Matrix:**
+
+1. Matrix structure and elements:
+   - Job positions/titles listed vertically
+   - Required training topics listed horizontally
+   - Training frequency indicated in each cell
+   - Regulatory citation reference for each requirement
+   - Visual status indicators (color-coding)
+
+2. Training status tracking:
+   - Completion dates for each employee
+   - Expiration/renewal dates clearly marked
+   - Certification levels where applicable
+   - Training method used (classroom, online, etc.)
+   - Instructor/vendor information
+
+3. Matrix management:
+   - Quarterly review for compliance status
+   - Updates when regulations or job duties change
+   - Integration with HR systems for personnel changes
+   - Automated notifications for upcoming expirations
+
+Would you like a downloadable training matrix template customized for warehouse operations that you can modify for your team?`,
+
+    'calendar': `**Safety Training Calendar Development:**
+
+1. Calendar structure:
+   - Annual overview with monthly training focus
+   - Regular recurring training sessions
+   - Certification renewal deadlines
+   - Compliance audit/inspection dates
+   - Seasonal safety emphasis topics
+
+2. Scheduling best practices:
+   - Distribute training throughout the year
+   - Coordinate with production/operations schedules
+   - Plan refresher training before expiration dates
+   - Allow adequate time for documentation
+   - Include mix of required and optional topics
+
+3. Calendar management:
+   - Assign responsible party for each training topic
+   - Track attendance and make-up sessions
+   - Document changes and cancellations
+   - Review quarterly for needed adjustments
+   - Evaluate effectiveness annually
+
+Would you like me to provide a sample annual safety training calendar template that you can customize?`
   };
 
   // Check for topic matches
@@ -141,4 +259,3 @@ Would you like a PPE assessment template?`
 
   return null;
 };
-

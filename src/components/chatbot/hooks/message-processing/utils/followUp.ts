@@ -47,27 +47,43 @@ export const handleFollowUpQuestion = (recentTopics: string[], query: string, pr
     
     // Documentation-related questions
     if (query.toLowerCase().includes('document') || query.toLowerCase().includes('record')) {
-      return `Great question about documentation. Here's what safety professionals recommend:
+      return `**Documentation Best Practices**
 
-1. Use standardized forms with consistent fields (date, equipment ID, inspector name, findings)
-2. Implement both digital and physical documentation systems for redundancy
-3. Organize records by type, date, and location/equipment
-4. Establish minimum retention periods (typically 3-5 years, or as required by specific regulations)
-5. Create a system for regular review and verification of documentation
-6. Make documentation easily accessible to appropriate personnel
-7. Consider using QR codes on equipment linking to digital inspection records
+Great question about documentation. Here's what safety professionals recommend:
 
-Would you like me to provide a specific documentation template for this topic?`;
+1. Create standardized forms with consistent fields:
+   - Date and time
+   - Equipment/location identifiers
+   - Inspector/reviewer name and signature
+   - Specific findings with details
+   - Corrective actions needed
+
+2. Establish a robust documentation system:
+   - Implement both digital and physical record-keeping
+   - Organize by type, date, and location/equipment
+   - Set minimum retention periods (3-5 years minimum)
+   - Create regular review schedules
+   
+3. Make records accessible and usable:
+   - Ensure appropriate personnel can access records
+   - Consider QR codes linking to digital inspection history
+   - Create dashboard reports to identify trends
+   - Use documentation for continuous improvement
+
+Would you like me to provide a downloadable documentation template for this specific topic?`;
     }
     
     // Training record questions
     if (query.toLowerCase().includes('training') && (query.toLowerCase().includes('record') || query.toLowerCase().includes('track'))) {
-      return `For tracking safety training effectively, follow these industry best practices:
+      return `**Safety Training Documentation System**
+
+For tracking safety training effectively, follow these industry best practices:
 
 1. Create a master training matrix showing:
    - Required training by job role
-   - Frequency of refresher training
+   - Frequency of refresher training needed
    - Current status for each employee
+   - Regulatory standards addressed
    
 2. For each training session, document:
    - Date, time, duration, and location
@@ -77,62 +93,177 @@ Would you like me to provide a specific documentation template for this topic?`;
    - Attendance with employee signatures
    - Test scores or competency verification
    
-3. Set up automated notifications for expiring certifications
-4. Store records securely but accessibly for the duration of employment plus 3 years
-5. Conduct periodic audits of training records
+3. Manage training records effectively:
+   - Set up automated notifications for expiring certifications
+   - Store records securely for duration of employment plus 3 years
+   - Make records easily accessible for regulatory inspection
+   - Conduct periodic audits of training documentation
 
-Would you like me to share a sample training record template?`;
+Would you like me to share a downloadable training record template that you can customize for your workplace?`;
+    }
+    
+    // Forklift training records question
+    if (query.toLowerCase().includes('forklift') && 
+        (query.toLowerCase().includes('certification') || 
+         query.toLowerCase().includes('training') || 
+         query.toLowerCase().includes('record'))) {
+      return `**Forklift Operator Certification Tracking System**
+
+For tracking forklift operator certifications effectively:
+
+1. Required documentation elements:
+   - Operator's name and employee ID
+   - Date of training and certification
+   - Expiration date (3 years from certification)
+   - Specific equipment types/models qualified to operate
+   - Name and signature of evaluator/trainer
+   - Written test scores (with minimum passing threshold)
+   - Practical evaluation checklist with performance ratings
+   
+2. Certification management best practices:
+   - Maintain both digital and physical records
+   - Set automatic reminders 30/60/90 days before expiration
+   - Document refresher training and evaluations
+   - Note any performance issues or incidents
+   - Track specific attachments operators are certified to use
+   
+3. Required evaluation elements:
+   - Pre-operation inspection procedure
+   - Operating skills in typical workplace conditions
+   - Load handling capabilities
+   - Understanding of stability principles
+   - Knowledge of workplace-specific hazards
+
+Would you like a downloadable forklift certification tracking spreadsheet template that you can customize for your operators?`;
+    }
+    
+    // Training matrix question
+    if (query.toLowerCase().includes('matrix') && query.toLowerCase().includes('training')) {
+      return `**Safety Training Matrix Development Guide**
+
+To create an effective training matrix for your team:
+
+1. Matrix structure and components:
+   - List all job positions/titles down the left column
+   - List all required training topics across the top row
+   - In each cell, indicate:
+     * Required (Yes/No)
+     * Frequency (Initial, Annual, Biennial, etc.)
+     * Regulatory basis (OSHA standard reference)
+   
+2. Essential training categories to include:
+   - Required OSHA training (HazCom, PPE, etc.)
+   - Equipment-specific training
+   - Emergency procedures
+   - Job-specific safety procedures
+   - Leadership safety responsibilities (for supervisors)
+   
+3. Matrix management best practices:
+   - Color-code by training status (current, upcoming, overdue)
+   - Include employee-specific completion dates
+   - Track method of training (classroom, online, OJT)
+   - Note trainer/vendor for each completed session
+   - Review quarterly to identify gaps and plan sessions
+
+Would you like me to provide a downloadable training matrix template that you can customize for your warehouse operations?`;
+    }
+    
+    // Training calendar questions
+    if (query.toLowerCase().includes('calendar') && 
+        (query.toLowerCase().includes('training') || query.toLowerCase().includes('schedule'))) {
+      return `**Annual Safety Training Calendar Development**
+
+To create an effective safety training calendar:
+
+1. Strategic planning considerations:
+   - Distribute training throughout the year to avoid overload
+   - Schedule seasonal topics at appropriate times
+   - Coordinate with production/operations schedules
+   - Plan refresher training before certification expirations
+   - Include mix of required and enhancement topics
+   
+2. Monthly planning structure:
+   - Assign a primary safety focus for each month
+   - Schedule specific training dates with rooms/instructors
+   - Include multiple session options for shift coverage
+   - Block preparation time for instructors and materials
+   - Add documentation processing time after sessions
+   
+3. Calendar management practices:
+   - Review quarterly for adjustments and additions
+   - Track attendance and schedule make-up sessions
+   - Document reasons for any postponed sessions
+   - Evaluate training effectiveness to improve future sessions
+   - Adjust based on incident trends or regulatory changes
+
+Would you like me to provide a downloadable annual safety training calendar template that you can customize for your organization?`;
     }
     
     // Audit preparation questions
     if (query.toLowerCase().includes('audit') || 
         query.toLowerCase().includes('prepare') || 
         query.toLowerCase().includes('inspection')) {
-      return `To prepare for a safety audit or OSHA inspection, follow these steps:
+      return `**OSHA Inspection Preparation Guide**
 
-1. Organize your written safety programs and ensure they're current
-2. Gather and organize documentation:
-   - Training records
-   - Inspection logs
-   - Incident reports and investigations
-   - Equipment maintenance records
-   - Hazard assessments
-   - Corrective action records
+To prepare for a safety audit or OSHA inspection, follow these steps:
+
+1. Documentation preparation:
+   - Organize all written safety programs and ensure they're current
+   - Gather and organize key documentation:
+     * Training records with verification signatures
+     * Equipment inspection and maintenance logs
+     * Incident reports and investigations
+     * Hazard assessments and corrective actions
+     * Safety committee minutes
+     * Safety data sheets (SDS)
    
-3. Conduct a pre-audit self-inspection using relevant OSHA checklists
-4. Address any identified hazards or non-compliance issues
-5. Brief employees on the inspection process and their rights
-6. Prepare an inspection kit with frequently requested documents
-7. Designate team members for specific roles during the inspection
+2. Facility preparation:
+   - Conduct a pre-audit self-inspection using relevant OSHA checklists
+   - Address any identified hazards or non-compliance issues
+   - Verify all required signage and labels are properly displayed
+   - Ensure emergency equipment is accessible and functional
+   - Check that PPE is available and properly maintained
+   
+3. Personnel preparation:
+   - Brief employees on the inspection process and their rights
+   - Prepare for document requests and interview questions
+   - Designate team members for specific roles during the inspection
+   - Review recent citations in your industry to identify focus areas
+   - Establish a communication protocol during the inspection
 
-Would you like a comprehensive pre-audit checklist?`;
+Would you like a downloadable pre-audit checklist that you can use to systematically prepare for an inspection?`;
     }
     
     // Near-miss tracking questions
     if (query.toLowerCase().includes('near miss') || query.toLowerCase().includes('incident') || query.toLowerCase().includes('track')) {
-      return `For effective near-miss and incident tracking, implement these best practices:
+      return `**Near-Miss and Incident Tracking System**
 
-1. Create a simple reporting system that's easily accessible to all employees
-2. Collect these essential details for each report:
-   - Date, time, and location
-   - People involved and witnesses
-   - Description of what happened
-   - Contributing factors
+For effective near-miss and incident tracking, implement these best practices:
+
+1. Reporting system design:
+   - Create simple, accessible forms (paper and digital)
+   - Make reporting quick (under 5 minutes to complete)
+   - Ensure anonymous reporting option is available
+   - Develop mobile-friendly reporting tools
+   - Establish clear definitions of incidents vs. near-misses
+   
+2. Essential information to collect:
+   - Date, time, and precise location
+   - People involved and witnesses (optional for near-misses)
+   - Detailed description of what happened
+   - Contributing factors and potential root causes
    - Potential severity if outcome had been worse
-   - Immediate actions taken
+   - Immediate actions taken after event
    
-3. Establish a no-blame culture to encourage reporting
-4. Implement a tracking system to identify trends by:
-   - Type of incident
-   - Location
-   - Contributing factors
-   - Time of day/shift
-   
-5. Review near-misses regularly (weekly or monthly)
-6. Document corrective actions with responsible parties and due dates
-7. Share learnings with all employees while protecting privacy
+3. Program management best practices:
+   - Establish a no-blame culture focused on prevention
+   - Review reports weekly to identify trends and patterns
+   - Track corrective actions to completion with due dates
+   - Share learnings across the organization (anonymized)
+   - Calculate metrics to evaluate program effectiveness
+   - Recognize and reward active reporting participation
 
-Would you like a template for tracking near-misses and incidents?`;
+Would you like a downloadable template for tracking near-misses and incidents in your workplace?`;
     }
   }
   
@@ -142,30 +273,30 @@ Would you like a template for tracking near-misses and incidents?`;
     if (query.toLowerCase().includes('inspect')) {
       for (const topic of recentTopics) {
         if (topic.includes('fall protection')) {
-          return "For fall protection equipment, OSHA requires inspection before each use by the worker, and formal inspections by a competent person at least annually. After any fall event, the equipment must be immediately removed from service and inspected. Remember to document all inspections in your safety records with dates, inspector names, equipment IDs, and findings.";
+          return "**Fall Protection Equipment Inspection Requirements**\n\nFor fall protection equipment, OSHA requires:\n\n1. **User inspection before each use** - Workers must visually inspect all components\n\n2. **Formal inspections by a competent person** - At least annually, documented with equipment ID, inspector name, date, and findings\n\n3. **Post-event inspection** - After any fall event, equipment must be immediately removed from service and thoroughly inspected\n\n4. **Documentation requirements** - Keep inspection records with dates, inspector names, equipment IDs, and results for the life of the equipment\n\nWould you like a downloadable fall protection inspection checklist template?";
         } else if (topic.includes('ppe') || topic.includes('protective')) {
-          return "PPE should be inspected before each use for signs of damage, wear, or contamination. The inspection frequency also depends on the specific equipment - respirators need inspection before and after each use, while hard hats should be checked daily for cracks or dents. Equipment should also be thoroughly examined by a qualified person according to the manufacturer's recommendations, typically quarterly or annually. Always document these inspections with standardized forms.";
+          return "**PPE Inspection Frequency Guidelines**\n\nPPE inspection frequencies vary by equipment type:\n\n1. **General rule** - All PPE should be inspected before each use\n\n2. **Respirators** - Inspect before and after each use, plus monthly when in storage\n\n3. **Hard hats** - Daily visual inspection; replace after any impact\n\n4. **Safety glasses** - Before each use; replace when scratched or damaged\n\n5. **Gloves** - Before each use; watch for tears, punctures, degradation\n\n6. **Fall protection** - Before each use and annual formal inspection\n\nAll formal inspections should be documented with standardized forms including equipment ID, inspector name, date, and findings.\n\nWould you like a downloadable PPE inspection tracking template?";
         } else if (topic.includes('fire') || topic.includes('extinguisher')) {
-          return "Fire extinguishers require monthly visual inspections (checking pressure gauge, condition, accessibility) and annual maintenance checks by a certified professional. Hydrostatic testing is required every 5-12 years depending on the type. Use a standardized inspection log with dates, inspector names, and specific verification points for each extinguisher. Digital tracking with QR codes can help manage large numbers of extinguishers.";
+          return "**Fire Extinguisher Inspection Schedule**\n\n1. **Monthly visual inspections**\n   - Check pressure gauge is in operating range\n   - Verify extinguisher is in designated location\n   - Ensure access is not blocked\n   - Check for visible damage or tampering\n   - Document with inspector initials and date\n\n2. **Annual maintenance inspection**\n   - Must be performed by certified professional\n   - Includes internal examination and recharging if needed\n   - Requires detailed documentation and tagging\n\n3. **Hydrostatic testing**\n   - Required every 5-12 years depending on extinguisher type\n   - Must be performed by certified testing service\n   - Requires permanent marking of test date\n\nWould you like a downloadable fire extinguisher inspection log template?";
         }
       }
       // Generic inspection answer if no specific topic
-      return "Most safety equipment requires inspection before each use by the worker, with formal documented inspections by a qualified person on a regular schedule - often monthly, quarterly, or annually depending on the equipment type and manufacturer specifications. High-risk or critical safety equipment typically requires more frequent inspection. Always document these inspections with the date, inspector name, equipment identifier, condition assessment, and any corrective actions.";
+      return "**Equipment Inspection Frequency Guidelines**\n\n1. **Before each use** - Operators should visually inspect critical safety equipment\n\n2. **Formal documented inspections** - Schedule based on:\n   - Manufacturer recommendations\n   - Regulatory requirements\n   - Equipment criticality and risk\n   - Usage frequency and conditions\n\n3. **Typical inspection frequencies**:\n   - Daily: High-risk or critical safety equipment\n   - Weekly: Frequently used equipment\n   - Monthly: General facility safety equipment\n   - Quarterly/Annually: Backup or emergency equipment\n\n4. **Documentation requirements**:\n   - Date and time of inspection\n   - Inspector name and qualification\n   - Equipment identifier/serial number\n   - Pass/fail for each inspection point\n   - Corrective actions for deficiencies\n\nWould you like a downloadable equipment inspection scheduling template?";
     }
     
     // Training frequency questions
     if (query.toLowerCase().includes('train') || query.toLowerCase().includes('refresher')) {
       for (const topic of recentTopics) {
         if (topic.includes('fall protection')) {
-          return "OSHA requires fall protection refresher training whenever there are changes in the workplace that render previous training obsolete, changes in the types of fall protection systems or equipment used, or when a worker shows inadequate knowledge or use of fall protection systems. At minimum, annual refresher training is considered a best practice. Document all training with dates, content covered, trainer qualifications, and employee verification of understanding.";
+          return "**Fall Protection Training Frequency Requirements**\n\nOSHA requires fall protection refresher training:\n\n1. **Initial comprehensive training** - Before employee exposure to fall hazards\n\n2. **Refresher training required when**:\n   - Workplace changes render previous training obsolete\n   - Fall protection equipment or systems change\n   - Employee demonstrates inadequate knowledge or use\n   - After any fall-related incident\n\n3. **Best practice** - Annual refresher training even if not specifically required\n\n4. **Documentation needed**:\n   - Training dates and content covered\n   - Trainer qualifications\n   - Employee verification of understanding\n   - Hands-on competency demonstration\n\nWould you like a downloadable fall protection training documentation template?";
         } else if (topic.includes('lockout') || topic.includes('tagout')) {
-          return "For Lockout/Tagout procedures, OSHA requires retraining whenever there's a change in job assignments, machines, equipment or processes, or when a new hazard is introduced. Additionally, refresher training is required whenever an inspection reveals problems with employee knowledge. The standard practice is to conduct refresher training annually. Maintain a training matrix to track completion and schedule refreshers automatically.";
+          return "**Lockout/Tagout Training Frequency Requirements**\n\nFor Lockout/Tagout procedures, OSHA requires:\n\n1. **Initial training** - Before employee performs service/maintenance\n\n2. **Retraining required when**:\n   - Job assignments change\n   - Machines, equipment or processes change\n   - New hazards are introduced\n   - Periodic inspection reveals inadequate employee knowledge\n   - After any near-miss or incident involving energy control\n\n3. **Standard practice** - Annual refresher training\n\n4. **Documentation requirements**:\n   - Training dates and specific content\n   - Employee demonstration of procedures\n   - Trainer qualifications\n   - Equipment covered in the training\n\nWould you like a downloadable lockout/tagout training program template?";
         } else if (topic.includes('hazard communication') || topic.includes('hazcom')) {
-          return "Hazard Communication training refreshers should be provided whenever a new chemical hazard is introduced into the work area. While OSHA doesn't specify a refresher frequency, industry best practice is to conduct annual refresher training to ensure employees maintain their knowledge of chemical hazards, labeling systems, and safety data sheets. Create a standardized documentation system that includes training content, employee verification, and dates.";
+          return "**Hazard Communication Training Frequency Guidelines**\n\n1. **Initial training** - Before exposure to hazardous chemicals\n\n2. **Refresher training required when**:\n   - New chemical hazards are introduced\n   - Process or procedure changes affect exposure\n   - GHS labeling or SDS format changes\n   - Employee knowledge appears inadequate\n\n3. **Best practice** - Annual refresher training\n\n4. **Documentation requirements**:\n   - Training content covered (chemicals, hazards, protective measures)\n   - GHS labeling and SDS review\n   - Methods to detect presence of hazardous chemicals\n   - Employee verification of understanding\n\nWould you like a downloadable hazard communication training documentation template?";
         }
       }
       // Generic training answer if no specific topic
-      return "Most safety training programs require refresher training at least annually as a best practice, though OSHA's specific requirements vary by standard. Additionally, retraining is typically required when procedures change, new equipment is introduced, or when workplace observations indicate a need for additional training. Create a comprehensive training matrix that tracks requirements by position, completion dates, and schedules upcoming refreshers. Document all training thoroughly with standardized forms.";
+      return "**Safety Training Frequency Best Practices**\n\n1. **Initial training**:\n   - Required before employee exposure to workplace hazards\n   - Must cover all applicable OSHA standards for the role\n   - Needs to be comprehensive and job-specific\n\n2. **Refresher training** typically required:\n   - Annually for most critical safety topics\n   - When processes, equipment, or materials change\n   - After incidents or near-misses\n   - When observations indicate knowledge gaps\n   - When regulations are updated\n\n3. **Documentation best practices**:\n   - Maintain a training matrix by position\n   - Track completion dates and schedule upcoming refreshers\n   - Document content, duration, and instructor qualifications\n   - Include employee verification of understanding\n\nWould you like a downloadable training frequency reference guide by topic?";
     }
   }
   
@@ -173,7 +304,7 @@ Would you like a template for tracking near-misses and incidents?`;
   if (query.toLowerCase().includes('height') || 
       (query.toLowerCase().includes('minimum') && 
        (query.toLowerCase().includes('fall') || recentTopics.includes('fall protection')))) {
-    return "In construction, OSHA requires fall protection when working at heights of 6 feet or more above a lower level (29 CFR 1926.501). For general industry, the threshold is 4 feet (29 CFR 1910.28). In shipyards it's 5 feet, and for longshoring operations it's 8 feet. Remember that regardless of height, if there's a risk of falling onto dangerous equipment, fall protection is required. Document your fall protection plan with specific height thresholds for your workplace and train employees on these requirements.";
+    return "**Minimum Height Requirements for Fall Protection**\n\nOSHA specifies different height thresholds by industry:\n\n1. **Construction industry**: 6 feet or more above a lower level (29 CFR 1926.501)\n\n2. **General industry**: 4 feet or more above a lower level (29 CFR 1910.28)\n\n3. **Shipyards**: 5 feet or more above a lower level\n\n4. **Longshoring operations**: 8 feet or more above a lower level\n\n5. **Special case**: Any height when working above dangerous equipment\n\nWhen implementing your fall protection program, document the specific height thresholds applicable to your workplace and ensure all employees are trained on these requirements.\n\nWould you like a downloadable fall protection planning guide for your industry?";
   }
   
   // Check if any topic from the conversation matches our regulations
@@ -207,7 +338,7 @@ Would you like a template for tracking near-misses and incidents?`;
         const advice = practicalAdvice[Math.floor(Math.random() * practicalAdvice.length)];
         
         const closingPhrases = [
-          ` Would you like a simple implementation checklist for this requirement?`,
+          ` Would you like a downloadable implementation checklist for this requirement?`,
           ` Would you like to see a practical example of how to document compliance?`,
           ` Would you like some specific steps for implementing this in your workplace?`
         ];

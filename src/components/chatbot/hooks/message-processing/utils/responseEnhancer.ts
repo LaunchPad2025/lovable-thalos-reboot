@@ -76,9 +76,14 @@ export const enhanceResponse = (
 };
 
 /**
- * Add conversational and practical elements to make responses more helpful
+ * Add conversational and practical elements to make responses more helpful,
+ * with improved formatting, headings, and clear structure
  */
 const addConversationalElements = (response: string): string => {
+  // Fix run-on sentences
+  response = response.replace(/(\w)\s+([A-Z])/g, "$1. $2");
+  response = response.replace(/(\w)\s+(Would you like|Should I|Do you need|Want|Need)/g, "$1. $2");
+  
   // Add practical advice if not already present
   if (!response.includes("make sure") && 
       !response.includes("be sure to") && 
@@ -87,27 +92,62 @@ const addConversationalElements = (response: string): string => {
       response.length > 150) {
     
     const practicalTips = [
-      "\n\nPractical tip: Create standardized forms for all safety processes to ensure consistency and completeness in your documentation.",
-      "\n\nQuick tip: Digital safety management systems can help automate record-keeping and send alerts when inspections or training are due.",
-      "\n\nHelpful hint: Training employees on why safety procedures matter, not just how to follow them, leads to better compliance and fewer incidents.",
-      "\n\nPro tip: Consider using QR codes on equipment that link to digital maintenance and inspection records for easier tracking."
+      "\n\n**Practical Tip:** Create standardized forms for all safety processes to ensure consistency and completeness in your documentation.",
+      "\n\n**Quick Tip:** Digital safety management systems can help automate record-keeping and send alerts when inspections or training are due.",
+      "\n\n**Helpful Hint:** Training employees on why safety procedures matter, not just how to follow them, leads to better compliance and fewer incidents.",
+      "\n\n**Pro Tip:** Consider using QR codes on equipment that link to digital maintenance and inspection records for easier tracking."
     ];
     
     response += practicalTips[Math.floor(Math.random() * practicalTips.length)];
   }
   
-  // Replace generic offers with more specific, action-oriented ones
+  // Add Markdown formatting to lists if they exist but aren't already formatted
+  if (response.includes("1.") && response.includes("2.") && !response.includes("**")) {
+    // Add bold heading if there are numbered lists
+    const topicWords = ["training", "inspection", "documentation", "record", "checklist", "audit", "safety", "hazard"];
+    
+    for (const word of topicWords) {
+      if (response.toLowerCase().includes(word)) {
+        const capitalizedWord = word.charAt(0).toUpperCase() + word.slice(1);
+        const headings = [
+          `**${capitalizedWord} Best Practices**`,
+          `**${capitalizedWord} Documentation Guidelines**`,
+          `**Essential ${capitalizedWord} Steps**`,
+          `**${capitalizedWord} Compliance Checklist**`
+        ];
+        
+        const heading = headings[Math.floor(Math.random() * headings.length)];
+        
+        // Find where the list starts and add the heading there
+        const listStartIndex = response.search(/\d\.\s+[A-Z]/);
+        if (listStartIndex > 0) {
+          // If list doesn't start at the beginning, add heading before the list
+          if (listStartIndex > 20) {
+            const beforeList = response.substring(0, listStartIndex).trim();
+            const afterList = response.substring(listStartIndex);
+            response = beforeList + "\n\n" + heading + "\n" + afterList;
+          } else {
+            response = heading + "\n" + response;
+          }
+        }
+        
+        break;
+      }
+    }
+  }
+  
+  // Replace generic offers with more specific, action-oriented ones with template offers
   response = response.replace(
     /Would you like to see (a|the) (.+?)\?/gi,
     (match, article, item) => {
-      return `I can provide a practical template for ${item}. Would that be helpful?`;
+      return `I can provide a practical template for ${item} that you can download or adapt. Would that be helpful?`;
     }
   );
   
   response = response.replace(
     /Would you like more information about (.+?)\?/gi,
     (match, topic) => {
-      return `I can share some best practices for implementing ${topic} in your workplace. Interested?`;
+      return `I can share some best practices and a downloadable template for implementing ${topic} in your workplace. Interested?`;
     }
   );
   
@@ -122,7 +162,18 @@ const addConversationalElements = (response: string): string => {
   // Add documentation guidance to regulatory information
   if ((response.includes("CFR") || response.includes("OSHA requires")) && 
       !response.includes("document") && !response.includes("record")) {
-    response += "\n\nRemember to document your compliance efforts with dates, responsible parties, and specific actions taken.";
+    response += "\n\n**Documentation Reminder:** Remember to document your compliance efforts with dates, responsible parties, and specific actions taken.";
+  }
+  
+  // Offer template or downloadable resources if appropriate
+  if ((response.includes("documentation") || 
+       response.includes("record") || 
+       response.includes("form") || 
+       response.includes("checklist") || 
+       response.includes("template")) && 
+      !response.includes("Would you like a downloadable")) {
+    
+    response += "\n\nWould you like a downloadable template or sample form for this?";
   }
   
   return response;
@@ -164,11 +215,11 @@ const reformulateResponse = (response: string): string => {
     reformed += sentences[sentences.length - 1] + ".";
   }
   
-  // Add practical implementation advice
+  // Add practical implementation advice with better formatting
   const practicalImplementation = [
-    "\n\nHere's how to put this into practice: Focus on clear documentation, regular training, and consistent implementation. Start with a written program that outlines responsibilities and procedures.",
-    "\n\nTo implement this effectively: Create standardized forms, train all affected employees, and conduct regular audits to ensure compliance is maintained.",
-    "\n\nFor practical application: Develop a step-by-step procedure, assign clear responsibilities, and document all activities with dates and signatures."
+    "\n\n**How to put this into practice:**\nFocus on clear documentation, regular training, and consistent implementation. Start with a written program that outlines responsibilities and procedures.",
+    "\n\n**Implementation steps:**\n1. Create standardized forms\n2. Train all affected employees\n3. Conduct regular audits to ensure compliance is maintained\n4. Document all verification activities",
+    "\n\n**Practical application:**\n- Develop a step-by-step procedure\n- Assign clear responsibilities\n- Document all activities with dates and signatures\n- Perform regular effectiveness reviews"
   ];
   
   reformed += practicalImplementation[Math.floor(Math.random() * practicalImplementation.length)];
