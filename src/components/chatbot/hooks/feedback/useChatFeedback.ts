@@ -9,10 +9,13 @@ export const useChatFeedback = () => {
   const [showFeedbackForm, setShowFeedbackForm] = useState(false);
   const [currentMessageId, setCurrentMessageId] = useState<string | null>(null);
   const [feedbackNotes, setFeedbackNotes] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   // Track when a user clicks on thumbs up or down
   const handleFeedbackClick = useCallback(
     async (messageId: string, wasHelpful: boolean, messages: Message[]) => {
+      setError(null);
       try {
         // Find the AI message and the user message that preceded it
         const assistantMessageIndex = messages.findIndex(
@@ -49,7 +52,10 @@ export const useChatFeedback = () => {
         }
       } catch (error) {
         console.error('Error handling feedback click:', error);
-        toast.error('Failed to submit feedback');
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        toast.error('Failed to submit feedback', {
+          description: error instanceof Error ? error.message : 'Please try again later'
+        });
       }
     },
     []
@@ -59,6 +65,8 @@ export const useChatFeedback = () => {
   const submitFeedbackWithNotes = useCallback(
     async (messages: Message[]) => {
       if (!currentMessageId) return;
+      setIsSubmitting(true);
+      setError(null);
 
       try {
         const assistantMessageIndex = messages.findIndex(
@@ -92,7 +100,12 @@ export const useChatFeedback = () => {
         setFeedbackNotes('');
       } catch (error) {
         console.error('Error submitting feedback with notes:', error);
-        toast.error('Failed to submit feedback');
+        setError(error instanceof Error ? error.message : 'An unknown error occurred');
+        toast.error('Failed to submit feedback', {
+          description: error instanceof Error ? error.message : 'Please try again later'
+        });
+      } finally {
+        setIsSubmitting(false);
       }
     },
     [currentMessageId, feedbackNotes]
@@ -107,6 +120,7 @@ export const useChatFeedback = () => {
     notes: string,
     messages: Message[]
   ) => {
+    setIsSubmitting(true);
     try {
       // Extract potential matched keywords and regulations from the full conversation
       // This is simplified - in production you'd have a more robust mechanism
@@ -116,7 +130,7 @@ export const useChatFeedback = () => {
       const potentialKeywords = ['ppe', 'hazard', 'safety', 'compliance', 'inspection', 'training'];
       const matchedKeywords = potentialKeywords.filter(k => conversationText.includes(k));
       
-      const { error } = await supabase.from('paulie_queries').insert({
+      const { error: supabaseError, data } = await supabase.from('paulie_queries').insert({
         message_id: messageId,
         question: question,
         response: response,
@@ -125,9 +139,12 @@ export const useChatFeedback = () => {
         created_at: new Date().toISOString(),
         matched_keywords: matchedKeywords,
         review_status: !helpful && notes ? 'needs_review' : null
-      });
+      }).select();
 
-      if (error) throw error;
+      if (supabaseError) {
+        console.error('Supabase error:', supabaseError);
+        throw new Error(supabaseError.message || 'Database error occurred');
+      }
 
       // Update local state to show "Thank you for your feedback"
       setFeedbackSubmitted(prev => ({
@@ -136,20 +153,34 @@ export const useChatFeedback = () => {
       }));
 
       toast.success('Feedback submitted successfully');
+      return data;
     } catch (error) {
       console.error('Error submitting feedback:', error);
+      setError(error instanceof Error ? error.message : 'An unknown error occurred');
       throw error;
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const cancelFeedback = useCallback(() => {
+    setShowFeedbackForm(false);
+    setCurrentMessageId(null);
+    setFeedbackNotes('');
+    setError(null);
+  }, []);
 
   return {
     feedbackSubmitted,
     showFeedbackForm,
     currentMessageId,
     feedbackNotes,
+    isSubmitting,
+    error,
     handleFeedbackClick,
     submitFeedbackWithNotes,
     setFeedbackNotes,
-    setShowFeedbackForm
+    setShowFeedbackForm,
+    cancelFeedback
   };
 };

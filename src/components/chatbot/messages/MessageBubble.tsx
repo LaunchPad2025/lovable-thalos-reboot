@@ -14,12 +14,18 @@ interface MessageBubbleProps {
 
 const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) => {
   const isUser = message.role === 'user';
-  const { feedbackSubmitted, showFeedbackForm, currentMessageId, feedbackNotes, handleFeedbackClick, submitFeedbackWithNotes, setFeedbackNotes, setShowFeedbackForm } = useChatFeedback();
-
-  const cancelFeedback = () => {
-    setShowFeedbackForm(false);
-    setFeedbackNotes('');
-  };
+  const { 
+    feedbackSubmitted, 
+    showFeedbackForm, 
+    currentMessageId, 
+    feedbackNotes, 
+    isSubmitting,
+    error,
+    handleFeedbackClick, 
+    submitFeedbackWithNotes, 
+    setFeedbackNotes, 
+    cancelFeedback 
+  } = useChatFeedback();
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 last:mb-2`}>
@@ -71,6 +77,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) =
                   showFeedbackForm={showFeedbackForm}
                   currentMessageId={currentMessageId}
                   feedbackNotes={feedbackNotes}
+                  isSubmitting={isSubmitting}
+                  error={error}
                   onFeedbackClick={handleFeedbackClick}
                   onNotesChange={setFeedbackNotes}
                   onSubmitNotes={submitFeedbackWithNotes}

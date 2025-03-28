@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ThumbsUp, ThumbsDown, X } from 'lucide-react';
+import { ThumbsUp, ThumbsDown, X, AlertCircle } from 'lucide-react';
 import { Textarea } from '@/components/ui/textarea';
 import { Message } from '../types';
 
@@ -12,6 +12,8 @@ interface FeedbackButtonsProps {
   showFeedbackForm: boolean;
   currentMessageId: string | null;
   feedbackNotes: string;
+  isSubmitting?: boolean;
+  error?: string | null;
   onFeedbackClick: (messageId: string, wasHelpful: boolean, messages: Message[]) => void;
   onNotesChange: (notes: string) => void;
   onSubmitNotes: (messages: Message[]) => void;
@@ -25,6 +27,8 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
   showFeedbackForm,
   currentMessageId,
   feedbackNotes,
+  isSubmitting = false,
+  error = null,
   onFeedbackClick,
   onNotesChange,
   onSubmitNotes,
@@ -51,20 +55,31 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
           onChange={(e) => onNotesChange(e.target.value)}
           placeholder="Please provide details to help us improve..."
           className="min-h-[100px] bg-gray-800 border-gray-700 text-sm"
+          disabled={isSubmitting}
         />
+        
+        {error && (
+          <div className="flex items-center text-red-400 text-xs gap-1 mt-1">
+            <AlertCircle className="h-3 w-3" />
+            <span>{error}</span>
+          </div>
+        )}
+        
         <div className="flex space-x-2">
           <Button
             size="sm"
             onClick={() => onSubmitNotes(messages)}
             className="bg-blue-600 hover:bg-blue-700"
+            disabled={isSubmitting}
           >
-            Submit
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </Button>
           <Button
             size="sm"
             variant="outline"
             onClick={onCancelFeedback}
             className="border-gray-700 text-gray-300"
+            disabled={isSubmitting}
           >
             Cancel
           </Button>
@@ -82,6 +97,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         variant="ghost"
         className="h-7 w-7 p-0 rounded-full"
         onClick={() => onFeedbackClick(messageId, true, messages)}
+        disabled={isSubmitting}
       >
         <ThumbsUp className="h-4 w-4" />
       </Button>
@@ -90,6 +106,7 @@ const FeedbackButtons: React.FC<FeedbackButtonsProps> = ({
         variant="ghost"
         className="h-7 w-7 p-0 rounded-full"
         onClick={() => onFeedbackClick(messageId, false, messages)}
+        disabled={isSubmitting}
       >
         <ThumbsDown className="h-4 w-4" />
       </Button>
