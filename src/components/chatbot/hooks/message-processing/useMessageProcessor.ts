@@ -58,6 +58,7 @@ export const useMessageProcessor = () => {
       }
       
       // Try to find an exact regulation match from the database
+      // Now properly handling the async nature of this function
       const regulationMatch = await findExactRegulationMatch(content);
       if (regulationMatch) {
         const assistantMessage: Message = {

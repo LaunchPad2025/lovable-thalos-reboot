@@ -30,11 +30,8 @@ export const generateAIResponse = (message: string, allMessages: Message[]): str
     if (followUpResponse) return followUpResponse;
   }
   
-  // First, check for exact matches in our regulatory database
-  const exactMatchResponse = findExactRegulationMatch(query);
-  if (exactMatchResponse) return exactMatchResponse;
-  
-  // Check for practical guidance based on common workplace safety topics
+  // First, check for practical guidance based on common workplace safety topics
+  // We're not calling findExactRegulationMatch here anymore since it's async
   const practicalGuidance = getPracticalSafetyGuidance(query);
   if (practicalGuidance) return practicalGuidance;
   
