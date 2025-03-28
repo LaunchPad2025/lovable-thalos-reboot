@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { MessageCircleQuestion, X } from 'lucide-react';
+import { MessageCircleQuestion, X, HardHat } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -15,7 +15,7 @@ interface ChatPopupProps {
   title?: string;
 }
 
-const ChatPopup = ({ title = "Safety Assistant" }: ChatPopupProps) => {
+const ChatPopup = ({ title = "Paulie - Safety Assistant" }: ChatPopupProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -31,7 +31,12 @@ const ChatPopup = ({ title = "Safety Assistant" }: ChatPopupProps) => {
         <DialogContent className="max-w-md h-[500px] p-0 flex flex-col border-gray-700 bg-[#0d1117]">
           <DialogHeader className="px-4 py-2 border-b border-gray-800">
             <div className="flex justify-between items-center">
-              <DialogTitle className="text-white">{title}</DialogTitle>
+              <DialogTitle className="text-white flex items-center">
+                <div className="w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center mr-2">
+                  <HardHat className="h-4 w-4 text-white" />
+                </div>
+                {title}
+              </DialogTitle>
               <DialogClose asChild>
                 <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
                   <X size={18} />

@@ -50,6 +50,12 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
         setImagePreview(reader.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Give user feedback that image is ready for analysis
+      toast({
+        title: "Image ready",
+        description: "Add a question about safety concerns in this image for AI analysis",
+      });
     }
   };
   
@@ -80,6 +86,15 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
     }
   };
   
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter' && !e.shiftKey && !isLoading) {
+      e.preventDefault();
+      if (newMessage.trim() || imageFile) {
+        handleSubmit(e as unknown as React.FormEvent);
+      }
+    }
+  };
+  
   return (
     <form onSubmit={handleSubmit} className="p-2">
       <ImagePreview imagePreview={imagePreview} removeImage={removeImage} />
@@ -106,9 +121,10 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
         
         <Input
           type="text"
-          placeholder="Type your message..."
+          placeholder="Ask Paulie about safety regulations..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
           className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
           disabled={isLoading}
         />
@@ -123,7 +139,7 @@ const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
       </div>
       
       <p className="text-xs text-gray-400 mt-2">
-        Upload images of safety concerns for AI analysis or ask questions about workplace safety regulations.
+        Ask Paulie about workplace safety regulations, PPE requirements, or upload images of safety concerns for analysis.
       </p>
     </form>
   );
