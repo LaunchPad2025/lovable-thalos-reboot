@@ -16,6 +16,9 @@ interface PaulieQueryRow {
   matched_keywords: string[] | null;
   review_status: string | null;
   created_at: string;
+  message_id: string | null;
+  user_id: string | null;
+  timestamp: string | null;
   // Adding the new fields that exist in the database but weren't in the type
   training_status: 'approved' | 'rejected' | 'rewritten' | null;
   improved_response: string | null;
@@ -63,7 +66,7 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       if (error) throw error;
       
       // Format data for UI, now with proper typing
-      const formattedData: TrainingReviewItem[] = (queryData as PaulieQueryRow[] || []).map(item => {
+      const formattedData: TrainingReviewItem[] = (queryData as unknown as PaulieQueryRow[] || []).map(item => {
         // Define status with proper type checking
         let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
         
