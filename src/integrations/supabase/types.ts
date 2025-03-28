@@ -75,6 +75,66 @@ export type Database = {
           },
         ]
       }
+      media_violation_training: {
+        Row: {
+          category: string
+          copilot_response_sample: string | null
+          copilot_task_sample: string | null
+          created_at: string
+          id: string
+          industry: string
+          labels: string[]
+          media_type: string
+          regulation_citation: string | null
+          regulation_summary: string | null
+          remediation_steps: string[]
+          risk_level: string
+          sample_caption: string
+          status: string | null
+          tags: string[]
+          violation_id: string
+          violation_type: string
+        }
+        Insert: {
+          category: string
+          copilot_response_sample?: string | null
+          copilot_task_sample?: string | null
+          created_at?: string
+          id?: string
+          industry: string
+          labels: string[]
+          media_type: string
+          regulation_citation?: string | null
+          regulation_summary?: string | null
+          remediation_steps: string[]
+          risk_level: string
+          sample_caption: string
+          status?: string | null
+          tags: string[]
+          violation_id: string
+          violation_type: string
+        }
+        Update: {
+          category?: string
+          copilot_response_sample?: string | null
+          copilot_task_sample?: string | null
+          created_at?: string
+          id?: string
+          industry?: string
+          labels?: string[]
+          media_type?: string
+          regulation_citation?: string | null
+          regulation_summary?: string | null
+          remediation_steps?: string[]
+          risk_level?: string
+          sample_caption?: string
+          status?: string | null
+          tags?: string[]
+          violation_id?: string
+          violation_type?: string
+        }
+        Relationships: []
+      }
       ml_models: {
         Row: {
           accuracy: number | null
