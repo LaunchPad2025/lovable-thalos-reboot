@@ -8,11 +8,18 @@ import { Loader2 } from "lucide-react";
 const ProtectedRoute = () => {
   const { user, loading } = useAuth();
   const [isReady, setIsReady] = useState(false);
+  const isDemoPath = window.location.pathname.includes('/demo');
 
   // For debugging
   useEffect(() => {
-    console.log("Auth state in ProtectedRoute:", { user: !!user, userId: user?.id, loading, isReady });
-  }, [user, loading, isReady]);
+    console.log("Auth state in ProtectedRoute:", { 
+      user: !!user, 
+      userId: user?.id, 
+      loading, 
+      isReady,
+      isDemoPath
+    });
+  }, [user, loading, isReady, isDemoPath]);
 
   useEffect(() => {
     // Only start the ready timer once loading is complete
@@ -25,6 +32,11 @@ const ProtectedRoute = () => {
       return () => clearTimeout(timer);
     }
   }, [loading]);
+
+  // If the path is /demo, we don't need authentication
+  if (isDemoPath) {
+    return <Outlet />;
+  }
 
   // Show a loading indicator while checking auth state
   if (loading || !isReady) {
