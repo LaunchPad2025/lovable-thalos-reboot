@@ -2,7 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
-import { TrainingReviewItem, TrainingStats, TrainingFilters } from '../types';
+import { TrainingReviewItem, TrainingStats, TrainingFilters, RejectionReason } from '../types';
 import { downloadTrainingData } from '@/utils/feedback/exportTrainingData';
 
 const DEFAULT_FILTERS: TrainingFilters = {
@@ -69,8 +69,8 @@ export const useTrainingData = () => {
         matched_regulation: item.matched_regulation_id || '',
         industry: item.matched_category || '',
         feedback: item.notes || '',
-        status: item.training_status || 'pending',
-        review_status: item.review_status || null,
+        status: item.training_status as 'pending' | 'approved' | 'rejected' | 'rewritten' || 'pending',
+        review_status: item.review_status as 'needs_review' | 'improved' | 'escalated' | null,
         matched_keywords: item.matched_keywords || [],
         created_at: item.created_at,
         improved_response: item.improved_response || ''

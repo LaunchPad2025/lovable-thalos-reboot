@@ -11,6 +11,7 @@ export interface TrainingReviewItem {
   matched_keywords: string[];
   created_at: string;
   improved_response: string;
+  rejection_reason?: string;
 }
 
 export interface TrainingStats {
