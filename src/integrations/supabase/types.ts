@@ -156,6 +156,7 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
+          domain: string | null
           id: string
           industry: string | null
           name: string
@@ -164,6 +165,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          domain?: string | null
           id?: string
           industry?: string | null
           name: string
@@ -172,6 +174,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          domain?: string | null
           id?: string
           industry?: string | null
           name?: string

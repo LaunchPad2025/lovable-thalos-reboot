@@ -24,7 +24,7 @@ const handleFollowUpQuestion = (recentTopics: string[]): string | null => {
   // Check if any topic from the conversation matches our regulations
   for (const topic of recentTopics) {
     for (const regulation of safetyRegulationResponses) {
-      if (regulation.keywords.some(keyword => topic.includes(keyword))) {
+      if (regulation.keywords.some(keyword => topic.toLowerCase().includes(keyword.toLowerCase()))) {
         return `Continuing our discussion about ${topic}, ${regulation.response} Would you like me to elaborate on any specific aspect of this?`;
       }
     }
@@ -39,10 +39,10 @@ const handleFollowUpQuestion = (recentTopics: string[]): string | null => {
 const findExactRegulationMatch = (query: string): string | null => {
   for (const regulation of safetyRegulationResponses) {
     for (const keyword of regulation.keywords) {
-      if (query.includes(keyword)) {
+      if (query.toLowerCase().includes(keyword.toLowerCase())) {
         // Provide a more conversational and detailed response
         const regulationInfo = regulation.response;
-        const sourceInfo = regulation.source;
+        const sourceInfo = regulation.source || "applicable safety regulations";
         
         // Enhance with more conversational elements
         return `Based on your question about ${keyword}, here's what you need to know: ${regulationInfo}\n\nThis guidance comes from ${sourceInfo}. Is there a specific aspect of this regulation you'd like me to explain in more detail?`;
@@ -69,6 +69,8 @@ const getResponseForCommonTopic = (query: string): string | null => {
     return "Regarding your question about safety training, OSHA requires employers to provide training to all employees exposed to workplace hazards (29 CFR 1910.132 for general industry, 29 CFR 1926.21 for construction).\n\nKey requirements include:\n- Training must be in a language workers understand\n- It must cover hazard recognition and prevention\n- For many standards, annual refresher training is required\n- Documentation must be maintained with training dates and content\n\nWhat specific type of safety training are you implementing? I can provide more targeted guidance for your industry.";
   } else if (query.includes('hello') || query.includes('hi') || query.includes('hey')) {
     return "Hi there! I'm Paulie, your AI safety assistant. I'm here to help with questions about workplace safety regulations, compliance requirements, and best practices. I can provide guidance on OSHA standards, EPA regulations, and industry-specific safety protocols. What specific safety topic can I assist you with today?";
+  } else if (query.includes('construction') || query.includes('building') || query.includes('site')) {
+    return "Regarding construction safety, OSHA's Construction Standards (29 CFR 1926) provide comprehensive requirements. The Focus Four hazards - falls, struck-by, caught-in/between, and electrocution - account for most construction fatalities.\n\nKey regulations include:\n- Fall protection required at 6+ feet (1926.501)\n- Proper scaffolding with guardrails (1926.451)\n- Trench protection for excavations 5+ feet deep (1926.652)\n- Lockout/tagout procedures for equipment (1926.417)\n- Hard hats, safety glasses, and appropriate PPE (1926.100-106)\n\nWhat specific construction safety challenge are you facing?";
   }
   
   return null;

@@ -1,4 +1,3 @@
-
 import { Message } from '../../types';
 import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { generateAIResponse } from './localResponseGenerator';
@@ -24,6 +23,7 @@ export const useMessageProcessor = () => {
       
       try {
         // First try with the Hugging Face model
+        console.log("Attempting to process with HuggingFace API");
         aiResponse = await processWithHuggingFace(content, allMessages);
         console.log("Hugging Face processing successful");
       } catch (error) {
@@ -31,6 +31,20 @@ export const useMessageProcessor = () => {
         // Fall back to local response generation if API fails
         aiResponse = generateAIResponse(content, allMessages);
         console.log("Using local fallback response generator");
+      }
+      
+      // If the response is too short or generic, try to enhance it with more specific information
+      if (aiResponse.length < 50 || aiResponse.includes("I don't have specific information")) {
+        console.log("Response too generic, enhancing with local knowledge base");
+        const enhancedResponse = generateAIResponse(content, allMessages);
+        
+        // If the local response is more detailed, use it instead
+        if (enhancedResponse.length > aiResponse.length * 1.5) {
+          aiResponse = enhancedResponse;
+        } else {
+          // Otherwise, combine both responses for more context
+          aiResponse = `${aiResponse}\n\nAdditionally: ${enhancedResponse}`;
+        }
       }
       
       // Add AI response to messages

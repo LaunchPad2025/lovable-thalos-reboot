@@ -35,7 +35,7 @@ export function useOrganizationCheck(userEmail: string | undefined) {
           .select('id, name, domain')
           .not('domain', 'is', null)
           .filter('domain', 'neq', '')
-          .or(`domain.ilike.%${domain}%,domain.eq.${domain}`);
+          .eq('domain', domain);
         
         if (error) {
           console.error("Error in domain query:", error);
@@ -47,8 +47,26 @@ export function useOrganizationCheck(userEmail: string | undefined) {
           // Use the first matching organization
           setExistingOrganization(data[0]);
         } else {
-          console.log("No matching organization found for domain:", domain);
-          setExistingOrganization(null);
+          // Try a more flexible search with LIKE
+          const { data: likeData, error: likeError } = await supabase
+            .from('organizations')
+            .select('id, name, domain')
+            .not('domain', 'is', null)
+            .filter('domain', 'neq', '')
+            .ilike('domain', `%${domain}%`);
+            
+          if (likeError) {
+            console.error("Error in LIKE domain query:", likeError);
+            throw likeError;
+          }
+          
+          if (likeData && likeData.length > 0) {
+            console.log("Found partial matching organization(s):", likeData);
+            setExistingOrganization(likeData[0]);
+          } else {
+            console.log("No matching organization found for domain:", domain);
+            setExistingOrganization(null);
+          }
         }
       } catch (error: any) {
         console.error("Error checking organization:", error);
