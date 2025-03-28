@@ -4,7 +4,7 @@ import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { isFollowUpQuestion, handleFollowUpQuestion } from './utils/follow-up';
 import { getResponseForCommonTopic } from './utils/commonTopics';
 import { getDefaultResponse, getPracticalSafetyGuidance } from './utils/fallbackResponses';
-import { handleFallProtectionQuery } from './utils/regulationMatching';
+import { handleFallProtectionQuery } from './utils/regulation';
 
 /**
  * Enhanced AI response logic with more contextual awareness, practical guidance and conversational tone

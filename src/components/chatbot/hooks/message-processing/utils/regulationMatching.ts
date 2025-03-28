@@ -1,6 +1,8 @@
-import { detectIndustryContext } from './regulation/industry/industryDetector';
+
+import { detectIndustryContext } from '@/utils/conversation/follow-up-suggestions/industry';
 import { supabase } from '@/lib/supabase';
 import { extractKeyTerms } from './regulation/keywordExtraction';
+import { handleFallProtectionQuery } from './regulation/fallProtection';
 
 /**
  * Core regulation matching functionality
@@ -21,7 +23,7 @@ export const findRegulationMatch = async (query: string) => {
   const { data: matchingRegulations, error } = await supabase
     .from('regulations')
     .select('*')
-    .containsAny('keywords', keyTerms)
+    .contains('keywords', keyTerms)
     .limit(5);
   
   if (error) {
@@ -71,3 +73,6 @@ ${regulation.compliance_guidance}
 Reference: ${regulation.citation}
 `;
 };
+
+// Export fallProtectionQuery handler for use in localResponseGenerator
+export { handleFallProtectionQuery };
