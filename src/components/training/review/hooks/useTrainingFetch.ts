@@ -22,6 +22,7 @@ interface PaulieQueryRow {
   training_status: 'approved' | 'rejected' | 'rewritten' | null;
   improved_response: string | null;
   rejection_reason: string | null;
+  review_label?: string | null; // Added to match the actual database schema
 }
 
 export const useTrainingFetch = (initialFilters: TrainingFilters) => {
@@ -64,11 +65,14 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (error) throw error;
       
-      // Transform the data without deep type recursion
+      // Transform the data to avoid deep type recursion
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        for (const item of queryData as PaulieQueryRow[]) {
+        // Cast queryData to unknown first to avoid type mismatch error
+        const rowData = queryData as unknown as PaulieQueryRow[];
+        
+        for (const item of rowData) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           
