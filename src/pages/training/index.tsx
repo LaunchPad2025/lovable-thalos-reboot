@@ -5,7 +5,7 @@ import { Card } from '@/components/ui/card';
 import PageContainer from '@/components/layout/PageContainer';
 import TrainingTabs from '@/components/training/TrainingTabs';
 import { Link } from 'react-router-dom';
-import { Camera, MessageSquare, Calendar, Book, Dashboard, Training } from 'lucide-react';
+import { Camera, MessageSquare, Calendar, Book, LayoutDashboard, GraduationCap } from 'lucide-react';
 
 const TrainingPage = () => {
   return (

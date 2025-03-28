@@ -22,7 +22,9 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const location = useLocation();
-  const { userRole } = useAuthStatus?.() || { userRole: 'user' };
+  const authStatus = useAuthStatus?.() || { user: null, isLoading: false };
+  // Use user?.role or default to 'user' if not available
+  const userRole = authStatus.user?.role || 'user';
   
   // Filter nav items based on user role
   const filteredNavItems = navItems.filter(section => {
