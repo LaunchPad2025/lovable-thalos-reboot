@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import { Bot, User } from 'lucide-react';
 import FeedbackButtons from './FeedbackButtons';
 import { Message } from '../types';
+import { useChatFeedback } from '../hooks/feedback/useChatFeedback';
 
 interface MessageBubbleProps {
   message: Message;
@@ -85,6 +86,3 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) =
 };
 
 export default MessageBubble;
-
-// Import at the top to avoid hoisting issues
-import { useChatFeedback } from '../hooks/feedback/useChatFeedback';
