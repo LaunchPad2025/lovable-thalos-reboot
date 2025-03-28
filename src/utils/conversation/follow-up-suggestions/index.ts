@@ -3,7 +3,7 @@
  * Main follow-up suggestion generator
  */
 import { findMatchingKeywords, getKeywordBasedSuggestions } from './keywordAnalysis';
-import { detectIndustry, getIndustrySuggestion } from './industryDetection';
+import { detectIndustryContext, getIndustrySpecificSuggestions } from './industryDetection';
 import { generateFallbackSuggestions, ensurePracticalFollowUp } from './fallbackSuggestions';
 
 /**
@@ -19,7 +19,7 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
   const suggestions: string[] = [];
   
   // Detect industry context first for more relevant suggestions
-  const detectedIndustry = detectIndustry(combinedText);
+  const detectedIndustry = detectIndustryContext(combinedText);
   
   // Try to find the most relevant keywords first
   const matchingKeywords = findMatchingKeywords(combinedText);
@@ -88,9 +88,9 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
   
   // Add industry-specific suggestions if detected
   if (detectedIndustry && suggestions.length < 3) {
-    const industrySuggestion = getIndustrySuggestion(detectedIndustry);
-    if (industrySuggestion) {
-      suggestions.push(industrySuggestion);
+    const industrySuggestion = getIndustrySpecificSuggestions(detectedIndustry);
+    if (industrySuggestion && industrySuggestion.length > 0) {
+      suggestions.push(industrySuggestion[0]);
     }
   }
   
