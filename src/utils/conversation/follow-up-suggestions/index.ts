@@ -2,9 +2,9 @@
 /**
  * Main follow-up suggestion generator
  */
-import { findMatchingKeywords, getKeywordBasedSuggestions } from './keywordAnalysis';
+import { findMatchingKeywords, getKeywordBasedSuggestions } from './keywords';
 import { detectIndustryContext, getIndustrySpecificSuggestions } from './industry';
-import { generateFallbackSuggestions, ensurePracticalFollowUp } from './fallbackSuggestions';
+import { generateFallbackSuggestions, ensurePracticalFollowUp } from './fallback';
 
 /**
  * Generate relevant and actionable follow-up questions based on the conversation

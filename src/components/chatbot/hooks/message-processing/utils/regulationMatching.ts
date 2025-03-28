@@ -1,41 +1,73 @@
+import { detectIndustryContext } from './regulation/industry/industryDetector';
+import { supabase } from '@/lib/supabase';
+import { extractKeyTerms } from './regulation/keywordExtraction';
 
-// This file is kept for backward compatibility
-// Export everything from the new regulation module
-export * from './regulation';
-
-// Add explicit fall protection handling
-import { getFallProtectionResponse } from './follow-up/topicResponses';
-import { 
-  handleFallProtectionQuery as handleFallProtectionQueryImpl,
-  isDirectRegulationCitation,
-  extractRegulationNumber
-} from './regulation/fallProtection';
-
-export {
-  isDirectRegulationCitation,
-  extractRegulationNumber
-};
-
-// Updated to properly handle async function
-export const handleFallProtectionQuery = async (query: string): Promise<string | null> => {
-  // This is an async version that calls the async implementation
-  try {
-    // Call the async function with the query parameter
-    const result = await handleFallProtectionQueryImpl(query);
-    if (result) {
-      return result;
-    }
-    
-    // Use the static fall protection response for fallback
-    if (query.toLowerCase().includes('fall protection') || 
-        query.toLowerCase().includes('fall arrest') ||
-        query.toLowerCase().includes('1926.501')) {
-      return getFallProtectionResponse(query);
-    }
-    
-    return null;
-  } catch (error) {
-    console.error('Error in handleFallProtectionQuery:', error);
+/**
+ * Core regulation matching functionality
+ */
+export const findRegulationMatch = async (query: string) => {
+  // Get the industry context from the query
+  const industryContext = detectIndustryContext(query);
+  
+  // Extract key terms from the query
+  const keyTerms = await extractKeyTerms(query);
+  
+  // Log the query and extracted terms for analysis
+  console.log(`Regulation query: ${query}`);
+  console.log(`Extracted terms: ${keyTerms.join(', ')}`);
+  console.log(`Detected industry: ${industryContext || 'None'}`);
+  
+  // Search for matching regulations in the database
+  const { data: matchingRegulations, error } = await supabase
+    .from('regulations')
+    .select('*')
+    .containsAny('keywords', keyTerms)
+    .limit(5);
+  
+  if (error) {
+    console.error('Error searching regulations:', error);
     return null;
   }
+  
+  // If we have matching regulations, format and return the best match
+  if (matchingRegulations && matchingRegulations.length > 0) {
+    // Prioritize industry-specific matches if industry context was detected
+    let bestMatch = matchingRegulations[0];
+    
+    if (industryContext) {
+      const industryMatch = matchingRegulations.find(
+        reg => reg.industry === industryContext
+      );
+      
+      if (industryMatch) {
+        bestMatch = industryMatch;
+      }
+    }
+    
+    // Format the regulation response
+    const matchResult = formatRegulationResponse(bestMatch);
+    return matchResult;
+  }
+  
+  // No matching regulations found
+  return null;
+};
+
+/**
+ * Format a regulation match into a user-friendly response
+ */
+const formatRegulationResponse = (regulation: any): string => {
+  return `
+**${regulation.title}**
+
+${regulation.description}
+
+**Key Requirements:**
+${regulation.requirements}
+
+**Compliance Guidance:**
+${regulation.compliance_guidance}
+
+Reference: ${regulation.citation}
+`;
 };
