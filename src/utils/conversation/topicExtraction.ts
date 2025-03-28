@@ -52,6 +52,16 @@ const safetyTopics = [
   'near miss', 'osha 300', 'recordable', 'first aid', 'incident investigation',
   'root cause', 'corrective action', 'fatality', 'hospitalization', 'amputation',
   
+  // New conversational phrases (alternative expressions)
+  'when is fall protection required', 'what height needs harness', 'need guardrails',
+  'rooftop work', 'prevent falls', 'label chemical containers', 'required in safety data sheet',
+  'what does ghs mean', 'store flammable materials', 'post chemical hazards',
+  'what is loto', 'lock out machine', 'when is tagout required', 'authorized for lockout',
+  'typical loto checklist', 'qualifies as confined space', 'permit for tank entry',
+  'tested before entering', 'sign off on confined space', 'confined space rescue requirements',
+  'ppe required for welding', 'need respirator', 'gloves required', 'ppe training rules',
+  'check ppe compliance',
+  
   // Industry-specific topics
   'construction safety', 'manufacturing safety', 'healthcare safety', 'laboratory safety',
   'office safety', 'warehouse safety', 'mining safety', 'oil and gas safety',
@@ -77,6 +87,11 @@ const categoryMappings: Record<string, string> = {
   'elevated work': 'fall protection',
   'floor opening': 'fall protection',
   'hole cover': 'fall protection',
+  'when is fall protection required': 'fall protection',
+  'what height needs harness': 'fall protection',
+  'need guardrails': 'fall protection',
+  'rooftop work': 'fall protection',
+  'prevent falls': 'fall protection',
   
   // Chemical safety mappings
   'hazcom': 'chemical safety',
@@ -88,6 +103,11 @@ const categoryMappings: Record<string, string> = {
   'secondary container': 'chemical safety',
   'flammable storage': 'chemical safety',
   'chemical compatibility': 'chemical safety',
+  'label chemical containers': 'chemical safety',
+  'required in safety data sheet': 'chemical safety',
+  'what does ghs mean': 'chemical safety',
+  'store flammable materials': 'chemical safety',
+  'post chemical hazards': 'chemical safety',
   
   // Machine safety mappings
   'lockout/tagout': 'machine safety',
@@ -95,6 +115,11 @@ const categoryMappings: Record<string, string> = {
   'energy isolation': 'machine safety',
   'machine guarding': 'machine safety',
   'point of operation': 'machine safety',
+  'what is loto': 'machine safety',
+  'lock out machine': 'machine safety',
+  'when is tagout required': 'machine safety',
+  'authorized for lockout': 'machine safety',
+  'typical loto checklist': 'machine safety',
   
   // Confined space mappings
   'permit space': 'confined space',
@@ -102,6 +127,11 @@ const categoryMappings: Record<string, string> = {
   'entry permit': 'confined space',
   'attendant': 'confined space',
   'entrant': 'confined space',
+  'qualifies as confined space': 'confined space',
+  'permit for tank entry': 'confined space',
+  'tested before entering': 'confined space',
+  'sign off on confined space': 'confined space',
+  'confined space rescue requirements': 'confined space',
   
   // PPE mappings
   'hard hat': 'ppe',
@@ -111,6 +141,11 @@ const categoryMappings: Record<string, string> = {
   'safety shoes': 'ppe',
   'hearing protection': 'ppe',
   'protective clothing': 'ppe',
+  'ppe required for welding': 'ppe',
+  'need respirator': 'ppe',
+  'gloves required': 'ppe',
+  'ppe training rules': 'ppe',
+  'check ppe compliance': 'ppe',
   
   // Map various standards to their categories
   '1910.1200': 'chemical safety',
@@ -162,6 +197,54 @@ export function extractSafetyTopics(messages: Message[]): string[] {
     })) {
       if (content.includes(standard) && !topicsFound.has(category)) {
         topicsFound.add(category);
+      }
+    }
+    
+    // Check for conversational phrases that map to specific topics
+    const conversationalPhrases: Record<string, string[]> = {
+      'fall protection': [
+        'when is fall protection required', 
+        'what height needs harness', 
+        'need guardrails', 
+        'rooftop work', 
+        'prevent falls'
+      ],
+      'chemical safety': [
+        'label chemical containers', 
+        'required in safety data sheet', 
+        'what does ghs mean', 
+        'store flammable materials', 
+        'post chemical hazards'
+      ],
+      'machine safety': [
+        'what is loto', 
+        'lock out machine', 
+        'when is tagout required', 
+        'authorized for lockout', 
+        'typical loto checklist'
+      ],
+      'confined space': [
+        'qualifies as confined space', 
+        'permit for tank entry', 
+        'tested before entering', 
+        'sign off on confined space', 
+        'confined space rescue requirements'
+      ],
+      'ppe': [
+        'ppe required for welding', 
+        'need respirator', 
+        'gloves required', 
+        'ppe training rules', 
+        'check ppe compliance'
+      ]
+    };
+    
+    for (const [category, phrases] of Object.entries(conversationalPhrases)) {
+      for (const phrase of phrases) {
+        if (content.includes(phrase) && !topicsFound.has(category)) {
+          topicsFound.add(category);
+          break;
+        }
       }
     }
     

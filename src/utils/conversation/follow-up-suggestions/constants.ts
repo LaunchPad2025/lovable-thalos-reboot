@@ -1,235 +1,154 @@
 
 /**
- * Constants for follow-up suggestion generation
+ * Constants for follow-up suggestions
  */
 
-// Safety-related keyword map for generating contextual and actionable follow-up questions
-export const safetyKeywords = {
-  'ppe': [
-    'Would you like a PPE selection guide for your industry?', 
-    'Should I help you create a PPE training checklist?',
-    'Do you need a template for documenting PPE inspections?'
-  ],
-  'fall': [
-    'Would you like a fall protection inspection checklist template?', 
-    'Should I help you create a fall protection plan template?',
-    'Do you need a harness inspection guide for your team?'
-  ],
+// Enhanced safety keywords with more conversational options and alternatives
+export const safetyKeywords: Record<string, string[]> = {
+  // Fall Protection with alternative phrasing
   'fall protection': [
-    'Would you like a fall protection inspection checklist template?', 
-    'Should I help you create a fall protection plan template?',
-    'Do you need a harness inspection guide for your team?'
+    "What height requires fall protection?",
+    "How often should fall protection equipment be inspected?",
+    "What documentation is needed for fall protection training?",
+    "Do I need a personal fall arrest system or is a guardrail sufficient?",
+    "What's the proper way to tie off with a lanyard?"
   ],
-  'fall arrest': [
-    'Would you like a fall arrest system inspection form?',
-    'Do you need guidance on selecting proper anchorage points?',
-    'Should I provide information on fall clearance calculations?'
+  
+  // Alternative phrases for fall protection
+  'when is fall protection required': [
+    "What height requires fall protection?",
+    "Does OSHA specify different height requirements by industry?",
+    "What qualifies as adequate fall protection systems?"
   ],
-  'scaffold': [
-    'Would you like a scaffold inspection checklist?',
-    'Do you need information on scaffold tagging systems?',
-    'Should I provide scaffold erection guidelines?'
+  
+  'what height needs harness': [
+    "At what height is fall protection required?",
+    "When do workers need to wear a harness?",
+    "What are the height requirements for fall protection in construction?"
   ],
-  'harness': [
-    'Would you like a harness inspection checklist?',
-    'Do you need guidelines for proper harness fit and adjustment?',
-    'Should I provide information on harness maintenance?'
+  
+  'rooftop work': [
+    "What are the safety requirements for rooftop work?",
+    "Do I need guardrails on a roof?",
+    "What fall protection is required for low-slope roofs?"
   ],
-  'guardrail': [
-    'Would you like specifications for OSHA-compliant guardrail systems?',
-    'Do you need a guardrail inspection form?',
-    'Should I provide temporary guardrail installation guidance?'
+  
+  // Chemical Safety / HazCom with alternative phrasing
+  'chemical safety': [
+    "What GHS labels are required for chemical containers?",
+    "How should we store incompatible chemicals?",
+    "What chemical safety training is required for employees?",
+    "How often should we update safety data sheets?",
+    "What is required in a hazard communication program?"
   ],
-  'chemical': [
-    'Would you like a sample chemical inventory spreadsheet?', 
-    'Should I help you create a chemical storage compatibility chart?',
-    'Do you need a template for a chemical spill response plan?'
+  
+  // Alternative phrases for chemical safety
+  'label chemical containers': [
+    "What's required on a GHS compliant label?",
+    "Do secondary containers need the same labeling?",
+    "What symbols are required on chemical labels?"
   ],
-  'hazcom': [
-    'Would you like a chemical labeling compliance guide?',
-    'Should I help you create an SDS management system?',
-    'Do you need a GHS pictogram quick reference chart?'
+  
+  'store flammable materials': [
+    "What type of cabinet is required for flammables?",
+    "How should we store flammable liquids?",
+    "What are the quantity limits for flammable storage?"
   ],
+  
+  'safety data sheet': [
+    "What sections must be included in an SDS?",
+    "How accessible do safety data sheets need to be?",
+    "Do we need to update our SDS when a new revision is available?"
+  ],
+  
+  // Machine Safety / LOTO with alternative phrasing
+  'lockout/tagout': [
+    "What are the key components of a lockout/tagout program?",
+    "Who needs to be trained on lockout/tagout procedures?",
+    "How often should lockout/tagout procedures be reviewed?",
+    "What documentation is required for LOTO?",
+    "When is group lockout permitted?"
+  ],
+  
+  // Alternative phrases for LOTO
+  'what is loto': [
+    "What does a lockout/tagout program include?",
+    "Who needs to be trained in lockout/tagout?",
+    "What equipment requires lockout/tagout procedures?"
+  ],
+  
+  'lock out machine': [
+    "What are the steps in a proper lockout procedure?",
+    "Who is authorized to perform lockout?",
+    "What happens if a lock needs to be removed when someone is absent?"
+  ],
+  
+  // Confined Spaces with alternative phrasing
   'confined space': [
-    'Would you like a confined space entry permit template?',
-    'Should I help you develop atmospheric testing procedures?',
-    'Do you need a confined space rescue plan outline?'
+    "What testing is required before confined space entry?",
+    "Who needs to be involved in a confined space entry?",
+    "What rescue provisions are required for confined spaces?",
+    "How do you determine if a space is permit-required?",
+    "What training is needed for confined space entry?"
   ],
-  'respiratory': [
-    'Would you like a respirator selection flowchart?',
-    'Should I help you create a respiratory protection program?',
-    'Do you need a fit testing documentation form?'
+  
+  // Alternative phrases for confined spaces
+  'permit for tank entry': [
+    "What needs to be included on a confined space permit?",
+    "How long is a confined space entry permit valid?",
+    "Who needs to sign off on a confined space permit?"
   ],
-  'excavation': [
-    'Would you like a daily excavation inspection form?',
-    'Should I help you create a soil classification guide?',
-    'Do you need protective system selection guidance?'
+  
+  'tested before entering': [
+    "What atmospheric testing is required for confined spaces?",
+    "How often should air monitoring be performed during entry?",
+    "What oxygen levels are safe for confined space entry?"
   ],
-  'bloodborne': [
-    'Would you like an exposure control plan template?',
-    'Should I help you create a sharps injury log?',
-    'Do you need bloodborne pathogens training materials?'
+  
+  // PPE with alternative phrasing
+  'ppe': [
+    "How do I document PPE hazard assessments?",
+    "What training is required for PPE users?",
+    "How often should different types of PPE be replaced?",
+    "Who pays for required PPE?",
+    "What are the recordkeeping requirements for PPE?"
   ],
-  'training': [
-    'Would you like a downloadable training documentation template?', 
-    'Should I help you develop a training effectiveness evaluation form?',
-    'Do you need a sample training matrix for your team?'
+  
+  // Alternative phrases for PPE
+  'ppe required for welding': [
+    "What PPE is needed when welding?",
+    "What type of eye protection is required for welding?",
+    "Do welders need respirators?"
   ],
-  'hazard': [
-    'Would you like a downloadable hazard assessment template?',
-    'Should I help you create a job safety analysis form?',
-    'Do you need a guide for prioritizing hazard controls?'
+  
+  'need respirator': [
+    "When are respirators required?",
+    "What medical evaluation is needed before using a respirator?",
+    "How often should respirator fit testing be performed?"
   ],
-  'violation': [
-    'Would you like a violation abatement tracking template?',
-    'Should I help you create a corrective action plan form?',
-    'Do you need a guide for preparing violation contest documentation?'
+  
+  // General safety topics
+  'safety training': [
+    "What should be included in new employee safety orientation?",
+    "How often should safety refresher training be conducted?",
+    "How should I document safety training?",
+    "What training is required by OSHA for my industry?",
+    "Can you provide a safety training matrix template?"
   ],
-  'regulations': [
-    'Would you like a downloadable compliance calendar for upcoming deadlines?',
-    'Should I help you create a regulatory requirements tracker?',
-    'Do you need a documentation preparation checklist for inspections?'
+  
+  'hazard assessment': [
+    "How do I conduct a proper job hazard analysis?",
+    "How often should hazard assessments be updated?",
+    "What documentation is required for hazard assessments?",
+    "Who should be involved in conducting hazard assessments?",
+    "Can you provide a hazard assessment template?"
   ],
-  'fine': [
-    'Would you like a guide on penalty reduction programs?',
-    'Should I help you develop a financial impact assessment for violations?',
-    'Do you need tips for developing an effective abatement strategy?'
-  ],
-  'inspection': [
-    'Would you like a downloadable inspection preparation checklist?',
-    'Should I help you create a self-inspection program template?',
-    'Do you need templates for documenting inspection findings?'
-  ],
-  'employee': [
-    'Would you like a template for documenting employee safety concerns?',
-    'Should I help you create an employee safety suggestion system?',
-    'Do you need a safety responsibilities checklist by role?'
-  ],
-  'document': [
-    'Would you like a downloadable safety documentation organization guide?',
-    'Should I help you create a documentation retention schedule?',
-    'Do you need templates for common safety records?'
-  ],
-  'incident': [
-    'Would you like a downloadable incident investigation form template?',
-    'Should I help you create a near-miss reporting system?',
-    'Do you need a root cause analysis worksheet?'
-  ],
-  'audit': [
-    'Would you like a downloadable pre-audit preparation checklist?',
-    'Should I help you create an audit findings tracking system?',
-    'Do you need a template for developing corrective action plans?'
-  ],
-  'forklift': [
-    'Would you like a downloadable forklift operator evaluation form?',
-    'Should I help you create a forklift inspection checklist?',
-    'Do you need a forklift safety training presentation outline?'
-  ],
-  'warehouse': [
-    'Would you like a warehouse safety checklist template?',
-    'Should I help you create a warehouse ergonomics assessment form?',
-    'Do you need a racking inspection guide for your facility?'
-  ],
-  'construction': [
-    'Would you like a downloadable construction safety plan template?',
-    'Should I help you create a toolbox talk schedule for your site?',
-    'Do you need a scaffold inspection checklist?'
-  ],
-  'healthcare': [
-    'Would you like a downloadable bloodborne pathogens exposure control plan?',
-    'Should I help you create a sharps injury log template?',
-    'Do you need a patient handling assessment form?'
-  ],
-  'manufacturing': [
-    'Would you like a downloadable machine guarding audit form?',
-    'Should I help you create a lockout/tagout procedure template?',
-    'Do you need an equipment-specific training matrix?'
-  ],
-  'matrix': [
-    'Would you like a downloadable training matrix template for your industry?',
-    'Should I help you create a role-based certification tracker?',
-    'Do you need a checklist for setting up a new employee in your training system?'
-  ],
-  'calendar': [
-    'Would you like a downloadable annual safety training calendar template?',
-    'Should I help you organize your training schedule by priority?',
-    'Do you need a regulatory-based training frequency guide?'
-  ],
-  'ladder': [
-    'Would you like a ladder inspection checklist?',
-    'Should I help you create a ladder safety training guide?',
-    'Do you need a poster showing proper ladder setup angles?'
-  ],
-  'electrical': [
-    'Would you like an electrical safety program template?',
-    'Should I help you create a lockout/tagout procedure for electrical equipment?',
-    'Do you need an arc flash hazard assessment guide?'
-  ],
-  'fire': [
-    'Would you like a fire extinguisher inspection log?',
-    'Should I help you create an emergency evacuation plan?',
-    'Do you need a fire prevention plan template?'
-  ],
-  'recordkeeping': [
-    'Would you like an OSHA recordkeeping decision flowchart?',
-    'Should I help you create an injury and illness log template?',
-    'Do you need guidance on determining work-relatedness?'
+  
+  'incident reporting': [
+    "What incidents need to be reported to OSHA?",
+    "How do I calculate incident rates?",
+    "What information should be included in an incident report?",
+    "How long do I need to keep incident records?",
+    "What is considered a near miss?"
   ]
 };
-
-// Industry-specific recommendations for more targeted follow-ups
-export const industrySpecificKeywords = {
-  'construction': ['fall protection', 'scaffolding', 'trenching', 'silica', 'crane', 'ladder', 'steel erection', 'demolition', 'concrete', 'rebar'],
-  'healthcare': ['bloodborne', 'patient handling', 'sharps', 'hazardous drugs', 'radiation', 'infectious waste', 'needle safety', 'ergonomics'],
-  'manufacturing': ['machine guarding', 'lockout', 'ergonomics', 'confined space', 'robotics', 'forklift', 'electrical', 'noise', 'dust control'],
-  'warehouse': ['forklift', 'pallet jack', 'racking', 'ergonomics', 'loading dock', 'material handling', 'pedestrian safety', 'floor marking'],
-  'food': ['sanitation', 'food handling', 'allergens', 'slip prevention', 'knife safety', 'food equipment', 'hot surfaces', 'refrigeration'],
-  'energy': ['confined space', 'excavation', 'hot work', 'electrical', 'fall protection', 'process safety', 'hazardous energy', 'radiation'],
-  'transportation': ['driver safety', 'hours of service', 'pre-trip inspection', 'cargo securement', 'vehicle maintenance', 'fatigue management'],
-  'oil and gas': ['process safety', 'h2s', 'hot work', 'confined space', 'fall protection', 'explosion protection', 'drilling safety']
-};
-
-// Industry-specific suggestion templates
-export const industrySpecificSuggestions = {
-  'construction': [
-    'Would you like a site safety inspection form for construction?',
-    'Need a fall protection plan template for your construction site?',
-    'Should I create a toolbox talk schedule for your construction crew?'
-  ],
-  'healthcare': [
-    'Would you like a patient handling assessment form?',
-    'Need a bloodborne pathogens exposure control plan template?',
-    'Should I create an infectious waste management procedure?'
-  ],
-  'manufacturing': [
-    'Would you like a machine-specific lockout/tagout procedure template?',
-    'Need an ergonomic assessment form for manufacturing workstations?',
-    'Should I create a PPE selection guide for your production areas?'
-  ],
-  'warehouse': [
-    'Would you like a forklift operator certification tracking form?',
-    'Need a racking inspection checklist for your warehouse?',
-    'Should I create a loading dock safety procedure?'
-  ],
-  'food': [
-    'Would you like a food safety sanitation schedule template?',
-    'Need an allergen control program document?',
-    'Should I create a kitchen safety audit checklist?'
-  ],
-  'energy': [
-    'Would you like an energized work permit template?',
-    'Need a confined space entry procedure document?',
-    'Should I create a hot work safety program outline?'
-  ],
-  'transportation': [
-    'Would you like a driver qualification file checklist?',
-    'Need a pre-trip inspection form template?',
-    'Should I create a hours-of-service tracking log?'
-  ],
-  'oil and gas': [
-    'Would you like a H2S safety program template?',
-    'Need a hot work permit system for drilling operations?',
-    'Should I create a process safety management audit form?'
-  ]
-};
-

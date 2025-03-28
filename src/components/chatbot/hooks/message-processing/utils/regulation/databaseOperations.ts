@@ -20,7 +20,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     }
     
     // Enhanced query to find regulations with overlapping keywords
-    // Also check alt_phrases if the column exists
+    // Now also checking alt_phrases for better conversational matching
     const { data: regulations, error } = await supabase
       .from('regulations')
       .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at')
@@ -30,7 +30,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     if (error) {
       console.error('Error fetching regulations with keywords:', error);
       
-      // If the alt_phrases column doesn't exist, fallback to just checking keywords
+      // If the alt_phrases column doesn't exist or query fails, fallback to just checking keywords
       const { data: fallbackRegulations, error: fallbackError } = await supabase
         .from('regulations')
         .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at')
@@ -39,26 +39,18 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
       
       if (fallbackError) {
         console.error('Error in fallback regulation query:', fallbackError);
+        
+        // Log the failed match to regulation_match_failures table
+        await logRegulationMatchFailure(query, keyTerms, userId);
+        
         return null;
       }
       
       if (!fallbackRegulations || fallbackRegulations.length === 0) {
         console.log('No regulations with matching keywords found in database');
         
-        // Log the query for missing keyword analysis
-        try {
-          await supabase
-            .from('paulie_queries')
-            .insert({
-              question: query,
-              matched_keywords: keyTerms,
-              review_status: 'no_match_found',
-              notes: 'No regulation matches despite keywords extraction',
-              user_id: userId
-            });
-        } catch (logError) {
-          console.error('Error logging query with no matches:', logError);
-        }
+        // Log the failed match to regulation_match_failures table
+        await logRegulationMatchFailure(query, keyTerms, userId);
         
         return null;
       }
@@ -69,20 +61,8 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     if (!regulations || regulations.length === 0) {
       console.log('No regulations with matching keywords found in database');
       
-      // Log the query for missing keyword analysis
-      try {
-        await supabase
-          .from('paulie_queries')
-          .insert({
-            question: query,
-            matched_keywords: keyTerms,
-            review_status: 'no_match_found',
-            notes: 'No regulation matches despite keywords extraction',
-            user_id: userId
-          });
-      } catch (logError) {
-        console.error('Error logging query with no matches:', logError);
-      }
+      // Log the failed match to regulation_match_failures table
+      await logRegulationMatchFailure(query, keyTerms, userId);
       
       return null;
     }
@@ -91,6 +71,27 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
   } catch (error) {
     console.error('Error in findRegulationsByKeywords:', error);
     return null;
+  }
+};
+
+/**
+ * Log regulation match failures to the regulation_match_failures table
+ */
+export const logRegulationMatchFailure = async (
+  question: string, 
+  matchedKeywords: string[],
+  userId?: string
+): Promise<void> => {
+  try {
+    await supabase.from('regulation_match_failures').insert({
+      question,
+      user_id: userId,
+      matched_keywords: matchedKeywords,
+      timestamp: new Date().toISOString()
+    });
+    console.log('Logged regulation match failure for analysis');
+  } catch (error) {
+    console.error('Error logging regulation match failure:', error);
   }
 };
 
@@ -117,13 +118,26 @@ const processRegulationMatches = async (
       )
     );
     
-    // Check alt_phrases if available
+    // Check alt_phrases if available - higher weight for exact phrase matches
     let altPhraseMatches = 0;
+    let exactPhraseMatch = false;
+    
     if (reg.alt_phrases && Array.isArray(reg.alt_phrases)) {
       const queryLower = query.toLowerCase();
-      altPhraseMatches = reg.alt_phrases.filter((phrase: string) => 
+      
+      // Check for exact phrase matches which are strong signals of intent
+      exactPhraseMatch = reg.alt_phrases.some((phrase: string) => 
         queryLower.includes(phrase.toLowerCase())
-      ).length;
+      );
+      
+      // Count partial phrase matches
+      altPhraseMatches = reg.alt_phrases.filter((phrase: string) => {
+        const phraseLower = phrase.toLowerCase();
+        const phraseWords = phraseLower.split(' ').filter(word => word.length > 3);
+        
+        // Count phrases where significant words appear in the query
+        return phraseWords.some(word => queryLower.includes(word));
+      }).length;
     }
     
     // Calculate position weight - terms appearing earlier in the query get higher scores
@@ -137,26 +151,49 @@ const processRegulationMatches = async (
       ['fall protection', 'chemical safety', 'machine safety', 'ppe', 
        'confined space', 'fire safety', 'electrical safety', 'training',
        'incident reporting', 'ergonomics', 'respiratory protection',
-       'emergency planning'].includes(term)
+       'emergency planning', 'lockout/tagout', 'hazcom'].includes(term)
     );
     
     // Final score calculation with weights for different factors
     const termMatchScore = matchedTerms.length * 2;
     const categoryScore = matchedCategories.length * 3;
-    const altPhraseScore = altPhraseMatches * 4; // Higher weight for alt_phrases
-    const finalScore = termMatchScore + categoryScore + positionScore + altPhraseScore;
+    const altPhraseScore = altPhraseMatches * 3; // Higher weight for alt_phrases
+    const exactPhraseMatchScore = exactPhraseMatch ? 10 : 0; // Very high weight for exact phrase matches
+    const finalScore = termMatchScore + categoryScore + positionScore + altPhraseScore + exactPhraseMatchScore;
     
     return { 
       ...reg, 
       score: finalScore, 
       matchedTerms,
-      matchedCategories
+      matchedCategories,
+      exactPhraseMatch
     };
   });
   
   // Sort by score (highest first) and take top 3
   scoredRegulations.sort((a, b) => b.score - a.score);
   const topRegulations = scoredRegulations.slice(0, 3);
+  
+  // Check if we have a regulation with a high enough confidence score
+  // If not, log as a potential match failure for further analysis
+  const confidenceThreshold = 4;
+  if (topRegulations.length > 0 && topRegulations[0].score < confidenceThreshold) {
+    console.log('Low confidence regulation match:', topRegulations[0].score);
+    
+    // Log match with low confidence as a partial match
+    try {
+      await supabase.from('regulation_match_failures').insert({
+        question: query,
+        user_id: userId,
+        matched_keywords: keyTerms,
+        notes: 'Low confidence match',
+        suggested_category: topRegulations[0].category || null,
+        reviewed: false
+      });
+    } catch (logError) {
+      console.error('Error logging low confidence match:', logError);
+    }
+  }
   
   // Check for multiple category matches to provide better follow-ups
   const allMatchedCategories = Array.from(new Set(
