@@ -11,6 +11,8 @@ interface TrainingDataExport {
   notes: string | null;
   matched_regulation: string | null;
   industry_context: string | null;
+  matched_regulation_code: string | null; // Added for QA
+  industry_detected: string | null; // Added for QA
 }
 
 /**
@@ -27,7 +29,7 @@ export const exportPaulieFeedbackData = async (): Promise<{
     // Query for thumbs-down entries with notes or flagged for review
     const { data, error } = await supabase
       .from('paulie_queries')
-      .select('question, response, helpful, notes, matched_regulation_id, matched_category, review_status')
+      .select('question, response, helpful, notes, matched_regulation_id, matched_category, review_status, matched_keywords')
       .eq('helpful', false)
       .or('notes.is.not.null,review_status.eq.needs_review');
 
@@ -41,28 +43,42 @@ export const exportPaulieFeedbackData = async (): Promise<{
     }
 
     // Format the data according to the required structure
-    const formattedData: TrainingDataExport[] = data.map(item => ({
-      prompt: item.question || '',
-      response: item.response || '',
-      feedback: 'not_helpful', // All entries are thumbs-down
-      notes: item.notes,
-      matched_regulation: item.matched_regulation_id || null,
-      industry_context: item.matched_category || null
-    }));
+    const formattedData: TrainingDataExport[] = data.map(item => {
+      // Extract regulation code from matched_keywords if available
+      const regulationCodes = item.matched_keywords ? 
+        item.matched_keywords.filter((kw: string) => 
+          kw.match(/^\d+\.\d+/) || kw.match(/^[A-Z]+\d+/)
+        ) : [];
+      
+      const regulationCode = regulationCodes.length > 0 ? regulationCodes[0] : null;
+      
+      return {
+        prompt: item.question || '',
+        response: item.response || '',
+        feedback: 'not_helpful', // All entries are thumbs-down
+        notes: item.notes,
+        matched_regulation: item.matched_regulation_id || null,
+        industry_context: item.matched_category || null,
+        matched_regulation_code: regulationCode,
+        industry_detected: item.matched_category || null
+      };
+    });
 
     // Create export files (JSON and CSV)
     const jsonContent = JSON.stringify(formattedData, null, 2);
     const jsonFileName = 'trainingDataset-v1.json';
     
     // Generate CSV content
-    const csvHeader = 'prompt,response,feedback,notes,matched_regulation,industry_context';
+    const csvHeader = 'prompt,response,feedback,notes,matched_regulation,industry_context,matched_regulation_code,industry_detected';
     const csvRows = formattedData.map(row => [
       `"${escapeCSV(row.prompt)}"`,
       `"${escapeCSV(row.response)}"`,
       row.feedback,
       `"${escapeCSV(row.notes || '')}"`,
       row.matched_regulation || '',
-      `"${escapeCSV(row.industry_context || '')}"`
+      `"${escapeCSV(row.industry_context || '')}"`,
+      row.matched_regulation_code || '',
+      `"${escapeCSV(row.industry_detected || '')}"`
     ].join(','));
     const csvContent = [csvHeader, ...csvRows].join('\n');
     const csvFileName = 'paulie_finetune_candidates.csv';
@@ -104,14 +120,16 @@ export const downloadTrainingData = (data: TrainingDataExport[], format: 'json' 
     contentType = 'application/json';
   } else {
     // CSV format
-    const csvHeader = 'prompt,response,feedback,notes,matched_regulation,industry_context';
+    const csvHeader = 'prompt,response,feedback,notes,matched_regulation,industry_context,matched_regulation_code,industry_detected';
     const csvRows = data.map(row => [
       `"${escapeCSV(row.prompt)}"`,
       `"${escapeCSV(row.response)}"`,
       row.feedback,
       `"${escapeCSV(row.notes || '')}"`,
       row.matched_regulation || '',
-      `"${escapeCSV(row.industry_context || '')}"`
+      `"${escapeCSV(row.industry_context || '')}"`,
+      row.matched_regulation_code || '',
+      `"${escapeCSV(row.industry_detected || '')}"`
     ].join(','));
     content = [csvHeader, ...csvRows].join('\n');
     fileName = 'paulie_finetune_candidates.csv';

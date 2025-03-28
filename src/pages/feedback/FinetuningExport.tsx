@@ -11,7 +11,7 @@ const FinetuningExport = () => {
       <div className="space-y-6">
         <PageTitle 
           title="Paulie Training Data Export" 
-          description="Export feedback data for fine-tuning Paulie's responses"
+          subtitle="Export feedback data for fine-tuning Paulie's responses"
         />
         
         <TrainingDataExport />
@@ -31,7 +31,8 @@ const FinetuningExport = () => {
             <div className="mt-4 p-3 bg-yellow-950/20 border border-yellow-900/30 rounded-md">
               <h4 className="text-yellow-500 font-medium">Important</h4>
               <p className="text-sm text-muted-foreground">
-                Exported data should be reviewed before using for fine-tuning. Check for any sensitive information and ensure the feedback is constructive and relevant.
+                Exported data includes matched regulation codes and detected industry context for QA purposes. 
+                Review before using for fine-tuning to ensure the feedback is constructive and relevant.
               </p>
             </div>
           </CardContent>
