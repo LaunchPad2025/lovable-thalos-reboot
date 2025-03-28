@@ -30,6 +30,7 @@ export const useMessageProcessor = () => {
         console.error('Error with Hugging Face processing, falling back to local response:', error);
         // Fall back to local response generation if API fails
         aiResponse = generateAIResponse(content, allMessages);
+        console.log("Using local fallback response generator");
       }
       
       // Add AI response to messages

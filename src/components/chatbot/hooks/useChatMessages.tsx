@@ -52,22 +52,31 @@ export const useChatMessages = () => {
       
       // Process the user message and get AI response
       await processUserMessage(content, updatedMessages, setMessages, setFollowUpSuggestions);
-      
-      setIsLoading(false);
     } catch (error) {
       console.error('Error sending message:', error);
-      toast.error('Failed to send message');
-      setIsLoading(false);
       
-      // Add failure message
+      // Add fallback message
       const errorMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: "I encountered an error processing your request. Please try again or rephrase your question.",
+        content: "I encountered an error processing your request. I'll try to answer with my local knowledge instead.\n\n" + 
+                 (content.toLowerCase().includes('chemical') ? 
+                  "Regarding chemical storage, OSHA requires proper labeling, compatible storage groups, ventilation, and secondary containment. SDS documents should be readily available, and employees must be trained on hazard communication. Would you like more specific information about particular chemicals or storage requirements?" : 
+                  "I'm having trouble connecting to my knowledge base. Can you please try again with your question, or ask me about a different safety topic?"),
         role: 'assistant',
         timestamp: new Date().toISOString(),
       };
       
       setMessages(prev => [...prev, errorMessage]);
+      
+      // Generate some basic follow-up suggestions
+      setFollowUpSuggestions([
+        "What specific chemicals are you working with?",
+        "Do you need information about a specific safety regulation?"
+      ]);
+      
+      toast.error('Using local knowledge base due to connection issue');
+    } finally {
+      setIsLoading(false);
     }
   };
 

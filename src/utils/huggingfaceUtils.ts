@@ -53,7 +53,13 @@ export async function processWithHuggingFace(
 
     if (error) {
       console.error('Error calling Hugging Face edge function:', error);
-      return `I'm having trouble processing your request. Please try again later. Error: ${error.message}`;
+      // Instead of returning an error message, throw an error to trigger the fallback
+      throw new Error(`Failed to process with Hugging Face: ${error.message}`);
+    }
+
+    // Check if we got a fallback signal from the edge function
+    if (data.fallback) {
+      throw new Error('Edge function suggested using fallback');
     }
 
     // Get the raw response
@@ -65,7 +71,8 @@ export async function processWithHuggingFace(
     return response;
   } catch (error) {
     console.error('Exception in Hugging Face processing:', error);
-    return 'I apologize, but I encountered an unexpected error. Please try again later.';
+    // Throw the error to trigger the fallback mechanism
+    throw error;
   }
 }
 
