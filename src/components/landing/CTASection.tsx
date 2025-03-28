@@ -1,11 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 
 const CTASection = () => {
-  const navigate = useNavigate();
-  
   return (
     <div className="py-24">
       <div className="container mx-auto px-4">
@@ -15,11 +12,11 @@ const CTASection = () => {
             Join hundreds of companies already using Thalos to enhance safety compliance and reduce incidents.
           </p>
           <Button 
-            onClick={() => navigate('/auth?signup=true')} 
+            onClick={() => window.open('https://cal.com/annieeser/30min', '_blank')} 
             size="lg"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-md text-lg"
           >
-            Start Free Trial
+            Schedule a Demo
           </Button>
         </div>
       </div>

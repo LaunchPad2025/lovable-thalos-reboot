@@ -48,7 +48,7 @@ const PaulieSection = () => {
             
             <Button 
               className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate('/demo')}
             >
               Try Demo <ChevronRight className="ml-2 h-5 w-5" />
             </Button>

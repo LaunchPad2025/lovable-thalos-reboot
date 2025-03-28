@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { AuthProvider, useAuth } from "@/context/auth";
 import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
-import DemoDashboard from './components/DemoDashboard'; // Import the new component
+import DemoDashboard from './components/DemoDashboard'; 
 
 // Pages
 import Dashboard from "./pages/Dashboard";
