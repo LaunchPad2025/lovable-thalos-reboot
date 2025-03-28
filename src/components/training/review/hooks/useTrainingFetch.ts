@@ -45,20 +45,30 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       if (error) throw error;
       
       // Format data for UI
-      const formattedData: TrainingReviewItem[] = (queryData || []).map(item => ({
-        id: item.id,
-        question: item.question || '',
-        response: item.response || '',
-        matched_regulation: item.matched_regulation_id || '',
-        industry: item.matched_category || '',
-        feedback: item.notes || '',
-        status: item.training_status as 'pending' | 'approved' | 'rejected' | 'rewritten' || 'pending',
-        review_status: item.review_status as 'needs_review' | 'improved' | 'escalated' | null,
-        matched_keywords: item.matched_keywords || [],
-        created_at: item.created_at,
-        improved_response: item.improved_response || '',
-        rejection_reason: item.rejection_reason
-      }));
+      const formattedData: TrainingReviewItem[] = (queryData || []).map(item => {
+        // Define status with proper type checking
+        let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
+        if (item.training_status === 'approved' || 
+            item.training_status === 'rejected' || 
+            item.training_status === 'rewritten') {
+          status = item.training_status;
+        }
+        
+        return {
+          id: item.id,
+          question: item.question || '',
+          response: item.response || '',
+          matched_regulation: item.matched_regulation_id || '',
+          industry: item.matched_category || '',
+          feedback: item.notes || '',
+          status: status,
+          review_status: item.review_status as 'needs_review' | 'improved' | 'escalated' | null,
+          matched_keywords: item.matched_keywords || [],
+          created_at: item.created_at,
+          improved_response: item.improved_response || '',
+          rejection_reason: item.rejection_reason
+        };
+      });
       
       setData(formattedData);
     } catch (error) {

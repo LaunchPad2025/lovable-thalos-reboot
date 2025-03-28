@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Sheet, 
@@ -9,21 +10,16 @@ import {
   SheetClose
 } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { format } from 'date-fns';
-import { CheckCircle, XCircle, Pencil, CheckCircle2 } from 'lucide-react';
 import { useTrainingData } from './hooks/useTrainingData';
-import { TrainingReviewItem, REJECTION_REASONS } from './types';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { TrainingReviewItem } from './types';
+import {
+  DrawerHeader,
+  ReviewContent,
+  ImproveContent,
+  RejectContent,
+  ReviewActions
+} from './components/drawer';
 
 interface ReviewDrawerProps {
   item: TrainingReviewItem | null;
@@ -100,29 +96,7 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
         </SheetHeader>
         
         <div className="py-4 space-y-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Badge variant={
-                item.status === 'approved' ? 'success' : 
-                item.status === 'rejected' ? 'destructive' : 
-                item.status === 'rewritten' ? 'warning' : 
-                'secondary'
-              }>
-                {item.status.charAt(0).toUpperCase() + item.status.slice(1)}
-              </Badge>
-              <Badge variant="outline">
-                {item.industry || 'Unknown Industry'}
-              </Badge>
-              {item.review_status && (
-                <Badge variant="info">
-                  {item.review_status.replace('_', ' ')}
-                </Badge>
-              )}
-            </div>
-            <span className="text-sm text-muted-foreground">
-              {format(new Date(item.created_at), 'MMM d, yyyy')}
-            </span>
-          </div>
+          <DrawerHeader item={item} />
 
           <Tabs defaultValue="review" value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="grid grid-cols-3">
@@ -131,144 +105,58 @@ export const ReviewDrawer: React.FC<ReviewDrawerProps> = ({
               <TabsTrigger value="reject">Reject</TabsTrigger>
             </TabsList>
             
-            <TabsContent value="review" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">User Question</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap">{item.question}</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Paulie's Response</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap">{item.response}</p>
-                </CardContent>
-              </Card>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm font-medium">Regulation</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{item.matched_regulation || 'None detected'}</p>
-                    {item.matched_keywords && item.matched_keywords.length > 0 && (
-                      <div className="mt-2">
-                        <p className="text-xs text-muted-foreground mb-1">Keywords:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {item.matched_keywords.map((keyword, i) => (
-                            <Badge variant="outline" key={i} className="text-xs">
-                              {keyword}
-                            </Badge>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-                
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-sm font-medium">User Feedback</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p>{item.feedback || 'No feedback provided'}</p>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <Button variant="secondary" onClick={() => setActiveTab('reject')}>
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Reject
-                </Button>
-                <Button variant="outline" onClick={() => setActiveTab('improve')}>
-                  <Pencil className="mr-2 h-4 w-4" />
-                  Rewrite
-                </Button>
-                <Button onClick={handleApprove} disabled={updating}>
-                  <CheckCircle className="mr-2 h-4 w-4" />
-                  Approve
-                </Button>
+            <TabsContent value="review">
+              <ReviewContent item={item} />
+              <div className="mt-4">
+                <ReviewActions 
+                  activeTab="review"
+                  setActiveTab={setActiveTab}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onRewrite={handleRewrite}
+                  updating={updating}
+                  rejectionReason={rejectionReason}
+                  improvedResponse={improvedResponse}
+                />
               </div>
             </TabsContent>
             
-            <TabsContent value="improve" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Original Response</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="whitespace-pre-wrap">{item.response}</p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Improved Response</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Textarea
-                    placeholder="Write improved response here..."
-                    value={improvedResponse}
-                    onChange={(e) => setImprovedResponse(e.target.value)}
-                    className="min-h-[200px]"
-                  />
-                </CardContent>
-              </Card>
-              
-              <div className="flex justify-end gap-2">
-                <Button variant="secondary" onClick={() => setActiveTab('review')}>
-                  Cancel
-                </Button>
-                <Button onClick={handleRewrite} disabled={updating}>
-                  <CheckCircle2 className="mr-2 h-4 w-4" />
-                  Save Rewrite
-                </Button>
+            <TabsContent value="improve">
+              <ImproveContent 
+                item={item}
+                improvedResponse={improvedResponse}
+                setImprovedResponse={setImprovedResponse}
+              />
+              <div className="mt-4">
+                <ReviewActions 
+                  activeTab="improve"
+                  setActiveTab={setActiveTab}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onRewrite={handleRewrite}
+                  updating={updating}
+                  rejectionReason={rejectionReason}
+                  improvedResponse={improvedResponse}
+                />
               </div>
             </TabsContent>
             
-            <TabsContent value="reject" className="space-y-4 mt-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-sm font-medium">Rejection Reason</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Select
-                    value={rejectionReason}
-                    onValueChange={setRejectionReason}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a reason" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {REJECTION_REASONS.map((reason) => (
-                        <SelectItem key={reason.value} value={reason.value}>
-                          {reason.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </CardContent>
-              </Card>
-              
-              <div className="flex justify-end gap-2">
-                <Button variant="secondary" onClick={() => setActiveTab('review')}>
-                  Cancel
-                </Button>
-                <Button 
-                  variant="destructive" 
-                  onClick={handleReject} 
-                  disabled={updating || !rejectionReason}
-                >
-                  <XCircle className="mr-2 h-4 w-4" />
-                  Confirm Rejection
-                </Button>
+            <TabsContent value="reject">
+              <RejectContent 
+                rejectionReason={rejectionReason}
+                setRejectionReason={setRejectionReason}
+              />
+              <div className="mt-4">
+                <ReviewActions 
+                  activeTab="reject"
+                  setActiveTab={setActiveTab}
+                  onApprove={handleApprove}
+                  onReject={handleReject}
+                  onRewrite={handleRewrite}
+                  updating={updating}
+                  rejectionReason={rejectionReason}
+                  improvedResponse={improvedResponse}
+                />
               </div>
             </TabsContent>
           </Tabs>
