@@ -9,7 +9,7 @@ export const mockAuditFindings: AuditFinding[] = [
     location: "Production Line A",
     severity: "high",
     assignee: "Tom Anderson",
-    dueDate: "2023-12-05",
+    dueDate: "2025-04-05",
     status: "resolved"
   },
   {
@@ -18,7 +18,7 @@ export const mockAuditFindings: AuditFinding[] = [
     location: "Machining Area",
     severity: "critical",
     assignee: "Tom Anderson",
-    dueDate: "2023-12-01",
+    dueDate: "2025-04-01",
     status: "open"
   },
   {
@@ -27,7 +27,7 @@ export const mockAuditFindings: AuditFinding[] = [
     location: "Assembly Area",
     severity: "medium",
     assignee: "Sarah Johnson",
-    dueDate: "2023-12-10",
+    dueDate: "2025-04-10",
     status: "in_progress"
   }
 ];
@@ -81,7 +81,7 @@ export const mockScheduledAudits: ScheduledAudit[] = [
   {
     id: "a1",
     name: "Annual OSHA Compliance Review",
-    date: "2023-12-20",
+    date: "2025-04-20",
     time: "9:00 AM",
     type: "external",
     location: "Main Facility",
@@ -92,7 +92,7 @@ export const mockScheduledAudits: ScheduledAudit[] = [
   {
     id: "a2",
     name: "Quarterly Fire Safety Inspection",
-    date: "2023-12-15",
+    date: "2025-04-15",
     time: "2:30 PM",
     type: "internal",
     location: "All Buildings",
@@ -103,7 +103,7 @@ export const mockScheduledAudits: ScheduledAudit[] = [
   {
     id: "a3",
     name: "Environmental Compliance Audit",
-    date: "2023-12-18",
+    date: "2025-04-18",
     time: "10:00 AM",
     type: "external",
     location: "Manufacturing Plant",
@@ -114,7 +114,7 @@ export const mockScheduledAudits: ScheduledAudit[] = [
   {
     id: "a4",
     name: "Safety Committee Walkthrough",
-    date: "2023-12-12",
+    date: "2025-04-12",
     time: "1:00 PM",
     type: "internal",
     location: "Warehouse Areas",
@@ -125,7 +125,7 @@ export const mockScheduledAudits: ScheduledAudit[] = [
   {
     id: "a5",
     name: "Machine Guarding Inspection",
-    date: "2023-11-24",
+    date: "2025-03-24",
     time: "10:00 AM",
     type: "internal",
     location: "Production Floor",
@@ -147,15 +147,15 @@ export const statisticsData = {
   recentReports: [
     {
       name: "Monthly Safety Summary",
-      date: "November 2023"
+      date: "March 2025"
     },
     {
       name: "Fire Safety Inspection",
-      date: "October 2023"
+      date: "February 2025"
     },
     {
       name: "Quarterly Compliance Report",
-      date: "Q3 2023"
+      date: "Q1 2025"
     }
   ]
 };

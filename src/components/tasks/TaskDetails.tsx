@@ -7,6 +7,7 @@ import TaskStatusControl from './status/TaskStatusControl';
 import { useTaskViolation } from '@/hooks/useTaskViolation';
 import { Calendar, User, MapPin, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { getDateStatus } from '@/utils/dateUtils';
 
 interface TaskDetailsProps {
   task: Task | null;
@@ -39,7 +40,8 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
       })
     : "No due date";
   
-  const isOverdue = task.due_date && new Date(task.due_date) < new Date();
+  // Get the date status information
+  const dueDateStatus = task.due_date ? getDateStatus(new Date(task.due_date)) : null;
   
   return (
     <div className="h-full border border-gray-800 bg-[#0f1419] rounded-lg shadow-sm overflow-hidden flex flex-col">
@@ -99,9 +101,14 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
               </div>
               <div>
                 <p className="text-xs text-gray-400 mb-1">Due Date</p>
-                <p className={isOverdue ? "text-red-400" : "text-white"}>
+                <p className={dueDateStatus ? dueDateStatus.className : "text-white"}>
                   {formattedDueDate}
-                  {isOverdue && <span className="text-red-400 ml-2 text-sm">Overdue</span>}
+                  {dueDateStatus && dueDateStatus.isPastDue && 
+                    <span className="text-red-400 ml-2 text-sm">Overdue</span>
+                  }
+                  {dueDateStatus && dueDateStatus.isDueToday && 
+                    <span className="text-yellow-400 ml-2 text-sm">Due Today</span>
+                  }
                 </p>
               </div>
               <div>

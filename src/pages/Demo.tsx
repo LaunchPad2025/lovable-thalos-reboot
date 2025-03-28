@@ -23,7 +23,7 @@ const DemoPage = () => {
     return [
       {
         id: "demo-violation-1",
-        severity: "medium",
+        severity: "medium" as "medium" | "low" | "high" | "critical", // Cast to the expected union type
         timestamp: new Date().toISOString(),
         description: "Simulated safety violation analysis for demo purposes.",
         image_url: imageUrl,
