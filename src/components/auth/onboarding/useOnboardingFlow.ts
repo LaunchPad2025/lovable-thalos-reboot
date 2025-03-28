@@ -5,6 +5,7 @@ import { useAuth } from "@/context/auth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 import { UserRole } from "./types";
+import { useOrganizationCheck } from "./useOrganizationCheck";
 
 export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
   const [step, setStep] = useState(1);
@@ -16,43 +17,17 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>([]);
   const [selectedModules, setSelectedModules] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [existingOrganization, setExistingOrganization] = useState<any>(null);
-  const [checkingOrganization, setCheckingOrganization] = useState<boolean>(true);
   
   const { user, updateUserProfile } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { existingOrganization, checkingOrganization } = useOrganizationCheck(user?.email);
 
   useEffect(() => {
-    const checkExistingOrganization = async () => {
-      if (!user?.email) return;
-      
-      setCheckingOrganization(true);
-      
-      try {
-        const domain = user.email.split('@')[1];
-        
-        const { data, error } = await supabase
-          .from('organizations')
-          .select('id, name')
-          .ilike('domain', `%${domain}%`)
-          .maybeSingle();
-        
-        if (error) throw error;
-        
-        if (data) {
-          setExistingOrganization(data);
-          setCreateOrg(false);
-        }
-      } catch (error: any) {
-        console.error("Error checking organization:", error);
-      } finally {
-        setCheckingOrganization(false);
-      }
-    };
-    
-    checkExistingOrganization();
-  }, [user?.email]);
+    if (existingOrganization) {
+      setCreateOrg(false);
+    }
+  }, [existingOrganization]);
 
   const handleIndustrySelect = (industry: string) => {
     if (selectedIndustries.includes(industry)) {
