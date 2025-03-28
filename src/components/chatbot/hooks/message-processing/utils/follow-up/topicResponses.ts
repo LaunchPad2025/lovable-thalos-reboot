@@ -10,7 +10,43 @@ import { safetyRegulationResponses } from '../../../../data/safetyRegulationData
  * Generate a response for height-related follow-up questions
  */
 export const getHeightRequirementsResponse = (): string => {
-  return "**Minimum Height Requirements for Fall Protection**\n\nOSHA specifies different height thresholds by industry:\n\n1. **Construction industry**: 6 feet or more above a lower level (29 CFR 1926.501)\n\n2. **General industry**: 4 feet or more above a lower level (29 CFR 1910.28)\n\n3. **Shipyards**: 5 feet or more above a lower level\n\n4. **Longshoring operations**: 8 feet or more above a lower level\n\n5. **Special case**: Any height when working above dangerous equipment\n\nWhen implementing your fall protection program, document the specific height thresholds applicable to your workplace and ensure all employees are trained on these requirements.\n\nWould you like a downloadable fall protection planning guide for your industry?";
+  return `**Minimum Height Requirements for Fall Protection**
+
+OSHA specifies different height thresholds by industry:
+
+1. **Construction industry**: 
+   - 6 feet or more above a lower level (29 CFR 1926.501)
+   - Includes residential construction applications
+   - Exceptions apply for specific activities
+
+2. **General industry**: 
+   - 4 feet or more above a lower level (29 CFR 1910.28)
+   - Applies to most manufacturing and warehousing
+   - Additional requirements for fixed ladders and platforms
+
+3. **Shipyards**: 
+   - 5 feet or more above a lower level
+   - Special requirements for working over water
+   - Different standards for various shipyard operations
+
+4. **Longshoring operations**: 
+   - 8 feet or more above a lower level
+   - Special considerations for dock and vessel work
+   - Additional requirements for marine terminals
+
+5. **Special case**: 
+   - Any height when working above dangerous equipment
+   - Requires guardrails, fall restraint, or fall arrest
+   - Specific process for documenting hazard assessment
+
+When implementing your fall protection program, document the specific height thresholds applicable to your workplace and ensure all employees are trained on these requirements.
+
+Would you like a downloadable fall protection planning guide for your industry?
+
+**Related questions you might ask:**
+- What are the different types of fall protection systems?
+- How do I conduct a fall hazard assessment?
+- What documentation is required for my fall protection program?`;
 };
 
 /**

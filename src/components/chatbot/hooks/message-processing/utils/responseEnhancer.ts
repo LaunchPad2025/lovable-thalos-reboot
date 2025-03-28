@@ -1,4 +1,3 @@
-
 /**
  * Enhance AI response with additional context and practical advice if needed
  */
@@ -80,30 +79,12 @@ export const enhanceResponse = (
  * with improved formatting, headings, and clear structure
  */
 const addConversationalElements = (response: string): string => {
-  // Fix run-on sentences
+  // Fix run-on sentences - ensuring proper punctuation
   response = response.replace(/(\w)\s+([A-Z])/g, "$1. $2");
   response = response.replace(/(\w)\s+(Would you like|Should I|Do you need|Want|Need)/g, "$1. $2");
   
-  // Add practical advice if not already present
-  if (!response.includes("make sure") && 
-      !response.includes("be sure to") && 
-      !response.includes("should") &&
-      !response.includes("important to") &&
-      response.length > 150) {
-    
-    const practicalTips = [
-      "\n\n**Practical Tip:** Create standardized forms for all safety processes to ensure consistency and completeness in your documentation.",
-      "\n\n**Quick Tip:** Digital safety management systems can help automate record-keeping and send alerts when inspections or training are due.",
-      "\n\n**Helpful Hint:** Training employees on why safety procedures matter, not just how to follow them, leads to better compliance and fewer incidents.",
-      "\n\n**Pro Tip:** Consider using QR codes on equipment that link to digital maintenance and inspection records for easier tracking."
-    ];
-    
-    response += practicalTips[Math.floor(Math.random() * practicalTips.length)];
-  }
-  
-  // Add Markdown formatting to lists if they exist but aren't already formatted
+  // Add bold headings for lists to improve readability
   if (response.includes("1.") && response.includes("2.") && !response.includes("**")) {
-    // Add bold heading if there are numbered lists
     const topicWords = ["training", "inspection", "documentation", "record", "checklist", "audit", "safety", "hazard"];
     
     for (const word of topicWords) {
@@ -136,44 +117,69 @@ const addConversationalElements = (response: string): string => {
     }
   }
   
-  // Replace generic offers with more specific, action-oriented ones with template offers
-  response = response.replace(
-    /Would you like to see (a|the) (.+?)\?/gi,
-    (match, article, item) => {
-      return `I can provide a practical template for ${item} that you can download or adapt. Would that be helpful?`;
-    }
-  );
+  // Improve formatting for numbered lists with sub-bullets
+  response = response.replace(/(\d+\.\s+)([A-Z][^:]+):\s+/g, "$1**$2:**\n   ");
   
-  response = response.replace(
-    /Would you like more information about (.+?)\?/gi,
-    (match, topic) => {
-      return `I can share some best practices and a downloadable template for implementing ${topic} in your workplace. Interested?`;
-    }
-  );
-  
-  // Make inspection guidance more specific and practical
-  if (response.includes("inspect") && !response.includes("before each use") && !response.includes("annually")) {
-    response = response.replace(
-      /should be inspected/gi,
-      "should be inspected before each use and documented with standardized forms"
-    );
-  }
-  
-  // Add documentation guidance to regulatory information
-  if ((response.includes("CFR") || response.includes("OSHA requires")) && 
-      !response.includes("document") && !response.includes("record")) {
-    response += "\n\n**Documentation Reminder:** Remember to document your compliance efforts with dates, responsible parties, and specific actions taken.";
-  }
-  
-  // Offer template or downloadable resources if appropriate
-  if ((response.includes("documentation") || 
-       response.includes("record") || 
-       response.includes("form") || 
-       response.includes("checklist") || 
-       response.includes("template")) && 
-      !response.includes("Would you like a downloadable")) {
+  // Add practical advice if not already present
+  if (!response.includes("make sure") && 
+      !response.includes("be sure to") && 
+      !response.includes("should") &&
+      !response.includes("important to") &&
+      response.length > 150) {
     
-    response += "\n\nWould you like a downloadable template or sample form for this?";
+    const practicalTips = [
+      "\n\n**Practical Tip:** Create standardized forms for all safety processes to ensure consistency and completeness in your documentation.",
+      "\n\n**Quick Tip:** Digital safety management systems can help automate record-keeping and send alerts when inspections or training are due.",
+      "\n\n**Helpful Hint:** Training employees on why safety procedures matter, not just how to follow them, leads to better compliance and fewer incidents.",
+      "\n\n**Pro Tip:** Consider using QR codes on equipment that link to digital maintenance and inspection records for easier tracking."
+    ];
+    
+    response += practicalTips[Math.floor(Math.random() * practicalTips.length)];
+  }
+  
+  // Offer downloadable templates for training, inspection, and recordkeeping
+  if ((response.toLowerCase().includes("training") || 
+       response.toLowerCase().includes("inspection") || 
+       response.toLowerCase().includes("record") || 
+       response.toLowerCase().includes("document") || 
+       response.toLowerCase().includes("checklist")) && 
+      !response.toLowerCase().includes("would you like a downloadable")) {
+    
+    const templateOffers = [
+      "\n\nWould you like a downloadable template for this that you can customize for your workplace?",
+      "\n\nI can provide a downloadable template that you can adapt to your specific needs. Would that be helpful?",
+      "\n\nWould you like me to provide a downloadable template or editable form for this?"
+    ];
+    
+    response += templateOffers[Math.floor(Math.random() * templateOffers.length)];
+  }
+  
+  // Add industry customization hints if detected
+  const industries = ["construction", "healthcare", "manufacturing", "warehouse", "office", "retail", "restaurant", "energy"];
+  for (const industry of industries) {
+    if (response.toLowerCase().includes(industry)) {
+      const customizationHints = [
+        `\n\nI can tailor this information specifically for the ${industry} industry if that would be helpful.`,
+        `\n\nI notice you're in the ${industry} industry. I can customize this guidance for your specific sector.`,
+        `\n\nSince you're in ${industry}, I can provide industry-specific examples and templates.`
+      ];
+      
+      if (!response.toLowerCase().includes("industry") && !response.toLowerCase().includes("customize")) {
+        response += customizationHints[Math.floor(Math.random() * customizationHints.length)];
+      }
+      break;
+    }
+  }
+  
+  // Add suggested follow-up questions for training, inspection, and recordkeeping topics
+  if (!response.includes("Would you also like to know") && !response.includes("Related questions")) {
+    if (response.toLowerCase().includes("training")) {
+      response += "\n\n**Related questions you might ask:**\n- How often should refresher training be conducted?\n- What documentation is required for training certification?\n- Can you provide a training matrix template?";
+    } else if (response.toLowerCase().includes("inspection")) {
+      response += "\n\n**Related questions you might ask:**\n- What frequency of inspections is recommended?\n- How should inspection findings be documented?\n- Can you provide an inspection checklist template?";
+    } else if (response.toLowerCase().includes("record") || response.toLowerCase().includes("document")) {
+      response += "\n\n**Related questions you might ask:**\n- How long should safety records be retained?\n- What's the best way to organize safety documentation?\n- Can you provide a documentation system template?";
+    }
   }
   
   return response;

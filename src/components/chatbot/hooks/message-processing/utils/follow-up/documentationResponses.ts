@@ -108,7 +108,12 @@ For tracking forklift operator certifications effectively:
    - Understanding of stability principles
    - Knowledge of workplace-specific hazards
 
-Would you like a downloadable forklift certification tracking spreadsheet template that you can customize for your operators?`;
+Would you like a downloadable forklift certification tracking spreadsheet template that you can customize for your operators?
+
+**Related questions you might ask:**
+- What specific OSHA requirements apply to forklift certification?
+- How do I document refresher training for forklift operators?
+- What should be included in a forklift pre-operation inspection checklist?`;
   }
   
   return null;
