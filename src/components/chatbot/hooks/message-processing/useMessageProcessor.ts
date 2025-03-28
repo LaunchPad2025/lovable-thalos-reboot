@@ -1,12 +1,10 @@
 
 import { Message } from '../../types';
-import { extractSafetyTopics } from '@/utils/conversationUtils';
-import { generateAIResponse } from './localResponseGenerator';
-import { processWithAI, generateSuggestions } from './api/huggingfaceProcessor';
-import { enhanceResponse } from './utils/responseEnhancer';
-import { getTrainingMatrixResponse, getTrainingCalendarResponse } from './utils/follow-up/matrixCalendarResponses';
-import { findExactRegulationMatch, logRegulationMatchFailure } from './utils/regulationMatching';
-import { handleFallProtectionQuery } from './utils/regulationMatching';
+import { logUserQuery } from './processors/queryLogger';
+import { processFallProtectionQuery } from './processors/fallProtectionProcessor';
+import { processSpecializedResponses } from './processors/specializedResponseProcessor';
+import { processRegulationQuery } from './processors/regulationProcessor';
+import { processFallbackResponse } from './processors/fallbackProcessor';
 import { supabase } from '@/lib/supabase';
 
 export const useMessageProcessor = () => {
@@ -20,230 +18,62 @@ export const useMessageProcessor = () => {
     setFollowUpSuggestions: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     try {
+      // Get current user
+      const user = await supabase.auth.getUser();
+      const userId = user.data?.user?.id || null;
+      
       // Log the user's query to paulie_queries table at the start
-      let userId: string | null = null;
-      let messageId: string = Date.now().toString();
+      const messageId = await logUserQuery(content, userId);
       
-      try {
-        const user = await supabase.auth.getUser();
-        userId = user.data?.user?.id || null;
-        
-        await supabase.from('paulie_queries').insert({
-          question: content,
-          user_id: userId,
-          message_id: messageId
-        });
-      } catch (logError) {
-        console.error('Error logging initial query:', logError);
-        // Continue even if logging fails
-      }
-      
-      // First, check specifically for fall protection related queries
-      if (content.toLowerCase().includes('fall protection') || 
-          content.toLowerCase().includes('fall arrest') ||
-          content.toLowerCase().includes('osha') && content.toLowerCase().includes('fall') ||
-          content.toLowerCase().includes('1926.501')) {
-        
-        const fallProtectionResponse = handleFallProtectionQuery(content);
-        if (fallProtectionResponse) {
-          const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            content: fallProtectionResponse,
-            role: 'assistant',
-            timestamp: new Date().toISOString(),
-          };
-          
-          setMessages(prev => [...prev, assistantMessage]);
-          setFollowUpSuggestions([
-            "What are the inspection requirements for fall protection equipment?",
-            "How do I develop a site-specific fall protection plan?",
-            "What training is required for workers using fall protection?"
-          ]);
-          
-          // Update paulie_queries table with the response
-          try {
-            await supabase.from('paulie_queries').update({
-              response: fallProtectionResponse,
-              matched_category: 'fall protection'
-            }).eq('message_id', messageId);
-          } catch (error) {
-            console.error('Error updating query with response:', error);
-          }
-          
-          return assistantMessage;
-        }
-      }
-      
-      // Check for specialized responses next
-      const matrixResponse = getTrainingMatrixResponse(content);
-      if (matrixResponse) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: matrixResponse,
-          role: 'assistant',
-          timestamp: new Date().toISOString(),
-        };
-        
+      // Step 1: First, check specifically for fall protection related queries
+      const fallProtectionResult = await processFallProtectionQuery(content, messageId);
+      if (fallProtectionResult.match) {
+        const assistantMessage = createAssistantMessage(fallProtectionResult.response!);
         setMessages(prev => [...prev, assistantMessage]);
-        setFollowUpSuggestions([
-          "How do I determine which training topics are required for each position?",
-          "What's the best way to track training completion status?",
-          "Can you provide a sample training attendance form?"
-        ]);
-        
-        // Update paulie_queries table with the response
-        try {
-          await supabase.from('paulie_queries').update({
-            response: matrixResponse,
-            matched_category: 'training'
-          }).eq('message_id', messageId);
-        } catch (error) {
-          console.error('Error updating query with response:', error);
-        }
-        
+        setFollowUpSuggestions(fallProtectionResult.followUpSuggestions);
         return assistantMessage;
       }
       
-      const calendarResponse = getTrainingCalendarResponse(content);
-      if (calendarResponse) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: calendarResponse,
-          role: 'assistant',
-          timestamp: new Date().toISOString(),
-        };
-        
+      // Step 2: Check for specialized responses like training matrices
+      const specializedResult = await processSpecializedResponses(content, messageId);
+      if (specializedResult.match) {
+        const assistantMessage = createAssistantMessage(specializedResult.response!);
         setMessages(prev => [...prev, assistantMessage]);
-        setFollowUpSuggestions([
-          "What safety topics should be prioritized in my training calendar?",
-          "How do I measure training effectiveness?",
-          "Can you provide a training needs assessment template?"
-        ]);
-        
-        // Update paulie_queries table with the response
-        try {
-          await supabase.from('paulie_queries').update({
-            response: calendarResponse,
-            matched_category: 'training'
-          }).eq('message_id', messageId);
-        } catch (error) {
-          console.error('Error updating query with response:', error);
-        }
-        
+        setFollowUpSuggestions(specializedResult.followUpSuggestions);
         return assistantMessage;
       }
       
-      // Try to find a regulation match using our enhanced keyword intelligence
-      const regulationMatch = await findExactRegulationMatch(content, userId);
-      if (regulationMatch) {
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: regulationMatch,
-          role: 'assistant',
-          timestamp: new Date().toISOString(),
-        };
-        
+      // Step 3: Try to find a regulation match
+      const regulationResult = await processRegulationQuery(content, allMessages, userId, messageId);
+      if (regulationResult.match) {
+        const assistantMessage = createAssistantMessage(regulationResult.response!);
         setMessages(prev => [...prev, assistantMessage]);
-        
-        // Extract detected safety topics from conversation history
-        const safetyTopics = extractSafetyTopics(allMessages);
-        
-        // Generate regulation-specific follow-up suggestions based on detected topics
-        let followUpSuggestions = [
-          "Can you explain how to implement this regulation?",
-          "What documentation is required for compliance?",
-          "Are there any exceptions to this regulation?"
-        ];
-        
-        // Customize follow-ups based on detected safety topics
-        if (safetyTopics.includes('fall protection')) {
-          followUpSuggestions = [
-            "What are the inspection requirements for fall protection equipment?",
-            "How do I develop a site-specific fall protection plan?",
-            "What training is required for workers using fall protection?"
-          ];
-        } else if (safetyTopics.includes('chemical safety') || safetyTopics.includes('hazcom')) {
-          followUpSuggestions = [
-            "What GHS labels are required for chemical containers?",
-            "How should we store incompatible chemicals?",
-            "What training is required for employees who work with chemicals?"
-          ];
-        } else if (safetyTopics.includes('confined space')) {
-          followUpSuggestions = [
-            "What testing is required before confined space entry?",
-            "Who needs to be involved in a confined space entry?",
-            "What rescue provisions are required for confined spaces?"
-          ];
-        }
-        
-        setFollowUpSuggestions(followUpSuggestions);
-        
-        // Update paulie_queries table with the response
-        try {
-          await supabase.from('paulie_queries').update({
-            response: regulationMatch
-          }).eq('message_id', messageId);
-        } catch (error) {
-          console.error('Error updating query with response:', error);
-        }
-        
+        setFollowUpSuggestions(regulationResult.followUpSuggestions);
         return assistantMessage;
       }
       
-      // No regulation match found - use enhanced fallback logic with category suggestions
-      const keyTerms = await extractKeyTerms(content);
-      // Extract safety topics from conversation history to provide more relevant context
-      const safetyTopics = extractSafetyTopics(allMessages);
-      console.log("Detected safety topics for context:", safetyTopics);
-      
-      // Log the regulation match failure for analysis
-      await logRegulationMatchFailure(content, keyTerms, userId);
-      
-      // Prepare the fallback response with category suggestions
-      let fallbackResponse = "I couldn't find a direct regulation for that query, but I'd love to help improve. "
-        + "Could you clarify what industry or hazard type this relates to?\n\n"
-        + "Common safety categories include:\n"
-        + "- Fall Protection (heights, scaffolds, ladders)\n"
-        + "- Chemical Safety (HazCom, GHS, storage)\n"
-        + "- Machine Safety (Lockout/Tagout, guarding)\n"
-        + "- Confined Spaces (permits, testing, rescue)\n"
-        + "- PPE (respirators, hearing protection, gloves)\n\n"
-        + "You can also try rephrasing your question with more specific details about the regulation or standard you're looking for.";
-      
-      const assistantMessage: Message = {
-        id: (Date.now() + 1).toString(),
-        content: fallbackResponse,
-        role: 'assistant',
-        timestamp: new Date().toISOString(),
-      };
-      
+      // Step 4: Use fallback response if no matches found
+      const fallbackResult = await processFallbackResponse(content, messageId);
+      const assistantMessage = createAssistantMessage(fallbackResult.response);
       setMessages(prev => [...prev, assistantMessage]);
-      
-      // Set category-specific follow-up suggestions
-      setFollowUpSuggestions([
-        "Tell me about Fall Protection requirements",
-        "What are the Chemical Safety (HazCom) rules?",
-        "Explain Confined Space Entry requirements",
-        "What PPE is required for my industry?",
-        "Tell me about Lockout/Tagout procedures"
-      ]);
-      
-      // Update paulie_queries table with the fallback response
-      try {
-        await supabase.from('paulie_queries').update({
-          response: fallbackResponse,
-          review_status: 'no_match_found',
-          notes: 'Using category suggestion fallback'
-        }).eq('message_id', messageId);
-      } catch (error) {
-        console.error('Error updating query with fallback response:', error);
-      }
-      
+      setFollowUpSuggestions(fallbackResult.followUpSuggestions);
       return assistantMessage;
     } catch (error) {
       console.error('Error processing message:', error);
       throw error;
     }
+  };
+  
+  /**
+   * Create an assistant message object
+   */
+  const createAssistantMessage = (content: string): Message => {
+    return {
+      id: (Date.now() + 1).toString(),
+      content: content,
+      role: 'assistant',
+      timestamp: new Date().toISOString(),
+    };
   };
   
   /**
