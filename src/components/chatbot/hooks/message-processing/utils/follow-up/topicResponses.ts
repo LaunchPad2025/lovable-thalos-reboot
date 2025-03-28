@@ -41,18 +41,49 @@ OSHA specifies different height thresholds by industry:
 
 When implementing your fall protection program, document the specific height thresholds applicable to your workplace and ensure all employees are trained on these requirements.
 
-Would you like a downloadable fall protection planning guide for your industry?
+Would you like any of these resources?
+- ✅ A fall protection inspection checklist
+- ✅ A scaffold safety inspection template
+- ✅ A summary of OSHA 1926.501 requirements`;
+};
 
-**Related questions you might ask:**
-- What are the different types of fall protection systems?
-- How do I conduct a fall hazard assessment?
-- What documentation is required for my fall protection program?`;
+/**
+ * Generate a specific fall protection response
+ */
+export const getFallProtectionResponse = (): string => {
+  return `**OSHA Fall Protection Requirements**
+
+OSHA requires fall protection at elevations of 6 feet or higher in construction (1926.501) and 4 feet in general industry (1910.28). Employers must provide one or more of these systems:
+
+- Guardrail systems
+- Safety net systems  
+- Personal fall arrest systems (harness, lanyard, anchor)
+
+Key requirements include:
+- Equipment inspection before each use
+- Training on proper use and limitations
+- Regular maintenance and documentation
+- Rescue planning when using personal fall arrest
+
+Would you like any of these resources?
+- ✅ A fall protection daily inspection checklist
+- ✅ A scaffold inspection template
+- ✅ A summary of OSHA 1926.501 requirements`;
 };
 
 /**
  * Get regulation-based response for a topic
  */
 export const getRegulationBasedResponse = (topic: string, recentTopics: string[]): string | null => {
+  // Special case for fall protection topics
+  if (topic.toLowerCase().includes('fall protection') || 
+      topic.toLowerCase().includes('fall arrest') || 
+      topic.toLowerCase().includes('1926.501') ||
+      (topic.toLowerCase().includes('fall') && recentTopics.some(t => 
+        t.includes('protection') || t.includes('construction')))) {
+    return getFallProtectionResponse();
+  }
+  
   // Check if any topic from the conversation matches our regulations
   for (const regulation of safetyRegulationResponses) {
     if (regulation.keywords.some(keyword => topic.toLowerCase().includes(keyword.toLowerCase()))) {

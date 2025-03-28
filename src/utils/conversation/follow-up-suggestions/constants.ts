@@ -10,6 +10,36 @@ export const safetyKeywords = {
     'Should I help you create a PPE training checklist?',
     'Do you need a template for documenting PPE inspections?'
   ],
+  'fall': [
+    'Would you like a fall protection inspection checklist template?', 
+    'Should I help you create a fall protection plan template?',
+    'Do you need a harness inspection guide for your team?'
+  ],
+  'fall protection': [
+    'Would you like a fall protection inspection checklist template?', 
+    'Should I help you create a fall protection plan template?',
+    'Do you need a harness inspection guide for your team?'
+  ],
+  'fall arrest': [
+    'Would you like a fall arrest system inspection form?',
+    'Do you need guidance on selecting proper anchorage points?',
+    'Should I provide information on fall clearance calculations?'
+  ],
+  'scaffold': [
+    'Would you like a scaffold inspection checklist?',
+    'Do you need information on scaffold tagging systems?',
+    'Should I provide scaffold erection guidelines?'
+  ],
+  'harness': [
+    'Would you like a harness inspection checklist?',
+    'Do you need guidelines for proper harness fit and adjustment?',
+    'Should I provide information on harness maintenance?'
+  ],
+  'guardrail': [
+    'Would you like specifications for OSHA-compliant guardrail systems?',
+    'Do you need a guardrail inspection form?',
+    'Should I provide temporary guardrail installation guidance?'
+  ],
   'chemical': [
     'Would you like a sample chemical inventory spreadsheet?', 
     'Should I help you create a chemical storage compatibility chart?',
@@ -19,11 +49,6 @@ export const safetyKeywords = {
     'Would you like a downloadable training documentation template?', 
     'Should I help you develop a training effectiveness evaluation form?',
     'Do you need a sample training matrix for your team?'
-  ],
-  'fall': [
-    'Would you like a fall protection inspection checklist template?', 
-    'Should I help you create a fall protection plan template?',
-    'Do you need a harness inspection guide for your team?'
   ],
   'hazard': [
     'Would you like a downloadable hazard assessment template?',

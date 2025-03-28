@@ -6,6 +6,7 @@ import { processWithAI, generateSuggestions } from './api/huggingfaceProcessor';
 import { enhanceResponse } from './utils/responseEnhancer';
 import { getTrainingMatrixResponse, getTrainingCalendarResponse } from './utils/follow-up/matrixCalendarResponses';
 import { findExactRegulationMatch } from './utils/regulationMatching';
+import { handleFallProtectionQuery } from './utils/regulationMatching';
 
 export const useMessageProcessor = () => {
   /**
@@ -18,7 +19,33 @@ export const useMessageProcessor = () => {
     setFollowUpSuggestions: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     try {
-      // Check for specialized responses first
+      // First, check specifically for fall protection related queries
+      if (content.toLowerCase().includes('fall protection') || 
+          content.toLowerCase().includes('fall arrest') ||
+          content.toLowerCase().includes('osha') && content.toLowerCase().includes('fall') ||
+          content.toLowerCase().includes('1926.501')) {
+        
+        const fallProtectionResponse = handleFallProtectionQuery(content);
+        if (fallProtectionResponse) {
+          const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            content: fallProtectionResponse,
+            role: 'assistant',
+            timestamp: new Date().toISOString(),
+          };
+          
+          setMessages(prev => [...prev, assistantMessage]);
+          setFollowUpSuggestions([
+            "What are the inspection requirements for fall protection equipment?",
+            "How do I develop a site-specific fall protection plan?",
+            "What training is required for workers using fall protection?"
+          ]);
+          
+          return assistantMessage;
+        }
+      }
+      
+      // Check for specialized responses next
       const matrixResponse = getTrainingMatrixResponse(content);
       if (matrixResponse) {
         const assistantMessage: Message = {
@@ -136,6 +163,15 @@ export const useMessageProcessor = () => {
   const generateMoreTargetedSuggestions = (userQuery: string, aiResponse: string): string[] => {
     const topic = userQuery.toLowerCase();
     const suggestions: string[] = [];
+    
+    // Fall protection specific suggestions
+    if (topic.includes('fall protection') || topic.includes('fall arrest') || 
+        (topic.includes('fall') && topic.includes('osha'))) {
+      suggestions.push("Would you like a fall protection inspection checklist?");
+      suggestions.push("How often should fall protection equipment be inspected?");
+      suggestions.push("What are the training requirements for workers using fall protection?");
+      return suggestions;
+    }
     
     // Basic template offer
     suggestions.push("Would you like a downloadable template for this?");

@@ -1,6 +1,5 @@
 
-// This file was missing in the previous refactoring
-// Moving it from the root to the appropriate location
+// Safety regulation data with enhanced fall protection entries
 
 export interface SafetyRegulation {
   id: string;
@@ -11,6 +10,20 @@ export interface SafetyRegulation {
 }
 
 export const safetyRegulationResponses: SafetyRegulation[] = [
+  {
+    id: "osha-1926-501",
+    topic: "Fall Protection",
+    keywords: ["fall protection", "fall arrest", "harness", "tie-off", "lanyard", "guardrail", "safety net", "1926.501"],
+    response: "According to OSHA standard 29 CFR 1926.501, employers must provide fall protection at heights of 6 feet or more in construction. Acceptable systems include guardrails, safety nets, or personal fall arrest systems. Specific requirements exist for different work scenarios like leading edges, holes, formwork, rebar, excavations, and roofing. Employers must train workers on fall hazards and proper use of fall protection systems. Equipment must be inspected before each use and damaged equipment removed from service.",
+    source: "OSHA 29 CFR 1926.501"
+  },
+  {
+    id: "osha-1910-28",
+    topic: "Walking-Working Surfaces Fall Protection",
+    keywords: ["fall protection", "general industry", "fall arrest", "walking-working", "1910.28"],
+    response: "OSHA standard 29 CFR 1910.28 requires fall protection for general industry at heights of 4 feet or more. Protection methods include guardrail systems, safety net systems, and personal fall protection systems. Special requirements apply for hoist areas, runways, dangerous equipment, wall openings, repair pits, stairways, and ladders. The standard was updated in 2017 to allow more flexible fall protection options while still maintaining worker safety.",
+    source: "OSHA 29 CFR 1910.28"
+  },
   {
     id: "osha-1926-100",
     topic: "Head Protection",
@@ -26,11 +39,11 @@ export const safetyRegulationResponses: SafetyRegulation[] = [
     source: "OSHA 29 CFR 1910.132"
   },
   {
-    id: "osha-1926-501",
-    topic: "Fall Protection",
-    keywords: ["fall protection", "heights", "6 feet", "fall arrest", "guardrail"],
-    response: "OSHA standard 29 CFR 1926.501 mandates that employers provide fall protection when workers are operating at heights of 6 feet or more above a lower level in construction. Acceptable fall protection systems include guardrail systems, safety net systems, or personal fall arrest systems. For specific work scenarios such as leading edges, hoist areas, and roofing work, there are additional requirements outlined in subsections of the standard.",
-    source: "OSHA 29 CFR 1926.501"
+    id: "osha-1926-502",
+    topic: "Fall Protection Systems Criteria",
+    keywords: ["fall protection", "guardrail", "safety net", "personal fall arrest", "positioning device", "1926.502"],
+    response: "OSHA standard 29 CFR 1926.502 details the specific requirements for fall protection systems. Guardrails must be 42 inches high (±3 inches) with midrails and be able to withstand 200 pounds of force. Safety nets must be installed as close as possible under the work area (never more than 30 feet below) and have sufficient clearance. Personal fall arrest systems must limit maximum arresting force to 1,800 pounds, bring a worker to a complete stop, and limit maximum deceleration distance to 3.5 feet. Inspection before each use is required for all components.",
+    source: "OSHA 29 CFR 1926.502"
   },
   {
     id: "osha-1910-1200",
@@ -68,17 +81,17 @@ export const safetyRegulationResponses: SafetyRegulation[] = [
     source: "OSHA 29 CFR 1926.25"
   },
   {
-    id: "osha-1910-37",
-    topic: "Emergency Exit Routes",
-    keywords: ["exit", "exit route", "emergency exit", "evacuation", "escape route"],
-    response: "OSHA standard 29 CFR 1910.37 requires that exit routes be permanent parts of the workplace, properly designed, constructed, and maintained. Exit doors must be unlocked from the inside, with side-hinged doors used for exit access. Exit routes must be free of explosive or highly flammable furnishings, and adequately lit. Exit signs must be clearly visible and distinctly marked. The minimum width of exit routes must be sufficient to accommodate the maximum permitted occupant load of each floor served.",
-    source: "OSHA 29 CFR 1910.37"
-  },
-  {
     id: "osha-1926-1053",
     topic: "Ladder Safety",
     keywords: ["ladder", "step ladder", "extension ladder", "climbing"],
     response: "According to OSHA standard 29 CFR 1926.1053, ladders must be able to support at least four times the maximum intended load. Ladder rungs must be uniformly spaced and parallel. Self-supporting portable ladders must have a 4:1 height-to-base ratio, while non-self-supporting ladders require secure footing and proper angle placement (1:4 ratio). Ladders must be inspected regularly for defects. Workers must maintain three points of contact when climbing, face the ladder, and never carry objects that could cause them to lose balance.",
     source: "OSHA 29 CFR 1926.1053"
+  },
+  {
+    id: "osha-1926-500",
+    topic: "Fall Protection Scope and Definitions",
+    keywords: ["fall protection definition", "fall protection scope", "1926.500"],
+    response: "OSHA standard 29 CFR 1926.500 defines the scope and application of the fall protection standards in construction. It provides key definitions including 'anchorage', 'body belt', 'body harness', 'connector', 'controlled access zone', 'dangerous equipment', 'equivalent', 'failure', 'free fall', 'guardrail system', 'hole', 'lanyard', 'leading edge', 'low-slope roof', 'opening', 'personal fall arrest system', 'positioning device system', 'rope grab', 'safety-monitoring system', 'steep roof', and 'warning line system'. Understanding these definitions is crucial for properly implementing fall protection requirements.",
+    source: "OSHA 29 CFR 1926.500"
   }
 ];
