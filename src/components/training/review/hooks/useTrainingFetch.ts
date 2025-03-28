@@ -33,13 +33,16 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch paulie_queries that are thumbs-down or flagged for review
+      // Start with base query
+      // Using explicit type annotation to help TypeScript
       let query = supabase
         .from('paulie_queries')
-        .select('*')
-        .or('helpful.eq.false,review_status.eq.needs_review');
+        .select('*');
       
-      // Apply filters
+      // Add the base filter condition
+      query = query.or('helpful.eq.false,review_status.eq.needs_review');
+      
+      // Apply status filter
       if (filters.status && filters.status !== 'all') {
         if (filters.status === 'pending') {
           query = query.is('training_status', null);
@@ -48,14 +51,17 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
         }
       }
       
+      // Apply industry filter
       if (filters.industry) {
         query = query.eq('matched_category', filters.industry);
       }
       
+      // Apply regulation filter
       if (filters.regulation) {
         query = query.eq('matched_regulation_id', filters.regulation);
       }
       
+      // Apply search filter
       if (filters.searchQuery) {
         query = query.or(`question.ilike.%${filters.searchQuery}%,response.ilike.%${filters.searchQuery}%`);
       }
@@ -69,7 +75,7 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        // Cast queryData to unknown first to avoid type mismatch error
+        // Cast to unknown first to avoid type mismatch error
         const rowData = queryData as unknown as PaulieQueryRow[];
         
         for (const item of rowData) {
