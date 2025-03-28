@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { useLocation } from 'react-router-dom';
-import { NavSection } from './sidebar/types';
+import { useLocation, Link } from 'react-router-dom';
+import { NavItem, NavSection, navItems } from './sidebar/navItems';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
 import Logo from './sidebar/Logo';
-import { LayoutDashboard, BarChart2, Users, Folder, ThumbsUp } from 'lucide-react';
 import {
   Sidebar as SidebarUI,
   SidebarContent,
@@ -12,7 +12,8 @@ import {
   SidebarProvider,
   SidebarMenu,
   SidebarMenuItem,
-  SidebarMenuButton
+  SidebarMenuButton,
+  SidebarTrigger
 } from '@/components/ui/sidebar';
 
 interface SidebarProps {
@@ -21,56 +22,37 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const location = useLocation();
+  const { userRole } = useAuthStatus?.() || { userRole: 'user' };
   
-  // These items would typically come from your application state or context
-  // They are hardcoded here for demonstration purposes
-  const demoNavItems: NavSection[] = [
-    {
-      title: 'Dashboard',
-      items: [
-        {
-          title: 'Overview',
-          path: '/dashboard',
-          icon: LayoutDashboard,
-        },
-        {
-          title: 'Analytics',
-          path: '/analytics',
-          icon: BarChart2,
-        },
-      ],
-    },
-    {
-      title: 'Management',
-      items: [
-        {
-          title: 'Users',
-          path: '/users',
-          icon: Users,
-        },
-        {
-          title: 'Projects',
-          path: '/projects',
-          icon: Folder,
-        },
-        {
-          title: 'Feedback',
-          path: '/feedback',
-          icon: ThumbsUp,
-        }
-      ],
-    },
-  ];
+  // Filter nav items based on user role
+  const filteredNavItems = navItems.filter(section => {
+    // If the section has roles specified, check if the user's role is included
+    if (section.roles && !section.roles.includes(userRole)) {
+      return false;
+    }
+    
+    // Filter items within each section
+    section.items = section.items.filter(item => {
+      if (item.roles && !item.roles.includes(userRole)) {
+        return false;
+      }
+      return true;
+    });
+    
+    return section.items.length > 0; // Only include sections with at least one visible item
+  });
 
   return (
     <SidebarProvider defaultOpen={true}>
       <div className="flex h-screen overflow-hidden w-full">
         <SidebarUI>
           <SidebarHeader className="border-b border-gray-800 py-4">
-            <Logo />
+            <div className="px-4">
+              <Logo />
+            </div>
           </SidebarHeader>
           <SidebarContent>
-            {demoNavItems.map((section, sectionIndex) => (
+            {filteredNavItems.map((section, sectionIndex) => (
               <div key={sectionIndex} className="px-3 py-2">
                 {section.title && (
                   <h3 className="mb-2 px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
@@ -79,7 +61,7 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                 )}
                 <SidebarMenu>
                   {section.items.map((item, itemIndex) => {
-                    const isActive = location.pathname === item.path;
+                    const isActive = location.pathname === item.href;
                     
                     return (
                       <SidebarMenuItem key={itemIndex}>
@@ -88,15 +70,15 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
                           isActive={isActive}
                           tooltip={item.title}
                         >
-                          <a href={item.path} className="w-full">
+                          <Link to={item.href} className="w-full">
                             <item.icon />
                             <span>{item.title}</span>
                             {item.badge && (
-                              <span className="ml-auto inline-block py-0.5 px-2 text-xs font-medium rounded-full bg-gray-700 text-gray-300">
+                              <span className={`ml-auto inline-block py-0.5 px-2 text-xs font-medium rounded-full ${item.badgeColor || 'bg-gray-700 text-gray-300'}`}>
                                 {item.badge}
                               </span>
                             )}
-                          </a>
+                          </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
@@ -112,6 +94,9 @@ const Sidebar: React.FC<SidebarProps> = ({ children }) => {
           </SidebarFooter>
         </SidebarUI>
         <main className="flex-1 overflow-auto">
+          <div className="h-12 border-b border-gray-800 flex items-center px-4">
+            <SidebarTrigger />
+          </div>
           {children}
         </main>
       </div>

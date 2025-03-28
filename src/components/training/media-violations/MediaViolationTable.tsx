@@ -1,17 +1,17 @@
 
 import React from 'react';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { MediaViolationTraining } from './types';
 import { Button } from '@/components/ui/button';
 import { Eye, CheckCircle, AlertTriangle } from 'lucide-react';
+import { MediaViolationTraining } from './types';
 
 interface TableProps {
   data: MediaViolationTraining[];
@@ -22,50 +22,69 @@ interface TableProps {
 const MediaViolationTable: React.FC<TableProps> = ({
   data,
   onSelectItem,
-  onUpdateStatus,
+  onUpdateStatus
 }) => {
-  const getRiskLevelBadge = (riskLevel: string) => {
-    switch (riskLevel) {
-      case 'Critical':
-        return <Badge className="bg-red-500">{riskLevel}</Badge>;
-      case 'High':
-        return <Badge className="bg-orange-500">{riskLevel}</Badge>;
-      case 'Medium':
-        return <Badge className="bg-yellow-500">{riskLevel}</Badge>;
+  // Render risk level badge with appropriate color
+  const getRiskLevelBadge = (level: string) => {
+    let color = '';
+    
+    switch (level) {
       case 'Low':
-        return <Badge className="bg-green-500">{riskLevel}</Badge>;
+        color = 'bg-blue-900/20 text-blue-400 border-blue-900/30';
+        break;
+      case 'Medium':
+        color = 'bg-amber-900/20 text-amber-400 border-amber-900/30';
+        break;
+      case 'High':
+        color = 'bg-orange-900/20 text-orange-400 border-orange-900/30';
+        break;
+      case 'Critical':
+        color = 'bg-red-900/20 text-red-400 border-red-900/30';
+        break;
       default:
-        return <Badge>{riskLevel}</Badge>;
+        color = 'bg-gray-900/20 text-gray-400 border-gray-900/30';
     }
+    
+    return <Badge variant="outline" className={color}>{level}</Badge>;
   };
-
+  
+  // Render status badge with appropriate color
   const getStatusBadge = (status: string) => {
+    let color = '';
+    let icon = null;
+    
     switch (status) {
       case 'needs_review':
-        return <Badge variant="outline" className="text-amber-500 border-amber-500">Needs Review</Badge>;
+        color = 'bg-amber-900/20 text-amber-400 border-amber-900/30';
+        icon = <AlertTriangle className="h-3 w-3 mr-1" />;
+        break;
       case 'ready':
-        return <Badge variant="outline" className="text-blue-500 border-blue-500">Ready</Badge>;
+        color = 'bg-blue-900/20 text-blue-400 border-blue-900/30';
+        break;
       case 'approved':
-        return <Badge variant="outline" className="text-green-500 border-green-500">Approved</Badge>;
+        color = 'bg-green-900/20 text-green-400 border-green-900/30';
+        icon = <CheckCircle className="h-3 w-3 mr-1" />;
+        break;
       default:
-        return <Badge variant="outline">{status}</Badge>;
+        color = 'bg-gray-900/20 text-gray-400 border-gray-900/30';
     }
-  };
-
-  const truncateText = (text: string, maxLength: number = 60) => {
-    if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    
+    return (
+      <Badge variant="outline" className={`flex items-center ${color}`}>
+        {icon}
+        <span>{status.replace('_', ' ')}</span>
+      </Badge>
+    );
   };
 
   return (
-    <div className="border rounded-md">
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>Violation ID</TableHead>
             <TableHead>Industry</TableHead>
             <TableHead>Category</TableHead>
-            <TableHead>Caption</TableHead>
             <TableHead>Risk Level</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="w-[100px]">Actions</TableHead>
@@ -74,8 +93,8 @@ const MediaViolationTable: React.FC<TableProps> = ({
         <TableBody>
           {data.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={7} className="text-center py-6">
-                No violation training data found
+              <TableCell colSpan={6} className="text-center py-6 text-muted-foreground">
+                No violations found matching your filters.
               </TableCell>
             </TableRow>
           ) : (
@@ -84,44 +103,18 @@ const MediaViolationTable: React.FC<TableProps> = ({
                 <TableCell className="font-medium">{item.violation_id}</TableCell>
                 <TableCell>{item.industry}</TableCell>
                 <TableCell>{item.category}</TableCell>
-                <TableCell className="max-w-xs">
-                  {truncateText(item.sample_caption)}
-                </TableCell>
                 <TableCell>{getRiskLevelBadge(item.risk_level)}</TableCell>
                 <TableCell>{getStatusBadge(item.status)}</TableCell>
                 <TableCell>
-                  <div className="flex space-x-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onSelectItem(item)}
-                      title="View Details"
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    
-                    {item.status !== 'approved' && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onUpdateStatus(item.id, 'approved')}
-                        title="Approve"
-                      >
-                        <CheckCircle className="h-4 w-4 text-green-500" />
-                      </Button>
-                    )}
-                    
-                    {item.status !== 'needs_review' && (
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onUpdateStatus(item.id, 'needs_review')}
-                        title="Mark for Review"
-                      >
-                        <AlertTriangle className="h-4 w-4 text-amber-500" />
-                      </Button>
-                    )}
-                  </div>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    onClick={() => onSelectItem(item)}
+                    className="w-full flex items-center justify-center"
+                  >
+                    <Eye className="h-4 w-4 mr-1" />
+                    View
+                  </Button>
                 </TableCell>
               </TableRow>
             ))

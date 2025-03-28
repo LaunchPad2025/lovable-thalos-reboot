@@ -22,7 +22,7 @@ interface PaulieQueryRow {
   training_status: 'approved' | 'rejected' | 'rewritten' | null;
   improved_response: string | null;
   rejection_reason: string | null;
-  review_label?: string | null; // Added to match the actual database schema
+  review_label: string | null; // Added to match the actual database schema
 }
 
 export const useTrainingFetch = (initialFilters: TrainingFilters) => {
@@ -33,14 +33,11 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Start with base query
-      // Using explicit type annotation to help TypeScript
-      let query = supabase
-        .from('paulie_queries')
-        .select('*');
+      // Build the query in a more TypeScript-friendly way
+      const baseQuery = supabase.from('paulie_queries').select('*');
       
-      // Add the base filter condition
-      query = query.or('helpful.eq.false,review_status.eq.needs_review');
+      // Add conditionally applied filters one by one
+      let query = baseQuery.or('helpful.eq.false,review_status.eq.needs_review');
       
       // Apply status filter
       if (filters.status && filters.status !== 'all') {
@@ -75,8 +72,8 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        // Cast to unknown first to avoid type mismatch error
-        const rowData = queryData as unknown as PaulieQueryRow[];
+        // Using explicit two-step type casting
+        const rowData = (queryData as unknown) as PaulieQueryRow[];
         
         for (const item of rowData) {
           // Define status with proper type checking
