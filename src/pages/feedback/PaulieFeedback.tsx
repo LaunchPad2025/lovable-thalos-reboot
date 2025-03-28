@@ -104,7 +104,7 @@ const PaulieFeedback = () => {
       'Notes', 
       'Created At',
       'Keywords',
-      'Regulations'
+      'Regulation'
     ];
     
     const dataRows = feedbackData.rawData.map(item => [
@@ -114,7 +114,7 @@ const PaulieFeedback = () => {
       `"${item.notes?.replace(/"/g, '""') || ''}"`,
       new Date(item.created_at).toLocaleString(),
       `"${(item.matched_keywords || []).join(', ')}"`,
-      `"${(item.matched_regulation_ids || []).join(', ')}"`
+      `"${item.matched_regulation_id || ''}"`
     ]);
     
     const csvContent = [

@@ -1,70 +1,58 @@
 
-import React from "react";
-import { NavLink } from "react-router-dom";
-import { NavItem } from "./types";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import React from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { NavItem, NavSection } from './types';
 
 interface NavItemsProps {
-  navItems: NavItem[];
-  userRole: string;
-  expanded?: boolean;
+  sections: NavSection[];
+  onItemClick?: () => void;
 }
 
-export const NavItems: React.FC<NavItemsProps> = ({ navItems, userRole, expanded = true }) => {
+const NavItems: React.FC<NavItemsProps> = ({ sections, onItemClick }) => {
+  const location = useLocation();
+  
   return (
-    <ul className="space-y-1">
-      {navItems.map((item) => {
-        const isDisabled = item.roles && !item.roles.includes(userRole as "admin" | "safety_officer" | "worker");
-        const isComingSoon = item.comingSoon || item.badge === "Soon";
-
-        return (
-          <li key={item.path}>
-            <NavLink
-              to={isDisabled ? "#" : item.path}
-              className={({ isActive }) =>
-                `flex items-center px-4 py-2 text-sm transition-colors rounded-md ${
-                  isActive ? "bg-sidebar-active" : ""
-                } ${
-                  isDisabled
-                    ? "opacity-50 cursor-not-allowed"
-                    : "hover:bg-sidebar-hover"
-                }`
-              }
-              onClick={(e) => {
-                if (isDisabled) {
-                  e.preventDefault();
-                }
-              }}
-            >
-              {item.icon && (
-                <item.icon className="w-5 h-5 mr-3 text-sidebar-icon" />
-              )}
-              {expanded && <span>{item.title}</span>}
+    <div className="space-y-6">
+      {sections.map((section, sectionIndex) => (
+        <div key={sectionIndex} className="space-y-2">
+          {section.title && (
+            <h3 className="px-3 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              {section.title}
+            </h3>
+          )}
+          <nav className="space-y-1">
+            {section.items.map((item, itemIndex) => {
+              const isActive = location.pathname === item.path;
+              const Icon = item.icon;
               
-              {isComingSoon && expanded && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <span className="ml-2 text-xs px-1.5 py-0.5 bg-blue-500/20 text-blue-300 border border-blue-400/30 rounded-md">
-                        Soon
-                      </span>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Simulation Only - Coming Soon</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              
-              {item.badge && item.badge !== "Soon" && expanded && (
-                <span className="ml-auto text-xs px-1.5 py-0.5 bg-blue-600 text-white rounded-md">
-                  {item.badge}
-                </span>
-              )}
-            </NavLink>
-          </li>
-        );
-      })}
-    </ul>
+              return (
+                <Link
+                  key={itemIndex}
+                  to={item.path}
+                  onClick={onItemClick}
+                  className={`flex items-center px-3 py-2 text-sm font-medium rounded-md ${
+                    isActive
+                      ? 'bg-gray-800 text-white'
+                      : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                  }`}
+                >
+                  <span className="mr-3 h-5 w-5 text-gray-400">
+                    <Icon />
+                  </span>
+                  {item.title}
+                  {item.badge && (
+                    <span className="ml-auto inline-block py-0.5 px-2 text-xs font-medium rounded-full bg-gray-700 text-gray-300">
+                      {item.badge}
+                    </span>
+                  )}
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+      ))}
+    </div>
   );
 };
+
+export default NavItems;

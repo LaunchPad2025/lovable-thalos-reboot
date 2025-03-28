@@ -1,69 +1,68 @@
 
-import { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
-import { useMobile } from "@/hooks/useMobile";
-import { useTheme } from "@/providers/ThemeProvider";
-import { useAuth } from "@/context/auth";
-import { getNavItems } from "./sidebar/navItems";
-import MobileNav from "./sidebar/MobileNav";
-import DesktopNav from "./sidebar/DesktopNav";
+import React from 'react';
+import { Sidebar as SidebarUI } from '@/components/ui/sidebar';
+import { NavSection, NavItem } from './sidebar/types';
+import NavItems from './sidebar/NavItems';
+import Logo from './sidebar/Logo';
+import DesktopNav from './sidebar/DesktopNav';
+import MobileNav from './sidebar/MobileNav';
 
-const Sidebar = () => {
-  const location = useLocation();
-  const isMobile = useMobile();
-  const { sidebarCollapsed, setSidebarCollapsed } = useTheme();
-  const { user } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
+interface SidebarProps {
+  children?: React.ReactNode;
+}
 
-  // Get user role from auth context
-  const userRole = user?.user_metadata?.role || "worker";
-
-  // The initial state is expanded on desktop, closed on mobile
-  const [expanded, setExpanded] = useState(!isMobile && !sidebarCollapsed);
-
-  // Update expanded state when screen size or sidebarCollapsed changes
-  useEffect(() => {
-    setExpanded(!isMobile && !sidebarCollapsed);
-  }, [isMobile, sidebarCollapsed]);
-
-  const toggleMobileSidebar = () => {
-    setMobileOpen(!mobileOpen);
-  };
-
-  const toggleExpanded = () => {
-    setExpanded(!expanded);
-    if (setSidebarCollapsed) {
-      setSidebarCollapsed(!sidebarCollapsed);
-    }
-  };
-
-  // Close mobile sidebar when location changes
-  useEffect(() => {
-    if (mobileOpen) setMobileOpen(false);
-  }, [location.pathname]);
-
-  // Get navigation items
-  const navItems = getNavItems();
+const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+  // These items would typically come from your application state or context
+  // They are hardcoded here for demonstration purposes
+  const demoNavItems: NavSection[] = [
+    {
+      title: 'Dashboard',
+      items: [
+        {
+          title: 'Overview',
+          path: '/dashboard',
+          icon: () => <span>📊</span>,
+        },
+        {
+          title: 'Analytics',
+          path: '/analytics',
+          icon: () => <span>📈</span>,
+        },
+      ],
+    },
+    {
+      title: 'Management',
+      items: [
+        {
+          title: 'Users',
+          path: '/users',
+          icon: () => <span>👥</span>,
+        },
+        {
+          title: 'Projects',
+          path: '/projects',
+          icon: () => <span>📁</span>,
+        },
+      ],
+    },
+  ];
 
   return (
-    <>
-      {isMobile ? (
-        <MobileNav
-          mobileOpen={mobileOpen}
-          setMobileOpen={setMobileOpen}
-          toggleMobileSidebar={toggleMobileSidebar}
-          navItems={navItems}
-          userRole={userRole}
-        />
-      ) : (
-        <DesktopNav
-          expanded={expanded}
-          navItems={navItems}
-          userRole={userRole}
-          toggleExpanded={toggleExpanded}
-        />
-      )}
-    </>
+    <SidebarUI.Root>
+      <SidebarUI.Header>
+        <Logo />
+      </SidebarUI.Header>
+      <SidebarUI.Nav>
+        <DesktopNav sections={demoNavItems} />
+        <MobileNav sections={demoNavItems} />
+      </SidebarUI.Nav>
+      <SidebarUI.Footer>
+        {/* Add footer content here if needed */}
+      </SidebarUI.Footer>
+      <SidebarUI.Content>
+        {children}
+      </SidebarUI.Content>
+    </SidebarUI.Root>
   );
 };
 

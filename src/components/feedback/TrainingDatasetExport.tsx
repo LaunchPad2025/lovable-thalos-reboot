@@ -30,7 +30,7 @@ const TrainingDatasetExport: React.FC<TrainingDatasetExportProps> = ({ feedbackD
       item.helpful ? 'Yes' : 'No',
       `"${item.notes?.replace(/"/g, '""') || ''}"`,
       `"${item.matched_keywords?.join(', ') || ''}"`,
-      `"${item.matched_regulation_ids?.join(', ') || ''}"`
+      `"${item.matched_regulation_id || ''}"`
     ]);
     
     const csvContent = [
@@ -97,7 +97,7 @@ const TrainingDatasetExport: React.FC<TrainingDatasetExportProps> = ({ feedbackD
                     <td className="border px-2 py-1">Yes/No</td>
                     <td className="border px-2 py-1">User feedback</td>
                     <td className="border px-2 py-1">Keyword tags</td>
-                    <td className="border px-2 py-1">Matching regulations</td>
+                    <td className="border px-2 py-1">Matching regulation</td>
                   </tr>
                 </tbody>
               </table>

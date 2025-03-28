@@ -185,29 +185,50 @@ export type Database = {
       }
       paulie_queries: {
         Row: {
+          created_at: string | null
+          helpful: boolean | null
           id: string
           matched_category: string | null
           matched_keywords: string[] | null
           matched_regulation_id: string | null
+          message_id: string | null
+          notes: string | null
           question: string
+          response: string | null
+          review_label: string | null
+          review_status: string | null
           timestamp: string | null
           user_id: string | null
         }
         Insert: {
+          created_at?: string | null
+          helpful?: boolean | null
           id?: string
           matched_category?: string | null
           matched_keywords?: string[] | null
           matched_regulation_id?: string | null
+          message_id?: string | null
+          notes?: string | null
           question: string
+          response?: string | null
+          review_label?: string | null
+          review_status?: string | null
           timestamp?: string | null
           user_id?: string | null
         }
         Update: {
+          created_at?: string | null
+          helpful?: boolean | null
           id?: string
           matched_category?: string | null
           matched_keywords?: string[] | null
           matched_regulation_id?: string | null
+          message_id?: string | null
+          notes?: string | null
           question?: string
+          response?: string | null
+          review_label?: string | null
+          review_status?: string | null
           timestamp?: string | null
           user_id?: string | null
         }
