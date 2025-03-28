@@ -48,10 +48,13 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       const formattedData: TrainingReviewItem[] = (queryData || []).map(item => {
         // Define status with proper type checking
         let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
-        if (item.training_status === 'approved' || 
-            item.training_status === 'rejected' || 
-            item.training_status === 'rewritten') {
-          status = item.training_status;
+        
+        // Use optional chaining and type checking for item.training_status
+        const trainingStatus = (item as any).training_status;
+        if (trainingStatus === 'approved' || 
+            trainingStatus === 'rejected' || 
+            trainingStatus === 'rewritten') {
+          status = trainingStatus;
         }
         
         return {
@@ -65,8 +68,8 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
           review_status: item.review_status as 'needs_review' | 'improved' | 'escalated' | null,
           matched_keywords: item.matched_keywords || [],
           created_at: item.created_at,
-          improved_response: item.improved_response || '',
-          rejection_reason: item.rejection_reason
+          improved_response: (item as any).improved_response || '',
+          rejection_reason: (item as any).rejection_reason
         };
       });
       
