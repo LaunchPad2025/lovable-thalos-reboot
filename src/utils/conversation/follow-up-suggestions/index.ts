@@ -24,10 +24,60 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
   // Try to find the most relevant keywords first
   const matchingKeywords = findMatchingKeywords(combinedText);
   
-  if (matchingKeywords.length > 0) {
+  // Check for specific safety categories to tailor suggestions
+  const safetyCategories = {
+    'fall protection': [
+      "What are the inspection requirements for fall protection equipment?",
+      "How do I develop a site-specific fall protection plan?",
+      "What training is required for workers using fall protection?"
+    ],
+    'chemical safety': [
+      "What GHS labels are required for chemical containers?",
+      "How should we store incompatible chemicals?",
+      "What training is required for employees who work with chemicals?"
+    ],
+    'machine safety': [
+      "What are the key components of a lockout/tagout program?",
+      "Who needs to be trained on lockout/tagout procedures?",
+      "How often should we review our machine guarding?"
+    ],
+    'confined space': [
+      "What testing is required before confined space entry?",
+      "Who needs to be involved in a confined space entry?",
+      "What rescue provisions are required for confined spaces?"
+    ],
+    'respiratory protection': [
+      "How often should we conduct respirator fit testing?",
+      "What medical evaluations are required for respirator users?",
+      "How should we document respirator training?"
+    ],
+    'fire safety': [
+      "How often should fire extinguishers be inspected?",
+      "What elements should be included in a fire prevention plan?",
+      "What training is required for emergency evacuation procedures?"
+    ]
+  };
+  
+  // Check if any safety category is mentioned in the text
+  for (const [category, categoryQuestions] of Object.entries(safetyCategories)) {
+    if (combinedText.includes(category)) {
+      // Add category-specific suggestions
+      suggestions.push(...categoryQuestions.slice(0, 2));
+      break; // Only use one category to avoid too many similar suggestions
+    }
+  }
+  
+  // If we still have room for more suggestions
+  if (suggestions.length < 2 && matchingKeywords.length > 0) {
     // Get suggestions based on matching keywords
     const keywordSuggestions = getKeywordBasedSuggestions(matchingKeywords);
-    suggestions.push(...keywordSuggestions);
+    
+    // Add suggestions that don't duplicate what we already have
+    for (const suggestion of keywordSuggestions) {
+      if (!suggestions.includes(suggestion) && suggestions.length < 2) {
+        suggestions.push(suggestion);
+      }
+    }
   }
   
   // If no specific keywords matched, analyze the intent and provide relevant actionable follow-ups

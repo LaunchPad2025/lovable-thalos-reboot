@@ -7,6 +7,7 @@ import { enhanceResponse } from './utils/responseEnhancer';
 import { getTrainingMatrixResponse, getTrainingCalendarResponse } from './utils/follow-up/matrixCalendarResponses';
 import { findExactRegulationMatch } from './utils/regulationMatching';
 import { handleFallProtectionQuery } from './utils/regulationMatching';
+import { supabase } from '@/lib/supabase';
 
 export const useMessageProcessor = () => {
   /**
@@ -19,6 +20,24 @@ export const useMessageProcessor = () => {
     setFollowUpSuggestions: React.Dispatch<React.SetStateAction<string[]>>
   ) => {
     try {
+      // Log the user's query to paulie_queries table at the start
+      let userId: string | null = null;
+      let messageId: string = Date.now().toString();
+      
+      try {
+        const user = await supabase.auth.getUser();
+        userId = user.data?.user?.id || null;
+        
+        await supabase.from('paulie_queries').insert({
+          question: content,
+          user_id: userId,
+          message_id: messageId
+        });
+      } catch (logError) {
+        console.error('Error logging initial query:', logError);
+        // Continue even if logging fails
+      }
+      
       // First, check specifically for fall protection related queries
       if (content.toLowerCase().includes('fall protection') || 
           content.toLowerCase().includes('fall arrest') ||
@@ -41,6 +60,16 @@ export const useMessageProcessor = () => {
             "What training is required for workers using fall protection?"
           ]);
           
+          // Update paulie_queries table with the response
+          try {
+            await supabase.from('paulie_queries').update({
+              response: fallProtectionResponse,
+              matched_category: 'fall protection'
+            }).eq('message_id', messageId);
+          } catch (error) {
+            console.error('Error updating query with response:', error);
+          }
+          
           return assistantMessage;
         }
       }
@@ -62,6 +91,16 @@ export const useMessageProcessor = () => {
           "Can you provide a sample training attendance form?"
         ]);
         
+        // Update paulie_queries table with the response
+        try {
+          await supabase.from('paulie_queries').update({
+            response: matrixResponse,
+            matched_category: 'training'
+          }).eq('message_id', messageId);
+        } catch (error) {
+          console.error('Error updating query with response:', error);
+        }
+        
         return assistantMessage;
       }
       
@@ -81,12 +120,21 @@ export const useMessageProcessor = () => {
           "Can you provide a training needs assessment template?"
         ]);
         
+        // Update paulie_queries table with the response
+        try {
+          await supabase.from('paulie_queries').update({
+            response: calendarResponse,
+            matched_category: 'training'
+          }).eq('message_id', messageId);
+        } catch (error) {
+          console.error('Error updating query with response:', error);
+        }
+        
         return assistantMessage;
       }
       
-      // Try to find an exact regulation match from the database
-      // Now properly handling the async nature of this function
-      const regulationMatch = await findExactRegulationMatch(content);
+      // Try to find a regulation match using our enhanced keyword intelligence
+      const regulationMatch = await findExactRegulationMatch(content, userId);
       if (regulationMatch) {
         const assistantMessage: Message = {
           id: (Date.now() + 1).toString(),
@@ -97,12 +145,47 @@ export const useMessageProcessor = () => {
         
         setMessages(prev => [...prev, assistantMessage]);
         
-        // Generate regulation-specific follow-up suggestions
-        setFollowUpSuggestions([
+        // Extract detected safety topics from conversation history
+        const safetyTopics = extractSafetyTopics(allMessages);
+        
+        // Generate regulation-specific follow-up suggestions based on detected topics
+        let followUpSuggestions = [
           "Can you explain how to implement this regulation?",
           "What documentation is required for compliance?",
           "Are there any exceptions to this regulation?"
-        ]);
+        ];
+        
+        // Customize follow-ups based on detected safety topics
+        if (safetyTopics.includes('fall protection')) {
+          followUpSuggestions = [
+            "What are the inspection requirements for fall protection equipment?",
+            "How do I develop a site-specific fall protection plan?",
+            "What training is required for workers using fall protection?"
+          ];
+        } else if (safetyTopics.includes('chemical safety') || safetyTopics.includes('hazcom')) {
+          followUpSuggestions = [
+            "What GHS labels are required for chemical containers?",
+            "How should we store incompatible chemicals?",
+            "What training is required for employees who work with chemicals?"
+          ];
+        } else if (safetyTopics.includes('confined space')) {
+          followUpSuggestions = [
+            "What testing is required before confined space entry?",
+            "Who needs to be involved in a confined space entry?",
+            "What rescue provisions are required for confined spaces?"
+          ];
+        }
+        
+        setFollowUpSuggestions(followUpSuggestions);
+        
+        // Update paulie_queries table with the response
+        try {
+          await supabase.from('paulie_queries').update({
+            response: regulationMatch
+          }).eq('message_id', messageId);
+        } catch (error) {
+          console.error('Error updating query with response:', error);
+        }
         
         return assistantMessage;
       }
@@ -145,10 +228,19 @@ export const useMessageProcessor = () => {
       // Generate follow-up question suggestions based on context
       const suggestions = localResponseUsed ? 
         // If using local response, generate more targeted follow-ups
-        generateMoreTargetedSuggestions(content, aiResponse) : 
+        generateMoreTargetedSuggestions(content, aiResponse, safetyTopics) : 
         generateSuggestions(content, aiResponse);
       
       setFollowUpSuggestions(suggestions);
+      
+      // Update paulie_queries table with the response
+      try {
+        await supabase.from('paulie_queries').update({
+          response: aiResponse
+        }).eq('message_id', messageId);
+      } catch (error) {
+        console.error('Error updating query with response:', error);
+      }
       
       return assistantMessage;
     } catch (error) {
@@ -160,23 +252,55 @@ export const useMessageProcessor = () => {
   /**
    * Generate more targeted follow-up suggestions for local fallback responses
    */
-  const generateMoreTargetedSuggestions = (userQuery: string, aiResponse: string): string[] => {
+  const generateMoreTargetedSuggestions = (
+    userQuery: string, 
+    aiResponse: string,
+    safetyTopics: string[]
+  ): string[] => {
     const topic = userQuery.toLowerCase();
     const suggestions: string[] = [];
     
     // Fall protection specific suggestions
     if (topic.includes('fall protection') || topic.includes('fall arrest') || 
-        (topic.includes('fall') && topic.includes('osha'))) {
+        (topic.includes('fall') && topic.includes('osha')) ||
+        safetyTopics.includes('fall protection')) {
       suggestions.push("Would you like a fall protection inspection checklist?");
       suggestions.push("How often should fall protection equipment be inspected?");
       suggestions.push("What are the training requirements for workers using fall protection?");
       return suggestions;
     }
     
+    // Chemical safety suggestions
+    if (topic.includes('chemical') || topic.includes('hazcom') || topic.includes('sds') ||
+        safetyTopics.includes('chemical safety') || safetyTopics.includes('hazcom')) {
+      suggestions.push("Would you like a chemical inventory template?");
+      suggestions.push("What are the GHS labeling requirements?");
+      suggestions.push("How should incompatible chemicals be stored?");
+      return suggestions;
+    }
+    
+    // Machine safety / LOTO suggestions
+    if (topic.includes('machine') || topic.includes('lockout') || topic.includes('tagout') ||
+        safetyTopics.includes('machine safety')) {
+      suggestions.push("Would you like a lockout/tagout procedure template?");
+      suggestions.push("What training is required for lockout/tagout?");
+      suggestions.push("How often should lockout/tagout procedures be inspected?");
+      return suggestions;
+    }
+    
+    // Confined space suggestions
+    if (topic.includes('confined space') || topic.includes('permit') || topic.includes('entry') ||
+        safetyTopics.includes('confined space')) {
+      suggestions.push("Would you like a confined space entry permit template?");
+      suggestions.push("What atmospheric testing is required for confined spaces?");
+      suggestions.push("What rescue provisions are needed for confined spaces?");
+      return suggestions;
+    }
+    
     // Basic template offer
     suggestions.push("Would you like a downloadable template for this?");
     
-    // Topic-specific follow-ups
+    // Topic-specific follow-ups based on detected keywords
     if (topic.includes('hazard') || topic.includes('risk') || topic.includes('assessment')) {
       suggestions.push("Can you show me a sample hazard identification checklist?");
       suggestions.push("How often should we update our risk assessments?");
