@@ -10,16 +10,22 @@ export function useAuthMethods({ user, setUser }: UseAuthMethodsProps) {
   const signUp = async (email: string, password: string, name: string, additionalMetadata = {}) => {
     try {
       console.log("Attempting to sign up:", email);
+      
+      // Ensure we have base metadata with the name
+      const metadata: UserMetadata = {
+        name,
+        role: 'worker', // Default role
+        onboarded: false, // Flag to indicate onboarding status
+        ...additionalMetadata // Include any additional metadata like selected plan
+      };
+      
+      console.log("Sign up with metadata:", metadata);
+      
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            name,
-            role: 'worker', // Default role
-            onboarded: false, // Flag to indicate onboarding status
-            ...additionalMetadata // Include any additional metadata like selected plan
-          }
+          data: metadata
         }
       });
 

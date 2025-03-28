@@ -43,16 +43,18 @@ export interface Task {
 export interface Subscription {
   id: string;
   user_id: string;
-  plan_id: string;
-  status: 'active' | 'canceled' | 'past_due';
-  current_period_end: string;
-  current_period_start?: string;
-  cancel_at_period_end: boolean;
-  created_at: string;
-  stripe_subscription_id?: string;
-  stripe_customer_id?: string;
-  updated_at?: string;
   organization_id?: string;
+  status: 'active' | 'canceled' | 'past_due';
+  plan_id: string;
+  stripe_customer_id?: string;
+  stripe_subscription_id?: string;
+  current_period_start?: string;
+  current_period_end?: string;
+  cancel_at_period_end?: boolean;
+  created_at: string;
+  updated_at: string;
+  trial_start?: string;
+  trial_end?: string;
 }
 
 export interface Plan {

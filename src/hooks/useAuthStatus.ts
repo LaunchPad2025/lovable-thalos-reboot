@@ -18,7 +18,8 @@ export function useAuthStatus() {
     // Check user metadata first
     (user?.user_metadata?.onboarded && user?.user_metadata?.subscriptionStatus === 'trial') ||
     // Or check if there's an active subscription in trial period
-    (subscription?.status === 'active' && subscription?.trial_period_end !== null);
+    (subscription?.status === 'active' && subscription?.current_period_end !== null && 
+     subscription?.trial_start !== undefined);
   
   // Calculate trial days left if applicable
   let trialDaysLeft = 0;

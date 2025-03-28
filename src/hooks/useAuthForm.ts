@@ -60,6 +60,7 @@ export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: st
         metadata.selectedPlan = selectedPlan;
       }
       
+      // Call signUp with correct parameter order
       await signUp(values.email, values.password, values.name, metadata);
       setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
       // Don't navigate yet, let them confirm their email first

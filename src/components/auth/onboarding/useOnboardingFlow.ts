@@ -29,6 +29,7 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
 
   useEffect(() => {
     if (existingOrganization) {
+      console.log("Setting createOrg to false because existing organization found:", existingOrganization);
       setCreateOrg(false);
     }
   }, [existingOrganization]);
@@ -50,6 +51,16 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
   };
 
   const handleNext = () => {
+    // Validate inputs for the current step
+    if (step === 1 && createOrg && !organization) {
+      toast({
+        title: "Organization name required",
+        description: "Please enter a name for your organization.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
     setStep(step + 1);
   };
 
@@ -58,7 +69,15 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user) {
+      console.error("No user found for onboarding");
+      toast({
+        title: "Authentication error",
+        description: "Please sign in again to continue.",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setIsSubmitting(true);
     
@@ -75,31 +94,56 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
         plan_id: selectedPlanId || 'basic' // Store the selected plan
       });
       
-      let organizationId;
+      let organizationId = null;
       
       if (existingOrganization) {
         organizationId = existingOrganization.id;
         
-        await supabase
+        console.log("Adding user to existing organization:", existingOrganization.name);
+        
+        // Check if the user is already a member of this organization
+        const { data: existingMembership } = await supabase
           .from('organization_members')
-          .insert({
-            organization_id: organizationId,
-            user_id: user.id,
-            role: 'member'
-          });
+          .select('id')
+          .eq('organization_id', organizationId)
+          .eq('user_id', user.id)
+          .maybeSingle();
           
-        toast({
-          title: "Joined existing organization!",
-          description: `You've been added to ${existingOrganization.name} because of your email domain.`,
-        });
+        if (!existingMembership) {
+          // Add user to the organization
+          const { error: membershipError } = await supabase
+            .from('organization_members')
+            .insert({
+              organization_id: organizationId,
+              user_id: user.id,
+              role: 'member'
+            });
+            
+          if (membershipError) throw membershipError;
+          
+          toast({
+            title: "Joined existing organization!",
+            description: `You've been added to ${existingOrganization.name} because of your email domain.`,
+          });
+        } else {
+          console.log("User is already a member of this organization");
+        }
       } else if (createOrg && organization) {
+        console.log("Creating new organization:", organization);
+        
+        // Create domain from email if not provided
+        let domain = companyEmail;
+        if (!domain && user.email) {
+          domain = user.email.split('@')[1];
+        }
+        
         const { data, error } = await supabase
           .from('organizations')
           .insert({
             name: organization,
             size: size || null,
             industries: selectedIndustries,
-            domain: companyEmail || null
+            domain: domain || null
           })
           .select();
           
@@ -108,18 +152,32 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
         if (data && data[0]) {
           organizationId = data[0].id;
           
-          await supabase
+          console.log("Created organization with ID:", organizationId);
+          
+          // Make the user an admin of the organization
+          const { error: membershipError } = await supabase
             .from('organization_members')
             .insert({
               organization_id: organizationId,
               user_id: user.id,
               role: 'admin'
             });
+            
+          if (membershipError) throw membershipError;
+          
+          toast({
+            title: "Organization created!",
+            description: `${organization} has been successfully created.`,
+          });
         }
-        
-        toast({
-          title: "Organization created!",
-          description: `${organization} has been successfully created.`,
+      } else {
+        console.log("No organization created or joined");
+      }
+      
+      // Update user profile with organization ID if applicable
+      if (organizationId) {
+        await updateUserProfile({
+          organization_id: organizationId
         });
       }
       
