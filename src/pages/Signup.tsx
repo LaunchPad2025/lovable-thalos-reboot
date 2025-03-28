@@ -1,92 +1,98 @@
 
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 const Signup = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
+    setError('');
 
     try {
-      const { error } = await supabase.auth.signUp({
-        email,
-        password,
-      });
+      const { error } = await supabase.auth.signUp({ email, password });
 
-      if (error) throw error;
-      
-      // Success
-      navigate('/auth');
-    } catch (err: any) {
-      setError(err.message);
+      if (error) {
+        setError(error.message);
+      } else {
+        navigate('/dashboard');
+      }
+    } catch (error: any) {
+      setError('An error occurred during signup.');
+      console.error('Signup error:', error.message);
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-gray-800 rounded-lg shadow-lg">
-      <h1 className="text-2xl font-bold mb-6 text-white">Sign Up</h1>
-      
-      {error && (
-        <div className="bg-red-500 text-white p-3 rounded mb-4">
-          {error}
+    <div className="min-h-screen flex items-center justify-center bg-gray-900">
+      <div className="w-full max-w-md p-8 space-y-8 bg-gray-800 rounded-lg shadow-lg">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white">Create an Account</h1>
+          <p className="mt-2 text-sm text-gray-400">
+            Join Thalos to improve workplace safety
+          </p>
         </div>
-      )}
-      
-      <form onSubmit={handleSignup}>
-        <div className="mb-4">
-          <label className="block text-white mb-2" htmlFor="email">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-2 rounded bg-gray-700 text-white"
-          />
+
+        {error && (
+          <div className="p-3 bg-red-900/50 border border-red-700 rounded text-red-200 text-sm">
+            {error}
+          </div>
+        )}
+
+        <form onSubmit={handleSignup} className="space-y-6">
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              className="bg-gray-700 border-gray-600"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <Input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              className="bg-gray-700 border-gray-600"
+            />
+            <p className="text-xs text-gray-400">
+              Password must be at least 6 characters
+            </p>
+          </div>
+
+          <Button
+            type="submit"
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            disabled={loading}
+          >
+            {loading ? 'Creating account...' : 'Create Account'}
+          </Button>
+        </form>
+
+        <div className="mt-4 text-center text-sm">
+          <span className="text-gray-400">Already have an account? </span>
+          <Link to="/auth" className="text-blue-400 hover:underline">
+            Sign In
+          </Link>
         </div>
-        
-        <div className="mb-6">
-          <label className="block text-white mb-2" htmlFor="password">
-            Password
-          </label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full p-2 rounded bg-gray-700 text-white"
-          />
-        </div>
-        
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700 disabled:opacity-50"
-        >
-          {loading ? 'Signing Up...' : 'Sign Up'}
-        </button>
-      </form>
-      
-      <div className="mt-4 text-center">
-        <button 
-          onClick={() => navigate('/auth')}
-          className="text-blue-400 hover:underline"
-        >
-          Already have an account? Sign In
-        </button>
       </div>
     </div>
   );
