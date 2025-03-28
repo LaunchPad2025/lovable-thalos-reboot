@@ -1,5 +1,4 @@
-
-import { handleFallProtectionQuery } from '../utils/regulation/fallProtection';
+import { handleFallProtectionQuery } from '../utils/regulation';
 import { supabase } from '@/lib/supabase';
 
 /**

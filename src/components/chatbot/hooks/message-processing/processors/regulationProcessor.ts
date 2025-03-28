@@ -1,11 +1,15 @@
 
 import { Message } from '../../../types';
-import { findExactRegulationMatch, logRegulationMatchFailure } from '../utils/regulation';
+import { 
+  findExactRegulationMatch, 
+  logRegulationMatchFailure,
+  isDirectRegulationCitation,
+  extractRegulationNumber
+} from '../utils/regulation';
 import { extractKeyTerms } from '../utils/regulation/keywordExtraction';
 import { supabase } from '@/lib/supabase';
 import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { detectIndustryContext, getIndustrySpecificSuggestions } from '@/utils/conversation/follow-up-suggestions/industryDetection';
-import { isDirectRegulationCitation, extractRegulationNumber } from '../utils/regulation/fallProtection';
 
 /**
  * Handle regulation-specific query processing

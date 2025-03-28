@@ -1,10 +1,12 @@
 
 /**
- * Database operations for regulations
+ * Regulation search functionality
  */
 import { supabase } from '@/lib/supabase';
 import { extractKeyTerms } from './keywordExtraction';
-import { formatRegulationsResponse, formatRegulationResponse } from './responseFormatters';
+import { formatRegulationsResponse } from './responseFormatters';
+import { logRegulationMatchFailure } from './loggingOperations';
+import { findRegulationsByIndustry } from './industrySearch';
 
 /**
  * Find regulations based on keyword matching from the database
@@ -67,97 +69,6 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
   } catch (error) {
     console.error('Error in findRegulationsByKeywords:', error);
     return null;
-  }
-};
-
-/**
- * Find regulations by industry when no direct keyword matches are found
- */
-export const findRegulationsByIndustry = async (query: string, keyTerms: string[], userId?: string): Promise<string | null> => {
-  try {
-    // Extract industry from query
-    const industryTerms = ['construction', 'manufacturing', 'healthcare', 'oil & gas', 'oil and gas', 'mining', 'agriculture', 'retail', 'laboratory', 'logistics', 'food processing'];
-    
-    let detectedIndustry = null;
-    
-    for (const industry of industryTerms) {
-      if (query.toLowerCase().includes(industry.toLowerCase())) {
-        detectedIndustry = industry;
-        break;
-      }
-    }
-    
-    if (!detectedIndustry) {
-      // No industry detected, can't find industry-specific regulations
-      await logRegulationMatchFailure(query, keyTerms, userId);
-      return null;
-    }
-    
-    // Standardize certain industry names
-    if (detectedIndustry === 'oil & gas' || detectedIndustry === 'oil and gas') {
-      detectedIndustry = 'oil_gas';
-    } else if (detectedIndustry === 'food processing') {
-      detectedIndustry = 'food_processing';
-    }
-    
-    // Try to find regulations by industry or industry_tags array
-    const { data: industryRegulations, error } = await supabase
-      .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry, industry_tags')
-      .or(`industry.ilike.%${detectedIndustry}%,industry_tags.cs.{${detectedIndustry}}`)
-      .order('updated_at', { ascending: false })
-      .limit(3);
-    
-    if (error || !industryRegulations || industryRegulations.length === 0) {
-      console.log('No industry-specific regulations found:', error || 'Empty result');
-      
-      // Log the failure for industry match as well
-      await logRegulationMatchFailure(query, keyTerms, userId, detectedIndustry);
-      
-      return null;
-    }
-    
-    // We found some industry-specific regulations, process them
-    console.log(`Found ${industryRegulations.length} industry-specific regulations for ${detectedIndustry}`);
-    
-    // Create a special context message for industry matches
-    const message = formatRegulationsResponse(
-      industryRegulations, 
-      query, 
-      [...keyTerms, detectedIndustry], 
-      [detectedIndustry]
-    );
-    
-    return message;
-  } catch (error) {
-    console.error('Error in findRegulationsByIndustry:', error);
-    return null;
-  }
-};
-
-/**
- * Log regulation match failures to the regulation_match_failures table
- * Enhanced to include industry context
- */
-export const logRegulationMatchFailure = async (
-  question: string, 
-  matchedKeywords: string[],
-  userId?: string,
-  fallbackIndustry?: string
-): Promise<void> => {
-  try {
-    // Use the regulation_match_failures table with enhanced fields
-    await supabase.from('regulation_match_failures').insert({
-      question,
-      user_id: userId,
-      matched_keywords: matchedKeywords,
-      fallback_industry: fallbackIndustry,
-      timestamp: new Date().toISOString(),
-      reviewed: false
-    });
-    console.log('Logged regulation match failure for analysis');
-  } catch (error) {
-    console.error('Error logging regulation match failure:', error);
   }
 };
 
@@ -289,19 +200,5 @@ const processRegulationMatches = async (
     return formatRegulationsResponse(topRegulations, query, keyTerms, allMatchedCategories);
   }
   
-  return null;
-};
-
-/**
- * Check for exact matches in regulatory database
- */
-export const findExactRegulationMatch = async (query: string, userId?: string): Promise<string | null> => {
-  // First try to match with database regulations based on keywords
-  const matchResult = await findRegulationsByKeywords(query, userId);
-  if (matchResult) {
-    return matchResult;
-  }
-
-  // Fall back to static regulations if no database match
   return null;
 };

@@ -1,7 +1,6 @@
-
 import { supabase } from '@/lib/supabase';
 import { detectIndustryContext, formatIndustryFallbackResponse, getIndustrySpecificSuggestions } from '@/utils/conversation/follow-up-suggestions/industryDetection';
-import { isDirectRegulationCitation, extractRegulationNumber } from '../utils/regulation/fallProtection';
+import { isDirectRegulationCitation, extractRegulationNumber } from '../utils/regulation';
 
 /**
  * Generate fallback response when no matches are found
