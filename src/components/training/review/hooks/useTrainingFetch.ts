@@ -4,6 +4,24 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 import { TrainingReviewItem, TrainingFilters } from '../types';
 
+// Define an interface that matches what's actually coming back from Supabase
+interface PaulieQueryRow {
+  id: string;
+  question: string;
+  response: string | null;
+  helpful: boolean | null;
+  notes: string | null;
+  matched_category: string | null;
+  matched_regulation_id: string | null;
+  matched_keywords: string[] | null;
+  review_status: string | null;
+  created_at: string;
+  // Adding the new fields that exist in the database but weren't in the type
+  training_status: 'approved' | 'rejected' | 'rewritten' | null;
+  improved_response: string | null;
+  rejection_reason: string | null;
+}
+
 export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const [data, setData] = useState<TrainingReviewItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,8 +62,8 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (error) throw error;
       
-      // Format data for UI
-      const formattedData: TrainingReviewItem[] = (queryData || []).map(item => {
+      // Format data for UI, now with proper typing
+      const formattedData: TrainingReviewItem[] = (queryData as PaulieQueryRow[] || []).map(item => {
         // Define status with proper type checking
         let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
         
