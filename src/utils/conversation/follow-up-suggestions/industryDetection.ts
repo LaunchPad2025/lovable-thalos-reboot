@@ -1,4 +1,3 @@
-
 import { safetyKeywords } from './constants';
 
 // Define industry keywords and suggestions for industryDetection.ts
@@ -8,7 +7,12 @@ export const industrySpecificKeywords: Record<string, string[]> = {
   'healthcare': ['hospital', 'clinic', 'patient', 'medical', 'nursing', 'healthcare', 'health care', 'medical facility', 'doctors', 'nurses'],
   'logistics': ['warehouse', 'forklift', 'shipping', 'distribution', 'loading dock', 'logistics', 'supply chain', 'inventory'],
   'laboratory': ['lab', 'laboratory', 'research', 'experiment', 'chemical', 'testing', 'scientific', 'samples'],
-  'oil_gas': ['oil', 'gas', 'drilling', 'refinery', 'pipeline', 'petroleum', 'rig', 'offshore', 'oil & gas', 'oil and gas', 'well'],
+  'oil_gas': [
+    'oil', 'gas', 'drilling', 'refinery', 'refineries', 'petrochemical', 'petroleum', 
+    'pipeline', 'petroleum', 'rig', 'offshore', 'oil & gas', 'oil and gas', 'well',
+    'process safety', 'psm', 'hazwoper', 'h2s', 'sour gas', 'upstream', 'downstream',
+    'midstream', 'fracking', 'crude oil', 'natural gas'
+  ],
   'mining': ['mine', 'mining', 'underground', 'quarry', 'extraction', 'mineral', 'coal', 'metals', 'excavation'],
   'agriculture': ['farm', 'farming', 'agricultural', 'crops', 'livestock', 'pesticide', 'tractor', 'harvesting'],
   'retail': ['store', 'retail', 'shop', 'customer', 'merchandise', 'sales floor', 'checkout'],
@@ -22,7 +26,14 @@ export const industryTopSafetyCategories: Record<string, string[]> = {
   'healthcare': ['Bloodborne Pathogens', 'Ergonomics', 'Workplace Violence', 'Hazardous Drugs', 'Needlestick Prevention'],
   'logistics': ['Forklift Safety', 'Material Handling', 'Loading Dock Safety', 'Racking and Storage', 'Pedestrian Safety'],
   'laboratory': ['Chemical Safety', 'Biological Safety', 'Emergency Equipment', 'Fume Hood Operations', 'PPE Requirements'],
-  'oil_gas': ['H2S Safety', 'Fire and Explosion Prevention', 'Confined Space Entry', 'Fall Protection', 'Hot Work'],
+  'oil_gas': [
+    'Process Safety Management (29 CFR 1910.119)', 
+    'H2S Safety Monitoring and Response', 
+    'Hot Work Permits (29 CFR 1910.252)', 
+    'Confined Space Entry (29 CFR 1910.146)', 
+    'Emergency Response Planning (29 CFR 1910.120)',
+    'Lockout/Tagout Procedures (29 CFR 1910.147)'
+  ],
   'mining': ['Ground Control', 'Ventilation', 'Explosive Safety', 'Respiratory Protection', 'Equipment Operation'],
   'agriculture': ['Tractor Safety', 'Pesticide Handling', 'Grain Handling', 'Animal Handling', 'Machinery Guarding'],
   'retail': ['Ergonomics', 'Slip and Fall Prevention', 'Emergency Exits', 'Ladder Safety', 'Violence Prevention'],
@@ -66,11 +77,11 @@ export const industrySpecificSuggestions: Record<string, string[]> = {
     "How should we document laboratory safety training?"
   ],
   'oil_gas': [
-    "What are the H2S safety requirements?",
-    "How should we manage hot work permits on our site?",
+    "What are the Process Safety Management (PSM) requirements for refineries?",
+    "How should we implement H2S monitoring in our facility?",
+    "What hot work permit procedures are required for oil & gas operations?",
     "What are the confined space requirements for tank entry?",
-    "What PPE is required for oil rig operations?",
-    "How do I document training for refinery workers?"
+    "What PPE is required for refinery operations?"
   ],
   'mining': [
     "What are the ventilation requirements for underground mining?",
@@ -104,10 +115,16 @@ export const industrySpecificSuggestions: Record<string, string[]> = {
 
 /**
  * Detect industry context from user query and conversation history
- * Enhanced to provide more robust industry detection
+ * Enhanced to provide more robust industry detection, especially for refineries
  */
 export const detectIndustryContext = (query: string, previousMessages: string[] = []): string | null => {
   const allText = [query, ...previousMessages].join(' ').toLowerCase();
+  
+  // Special case for refineries - explicitly map to oil_gas
+  if (allText.includes('refinery') || allText.includes('refineries') || 
+      allText.includes('petrochemical') || allText.includes('petroleum processing')) {
+    return 'oil_gas';
+  }
   
   // First check for direct industry mentions
   for (const [industry, keywords] of Object.entries(industrySpecificKeywords)) {
@@ -117,7 +134,7 @@ export const detectIndustryContext = (query: string, previousMessages: string[] 
   }
   
   // If no direct industry mention, check for related safety topics that imply an industry
-  const safetyTopics = {
+  const safetyTopics: Record<string, string> = {
     'scaffolding': 'construction',
     'crane': 'construction',
     'excavation': 'construction',
@@ -131,6 +148,8 @@ export const detectIndustryContext = (query: string, previousMessages: string[] 
     'experiment': 'laboratory',
     'h2s': 'oil_gas',
     'drilling': 'oil_gas',
+    'process safety': 'oil_gas',
+    'hot work permit': 'oil_gas',
     'ventilation in mines': 'mining',
     'underground': 'mining',
     'pesticide': 'agriculture',
@@ -187,7 +206,7 @@ export const getTopSafetyCategoriesByIndustry = (industry: string | null): strin
 
 /**
  * Format a fallback response that uses industry context
- * Used when no direct regulation match is found
+ * Enhanced for oil & gas/refinery specific responses
  */
 export const formatIndustryFallbackResponse = (industry: string | null, query: string): string => {
   if (!industry) {
@@ -196,6 +215,42 @@ export const formatIndustryFallbackResponse = (industry: string | null, query: s
   
   const formattedIndustry = industry.replace('_', ' ');
   const topCategories = getTopSafetyCategoriesByIndustry(industry);
+  
+  // Specialized response for oil & gas industry
+  if (industry === 'oil_gas') {
+    // Check if refinery specific
+    if (query.toLowerCase().includes('refiner')) {
+      return `**Oil Refinery Safety Regulations**
+
+OSHA's Process Safety Management standard (29 CFR 1910.119) applies specifically to petroleum refineries and facilities with hazardous chemicals above threshold quantities.
+
+Key safety requirements for refineries include:
+
+• Process Safety Management (PSM) program implementation
+• H2S safety programs and continuous air monitoring
+• Permit-required confined space entry procedures
+• Hot work permits for welding and cutting (29 CFR 1910.252)
+• Emergency response planning (29 CFR 1910.120)
+• Lockout/Tagout (LOTO) procedures (29 CFR 1910.147)
+
+Would you like information about implementing any of these specific refinery safety programs?`;
+    }
+    
+    // General oil & gas response
+    return `**Oil & Gas Safety Regulations**
+
+The oil & gas industry is governed by several OSHA standards, with these being most critical:
+
+• Process Safety Management (29 CFR 1910.119) for facilities with threshold quantities of hazardous chemicals
+• HAZWOPER (29 CFR 1910.120) for emergency response to releases
+• Confined spaces (29 CFR 1910.146) for tank and vessel entry
+• Hot work (29 CFR 1910.252) for welding and cutting operations
+• Respiratory protection (29 CFR 1910.134) for H2S and other hazards
+
+Would you like more specific information about any of these regulations for the ${formattedIndustry} industry?`;
+  }
+  
+  // For other industries, use the standard response
   const topCategoriesList = topCategories.map(cat => `• ${cat}`).join('\n');
   
   return `I wasn't able to find a regulation specifically for ${formattedIndustry} safety protocols as requested, but here are the top compliance areas for that industry:

@@ -1,10 +1,10 @@
-
 /**
  * Utilities for extracting keywords from user queries
  */
 
 /**
  * Extract key terms from user query for better matching
+ * Enhanced with oil & gas industry specific terms
  */
 export const extractKeyTerms = (query: string): string[] => {
   const stopWords = ['a', 'an', 'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'with', 'about', 'is', 'are', 'how', 'what', 'when', 'where', 'why', 'can', 'do', 'does', 'should', 'would', 'could', 'will'];
@@ -150,6 +150,44 @@ export const extractKeyTerms = (query: string): string[] => {
       'ventilation', 'ground control', 'blasting', 'dust control', 'methane', 'respirable dust',
       'rock dust', 'self-rescuer', 'mine rescue',
       'mining operation', 'mining site', 'quarry'
+    ],
+    
+    // Oil & Gas / Refinery specific keywords
+    'oil_gas': [
+      'refinery', 'refineries', 'oil and gas', 'oil & gas', 'petroleum', 'petrochemical',
+      'process safety', 'psm', '1910.119', 'hazwoper', '1910.120', 'hot work', '1910.252',
+      'h2s', 'hydrogen sulfide', 'sour gas', 'drilling', 'well', 'pipeline',
+      'fracking', 'upstream', 'downstream', 'midstream', 'hazard analysis', 'pha',
+      'management of change', 'moc', 'offshore', 'onshore', 'tank', 'vessel',
+      'refinery safety', 'oil safety protocols', 'refinery procedures', 'oil processing',
+      'process hazard analysis'
+    ],
+    
+    // Process Safety Management specific keywords
+    'process safety': [
+      'process safety', 'psm', '1910.119', 'process hazard analysis', 'pha',
+      'management of change', 'moc', 'pre-startup safety review', 'pssr',
+      'mechanical integrity', 'hot work', 'contractor safety', 'operating procedures',
+      'emergency planning', 'compliance audit', 'trade secrets', 'employee participation',
+      'incident investigation', 'highly hazardous chemicals', 'threshold quantities'
+    ],
+    
+    // Hot Work specific keywords
+    'hot work': [
+      'hot work', 'welding', 'cutting', 'grinding', 'torch', 'flame', 'spark',
+      'hot work permit', 'fire watch', 'fire prevention', 'welding safety',
+      'gas welding', 'arc welding', 'oxy fuel', 'acetylene', 'combustible',
+      'flammable', 'ignition source', 'fire blanket', 'flash burn',
+      'welding permit', 'burn permit', 'hot work procedures'
+    ],
+    
+    // H2S Safety specific keywords
+    'h2s safety': [
+      'h2s', 'hydrogen sulfide', 'sour gas', 'gas monitor', 'breathing apparatus',
+      'scba', 'detector', 'ppm', 'parts per million', 'h2s training', 'sweet gas',
+      'rotten egg smell', 'toxic gas', 'contingency plan', 'wind sock',
+      'respiratory protection', 'monitor calibration', 'warning signs',
+      'h2s alarm', 'gas detection', 'exposure limit'
     ]
   };
   
@@ -235,6 +273,15 @@ export const extractKeyTerms = (query: string): string[] => {
   // Handle multi-category matches - include all matched categories for better context
   if (allMatchedCategories.length > 1) {
     console.log(`Query matches multiple safety categories: ${allMatchedCategories.join(', ')}`);
+  }
+  
+  // Special handling for refinery / oil & gas terms
+  if (normalizedQuery.includes('refiner') || 
+      normalizedQuery.includes('oil and gas') || 
+      normalizedQuery.includes('oil & gas') || 
+      normalizedQuery.includes('petroleum')) {
+    const refineryTerms = ['oil_gas', 'refinery', 'process safety', 'psm', 'hot work'];
+    directCategoryMatches.push(...refineryTerms);
   }
   
   // Split into words and filter out stop words for additional general keyword extraction

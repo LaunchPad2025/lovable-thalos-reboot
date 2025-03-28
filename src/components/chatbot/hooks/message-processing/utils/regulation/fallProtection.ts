@@ -1,40 +1,68 @@
 
 /**
- * Fall protection specific regulation matching logic
+ * Specialized handling for fall protection related queries
  */
-import { getFallProtectionResponse } from '../follow-up/topicResponses';
 
 /**
- * Handle fall protection query processing
+ * Check if a query is specifically about fall protection and provide a targeted response
  */
 export const handleFallProtectionQuery = (query: string): string | null => {
   const fallProtectionTerms = [
-    // Basic terms
-    'fall protection', 'fall arrest', 'tie-off', 'harness', 'scaffold safety', 
-    '1926.501', 'lanyard', 'guardrail', 'safety net', 'osha fall',
-    
-    // Additional specific terms
-    'anchor point', 'lifeline', 'leading edge', 'fall restraint', 'fall prevention',
-    'height requirement', 'roof safety', 'elevated work', '1910.28', 'walking-working',
-    'floor opening', 'hole cover', 'fall distance', 'fall clearance', 'impact force',
-    'self-retracting', 'deceleration device', 'horizontal lifeline', 'vertical lifeline',
-    'fall protection plan', 'fall protection training', 'competent person fall'
+    'fall protection', 'fall arrest', 'harness', 'guardrail', 'safety net',
+    '1926.501', '1910.28', 'roof', 'height requirement', 'fall distance'
   ];
   
-  // Check if the query is related to fall protection
-  // Enhanced to include partial matches for more complex queries
-  if (fallProtectionTerms.some(term => query.toLowerCase().includes(term)) || 
-      query.toLowerCase().includes('fall') && (
-        query.toLowerCase().includes('height') || 
-        query.toLowerCase().includes('feet') || 
-        query.toLowerCase().includes('requirement') ||
-        query.toLowerCase().includes('osha') || 
-        query.toLowerCase().includes('protection') ||
-        query.toLowerCase().includes('standard')
-      )
-     ) {
-    return getFallProtectionResponse();
+  // Check if any fall protection terms are in the query
+  const isFallProtectionQuery = fallProtectionTerms.some(term => 
+    query.toLowerCase().includes(term.toLowerCase())
+  );
+  
+  if (!isFallProtectionQuery) return null;
+  
+  // If query is about required height for fall protection
+  if (query.toLowerCase().includes('height') && 
+     (query.toLowerCase().includes('require') || query.toLowerCase().includes('need'))) {
+    return `**OSHA Fall Protection Height Requirements**
+
+OSHA specifies different height thresholds by industry:
+
+1. **Construction industry**: 
+   - 6 feet or more above a lower level (29 CFR 1926.501)
+   - Includes residential construction applications
+
+2. **General industry**: 
+   - 4 feet or more above a lower level (29 CFR 1910.28)
+   - Applies to most manufacturing and warehousing
+
+3. **Shipyards**: 
+   - 5 feet or more above a lower level
+   - Special requirements for working over water
+
+4. **Longshoring operations**: 
+   - 8 feet or more above a lower level
+   - Special considerations for dock and vessel work
+
+5. **Special case**: 
+   - Any height when working above dangerous equipment
+   - Requires guardrails, fall restraint, or fall arrest systems
+
+Would you like information on specific fall protection equipment requirements or implementation guidelines?`;
   }
   
-  return null;
+  // Generic fall protection response
+  return `**OSHA Fall Protection Requirements (29 CFR 1926.501 & 1910.28)**
+
+OSHA requires fall protection at elevations of 6 feet or higher in construction (1926.501) and 4 feet in general industry (1910.28). Employers must provide one or more of these systems:
+
+- Guardrail systems
+- Safety net systems  
+- Personal fall arrest systems (harness, lanyard, anchor)
+
+Key requirements include:
+- Equipment inspection before each use
+- Training on proper use and limitations
+- Regular maintenance and documentation
+- Rescue planning when using personal fall arrest
+
+Would you like a fall protection inspection checklist or a summary of OSHA 1926.501 requirements?`;
 };
