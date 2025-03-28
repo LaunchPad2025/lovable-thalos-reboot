@@ -1,5 +1,5 @@
 
-import { handleFallProtectionQuery } from '../utils/regulationMatching';
+import { handleFallProtectionQuery } from '../utils/regulation/fallProtection';
 import { supabase } from '@/lib/supabase';
 
 /**
