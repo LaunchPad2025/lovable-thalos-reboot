@@ -3,7 +3,7 @@ import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import TrainingDataExport from '@/components/feedback/TrainingDataExport';
 import { Card, CardContent } from '@/components/ui/card';
-import { PageTitle } from '@/components/ui/PageTitle';
+import PageTitle from '@/components/ui/PageTitle';
 
 const FinetuningExport = () => {
   return (
