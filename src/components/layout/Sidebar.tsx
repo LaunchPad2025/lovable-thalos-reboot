@@ -22,9 +22,17 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ children }) => {
   const location = useLocation();
-  const authStatus = useAuthStatus?.() || { user: null, isLoading: false };
-  // Use user?.role or default to 'user' if not available
-  const userRole = authStatus.user?.role || 'user';
+  
+  // Use a try-catch to handle the case when useAuth might not be available
+  let userRole = 'user';
+  try {
+    // Only call useAuthStatus if it's available and handle the case when it's not
+    const authStatus = useAuthStatus?.();
+    userRole = authStatus?.user?.role || 'user';
+  } catch (error) {
+    console.warn('Auth status unavailable, defaulting to user role');
+    // Continue with default role
+  }
   
   // Filter nav items based on user role
   const filteredNavItems = navItems.filter(section => {

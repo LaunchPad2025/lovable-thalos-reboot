@@ -7,8 +7,27 @@ import { useSubscription } from '@/hooks/useSubscription';
  * @returns Object containing authentication status
  */
 export function useAuthStatus() {
-  const { user, loading } = useAuth();
-  const { subscription } = useSubscription();
+  let user = null;
+  let loading = false;
+  let subscription = null;
+  
+  try {
+    // Try to use the auth context, but handle the case when it's not available
+    const authContext = useAuth();
+    user = authContext?.user;
+    loading = authContext?.loading || false;
+    
+    // Try to get subscription data if available
+    try {
+      const subscriptionData = useSubscription();
+      subscription = subscriptionData?.subscription;
+    } catch (err) {
+      console.warn('Subscription data unavailable');
+    }
+  } catch (err) {
+    console.warn('Auth context unavailable');
+    // Continue with default values
+  }
   
   // Check if the current route is the demo page
   const isDemoMode = window.location.pathname.includes('/demo');

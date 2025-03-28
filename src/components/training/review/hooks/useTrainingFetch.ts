@@ -33,10 +33,11 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      let query = supabase
-        .from('paulie_queries')
-        .select('*')
-        .or('helpful.eq.false,review_status.eq.needs_review');
+      // Build the query step by step to avoid excessive type instantiation
+      let query = supabase.from('paulie_queries').select('*');
+      
+      // Add the basic filter condition
+      query = query.or('helpful.eq.false,review_status.eq.needs_review');
       
       // Apply status filter
       if (filters.status && filters.status !== 'all') {
@@ -67,14 +68,11 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
       
       if (error) throw error;
       
-      // Transform the data to avoid deep type recursion
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        // Use a clean type assertion to PaulieQueryRow[]
-        const rowData = queryData as unknown as PaulieQueryRow[];
-        
-        for (const item of rowData) {
+        // Transform the data to a known type
+        for (const item of queryData) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           
