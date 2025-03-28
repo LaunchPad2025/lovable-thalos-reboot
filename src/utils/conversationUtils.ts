@@ -20,25 +20,40 @@ export function prepareConversationContext(messages: Message[]): string {
 }
 
 /**
- * Process the message content to make it more natural and friendly
- * Enhances formal responses with more conversational phrases
+ * Process the message content to make it more conversational and friendly
+ * Enhances formal responses with more natural phrases
  */
 export function enhanceResponseTone(content: string): string {
-  // This is a simple implementation - in a production environment,
-  // this would be handled by the model's prompt and temperature settings
-  
   // If the response is very short, it might be an error message, so leave it as is
   if (content.length < 50) return content;
   
+  // Add conversation starters if they don't exist
+  if (!content.includes("Great question") && 
+      !content.includes("Thanks for asking") && 
+      !content.includes("That's a good point") &&
+      Math.random() > 0.5) {
+    const starters = [
+      "Great question! ",
+      "I'm glad you asked about that. ",
+      "That's something many people wonder about. ",
+      "Here's what I found for you. ",
+      "Happy to help with that! "
+    ];
+    content = starters[Math.floor(Math.random() * starters.length)] + content;
+  }
+  
   // Replace formal phrases with more conversational ones
-  // This is a simplistic approach - a better implementation would use NLP
   const formalPhrases = [
+    { formal: "According to OSHA", conversational: "OSHA guidelines state" },
     { formal: "It is required that", conversational: "You'll need to" },
-    { formal: "According to regulations", conversational: "Based on safety regulations" },
     { formal: "It is necessary to", conversational: "You should" },
-    { formal: "It is recommended that", conversational: "I'd recommend that you" },
-    { formal: "The compliance requirement is", conversational: "The safety guideline here is" },
-    { formal: "It is mandatory to", conversational: "You'll definitely need to" }
+    { formal: "It is recommended that", conversational: "I'd recommend" },
+    { formal: "The compliance requirement is", conversational: "The guideline here is" },
+    { formal: "It is mandatory to", conversational: "You'll definitely need to" },
+    { formal: "Section 1910", conversational: "the safety standard" },
+    { formal: "This regulation requires", conversational: "You're required to" },
+    { formal: "Per the standard", conversational: "Based on safety guidelines" },
+    { formal: "Employers must ensure", conversational: "You'll want to make sure" }
   ];
   
   let enhancedContent = content;
@@ -48,6 +63,21 @@ export function enhanceResponseTone(content: string): string {
       phrase.conversational
     );
   });
+  
+  // Add a helpful closing if it doesn't already have one
+  if (!enhancedContent.includes("hope that helps") && 
+      !enhancedContent.includes("let me know if") && 
+      !enhancedContent.includes("anything else") &&
+      Math.random() > 0.6) {
+    const closings = [
+      " Hope that helps! Let me know if you need any clarification.",
+      " Does that address what you were looking for?",
+      " Is there anything specific about this you'd like me to explain further?",
+      " Let me know if you need more specific information on this topic.",
+      " Would you like me to elaborate on any part of this?"
+    ];
+    enhancedContent += closings[Math.floor(Math.random() * closings.length)];
+  }
   
   return enhancedContent;
 }
@@ -62,44 +92,54 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
   // Enhanced version with more specific and contextual follow-up questions
   const safetyKeywords = {
     'ppe': [
-      'Which specific PPE items are you having issues with?', 
-      'Are you looking for PPE recommendations for a particular job task?',
-      'Do you need help with your PPE compliance program?'
+      'What specific PPE is required for my industry?', 
+      'How often should we replace PPE items?',
+      'What training is needed for proper PPE use?'
     ],
     'chemical': [
-      'What specific chemicals are you working with?', 
-      'Are you asking about storage, handling, or disposal procedures?',
-      'Do you need help with your chemical hazard communication program?'
+      'What are the storage requirements for flammable chemicals?', 
+      'Do you have a template for a chemical inventory list?',
+      'What should our chemical spill procedure include?'
     ],
     'training': [
-      'Is this for new employee training or refresher training?', 
-      'Which specific safety training topic are you interested in?',
-      'Are you looking to implement a comprehensive training program?'
+      'How often should we conduct refresher training?', 
+      'What should be included in our training documentation?',
+      'Are there specific training requirements for supervisors?'
     ],
     'fall': [
-      'What height are you working at?', 
-      'Are you looking for information on guardrails, safety nets, or personal fall arrest systems?',
-      'Is this for construction or general industry fall protection?'
+      'What are the requirements for temporary guardrails?', 
+      'How often should fall protection equipment be inspected?',
+      'What documentation is needed for our fall protection program?'
     ],
     'hazard': [
-      'Is this hazard related to a specific piece of equipment or process?',
-      'Have you already conducted a hazard assessment?',
-      'Are you looking for hazard control recommendations?'
+      'What should be included in our hazard assessment?',
+      'How often should hazard assessments be updated?',
+      'What are the most commonly overlooked workplace hazards?'
     ],
     'violation': [
-      'Has this violation been cited by OSHA, or are you trying to prevent it?',
-      'Do you need guidance on abatement procedures?',
-      'Would you like information on potential penalties for this violation?'
+      'What's the process for contesting an OSHA citation?',
+      'How should we document our violation abatement efforts?',
+      'What are the most common violations in our industry?'
     ],
     'regulations': [
-      'Which specific OSHA standard are you referencing?',
-      'Are you looking for compliance guidance or interpretation?',
-      'Do you need help implementing these regulations at your workplace?'
+      'Are there any upcoming changes to this regulation?',
+      'Is there a simplified guide for implementing this requirement?',
+      'What documentation would an inspector look for regarding this?'
     ],
     'fine': [
-      'Are you concerned about a specific citation?',
-      'Would you like to know about OSHA\'s penalty reduction policies?',
-      'Are you preparing for an OSHA inspection?'
+      'What factors increase or decrease potential fines?',
+      'Are there any penalty reduction programs available?',
+      'What's the typical timeline for resolving citations?'
+    ],
+    'inspection': [
+      'What areas do OSHA inspectors focus on most?',
+      'What rights do we have during an inspection?',
+      'How should we prepare for an upcoming safety inspection?'
+    ],
+    'employee': [
+      'What safety rights do temporary workers have?',
+      'How should we handle employee safety complaints?',
+      'What safety responsibilities do employees have?'
     ]
   };
 
@@ -107,31 +147,45 @@ export function generateFollowUpQuestions(userQuery: string, aiResponse: string)
   const combinedText = (userQuery + ' ' + aiResponse).toLowerCase();
   const suggestions: string[] = [];
   
-  Object.entries(safetyKeywords).forEach(([keyword, questions]) => {
-    if (combinedText.includes(keyword) && suggestions.length < 2) {
-      // Add a relevant follow-up question that fits the context
-      suggestions.push(questions[Math.floor(Math.random() * questions.length)]);
-    }
-  });
+  // Try to find the most relevant keywords first
+  const foundKeywords = Object.entries(safetyKeywords).filter(([keyword]) => 
+    combinedText.includes(keyword)
+  );
+  
+  if (foundKeywords.length > 0) {
+    // Sort by keyword occurrence and relevance
+    foundKeywords.forEach(([keyword, questions]) => {
+      if (suggestions.length < 3) {
+        // Add a relevant follow-up question that fits the context
+        suggestions.push(questions[Math.floor(Math.random() * questions.length)]);
+      }
+    });
+  }
   
   // If no specific keywords matched, analyze the intent and provide relevant follow-ups
   if (suggestions.length === 0) {
-    if (combinedText.includes('osha') || combinedText.includes('regulation') || combinedText.includes('standard')) {
-      suggestions.push('Would you like me to explain how to implement this regulation practically?');
-    } else if (combinedText.includes('accident') || combinedText.includes('incident') || combinedText.includes('injury')) {
-      suggestions.push('Are you looking for prevention strategies or post-incident procedures?');
+    if (combinedText.includes('osha') || combinedText.includes('regulation')) {
+      suggestions.push('How should we document compliance with this regulation?');
+    } else if (combinedText.includes('accident') || combinedText.includes('incident')) {
+      suggestions.push('What should be included in our incident report forms?');
     } else if (combinedText.includes('inspect') || combinedText.includes('audit')) {
-      suggestions.push('Would you like guidance on conducting effective safety inspections?');
+      suggestions.push('How often should we conduct internal safety audits?');
     } else {
       // Generic but still helpful follow-ups
       suggestions.push(
-        'Would you like more specific information about this safety topic?',
-        'Is there a particular aspect of workplace safety you\'re most concerned about?'
+        'What are the top safety concerns in our industry?',
+        'How can we improve employee engagement in safety programs?'
       );
     }
   }
   
-  return suggestions.slice(0, 2); // Return at most 2 suggestions
+  // Ensure we have at least 2 suggestions
+  if (suggestions.length < 2) {
+    suggestions.push('Would you like to see a sample safety checklist for this topic?');
+  }
+  
+  // Make sure we're not repeating suggestions
+  return [...new Set(suggestions)].slice(0, 3); 
 }
 
 /**
@@ -145,13 +199,15 @@ export function extractSafetyTopics(messages: Message[]): string[] {
     'machine guarding', 'respiratory protection', 'hearing conservation',
     'bloodborne pathogens', 'emergency action plan', 'scaffolding', 'ladders',
     'forklift', 'crane', 'welding', 'excavation', 'trenching', 'asbestos',
-    'lead', 'silica', 'radiation', 'hazardous waste', 'recordkeeping'
+    'lead', 'silica', 'radiation', 'hazardous waste', 'recordkeeping',
+    'training', 'new employees', 'safety program', 'inspection', 'audit',
+    'violation', 'fine', 'penalty', 'citation', 'compliance', 'standard'
   ];
   
   const topicsFound: string[] = [];
   
-  // Look through recent messages
-  const recentMessages = messages.slice(-5);
+  // Look through recent messages (increased from 5 to 7 for better context memory)
+  const recentMessages = messages.slice(-7);
   
   recentMessages.forEach(msg => {
     const content = msg.content.toLowerCase();

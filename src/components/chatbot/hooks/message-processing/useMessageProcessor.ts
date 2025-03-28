@@ -1,3 +1,4 @@
+
 import { Message } from '../../types';
 import { extractSafetyTopics } from '@/utils/conversationUtils';
 import { generateAIResponse } from './localResponseGenerator';
@@ -16,9 +17,9 @@ export const useMessageProcessor = () => {
     try {
       // Extract safety topics to enhance context
       const safetyTopics = extractSafetyTopics(allMessages);
-      console.log("Detected safety topics:", safetyTopics);
+      console.log("Detected safety topics for context:", safetyTopics);
       
-      // Try to get AI response from Hugging Face model
+      // Try to get AI response from Hugging Face model with enhanced conversational tone
       let aiResponse: string;
       
       try {
@@ -34,16 +35,29 @@ export const useMessageProcessor = () => {
       }
       
       // If the response is too short or generic, try to enhance it with more specific information
-      if (aiResponse.length < 50 || aiResponse.includes("I don't have specific information")) {
+      if (aiResponse.length < 50 || 
+          aiResponse.includes("I don't have specific information") ||
+          aiResponse.includes("I don't know") ||
+          aiResponse.includes("I'm not sure")) {
         console.log("Response too generic, enhancing with local knowledge base");
         const enhancedResponse = generateAIResponse(content, allMessages);
         
         // If the local response is more detailed, use it instead
-        if (enhancedResponse.length > aiResponse.length * 1.5) {
+        if (enhancedResponse.length > aiResponse.length * 1.2) {
           aiResponse = enhancedResponse;
         } else {
-          // Otherwise, combine both responses for more context
-          aiResponse = `${aiResponse}\n\nAdditionally: ${enhancedResponse}`;
+          // Create a more natural combined response
+          const transitions = [
+            "Additionally, ",
+            "I can also add that ",
+            "To give you more context, ",
+            "It's also worth noting that ",
+            "For more specific guidance, "
+          ];
+          const transition = transitions[Math.floor(Math.random() * transitions.length)];
+          
+          // Combine responses without redundancy
+          aiResponse = aiResponse + "\n\n" + transition + enhancedResponse.toLowerCase();
         }
       }
       
@@ -57,7 +71,7 @@ export const useMessageProcessor = () => {
       
       setMessages(prev => [...prev, assistantMessage]);
       
-      // Generate follow-up question suggestions
+      // Generate follow-up question suggestions based on context
       const suggestions = suggestFollowUpQuestions(content, aiResponse);
       setFollowUpSuggestions(suggestions);
       
