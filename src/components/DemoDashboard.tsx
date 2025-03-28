@@ -16,14 +16,18 @@ import {
   CheckSquare, 
   Settings, 
   Shield,
-  MessageSquare
+  MessageSquare,
+  AlertTriangle
 } from 'lucide-react';
 
 import ChatInterface from './chatbot/ChatInterface';
 import ViolationUpload from './violations/ViolationUpload';
 import ViolationResults from './violations/ViolationResults';
-import { useViolationAnalysisContext } from './violations/ViolationAnalysisProvider';
 import { ViolationAnalysisProvider } from './violations/ViolationAnalysisProvider';
+import { mockDocuments } from './documents/mockData';
+import { mockTasks } from '@/hooks/tasks/mockTasks';
+import { trainingStatus, upcomingTrainings, completedTrainings } from './training/mockData';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const DemoHeader = () => {
   const navigate = useNavigate();
@@ -99,8 +103,8 @@ const DemoSidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActive
           </button>
           
           <button 
-            className="flex items-center w-full px-3 py-2 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white opacity-70 cursor-not-allowed"
-            disabled
+            onClick={() => setActiveTab('tasks')}
+            className={`flex items-center w-full px-3 py-2 rounded-md ${activeTab === 'tasks' ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
           >
             <CheckSquare className="h-5 w-5 mr-3" />
             Tasks
@@ -108,8 +112,8 @@ const DemoSidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActive
           </button>
           
           <button 
-            className="flex items-center w-full px-3 py-2 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white opacity-70 cursor-not-allowed"
-            disabled
+            onClick={() => setActiveTab('documents')}
+            className={`flex items-center w-full px-3 py-2 rounded-md ${activeTab === 'documents' ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
           >
             <FileText className="h-5 w-5 mr-3" />
             Documents
@@ -117,8 +121,8 @@ const DemoSidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActive
           </button>
           
           <button 
-            className="flex items-center w-full px-3 py-2 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white opacity-70 cursor-not-allowed"
-            disabled
+            onClick={() => setActiveTab('reports')}
+            className={`flex items-center w-full px-3 py-2 rounded-md ${activeTab === 'reports' ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
           >
             <BarChart2 className="h-5 w-5 mr-3" />
             Reports
@@ -126,8 +130,8 @@ const DemoSidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActive
           </button>
           
           <button 
-            className="flex items-center w-full px-3 py-2 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white opacity-70 cursor-not-allowed"
-            disabled
+            onClick={() => setActiveTab('training')}
+            className={`flex items-center w-full px-3 py-2 rounded-md ${activeTab === 'training' ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
           >
             <Calendar className="h-5 w-5 mr-3" />
             Training
@@ -135,8 +139,8 @@ const DemoSidebar = ({ activeTab, setActiveTab }: { activeTab: string, setActive
           </button>
           
           <button 
-            className="flex items-center w-full px-3 py-2 rounded-md text-gray-400 hover:bg-gray-800 hover:text-white opacity-70 cursor-not-allowed"
-            disabled
+            onClick={() => setActiveTab('settings')}
+            className={`flex items-center w-full px-3 py-2 rounded-md ${activeTab === 'settings' ? 'bg-gray-800 text-white' : 'text-gray-400 hover:bg-gray-800 hover:text-white'}`}
           >
             <Settings className="h-5 w-5 mr-3" />
             Settings
@@ -181,25 +185,25 @@ const DemoDashboardContent = () => {
           
           <Button 
             variant="outline" 
-            className="flex items-center justify-center p-4 h-auto border-blue-700/50 bg-blue-900/20 hover:bg-blue-900/30 cursor-not-allowed opacity-70"
-            disabled
+            className="flex items-center justify-center p-4 h-auto border-blue-700/50 bg-blue-900/20 hover:bg-blue-900/30"
+            onClick={() => document.getElementById('documentation-tab-trigger')?.click()}
           >
             <div className="flex flex-col items-center text-center">
               <FileText className="h-8 w-8 mb-2 text-blue-400" />
               <span className="text-lg font-medium">Documentation</span>
-              <span className="text-sm text-gray-400 mt-1">Demo Only - Not Interactive</span>
+              <span className="text-sm text-gray-400 mt-1">Demo Only - Visual Preview</span>
             </div>
           </Button>
           
           <Button 
             variant="outline" 
-            className="flex items-center justify-center p-4 h-auto border-blue-700/50 bg-blue-900/20 hover:bg-blue-900/30 cursor-not-allowed opacity-70"
-            disabled
+            className="flex items-center justify-center p-4 h-auto border-blue-700/50 bg-blue-900/20 hover:bg-blue-900/30"
+            onClick={() => document.getElementById('reports-tab-trigger')?.click()}
           >
             <div className="flex flex-col items-center text-center">
               <BarChart2 className="h-8 w-8 mb-2 text-blue-400" />
               <span className="text-lg font-medium">Analytics</span>
-              <span className="text-sm text-gray-400 mt-1">Demo Only - Not Interactive</span>
+              <span className="text-sm text-gray-400 mt-1">Demo Only - Visual Preview</span>
             </div>
           </Button>
         </div>
@@ -239,7 +243,7 @@ const DemoDashboardContent = () => {
               </div>
             ))}
             <div className="pt-2 text-center">
-              <span className="text-sm text-gray-400">Demo data - not interactive</span>
+              <span className="text-sm text-gray-400">Demo data - Visual Preview Only</span>
             </div>
           </div>
         </div>
@@ -309,6 +313,348 @@ const DemoDashboardContent = () => {
   );
 };
 
+// Demo Tasks Content
+const DemoTasksContent = () => {
+  return (
+    <div className="p-6">
+      <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-300">
+            Demo Mode - This is a visual preview only. Tasks functionality is available in the full version.
+          </AlertDescription>
+        </div>
+      </Alert>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h2 className="text-xl font-bold mb-4">Task Management</h2>
+        <div className="space-y-4 mt-4">
+          {mockTasks.map((task) => (
+            <div key={task.id} className="p-4 border border-gray-700 rounded-lg bg-gray-900/60">
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="font-medium">{task.title}</h3>
+                  <p className="text-sm text-gray-400 mt-1">{task.description?.substring(0, 80)}...</p>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className={`text-xs px-2 py-1 rounded-full ${
+                    task.priority === 'high' ? 'bg-red-900/30 text-red-400' : 
+                    task.priority === 'medium' ? 'bg-yellow-900/30 text-yellow-400' : 
+                    'bg-green-900/30 text-green-400'
+                  }`}>
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                  </span>
+                  <span className="text-sm text-gray-400 mt-2">
+                    Due: {new Date(task.due_date).toLocaleDateString()}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Demo Documents Content
+const DemoDocumentsContent = () => {
+  return (
+    <div className="p-6">
+      <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-300">
+            Demo Mode - This is a visual preview only. Documents functionality is available in the full version.
+          </AlertDescription>
+        </div>
+      </Alert>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h2 className="text-xl font-bold mb-4">Document Management</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+          {mockDocuments.slice(0, 6).map((doc) => (
+            <div key={doc.id} className="p-4 border border-gray-700 rounded-lg bg-gray-900/60">
+              <div className="flex items-center">
+                <FileText className="h-8 w-8 text-blue-400 mr-3" />
+                <div>
+                  <h3 className="font-medium">{doc.title}</h3>
+                  <p className="text-sm text-gray-400">Last updated: {doc.lastModified}</p>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-between">
+                <span className="text-xs bg-gray-800 px-2 py-1 rounded">
+                  {doc.fileType.toUpperCase()} • {doc.fileSize}
+                </span>
+                <span className="text-xs text-blue-400">
+                  {doc.type}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Demo Reports Content
+const DemoReportsContent = () => {
+  return (
+    <div className="p-6">
+      <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-300">
+            Demo Mode - This is a visual preview only. Reports functionality is available in the full version.
+          </AlertDescription>
+        </div>
+      </Alert>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h2 className="text-xl font-bold mb-4">Analytics & Reports</h2>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Total Violations</h3>
+            <div className="text-2xl font-bold">48</div>
+            <div className="text-sm text-green-400 mt-2">↓ 12% from last month</div>
+          </div>
+          
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Open Tasks</h3>
+            <div className="text-2xl font-bold">23</div>
+            <div className="text-sm text-yellow-400 mt-2">↑ 5% from last month</div>
+          </div>
+          
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Compliance Score</h3>
+            <div className="text-2xl font-bold">87%</div>
+            <div className="text-sm text-green-400 mt-2">↑ 8% from last month</div>
+          </div>
+        </div>
+        
+        <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4 mb-6">
+          <h3 className="font-medium mb-4">Violation Trend (6 Month)</h3>
+          <div className="h-64 flex items-end justify-between px-2">
+            {Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="w-8 mx-1 flex flex-col items-center">
+                <div 
+                  className="bg-blue-500 w-full rounded-t-sm" 
+                  style={{ height: `${20 + Math.floor(Math.random() * 100)}px` }}
+                ></div>
+                <div className="text-xs text-gray-400 mt-2">
+                  {['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'][i]}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+        
+        <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+          <h3 className="font-medium mb-4">Violation Types</h3>
+          <div className="space-y-3">
+            {[
+              { name: 'PPE Violations', percent: 35, color: 'bg-red-500' },
+              { name: 'Fall Hazards', percent: 24, color: 'bg-yellow-500' },
+              { name: 'Chemical Hazards', percent: 18, color: 'bg-green-500' },
+              { name: 'Electrical Hazards', percent: 12, color: 'bg-blue-500' },
+              { name: 'Other', percent: 11, color: 'bg-purple-500' }
+            ].map((item, i) => (
+              <div key={i} className="space-y-1">
+                <div className="flex justify-between text-sm">
+                  <span>{item.name}</span>
+                  <span>{item.percent}%</span>
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2">
+                  <div 
+                    className={`${item.color} h-2 rounded-full`}
+                    style={{ width: `${item.percent}%` }}
+                  ></div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Demo Training Content
+const DemoTrainingContent = () => {
+  return (
+    <div className="p-6">
+      <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-300">
+            Demo Mode - This is a visual preview only. Training functionality is available in the full version.
+          </AlertDescription>
+        </div>
+      </Alert>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 mb-6">
+        <h2 className="text-xl font-bold mb-4">Training Status</h2>
+        
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Completed</h3>
+            <div className="text-2xl font-bold">{trainingStatus.completed}</div>
+          </div>
+          
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Upcoming</h3>
+            <div className="text-2xl font-bold">{trainingStatus.upcoming}</div>
+          </div>
+          
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Overdue</h3>
+            <div className="text-2xl font-bold text-red-400">{trainingStatus.overdue}</div>
+          </div>
+          
+          <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+            <h3 className="text-gray-400 text-sm mb-1">Expiring Soon</h3>
+            <div className="text-2xl font-bold text-yellow-400">{trainingStatus.expiring}</div>
+          </div>
+        </div>
+        
+        <h3 className="font-bold text-lg mb-4">Upcoming Training</h3>
+        <div className="space-y-3">
+          {upcomingTrainings.map((training, i) => (
+            <div key={i} className="bg-gray-900/60 rounded-lg border border-gray-700 p-4 flex justify-between items-center">
+              <div>
+                <h4 className="font-medium">{training.title}</h4>
+                <p className="text-sm text-gray-400">Duration: {training.duration}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm">{training.startDate}</p>
+                <p className={`text-sm ${training.daysLeft < 10 ? 'text-yellow-400' : 'text-gray-400'}`}>
+                  {training.daysLeft} days left
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h2 className="text-xl font-bold mb-4">Recently Completed</h2>
+        
+        <div className="space-y-3">
+          {completedTrainings.map((training, i) => (
+            <div key={i} className="bg-gray-900/60 rounded-lg border border-gray-700 p-4 flex justify-between items-center">
+              <div>
+                <h4 className="font-medium">{training.title}</h4>
+                <p className="text-sm text-gray-400">Completed: {training.completedDate}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-400">Certificate Expires</p>
+                <p className="text-sm text-yellow-400">{training.certificateExpires}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Demo Settings Content
+const DemoSettingsContent = () => {
+  return (
+    <div className="p-6">
+      <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+        <div className="flex items-center gap-2">
+          <AlertTriangle className="h-4 w-4 text-yellow-500" />
+          <AlertDescription className="text-yellow-300">
+            Demo Mode - This is a visual preview only. Settings functionality is available in the full version.
+          </AlertDescription>
+        </div>
+      </Alert>
+      
+      <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+        <h2 className="text-xl font-bold mb-6">Account Settings</h2>
+        
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h3 className="font-medium text-lg">Profile Information</h3>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label className="text-sm text-gray-400">Full Name</label>
+                <input 
+                  type="text" 
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md" 
+                  value="Demo User"
+                  disabled
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm text-gray-400">Email Address</label>
+                <input 
+                  type="email" 
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md" 
+                  value="demo@example.com"
+                  disabled
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm text-gray-400">Role</label>
+                <input 
+                  type="text" 
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md" 
+                  value="Safety Manager"
+                  disabled
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <label className="text-sm text-gray-400">Department</label>
+                <input 
+                  type="text" 
+                  className="w-full px-3 py-2 bg-gray-900 border border-gray-700 rounded-md" 
+                  value="EHS Department"
+                  disabled
+                />
+              </div>
+            </div>
+          </div>
+          
+          <div className="space-y-4">
+            <h3 className="font-medium text-lg">Notification Preferences</h3>
+            
+            <div className="space-y-3">
+              {[
+                "Email notifications for new violations",
+                "Email notifications for assigned tasks",
+                "Daily digest of activity",
+                "Training reminders",
+                "System announcements"
+              ].map((item, i) => (
+                <div key={i} className="flex items-center justify-between p-3 bg-gray-900/60 rounded-lg border border-gray-700">
+                  <span>{item}</span>
+                  <div className="w-10 h-6 bg-blue-600 rounded-full relative flex items-center">
+                    <div className="absolute right-1 w-4 h-4 bg-white rounded-full"></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="pt-4 border-t border-gray-700">
+            <Button className="bg-blue-600 hover:bg-blue-700" disabled>
+              Save Settings
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const DemoDashboard = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [violationResults, setViolationResults] = useState<any>(null);
@@ -333,6 +679,12 @@ const DemoDashboard = () => {
               <TabsTrigger id="violations-tab-trigger" value="violations">Violations</TabsTrigger>
               <TabsTrigger id="chatbot-tab-trigger" value="chatbot">Chatbot</TabsTrigger>
               <TabsTrigger value="violations-results">Results</TabsTrigger>
+              <TabsTrigger value="tasks">Tasks</TabsTrigger>
+              <TabsTrigger value="documents">Documents</TabsTrigger>
+              <TabsTrigger id="reports-tab-trigger" value="reports">Reports</TabsTrigger>
+              <TabsTrigger value="training">Training</TabsTrigger>
+              <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsTrigger id="documentation-tab-trigger" value="documentation">Documentation</TabsTrigger>
             </TabsList>
             
             <TabsContent value="dashboard" className="h-full">
@@ -411,7 +763,6 @@ const DemoDashboard = () => {
                         }
                       ]} 
                       onSave={() => {
-                        // In demo mode, we'll just show a message instead of saving
                         alert("This action would save the violation in a real environment. This is demo mode.");
                       }}
                     />
@@ -428,6 +779,104 @@ const DemoDashboard = () => {
                       </Button>
                     </div>
                   )}
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="tasks" className="h-full">
+              <DemoTasksContent />
+            </TabsContent>
+            
+            <TabsContent value="documents" className="h-full">
+              <DemoDocumentsContent />
+            </TabsContent>
+            
+            <TabsContent value="reports" className="h-full">
+              <DemoReportsContent />
+            </TabsContent>
+            
+            <TabsContent value="training" className="h-full">
+              <DemoTrainingContent />
+            </TabsContent>
+            
+            <TabsContent value="settings" className="h-full">
+              <DemoSettingsContent />
+            </TabsContent>
+            
+            <TabsContent value="documentation" className="p-6">
+              <div className="max-w-4xl mx-auto">
+                <Alert className="mb-6 bg-yellow-600/10 border-yellow-600/30">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 text-yellow-500" />
+                    <AlertDescription className="text-yellow-300">
+                      Demo Mode - This is a visual preview only. Documentation functionality is available in the full version.
+                    </AlertDescription>
+                  </div>
+                </Alert>
+                
+                <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+                  <h2 className="text-2xl font-bold mb-6">Documentation</h2>
+                  
+                  <div className="space-y-6">
+                    <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+                      <h3 className="font-bold text-lg mb-2">Getting Started</h3>
+                      <p className="text-gray-300 mb-4">Complete these steps to get up and running with Thalos.</p>
+                      <div className="space-y-2">
+                        {[
+                          "Setting up your organization profile",
+                          "Inviting team members",
+                          "Configuring safety settings",
+                          "Uploading your first documents",
+                          "Creating your first safety inspection"
+                        ].map((item, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-blue-900/50 text-blue-400 flex items-center justify-center text-xs">
+                              {i + 1}
+                            </div>
+                            <span>{item}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+                        <h3 className="font-medium mb-3">User Guides</h3>
+                        <ul className="space-y-2 text-blue-400">
+                          {[
+                            "Safety Violations Detection Guide",
+                            "AI Assistant Usage Guide",
+                            "Task Management Guide",
+                            "Reports and Analytics Guide",
+                            "User Management Guide"
+                          ].map((item, i) => (
+                            <li key={i} className="flex items-center gap-2">
+                              <FileText className="h-4 w-4" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                      
+                      <div className="bg-gray-900/60 rounded-lg border border-gray-700 p-4">
+                        <h3 className="font-medium mb-3">Industries</h3>
+                        <ul className="space-y-2 text-blue-400">
+                          {[
+                            "Construction Industry Guide",
+                            "Manufacturing Industry Guide",
+                            "Healthcare Industry Guide",
+                            "Oil & Gas Industry Guide",
+                            "Transportation Industry Guide"
+                          ].map((item, i) => (
+                            <li key={i} className="flex items-center gap-2">
+                              <HardHat className="h-4 w-4" />
+                              <span>{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </TabsContent>
