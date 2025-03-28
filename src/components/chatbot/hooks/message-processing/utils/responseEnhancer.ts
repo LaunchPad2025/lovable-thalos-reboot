@@ -43,35 +43,133 @@ export const enhanceResponse = (
     }
   }
   
-  // If the response is too short or generic, enhance it
+  // If the response indicates a knowledge gap, use improved fallback approach
   if (originalResponse.length < 50 || 
       originalResponse.includes("I don't have specific information") ||
       originalResponse.includes("I don't know") ||
       originalResponse.includes("I'm not sure") ||
-      originalResponse.includes("check with your safety")) {
+      originalResponse.includes("check with your safety") ||
+      originalResponse.includes("couldn't generate") ||
+      originalResponse.includes("don't have data") ||
+      originalResponse.includes("can't provide")) {
     
-    console.log("Response too generic, enhancing with local knowledge base");
+    console.log("Knowledge gap detected, using enhanced fallback approach");
     
-    // If the local response is more detailed, use it instead
+    // Extract the topic from the user's query
+    const userQueryIndex = previousMessages.findIndex(msg => msg.role === 'user');
+    const userQuery = userQueryIndex >= 0 ? previousMessages[userQueryIndex].content : '';
+    
+    // Create an improved fallback that acknowledges the user's intent
+    const topic = extractTopicFromQuery(userQuery);
+    
+    // If the local response is substantial, use it instead
     if (localResponse.length > originalResponse.length * 1.2) {
       return addConversationalElements(localResponse);
     } else {
-      // Create a more natural combined response
-      const transitions = [
-        "Additionally, ",
-        "I can also add that ",
-        "To give you more context, ",
-        "It's also worth noting that ",
-        "For more specific guidance, "
-      ];
-      const transition = transitions[Math.floor(Math.random() * transitions.length)];
-      
-      // Combine responses without redundancy
-      return addConversationalElements(originalResponse + "\n\n" + transition + localResponse.toLowerCase());
+      // Construct a helpful mini-response
+      return constructMiniResponse(topic, originalResponse, localResponse);
     }
   }
   
   return addConversationalElements(originalResponse);
+};
+
+/**
+ * Extract the main safety topic from a user query
+ */
+const extractTopicFromQuery = (query: string): string => {
+  const safetyTopics = [
+    'hazard assessment', 'hazard', 'risk assessment', 'risk', 
+    'training', 'inspection', 'audit', 'compliance', 
+    'ppe', 'protective equipment', 'safety equipment',
+    'incident', 'accident', 'injury', 'emergency',
+    'confined space', 'fall protection', 'lockout', 'tagout',
+    'chemical', 'hazcom', 'fire', 'electrical', 'machine',
+    'forklift', 'ladder', 'scaffold', 'welding', 'construction',
+    'manufacturing', 'healthcare', 'warehouse', 'safety data sheet',
+    'sds', 'msds', 'jsa', 'job safety analysis'
+  ];
+  
+  // Extract the main topic from query
+  const queryLower = query.toLowerCase();
+  let detectedTopic = 'safety';
+  
+  for (const topic of safetyTopics) {
+    if (queryLower.includes(topic)) {
+      detectedTopic = topic;
+      break;
+    }
+  }
+  
+  return detectedTopic;
+};
+
+/**
+ * Construct a mini-response that acknowledges the user's request
+ * and provides helpful information even when full content is unavailable
+ */
+const constructMiniResponse = (topic: string, originalResponse: string, localResponse: string): string => {
+  // Acknowledge user intent
+  const acknowledgments = [
+    `You're right to ask about ${topic}. `,
+    `That's an important question about ${topic}. `,
+    `I appreciate your interest in ${topic} procedures. `
+  ];
+  
+  // Offer what can be provided
+  const offerings = [
+    "Here's what I **can** help with: ",
+    "Let me share these key points about this topic: ",
+    "While I don't have the complete information, here are the essential elements: "
+  ];
+  
+  // Mini content snippets by topic
+  const miniContentByTopic: Record<string, string> = {
+    'hazard': '**Hazard Assessment Basics:**\n1. Identify potential hazards\n2. Evaluate risk levels\n3. Implement control measures\n4. Document and communicate\n5. Review regularly',
+    
+    'training': '**Training Documentation Essentials:**\n1. Training content and materials\n2. Attendance records with signatures\n3. Comprehension verification\n4. Certification documentation\n5. Refresher scheduling',
+    
+    'ppe': '**PPE Selection Process:**\n1. Hazard identification\n2. PPE specifications\n3. Proper fit and testing\n4. User training requirements\n5. Inspection and maintenance',
+    
+    'confined space': '**Confined Space Safety:**\n1. Space identification and evaluation\n2. Hazard controls\n3. Entry procedures\n4. Attendant responsibilities\n5. Emergency rescue planning',
+    
+    'jsa': '**Job Safety Analysis Components:**\n1. Task breakdown\n2. Hazard identification\n3. Risk evaluation\n4. Control measures\n5. Safe work procedures',
+    
+    'safety': '**Safety Program Essentials:**\n1. Written safety policies\n2. Hazard identification procedures\n3. Training requirements\n4. Incident reporting system\n5. Program evaluation methods'
+  };
+  
+  // Template offers
+  const templateOffers = [
+    "\n\nWould you like a downloadable template for this that you can customize?",
+    "\n\nI can provide a sample document or checklist for this. Would that be helpful?",
+    "\n\nWould you like me to share a template you can adapt for your specific needs?"
+  ];
+  
+  // Branching options
+  const branchingOptions = [
+    "\n\nWould you like me to focus on a specific aspect of this topic?",
+    "\n\nAre you interested in industry-specific guidance for this?",
+    "\n\nDo you need this information for training, compliance, or implementation purposes?"
+  ];
+  
+  // Select components
+  const acknowledgment = acknowledgments[Math.floor(Math.random() * acknowledgments.length)];
+  const offering = offerings[Math.floor(Math.random() * offerings.length)];
+  
+  // Find most relevant mini content
+  let miniContent = miniContentByTopic['safety']; // Default
+  for (const [key, content] of Object.entries(miniContentByTopic)) {
+    if (topic.includes(key)) {
+      miniContent = content;
+      break;
+    }
+  }
+  
+  const templateOffer = templateOffers[Math.floor(Math.random() * templateOffers.length)];
+  const branchingOption = branchingOptions[Math.floor(Math.random() * branchingOptions.length)];
+  
+  // Construct the response
+  return acknowledgment + offering + miniContent + templateOffer + branchingOption;
 };
 
 /**

@@ -10,8 +10,6 @@ export const getTrainingMatrixResponse = (query: string): string | null => {
   if (query.toLowerCase().includes('matrix') && query.toLowerCase().includes('training')) {
     return `**Safety Training Matrix Development Guide**
 
-To create an effective training matrix for your team:
-
 1. **Matrix structure and components**:
    - List all job positions/titles down the left column
    - List all required training topics across the top row
@@ -52,8 +50,6 @@ export const getTrainingCalendarResponse = (query: string): string | null => {
   if (query.toLowerCase().includes('calendar') && 
       (query.toLowerCase().includes('training') || query.toLowerCase().includes('schedule'))) {
     return `**Annual Safety Training Calendar Development**
-
-To create an effective safety training calendar:
 
 1. **Strategic planning considerations**:
    - Distribute training throughout the year to avoid overload
