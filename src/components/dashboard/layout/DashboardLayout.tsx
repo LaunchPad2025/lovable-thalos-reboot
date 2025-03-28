@@ -9,7 +9,7 @@ import RecommendedFeatures from '@/components/dashboard/RecommendedFeatures';
 import ChatPopup from '@/components/chatbot/ChatPopup';
 import { useAuthStatus } from '@/hooks/useAuthStatus';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { InfoCircle } from 'lucide-react';
+import { Info } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
@@ -44,7 +44,7 @@ const DashboardLayout = () => {
         {/* Show feature restrictions based on plan */}
         {!hasActiveSubscription && !isFreeTrial && !isDemoMode && (
           <Alert variant="default" className="bg-amber-50 border-amber-200 text-amber-800 dark:bg-amber-900/20 dark:border-amber-800 dark:text-amber-400">
-            <InfoCircle className="h-4 w-4" />
+            <Info className="h-4 w-4" />
             <AlertTitle>Subscription required</AlertTitle>
             <AlertDescription className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
               <span>Your free trial has ended. Subscribe to a plan to regain access to all features.</span>

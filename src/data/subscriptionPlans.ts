@@ -1,5 +1,5 @@
 
-import { formatCurrency } from 'utils';
+// Use the formatPrice function instead of imported utility
 
 export interface PlanData {
   id: string;
