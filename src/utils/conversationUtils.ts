@@ -1,8 +1,14 @@
 
-import { prepareConversationContext } from './conversation/formatContext';
-import { enhanceResponseTone } from './conversation/tone/enhanceTone';
-import { generateFollowUpQuestions } from './conversation/follow-up-suggestions';
-import { extractSafetyTopics } from './conversation/topicExtraction';
+/**
+ * Backward compatibility layer for conversation utilities.
+ * Imports from the new modular structure and re-exports for legacy usage.
+ */
+import {
+  prepareConversationContext,
+  enhanceResponseTone,
+  generateFollowUpQuestions,
+  extractSafetyTopics
+} from './conversation';
 
 // Re-export all functions to maintain backward compatibility
 export {
