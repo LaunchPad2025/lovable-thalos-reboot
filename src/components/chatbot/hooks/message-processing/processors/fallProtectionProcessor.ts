@@ -1,4 +1,5 @@
-import { handleFallProtectionQuery } from '../utils/regulation';
+
+import { handleFallProtectionQuery } from '../utils/regulation/fallProtection';
 import { supabase } from '@/lib/supabase';
 
 /**
@@ -12,33 +13,42 @@ export const processFallProtectionQuery = async (
   response: string | null;
   followUpSuggestions: string[];
 }> => {
-  const fallProtectionResponse = handleFallProtectionQuery(content);
-  
-  if (fallProtectionResponse) {
-    // Update paulie_queries table with the response
-    try {
-      await supabase.from('paulie_queries').update({
+  try {
+    const fallProtectionResponse = await handleFallProtectionQuery(content);
+    
+    if (fallProtectionResponse) {
+      // Update paulie_queries table with the response
+      try {
+        await supabase.from('paulie_queries').update({
+          response: fallProtectionResponse,
+          matched_category: 'fall protection'
+        }).eq('message_id', messageId);
+      } catch (error) {
+        console.error('Error updating query with response:', error);
+      }
+      
+      return {
+        match: true,
         response: fallProtectionResponse,
-        matched_category: 'fall protection'
-      }).eq('message_id', messageId);
-    } catch (error) {
-      console.error('Error updating query with response:', error);
+        followUpSuggestions: [
+          "What are the inspection requirements for fall protection equipment?",
+          "How do I develop a site-specific fall protection plan?",
+          "What training is required for workers using fall protection?"
+        ]
+      };
     }
     
     return {
-      match: true,
-      response: fallProtectionResponse,
-      followUpSuggestions: [
-        "What are the inspection requirements for fall protection equipment?",
-        "How do I develop a site-specific fall protection plan?",
-        "What training is required for workers using fall protection?"
-      ]
+      match: false,
+      response: null,
+      followUpSuggestions: []
+    };
+  } catch (error) {
+    console.error('Error in processFallProtectionQuery:', error);
+    return {
+      match: false,
+      response: null,
+      followUpSuggestions: []
     };
   }
-  
-  return {
-    match: false,
-    response: null,
-    followUpSuggestions: []
-  };
 };

@@ -16,20 +16,17 @@ export {
   extractRegulationNumber
 };
 
-export const handleFallProtectionQuery = (query: string): string | null => {
-  // Sync version that calls the async implementation
-  // This is kept for backward compatibility
+// Updated to properly handle async function
+export const handleFallProtectionQuery = async (query: string): Promise<string | null> => {
+  // This is an async version that calls the async implementation
   try {
-    // Call the async function but return a synchronous result
-    handleFallProtectionQueryImpl(query).then(
-      result => result, 
-      error => {
-        console.error('Error in handleFallProtectionQuery:', error);
-        return null;
-      }
-    );
+    // Call the async function
+    const result = await handleFallProtectionQueryImpl(query);
+    if (result) {
+      return result;
+    }
     
-    // Use the static fall protection response for synchronous contexts
+    // Use the static fall protection response for fallback
     if (query.toLowerCase().includes('fall protection') || 
         query.toLowerCase().includes('fall arrest') ||
         query.toLowerCase().includes('1926.501')) {

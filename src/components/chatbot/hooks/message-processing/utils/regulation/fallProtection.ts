@@ -28,6 +28,7 @@ export const isFallProtectionQuery = (query: string): boolean => {
 
 /**
  * Process a query specifically about fall protection
+ * Updated to be properly async
  */
 export const handleFallProtectionQuery = async (query: string): Promise<string | null> => {
   // First check if it's a fall protection related query

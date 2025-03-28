@@ -11,6 +11,10 @@ import { findStaticRegulationMatch } from './staticRegulations';
 import { checkRegulationExists } from '@/utils/regulationUtils';
 import { logRegulationMatchFailure } from './loggingOperations';
 import { handleFallProtectionQuery, isDirectRegulationCitation, extractRegulationNumber } from './fallProtection';
+import { 
+  formatCitation,
+  parseCitationParts
+} from './citationMatcher';
 
 // Export all the components for backward compatibility
 export {
@@ -26,5 +30,7 @@ export {
   logRegulationMatchFailure,
   handleFallProtectionQuery,
   isDirectRegulationCitation,
-  extractRegulationNumber
+  extractRegulationNumber,
+  formatCitation,
+  parseCitationParts
 };
