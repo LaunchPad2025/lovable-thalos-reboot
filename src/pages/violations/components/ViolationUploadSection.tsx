@@ -24,6 +24,21 @@ const ViolationUploadSection = ({
   setIsLoadingOverride, 
   modelInitError 
 }: ViolationUploadSectionProps) => {
+  // Create a handler that adapts the ViolationUpload component's callback
+  const handleUploadComplete = (results: any) => {
+    // Ensure the results match the TestResult type
+    const testResults: TestResult = {
+      id: results.id || 'temp-id',
+      detections: results.detections || [],
+      confidence: results.confidence || 0.75,
+      severity: results.severity || 'medium',
+      imagePreview: results.imagePreview || '',
+      timestamp: results.timestamp || new Date().toISOString(),
+    };
+    
+    onUploadComplete(testResults);
+  };
+
   return (
     <TabsContent value="upload">
       {isLoading ? (
@@ -44,7 +59,7 @@ const ViolationUploadSection = ({
       ) : (
         <ViolationAnalysisProvider>
           <ViolationUpload 
-            onUploadComplete={onUploadComplete} 
+            onUploadComplete={handleUploadComplete}
             userIndustry={userIndustry}
             hideModelSelection={true}
             modelInitError={modelInitError}

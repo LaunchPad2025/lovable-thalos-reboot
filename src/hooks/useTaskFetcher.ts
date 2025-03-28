@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from 'react';
-import { supabase } from '../supabaseClient';
+import { supabase } from '@/lib/supabase';
 
 const useTaskFetcher = () => {
     const [tasks, setTasks] = useState([]);

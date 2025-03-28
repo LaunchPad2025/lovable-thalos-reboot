@@ -19,7 +19,8 @@ const NewViolationModal: React.FC<NewViolationModalProps> = ({ isOpen, onClose, 
   const [violation, setViolation] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
-  const [severity, setSeverity] = useState<string>('medium');
+  // Fix: Use the correct type for severity
+  const [severity, setSeverity] = useState<'low' | 'medium' | 'high' | 'critical'>('medium');
   const [regulation, setRegulation] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -97,7 +98,10 @@ const NewViolationModal: React.FC<NewViolationModalProps> = ({ isOpen, onClose, 
             
             <div className="space-y-2">
               <Label htmlFor="severity" className="text-gray-300">Severity</Label>
-              <Select value={severity} onValueChange={setSeverity}>
+              <Select 
+                value={severity} 
+                onValueChange={(value: 'low' | 'medium' | 'high' | 'critical') => setSeverity(value)}
+              >
                 <SelectTrigger className="bg-[#1a1f29] border-gray-700 text-white">
                   <SelectValue placeholder="Select severity" />
                 </SelectTrigger>
@@ -105,6 +109,7 @@ const NewViolationModal: React.FC<NewViolationModalProps> = ({ isOpen, onClose, 
                   <SelectItem value="low">Low</SelectItem>
                   <SelectItem value="medium">Medium</SelectItem>
                   <SelectItem value="high">High</SelectItem>
+                  <SelectItem value="critical">Critical</SelectItem>
                 </SelectContent>
               </Select>
             </div>

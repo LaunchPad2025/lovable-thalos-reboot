@@ -58,7 +58,8 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) return null;
 
-  if (user && !user.onboarded) {
+  // Fix: Access onboarded property from user_metadata instead of directly on user
+  if (user && !user.user_metadata?.onboarded) {
     return <Navigate to="/onboarding" replace />;
   }
 

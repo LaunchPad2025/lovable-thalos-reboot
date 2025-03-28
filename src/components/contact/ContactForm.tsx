@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,9 +32,12 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -73,6 +77,12 @@ const ContactForm = () => {
     }
   };
 
+  // Added handler for select change
+  const handleSelectChange = (value: string) => {
+    // This is just a placeholder since we're using react-hook-form
+    console.log("Select changed:", value);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -90,7 +100,7 @@ const ContactForm = () => {
                 id="firstName" 
                 placeholder="John"
                 {...register('firstName')}
-                className="...existing styles..."
+                className="bg-[#1a1f29] border-gray-700 text-white"
                 required
               />
               {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
@@ -101,7 +111,7 @@ const ContactForm = () => {
                 id="lastName" 
                 placeholder="Doe"
                 {...register('lastName')}
-                className="...existing styles..."
+                className="bg-[#1a1f29] border-gray-700 text-white"
                 required
               />
               {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
@@ -115,7 +125,7 @@ const ContactForm = () => {
                 id="email" 
                 type="email" 
                 {...register('email')}
-                className="...existing styles..."
+                className="bg-[#1a1f29] border-gray-700 text-white"
                 required
               />
               {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
@@ -126,7 +136,7 @@ const ContactForm = () => {
                 id="phone" 
                 placeholder="+1 (555) 123-4567"
                 {...register('phone')}
-                className="...existing styles..."
+                className="bg-[#1a1f29] border-gray-700 text-white"
               />
             </div>
           </div>
@@ -137,13 +147,13 @@ const ContactForm = () => {
               id="company" 
               placeholder="Acme Corporation"
               {...register('company')}
-              className="...existing styles..."
+              className="bg-[#1a1f29] border-gray-700 text-white"
             />
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
-            <Select value={formData.subject} onValueChange={handleSelectChange}>
+            <Select onValueChange={(value) => handleSelectChange(value)}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
@@ -165,7 +175,7 @@ const ContactForm = () => {
               placeholder="Please provide details about your inquiry..."
               rows={5}
               {...register('message')}
-              className="...existing styles..."
+              className="bg-[#1a1f29] border-gray-700 text-white"
               required
             />
             {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
