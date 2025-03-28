@@ -4,9 +4,11 @@ import { findExactRegulationMatch, logRegulationMatchFailure } from '../utils/re
 import { extractKeyTerms } from '../utils/regulation/keywordExtraction';
 import { supabase } from '@/lib/supabase';
 import { extractSafetyTopics } from '@/utils/conversationUtils';
+import { detectIndustryContext, getIndustrySpecificSuggestions } from '@/utils/conversation/follow-up-suggestions/industryDetection';
 
 /**
  * Handle regulation-specific query processing
+ * Enhanced with industry-aware fallback
  */
 export const processRegulationQuery = async (
   content: string,
@@ -62,6 +64,17 @@ export const processRegulationQuery = async (
       ];
     }
     
+    // Detect industry context for better follow-up suggestions
+    const industryContext = detectIndustryContext(content, allMessages.map(m => m.content));
+    if (industryContext) {
+      // Add at least one industry-specific follow-up
+      const industrySuggestions = getIndustrySpecificSuggestions(industryContext);
+      if (industrySuggestions.length > 0) {
+        // Replace the last suggestion with an industry-specific one
+        followUpSuggestions[followUpSuggestions.length - 1] = industrySuggestions[0];
+      }
+    }
+    
     return {
       match: true,
       response: regulationMatch,
@@ -72,8 +85,11 @@ export const processRegulationQuery = async (
   // No regulation match found - log the failure and return not matched
   const keyTerms = await extractKeyTerms(content);
   
+  // Detect industry context
+  const industryContext = detectIndustryContext(content);
+  
   // Log the regulation match failure for analysis
-  await logRegulationMatchFailure(content, keyTerms, userId);
+  await logRegulationMatchFailure(content, keyTerms, userId, industryContext);
   
   return {
     match: false,

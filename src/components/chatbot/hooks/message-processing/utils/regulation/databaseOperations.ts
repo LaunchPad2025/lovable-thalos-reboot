@@ -23,7 +23,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     // Now also checking alt_phrases for better conversational matching
     const { data: regulations, error } = await supabase
       .from('regulations')
-      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at')
+      .select('id, title, description, document_type, authority, source_url, keywords, alt_phrases, category, updated_at, industry, industry_tags')
       .or(`keywords.cs.{${keyTerms.join(',')}},alt_phrases.cs.{${keyTerms.join(',')}}`)
       .order('updated_at', { ascending: false });
     
@@ -33,7 +33,7 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
       // If the alt_phrases column doesn't exist or query fails, fallback to just checking keywords
       const { data: fallbackRegulations, error: fallbackError } = await supabase
         .from('regulations')
-        .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at')
+        .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry, industry_tags')
         .filter('keywords', 'cs', `{${keyTerms.join(',')}}`)
         .order('updated_at', { ascending: false });
       
@@ -49,10 +49,8 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
       if (!fallbackRegulations || fallbackRegulations.length === 0) {
         console.log('No regulations with matching keywords found in database');
         
-        // Log the failed match to regulation_match_failures table
-        await logRegulationMatchFailure(query, keyTerms, userId);
-        
-        return null;
+        // Try to find regulations by industry if no direct matches
+        return await findRegulationsByIndustry(query, keyTerms, userId);
       }
       
       return processRegulationMatches(fallbackRegulations, query, keyTerms, userId);
@@ -61,10 +59,8 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
     if (!regulations || regulations.length === 0) {
       console.log('No regulations with matching keywords found in database');
       
-      // Log the failed match to regulation_match_failures table
-      await logRegulationMatchFailure(query, keyTerms, userId);
-      
-      return null;
+      // Try to find regulations by industry if no direct matches
+      return await findRegulationsByIndustry(query, keyTerms, userId);
     }
     
     return processRegulationMatches(regulations, query, keyTerms, userId);
@@ -75,20 +71,89 @@ export const findRegulationsByKeywords = async (query: string, userId?: string):
 };
 
 /**
+ * Find regulations by industry when no direct keyword matches are found
+ */
+export const findRegulationsByIndustry = async (query: string, keyTerms: string[], userId?: string): Promise<string | null> => {
+  try {
+    // Extract industry from query
+    const industryTerms = ['construction', 'manufacturing', 'healthcare', 'oil & gas', 'oil and gas', 'mining', 'agriculture', 'retail', 'laboratory', 'logistics', 'food processing'];
+    
+    let detectedIndustry = null;
+    
+    for (const industry of industryTerms) {
+      if (query.toLowerCase().includes(industry.toLowerCase())) {
+        detectedIndustry = industry;
+        break;
+      }
+    }
+    
+    if (!detectedIndustry) {
+      // No industry detected, can't find industry-specific regulations
+      await logRegulationMatchFailure(query, keyTerms, userId);
+      return null;
+    }
+    
+    // Standardize certain industry names
+    if (detectedIndustry === 'oil & gas' || detectedIndustry === 'oil and gas') {
+      detectedIndustry = 'oil_gas';
+    } else if (detectedIndustry === 'food processing') {
+      detectedIndustry = 'food_processing';
+    }
+    
+    // Try to find regulations by industry or industry_tags array
+    const { data: industryRegulations, error } = await supabase
+      .from('regulations')
+      .select('id, title, description, document_type, authority, source_url, keywords, category, updated_at, industry, industry_tags')
+      .or(`industry.ilike.%${detectedIndustry}%,industry_tags.cs.{${detectedIndustry}}`)
+      .order('updated_at', { ascending: false })
+      .limit(3);
+    
+    if (error || !industryRegulations || industryRegulations.length === 0) {
+      console.log('No industry-specific regulations found:', error || 'Empty result');
+      
+      // Log the failure for industry match as well
+      await logRegulationMatchFailure(query, keyTerms, userId, detectedIndustry);
+      
+      return null;
+    }
+    
+    // We found some industry-specific regulations, process them
+    console.log(`Found ${industryRegulations.length} industry-specific regulations for ${detectedIndustry}`);
+    
+    // Create a special context message for industry matches
+    const message = formatRegulationsResponse(
+      industryRegulations, 
+      query, 
+      [...keyTerms, detectedIndustry], 
+      [detectedIndustry]
+    );
+    
+    return message;
+  } catch (error) {
+    console.error('Error in findRegulationsByIndustry:', error);
+    return null;
+  }
+};
+
+/**
  * Log regulation match failures to the regulation_match_failures table
+ * Enhanced to include industry context
  */
 export const logRegulationMatchFailure = async (
   question: string, 
   matchedKeywords: string[],
-  userId?: string
+  userId?: string,
+  fallbackIndustry?: string
 ): Promise<void> => {
   try {
-    // Use the newly created regulation_match_failures table
+    // Use the regulation_match_failures table with enhanced fields
     await supabase.from('regulation_match_failures').insert({
       question,
       user_id: userId,
       matched_keywords: matchedKeywords,
-      timestamp: new Date().toISOString()
+      fallback_industry: fallbackIndustry,
+      timestamp: new Date().toISOString(),
+      reviewed: false
     });
     console.log('Logged regulation match failure for analysis');
   } catch (error) {

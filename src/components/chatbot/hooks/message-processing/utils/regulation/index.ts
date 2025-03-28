@@ -2,7 +2,7 @@
 /**
  * Main regulation matching module that brings together all sub-modules
  */
-import { findExactRegulationMatch, findRegulationsByKeywords, logRegulationMatchFailure } from './databaseOperations';
+import { findExactRegulationMatch, findRegulationsByKeywords, findRegulationsByIndustry, logRegulationMatchFailure } from './databaseOperations';
 import { extractKeyTerms, findIndustryTerms } from './keywordExtraction';
 import { formatRegulationsResponse, formatRegulationResponse } from './responseFormatters';
 import { findStaticRegulationMatch } from './staticRegulations';
@@ -13,6 +13,7 @@ import { handleFallProtectionQuery } from './fallProtection';
 export {
   findExactRegulationMatch,
   findRegulationsByKeywords,
+  findRegulationsByIndustry,
   extractKeyTerms,
   findIndustryTerms,
   formatRegulationsResponse,
