@@ -33,10 +33,13 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      // Build the query step by step to avoid excessive type instantiation
-      let query = supabase.from('paulie_queries').select('*');
+      // Using "let" to build up the query instead of chaining, which reduces type complexity
+      let query = supabase.from('paulie_queries');
       
-      // Add the basic filter condition
+      // First select operation
+      query = query.select('*');
+      
+      // Basic filter condition
       query = query.or('helpful.eq.false,review_status.eq.needs_review');
       
       // Apply status filter
@@ -63,8 +66,10 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
         query = query.or(`question.ilike.%${filters.searchQuery}%,response.ilike.%${filters.searchQuery}%`);
       }
       
-      // Execute query with explicit typing to prevent deep type instantiation
-      const { data: queryData, error } = await query as unknown as {
+      // Cast the query result to a known type to prevent TypeScript from calculating deep types
+      // This avoids the "excessively deep and possibly infinite" error
+      const result = await query;
+      const { data: queryData, error } = result as unknown as { 
         data: PaulieQueryRow[] | null;
         error: any;
       };
