@@ -1,5 +1,6 @@
 
 import { supabase } from '@/lib/supabase';
+import { prepareConversationContext, enhanceResponseTone, generateFollowUpQuestions } from './conversationUtils';
 
 // Model options
 export const AI_MODELS = {
@@ -9,12 +10,21 @@ export const AI_MODELS = {
   LLAMA2: 'meta-llama/Llama-2-7b-chat-hf'
 };
 
-// Default system prompt for safety assistant
+// Enhanced system prompt for better conversational safety assistant
 const DEFAULT_SYSTEM_PROMPT = `You are Paulie, an AI assistant specialized in workplace safety and compliance. 
 Your expertise includes OSHA regulations, EPA guidelines, and industry best practices.
-Be friendly, conversational, and helpful. Use simple language when possible.
-If you're unsure about something, acknowledge it and suggest reliable resources.
-Format your responses with markdown when it helps with readability.`;
+
+When responding:
+1. Be friendly, conversational, and helpful - you're a knowledgeable colleague, not just a database.
+2. Use simple, clear language while being precise about regulatory details.
+3. When citing regulations, include specific sections, potential fines, and practical implementation advice.
+4. If you're unsure about something, acknowledge it openly rather than guessing.
+5. Consider the context of the entire conversation, not just the current question.
+6. When appropriate, ask clarifying questions to better understand the user's needs.
+7. Format your responses with markdown when it helps with readability.
+8. Suggest relevant follow-up considerations or next steps when helpful.
+
+Remember: You're helping real people navigate complex safety regulations to keep workers safe.`;
 
 /**
  * Process a user message using Hugging Face Inference API
@@ -24,15 +34,18 @@ Format your responses with markdown when it helps with readability.`;
  */
 export async function processWithHuggingFace(
   message: string, 
-  conversationHistory: string, 
+  previousMessages: any[],
   modelId: string = AI_MODELS.DIALOGPT
 ): Promise<string> {
   try {
+    // Prepare conversation context from previous messages
+    const conversationContext = prepareConversationContext(previousMessages);
+    
     // Call the Hugging Face processing edge function
     const { data, error } = await supabase.functions.invoke('process-with-huggingface', {
       body: {
         message,
-        conversationHistory,
+        conversationHistory: conversationContext,
         modelId,
         systemPrompt: DEFAULT_SYSTEM_PROMPT
       }
@@ -43,7 +56,13 @@ export async function processWithHuggingFace(
       return `I'm having trouble processing your request. Please try again later. Error: ${error.message}`;
     }
 
-    return data.response || 'Sorry, I couldn\'t generate a response at this time.';
+    // Get the raw response
+    let response = data.response || 'Sorry, I couldn\'t generate a response at this time.';
+    
+    // Enhance the response tone to be more conversational if needed
+    response = enhanceResponseTone(response);
+    
+    return response;
   } catch (error) {
     console.error('Exception in Hugging Face processing:', error);
     return 'I apologize, but I encountered an unexpected error. Please try again later.';
@@ -54,8 +73,25 @@ export async function processWithHuggingFace(
  * Fallback to generate a response when Hugging Face is unavailable
  * Uses a template-based approach with safety regulations data
  */
-export function generateFallbackResponse(message: string): string {
-  // In a real implementation, this would use your safety regulations data
-  // For now, return a generic response
-  return "I understand you're asking about workplace safety. While I'm having trouble accessing my full knowledge base at the moment, I recommend consulting your company's safety officer or official OSHA documentation for the most accurate guidance.";
+export function generateFallbackResponse(message: string, previousMessages: any[]): string {
+  // Create a context-aware fallback by extracting topics from the conversation
+  const conversationContext = prepareConversationContext(previousMessages);
+  let topic = "workplace safety";
+  
+  // Extract potential topic from the message
+  if (message.toLowerCase().includes("chemical")) topic = "chemical safety";
+  else if (message.toLowerCase().includes("fall") || message.toLowerCase().includes("height")) topic = "fall protection";
+  else if (message.toLowerCase().includes("ppe") || message.toLowerCase().includes("protective")) topic = "personal protective equipment";
+  
+  return `I understand you're asking about ${topic}. While I'm having trouble accessing my full knowledge base at the moment, I can share that OSHA has specific regulations covering this area. For the most detailed and current guidance, I recommend consulting your company's safety officer or official OSHA documentation at osha.gov. Would you like me to help you with something else related to workplace safety?`;
+}
+
+/**
+ * Generate potential follow-up questions based on the conversation
+ * @param userMessage The user's latest message
+ * @param aiResponse The AI's response to that message
+ * @returns Array of suggested follow-up questions
+ */
+export function suggestFollowUpQuestions(userMessage: string, aiResponse: string): string[] {
+  return generateFollowUpQuestions(userMessage, aiResponse);
 }

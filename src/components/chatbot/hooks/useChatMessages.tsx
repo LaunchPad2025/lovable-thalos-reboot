@@ -1,8 +1,9 @@
-
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { Message } from '../types';
 import { safetyRegulationResponses } from '../data/safetyRegulationData';
+import { processWithHuggingFace, generateFallbackResponse, suggestFollowUpQuestions } from '@/utils/huggingfaceUtils';
+import { extractSafetyTopics } from '@/utils/conversationUtils';
 
 export const useChatMessages = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -14,6 +15,7 @@ export const useChatMessages = () => {
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
+  const [followUpSuggestions, setFollowUpSuggestions] = useState<string[]>([]);
 
   const handleSendMessage = async (content: string, imageFile?: File | null) => {
     if (!content.trim() && !imageFile) return;
@@ -29,6 +31,7 @@ export const useChatMessages = () => {
     
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
+    setFollowUpSuggestions([]); // Clear previous suggestions
     
     try {
       // Processing image if provided
@@ -37,23 +40,55 @@ export const useChatMessages = () => {
         await processImageForSafetyViolations(imageFile, userMessage.id);
       }
       
-      // Simulate AI processing time
-      setTimeout(() => {
-        // Get AI response from our safety regulations database
-        const assistantMessage: Message = {
-          id: (Date.now() + 1).toString(),
-          content: generateAIResponse(content),
-          role: 'assistant',
-          timestamp: new Date().toISOString(),
-        };
-        
-        setMessages(prev => [...prev, assistantMessage]);
-        setIsLoading(false);
-      }, 1200);
+      // Get the current conversation for context
+      const updatedMessages = [...messages, userMessage];
+      
+      // Extract safety topics to enhance context
+      const safetyTopics = extractSafetyTopics(updatedMessages);
+      console.log("Detected safety topics:", safetyTopics);
+      
+      // Try to get AI response from Hugging Face model
+      let aiResponse: string;
+      
+      try {
+        // First try with the Hugging Face model
+        aiResponse = await processWithHuggingFace(content, updatedMessages);
+        console.log("Hugging Face processing successful");
+      } catch (error) {
+        console.error('Error with Hugging Face processing, falling back to local response:', error);
+        // Fall back to local response generation if API fails
+        aiResponse = generateAIResponse(content, updatedMessages);
+      }
+      
+      // Add AI response to messages
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: aiResponse,
+        role: 'assistant',
+        timestamp: new Date().toISOString(),
+      };
+      
+      setMessages(prev => [...prev, assistantMessage]);
+      
+      // Generate follow-up question suggestions
+      const suggestions = suggestFollowUpQuestions(content, aiResponse);
+      setFollowUpSuggestions(suggestions);
+      
+      setIsLoading(false);
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Failed to send message');
       setIsLoading(false);
+      
+      // Add failure message
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: "I encountered an error processing your request. Please try again or rephrase your question.",
+        role: 'assistant',
+        timestamp: new Date().toISOString(),
+      };
+      
+      setMessages(prev => [...prev, errorMessage]);
     }
   };
 
@@ -195,41 +230,79 @@ export const useChatMessages = () => {
     }
   };
 
+  // Enhanced AI response logic with more contextual awareness
+  const generateAIResponse = (message: string, allMessages: Message[]): string => {
+    const query = message.toLowerCase();
+    
+    // Extract topics from conversation history to provide more relevant context
+    const recentTopics = extractSafetyTopics(allMessages);
+    const previousUserMessages = allMessages
+      .filter(msg => msg.role === 'user')
+      .map(msg => msg.content)
+      .slice(-3);
+    
+    // Check if this is a follow-up question
+    const isFollowUp = previousUserMessages.length > 1 && 
+      (query.length < 20 || 
+       query.includes('what about') || 
+       query.includes('how about') || 
+       query.includes('and') || 
+       !query.includes('?'));
+    
+    // If it seems like a follow-up, provide a more contextually relevant response
+    if (isFollowUp) {
+      console.log("Detected follow-up question, incorporating previous context");
+      
+      // Reference previous topics in the response
+      if (recentTopics.length > 0) {
+        // Check if any topic from the conversation matches our regulations
+        for (const topic of recentTopics) {
+          for (const regulation of safetyRegulationResponses) {
+            if (regulation.keywords.some(keyword => topic.includes(keyword))) {
+              return `Continuing our discussion about ${topic}, ${regulation.response} Would you like me to elaborate on any specific aspect of this?`;
+            }
+          }
+        }
+      }
+    }
+    
+    // First, check for exact matches in our regulatory database
+    for (const regulation of safetyRegulationResponses) {
+      for (const keyword of regulation.keywords) {
+        if (query.includes(keyword)) {
+          // Provide a more conversational and detailed response
+          const regulationInfo = regulation.response;
+          const sourceInfo = regulation.source;
+          
+          // Enhance with more conversational elements
+          return `Based on your question about ${keyword}, here's what you need to know: ${regulationInfo}\n\nThis guidance comes from ${sourceInfo}. Is there a specific aspect of this regulation you'd like me to explain in more detail?`;
+        }
+      }
+    }
+    
+    // Enhanced fallback responses for common safety topics with specific regulatory details
+    if (query.includes('ppe') || query.includes('equipment') || query.includes('protection')) {
+      return "Looking at your question about personal protective equipment (PPE), I can share that OSHA regulation 29 CFR 1910.132 requires employers to assess workplace hazards and provide appropriate PPE. This includes hard hats (ANSI Z89.1), safety glasses (ANSI Z87.1), and other equipment specific to job hazards.\n\nFailure to provide proper PPE can result in OSHA citations with penalties up to $13,653 per violation for serious violations, and up to $136,532 for willful or repeated violations.\n\nCan I help with implementing a specific aspect of your PPE program?";
+    } else if (query.includes('height') || query.includes('fall') || query.includes('elevation')) {
+      return "I see you're asking about fall protection. According to OSHA standard 29 CFR 1926.501, fall protection is required at heights of 6 feet or more in construction (4 feet in general industry).\n\nEmployers must provide guardrails, safety nets, or personal fall arrest systems. Each system must meet specific requirements - for example, guardrails must be 42 inches high (±3 inches) and withstand 200 pounds of force.\n\nNon-compliance can lead to citations with penalties ranging from $4,000 to $13,653 per violation, depending on severity. Would you like me to explain more about a specific fall protection system?";
+    } else if (query.includes('chemical') || query.includes('hazardous') || query.includes('storage')) {
+      return "Regarding your question about chemical storage, OSHA's Hazard Communication Standard (29 CFR 1910.1200) requires proper labeling, SDS accessibility, and employee training. For flammable liquids specifically, 29 CFR 1910.106 sets requirements for storage cabinets and rooms.\n\nStorage cabinets must be designed to limit internal temperature to 325°F when subjected to a 10-minute fire test. No more than 60 gallons of Class I or II liquids (or 120 gallons of Class III) can be stored in a single cabinet.\n\nAre you looking for guidance on a specific chemical or storage situation? I'd be happy to provide more targeted advice.";
+    } else if (query.includes('waste') || query.includes('disposal') || query.includes('epa')) {
+      return "I understand you're asking about waste management. The EPA's Resource Conservation and Recovery Act (RCRA) governs hazardous waste handling.\n\nUnder 40 CFR 262, generators must identify waste types, use proper containers, label with accumulation start dates, and conduct weekly inspections. Small quantity generators can store waste up to 180 days, while large quantity generators are limited to 90 days.\n\nNon-compliance penalties can range from $15,000 to $70,000 per day per violation. Is there a specific aspect of waste management you're dealing with at your facility?";
+    } else if (query.includes('training') || query.includes('certification')) {
+      return "Regarding your question about safety training, OSHA requires employers to provide training to all employees exposed to workplace hazards (29 CFR 1910.132 for general industry, 29 CFR 1926.21 for construction).\n\nKey requirements include:\n- Training must be in a language workers understand\n- It must cover hazard recognition and prevention\n- For many standards, annual refresher training is required\n- Documentation must be maintained with training dates and content\n\nWhat specific type of safety training are you implementing? I can provide more targeted guidance for your industry.";
+    } else if (query.includes('hello') || query.includes('hi') || query.includes('hey')) {
+      return "Hi there! I'm Paulie, your AI safety assistant. I'm here to help with questions about workplace safety regulations, compliance requirements, and best practices. I can provide guidance on OSHA standards, EPA regulations, and industry-specific safety protocols. What specific safety topic can I assist you with today?";
+    }
+    
+    // Default response when no specific safety regulation match is found
+    return "I appreciate your question about workplace safety. While I don't have specific regulatory information on that exact topic in my database, I can suggest consulting your company's safety officer or checking OSHA's website at osha.gov for the most current guidance.\n\nIf you'd like, you can rephrase your question or ask about a related topic like PPE requirements, fall protection, hazard communication, or machine guarding. What aspect of workplace safety is most important for your situation?";
+  };
+
   return {
     messages,
     isLoading,
-    handleSendMessage
+    handleSendMessage,
+    followUpSuggestions
   };
-};
-
-// Enhanced AI response logic that simulates connection to our regulatory database
-const generateAIResponse = (message: string): string => {
-  const query = message.toLowerCase();
-  
-  // First, check for exact matches in our regulatory database
-  for (const regulation of safetyRegulationResponses) {
-    for (const keyword of regulation.keywords) {
-      if (query.includes(keyword)) {
-        return regulation.response;
-      }
-    }
-  }
-  
-  // Fallback responses for common safety topics
-  if (query.includes('ppe') || query.includes('equipment') || query.includes('protection')) {
-    return "Personal Protective Equipment (PPE) requirements vary by job site and task. Common PPE includes hard hats (ANSI Z89.1), safety glasses (ANSI Z87.1), high-visibility clothing (ANSI/ISEA 107), gloves (ANSI/ISEA 105), and steel-toed boots (ASTM F2413). Based on OSHA regulation 29 CFR 1910.132, employers must assess the workplace to determine if hazards are present that require PPE.";
-  } else if (query.includes('height') || query.includes('fall') || query.includes('elevation')) {
-    return "According to OSHA standard 29 CFR 1926.501, fall protection is required at elevations of 6 feet or more in the construction industry. Employers must provide guardrails, safety nets, or personal fall arrest systems when workers are exposed to fall hazards. Each personal fall arrest system must be inspected prior to use (29 CFR 1926.502). Workers must also be trained on fall hazards and the proper use of fall protection systems according to 29 CFR 1926.503.";
-  } else if (query.includes('chemical') || query.includes('hazardous') || query.includes('storage')) {
-    return "Chemical storage rooms must be labeled according to OSHA's Hazard Communication Standard (29 CFR 1910.1200). This includes hazard warning signs, GHS pictograms, and proper container labeling. Safety Data Sheets (SDS) must be readily available. For flammable liquids, OSHA standard 29 CFR 1910.106 requires approved storage cabinets and rooms with specific construction, ventilation, and electrical requirements.";
-  } else if (query.includes('waste') || query.includes('disposal') || query.includes('epa')) {
-    return "The EPA's Resource Conservation and Recovery Act (RCRA) regulates hazardous waste management. Under 40 CFR 262, waste generators must identify, properly store, and arrange for proper disposal of hazardous waste. This includes using appropriate containers, labeling with accumulation start dates, conducting weekly inspections, and maintaining separation of incompatible wastes. Employee training is required under 40 CFR 262.17 for personnel handling hazardous waste.";
-  } else if (query.includes('training') || query.includes('certification')) {
-    return "OSHA requires employers to provide safety training to employees exposed to workplace hazards (29 CFR 1910.132 for general industry, 29 CFR 1926.21 for construction). Training must cover hazard recognition, equipment-specific procedures, emergency protocols, and be provided in a language workers understand. Records of all safety training must be maintained, including dates, topics covered, and employee verification of understanding.";
-  } else if (query.includes('hello') || query.includes('hi') || query.includes('hey')) {
-    return "Hello! I'm Paulie, your AI safety assistant trained on OSHA regulations, EPA guidelines, and industry-specific workplace safety standards. How can I help you today with workplace safety?";
-  }
-  
-  // Default response when no specific safety regulation match is found
-  return "I don't have specific information on that topic in my safety regulations database. For the most accurate guidance, I recommend consulting your company's safety officer or referring to the official OSHA standards at osha.gov. Is there something else I can help with regarding workplace safety?";
 };
