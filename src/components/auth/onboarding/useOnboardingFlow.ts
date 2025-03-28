@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
@@ -8,6 +8,10 @@ import { UserRole } from "./types";
 import { useOrganizationCheck } from "./useOrganizationCheck";
 
 export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const selectedPlanId = searchParams.get('plan');
+  
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<UserRole>("worker");
   const [organization, setOrganization] = useState<string>("");
@@ -66,8 +70,9 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
         industries: selectedIndustries,
         preferredModules: selectedModules,
         onboarded: true,
-        onboardedAt, // Add timestamp when user completes onboarding
-        subscriptionStatus: 'trial' // Set initial subscription status as trial
+        onboardedAt,
+        subscriptionStatus: 'trial',
+        plan_id: selectedPlanId || 'basic' // Store the selected plan
       });
       
       let organizationId;
@@ -118,12 +123,22 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
         });
       }
       
-      toast({
-        title: "Onboarding complete!",
-        description: "Your profile has been set up successfully. You're now on a 14-day free trial with full access.",
-      });
-      
-      navigate(redirectUrl);
+      // Redirect to subscription page if a plan was selected
+      if (selectedPlanId) {
+        toast({
+          title: "Onboarding complete!",
+          description: "Your profile has been set up successfully. Now let's set up your free trial.",
+        });
+        
+        navigate(`/subscription?plan=${selectedPlanId}`);
+      } else {
+        toast({
+          title: "Onboarding complete!",
+          description: "Your profile has been set up successfully. You're now on a 14-day free trial with full access.",
+        });
+        
+        navigate(redirectUrl);
+      }
     } catch (error: any) {
       console.error("Onboarding error:", error);
       toast({
@@ -153,6 +168,7 @@ export function useOnboardingFlow(redirectUrl: string = '/dashboard') {
     isSubmitting,
     existingOrganization,
     checkingOrganization,
+    selectedPlanId,
     handleIndustrySelect,
     handleModuleSelect,
     handleNext,

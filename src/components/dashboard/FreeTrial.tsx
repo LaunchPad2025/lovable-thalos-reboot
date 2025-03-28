@@ -5,26 +5,27 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/context/auth';
 import { useSubscription } from '@/hooks/useSubscription';
 import { CalendarDays } from 'lucide-react';
+import { useAuthStatus } from '@/hooks/useAuthStatus';
+import { plans } from '@/data/subscriptionPlans';
 
 const FreeTrial = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { subscription, isLoading } = useSubscription();
+  const { subscription } = useSubscription();
+  const { isFreeTrial, trialDaysLeft, planId } = useAuthStatus();
   
-  const handleContactSales = () => {
+  const handleUpgrade = () => {
     navigate('/subscription');
   };
 
-  // If subscription is active, don't show free trial banner
-  if (!isLoading && subscription?.status === 'active') {
+  // If subscription is active (not in trial mode), don't show free trial banner
+  if (!isFreeTrial) {
     return null;
   }
   
-  // Calculate days left in trial (default to 14 days from onboarding date)
-  const onboardedDate = user?.user_metadata?.onboardedAt || user?.created_at;
-  const trialEndDate = onboardedDate ? new Date(new Date(onboardedDate).getTime() + 14 * 24 * 60 * 60 * 1000) : new Date();
-  const today = new Date();
-  const daysLeft = Math.max(0, Math.ceil((trialEndDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24)));
+  // Get plan name
+  const plan = plans.find(p => p.id === planId);
+  const planName = plan?.name || 'Basic';
   
   return (
     <div className="bg-[#0d1117] border border-gray-800 rounded-lg p-6">
@@ -34,12 +35,18 @@ const FreeTrial = () => {
             <CalendarDays className="h-6 w-6 text-blue-400" />
           </div>
           <div>
-            <h2 className="text-white font-medium mb-1">Free Trial Mode {daysLeft > 0 && `(${daysLeft} days left)`}</h2>
-            <p className="text-gray-400 text-sm">Unlock all safety compliance features by subscribing to a paid plan</p>
+            <h2 className="text-white font-medium mb-1">
+              {planName} Plan Free Trial {trialDaysLeft > 0 && `(${trialDaysLeft} days left)`}
+            </h2>
+            <p className="text-gray-400 text-sm">
+              {trialDaysLeft > 0 
+                ? `Enjoy full access to the ${planName} plan features during your trial period` 
+                : "Your free trial has ended. Subscribe now to continue using all features"}
+            </p>
           </div>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4 md:mt-0" onClick={handleContactSales}>
-          Upgrade Now
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4 md:mt-0" onClick={handleUpgrade}>
+          {trialDaysLeft > 0 ? "Upgrade Now" : "Subscribe Now"}
         </Button>
       </div>
     </div>

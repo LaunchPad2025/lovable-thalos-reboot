@@ -1,25 +1,22 @@
 
-import { Plan } from '@/types/models';
-
-export interface PlanFeature {
-  text: string;
-  included: boolean;
-}
+import { formatCurrency } from 'utils';
 
 export interface PlanData {
   id: string;
   name: string;
   description: string;
-  features: PlanFeature[];
+  features: string[];
   pricing: {
     monthly: number;
     annual: number;
   };
+  popular?: boolean;
   stripe_price_id: {
     monthly: string;
     annual: string;
   };
-  popular?: boolean;
+  trial_period_days: number;
+  max_users: number;
 }
 
 export const plans: PlanData[] = [
@@ -27,75 +24,79 @@ export const plans: PlanData[] = [
     id: 'basic',
     name: 'Basic',
     description: 'For small teams getting started with safety management',
+    features: [
+      'Up to 10 users',
+      'Basic incident reporting',
+      'Standard compliance checklists',
+      'Email support',
+      'Basic analytics'
+    ],
     pricing: {
       monthly: 99,
-      annual: 1009.80,
+      annual: 1069
     },
     stripe_price_id: {
-      monthly: 'price_1R4YqoGCrRkrgEFrxnYFNfd8',
-      annual: 'price_1R4YsZGCrRkrgEFruQgqFdUi',
+      monthly: 'price_basic_monthly',  // Replace with actual Stripe price ID
+      annual: 'price_basic_annual'     // Replace with actual Stripe price ID
     },
-    features: [
-      { text: 'Up to 10 users', included: true },
-      { text: 'Basic incident reporting', included: true },
-      { text: 'Standard compliance checklists', included: true },
-      { text: 'Email support', included: true },
-      { text: 'Advanced analytics', included: false },
-      { text: 'Custom workflows', included: false },
-      { text: 'AI safety assistant', included: false },
-    ],
+    trial_period_days: 14,
+    max_users: 10
   },
   {
     id: 'pro',
     name: 'Professional',
-    description: 'For growing organizations with advanced needs',
+    description: 'For growing businesses with advanced safety needs',
+    features: [
+      'Up to 50 users',
+      'Advanced incident reporting',
+      'Custom compliance checklists',
+      'Priority email & phone support',
+      'Advanced analytics',
+      'Custom workflows'
+    ],
     pricing: {
       monthly: 149,
-      annual: 1519.80,
+      annual: 1609
     },
-    stripe_price_id: {
-      monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
-      annual: 'price_1R4Yv1GCrRkrgEFrTMkY8gMF',
-    },
-    features: [
-      { text: 'Up to 50 users', included: true },
-      { text: 'Advanced incident reporting', included: true },
-      { text: 'Custom compliance checklists', included: true },
-      { text: 'Priority email & phone support', included: true },
-      { text: 'Advanced analytics', included: true },
-      { text: 'Custom workflows', included: true },
-      { text: 'AI safety assistant', included: false },
-    ],
     popular: true,
+    stripe_price_id: {
+      monthly: 'price_pro_monthly',    // Replace with actual Stripe price ID
+      annual: 'price_pro_annual'       // Replace with actual Stripe price ID
+    },
+    trial_period_days: 14,
+    max_users: 50
   },
   {
     id: 'enterprise',
     name: 'Enterprise',
-    description: 'For large organizations requiring full compliance',
+    description: 'For organizations with complex compliance requirements',
+    features: [
+      'Unlimited users',
+      'Enterprise incident reporting',
+      'Custom compliance & auditing',
+      'Dedicated support team',
+      'Advanced analytics & reporting',
+      'Custom workflows & integrations',
+      'AI safety assistant'
+    ],
     pricing: {
       monthly: 350,
-      annual: 3570.00,
+      annual: 3780
     },
     stripe_price_id: {
-      monthly: 'price_1R4YwjGCrRkrgEFrOCo5qMhv',
-      annual: 'price_1R4Yw3GCrRkrgEFrredMrTtQ',
+      monthly: 'price_enterprise_monthly',  // Replace with actual Stripe price ID
+      annual: 'price_enterprise_annual'     // Replace with actual Stripe price ID
     },
-    features: [
-      { text: 'Unlimited users', included: true },
-      { text: 'Enterprise incident reporting', included: true },
-      { text: 'Custom compliance & auditing', included: true },
-      { text: 'Dedicated support team', included: true },
-      { text: 'Advanced analytics & reporting', included: true },
-      { text: 'Custom workflows & integrations', included: true },
-      { text: 'AI safety assistant', included: true },
-    ],
-  },
+    trial_period_days: 14,
+    max_users: Infinity
+  }
 ];
 
+// Helper function to format price with currency symbol
 export const formatPrice = (price: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
-    minimumFractionDigits: 0,
+    minimumFractionDigits: 0
   }).format(price);
 };

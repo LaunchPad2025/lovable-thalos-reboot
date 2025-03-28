@@ -11,9 +11,11 @@ export default function Auth() {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Extract redirect URL from query params if present
+  // Extract redirect URL and plan from query params if present
   const searchParams = new URLSearchParams(location.search);
   const redirectUrl = searchParams.get('redirect') || '/dashboard';
+  const selectedPlan = searchParams.get('plan') || '';
+  const isSignup = searchParams.get('signup') === 'true';
   
   const {
     isLogin,
@@ -22,13 +24,19 @@ export default function Auth() {
     toggleAuthMode,
     onLoginSubmit,
     onSignupSubmit
-  } = useAuthForm(redirectUrl);
+  } = useAuthForm(redirectUrl, selectedPlan, isSignup);
 
   // Redirect if user is already logged in
   if (user) {
     // Check if user has completed onboarding
     if (user?.user_metadata?.onboarded === false) {
-      return <Navigate to={`/onboarding?redirect=${encodeURIComponent(redirectUrl)}`} replace />;
+      // Pass the selected plan to onboarding if it exists
+      const onboardingUrl = `/onboarding?redirect=${encodeURIComponent(redirectUrl)}`;
+      const finalUrl = selectedPlan ? `${onboardingUrl}&plan=${selectedPlan}` : onboardingUrl;
+      return <Navigate to={finalUrl} replace />;
+    } else if (selectedPlan) {
+      // If user is logged in and has a plan selected, redirect to subscription page
+      return <Navigate to={`/subscription?plan=${selectedPlan}`} replace />;
     } else {
       return <Navigate to={redirectUrl} replace />;
     }

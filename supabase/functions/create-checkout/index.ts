@@ -16,7 +16,7 @@ serve(async (req) => {
   }
   
   try {
-    const { priceId, billingCycle, planName, userId } = await req.json();
+    const { priceId, billingCycle, planName, planId, userId, trialPeriodDays } = await req.json();
     
     if (!priceId) {
       return new Response(
@@ -52,9 +52,13 @@ serve(async (req) => {
       mode: "subscription",
       success_url: `${origin}/subscription?success=true&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/subscription?canceled=true`,
+      subscription_data: {
+        trial_period_days: trialPeriodDays || 14, // Use specified trial days or default to 14
+      },
       metadata: {
         billingCycle,
         planName,
+        planId
       },
       client_reference_id: userId, // Add the user ID to identify the customer
     });

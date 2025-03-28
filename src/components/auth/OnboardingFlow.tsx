@@ -15,6 +15,8 @@ import { StepOne } from "./onboarding/StepOne";
 import { StepTwo } from "./onboarding/StepTwo";
 import { StepThree } from "./onboarding/StepThree";
 import { OnboardingFlowProps } from "./onboarding/types";
+import { plans } from "@/data/subscriptionPlans";
+import { Badge } from "@/components/ui/badge";
 
 export function OnboardingFlow({ redirectUrl = '/dashboard' }: OnboardingFlowProps) {
   const {
@@ -34,6 +36,7 @@ export function OnboardingFlow({ redirectUrl = '/dashboard' }: OnboardingFlowPro
     isSubmitting,
     existingOrganization,
     checkingOrganization,
+    selectedPlanId,
     handleIndustrySelect,
     handleModuleSelect,
     handleNext,
@@ -45,15 +48,26 @@ export function OnboardingFlow({ redirectUrl = '/dashboard' }: OnboardingFlowPro
     return <LoadingState />;
   }
 
+  // Find selected plan details if a plan was selected
+  const selectedPlan = selectedPlanId ? plans.find(p => p.id === selectedPlanId) : null;
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14] p-4">
       <Card className="w-full max-w-md border-gray-800 bg-[#131920] text-white">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold">
-            Welcome to Thalos
-          </CardTitle>
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-2xl font-bold">
+              Welcome to Thalos
+            </CardTitle>
+            {selectedPlan && (
+              <Badge className="bg-blue-600 text-white">
+                {selectedPlan.name} Plan
+              </Badge>
+            )}
+          </div>
           <CardDescription className="text-gray-400">
             Let's set up your account to get started
+            {selectedPlan && ` with your ${selectedPlan.trial_period_days}-day free trial`}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -111,7 +125,7 @@ export function OnboardingFlow({ redirectUrl = '/dashboard' }: OnboardingFlowPro
               disabled={isSubmitting}
               className="bg-thalos-blue hover:bg-blue-600 ml-auto"
             >
-              {isSubmitting ? "Saving..." : "Start Free Trial"}
+              {isSubmitting ? "Saving..." : selectedPlanId ? "Continue to Trial Setup" : "Start Free Trial"}
             </Button>
           )}
         </CardFooter>

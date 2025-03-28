@@ -12,14 +12,14 @@ export async function handleCheckoutComplete(session) {
   const subscriptionId = session.subscription;
   const customerId = session.customer;
   const userId = session.client_reference_id;
-  const { planName, billingCycle } = session.metadata || {};
+  const { planName, planId, billingCycle } = session.metadata || {};
   
   if (!userId) {
     console.error('No user ID found in session metadata');
     return;
   }
   
-  console.log(`Updating subscription for user ${userId}: Plan=${planName}, Cycle=${billingCycle}`);
+  console.log(`Updating subscription for user ${userId}: Plan=${planName} (${planId}), Cycle=${billingCycle}`);
   
   try {
     // Fetch subscription details to get the current period end
@@ -27,9 +27,6 @@ export async function handleCheckoutComplete(session) {
     
     // Connect to Supabase directly using the REST API with service role
     const { supabaseUrl, supabaseServiceKey } = getSupabaseClient();
-    
-    // Determine the plan ID based on the plan name
-    const planId = planName?.toLowerCase() || 'basic';
     
     // Get user's organization (if any)
     const orgResponse = await fetch(
@@ -63,7 +60,7 @@ export async function handleCheckoutComplete(session) {
         organization_id: organizationId,
         stripe_customer_id: customerId,
         stripe_subscription_id: subscriptionId,
-        plan_id: planId,
+        plan_id: planId || 'basic',
         status: subscription.status,
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
@@ -90,6 +87,7 @@ export async function handleCheckoutComplete(session) {
         user_metadata: {
           has_subscription: true,
           subscription_plan: planId,
+          plan_id: planId,
           subscription_status: subscription.status,
         },
       }),

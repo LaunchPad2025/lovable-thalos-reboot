@@ -7,7 +7,7 @@ import { UseAuthMethodsProps, UserMetadata } from './types';
 export function useAuthMethods({ user, setUser }: UseAuthMethodsProps) {
   const { toast: uiToast } = useToast();
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string, additionalMetadata = {}) => {
     try {
       console.log("Attempting to sign up:", email);
       const { error } = await supabase.auth.signUp({
@@ -17,7 +17,8 @@ export function useAuthMethods({ user, setUser }: UseAuthMethodsProps) {
           data: {
             name,
             role: 'worker', // Default role
-            onboarded: false // Flag to indicate onboarding status
+            onboarded: false, // Flag to indicate onboarding status
+            ...additionalMetadata // Include any additional metadata like selected plan
           }
         }
       });

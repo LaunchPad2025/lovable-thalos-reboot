@@ -6,8 +6,23 @@ import { Shield, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { plans } from '@/data/subscriptionPlans';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/context/auth';
 
 const Pricing = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
+  const handleStartTrial = (planId: string) => {
+    if (user) {
+      // If user is logged in, redirect to checkout with plan selection
+      navigate(`/subscription?plan=${planId}`);
+    } else {
+      // If user is not logged in, redirect to auth with plan selection
+      navigate(`/auth?signup=true&plan=${planId}`);
+    }
+  };
+
   const handleContactSales = () => {
     window.location.href = "https://cal.com/annieeser/30min";
   };
@@ -48,7 +63,12 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} className="w-full">Contact Sales</Button>
+              <Button 
+                onClick={() => handleStartTrial('basic')} 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                Start Free Trial
+              </Button>
             </CardFooter>
           </Card>
           
@@ -82,7 +102,12 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} className="w-full bg-blue-600 hover:bg-blue-700">Contact Sales</Button>
+              <Button 
+                onClick={() => handleStartTrial('pro')} 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                Start Free Trial
+              </Button>
             </CardFooter>
           </Card>
           

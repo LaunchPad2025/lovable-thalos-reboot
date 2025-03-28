@@ -29,7 +29,7 @@ export const useCheckout = () => {
           description: "Please sign in to subscribe to a plan.",
           variant: "destructive",
         });
-        navigate('/auth?redirect=subscription');
+        navigate(`/auth?redirect=subscription&plan=${selectedPlan}&signup=true`);
         return;
       }
       
@@ -37,8 +37,8 @@ export const useCheckout = () => {
       const userId = session.session.user.id;
       
       toast({
-        title: "Subscription in progress",
-        description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
+        title: "Setting up your free trial",
+        description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan with a ${plan.trial_period_days}-day free trial.`,
       });
       
       // Validate the stripe price ID before proceeding
@@ -47,15 +47,17 @@ export const useCheckout = () => {
         throw new Error(`No price ID available for ${plan.name} with ${billingCycle} billing cycle`);
       }
       
-      console.log(`Creating checkout for user ${userId}, plan ${plan.name}, price ${priceId}`);
+      console.log(`Creating checkout for user ${userId}, plan ${plan.name}, price ${priceId} with ${plan.trial_period_days}-day trial`);
       
-      // Call our Supabase Edge Function to create a checkout session
+      // Call our Supabase Edge Function to create a checkout session with trial
       const { data, error } = await supabase.functions.invoke('create-checkout', {
         body: {
           priceId,
           billingCycle,
           planName: plan.name,
+          planId: plan.id,
           userId,
+          trialPeriodDays: plan.trial_period_days
         },
       });
       
