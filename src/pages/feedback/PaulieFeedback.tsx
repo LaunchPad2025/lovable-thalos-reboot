@@ -11,7 +11,7 @@ import { DownloadIcon } from 'lucide-react';
 import FeedbackStats from '@/components/feedback/FeedbackStats';
 import TopDownvotedTable from '@/components/feedback/TopDownvotedTable';
 import CategoryBreakdown from '@/components/feedback/CategoryBreakdown';
-import { FeedbackData } from '@/components/feedback/types';
+import { FeedbackData, FeedbackItem } from '@/components/feedback/types';
 import LoadingState from '@/components/feedback/LoadingState';
 import NeedsReviewTable from '@/components/feedback/NeedsReviewTable';
 import TrainingDatasetExport from '@/components/feedback/TrainingDatasetExport';
@@ -38,7 +38,23 @@ const PaulieFeedback = () => {
 
       if (error) throw error;
 
-      const processedData = data || [];
+      // Process the data to match our FeedbackItem interface
+      const processedData: FeedbackItem[] = (data || []).map(item => ({
+        id: item.id,
+        message_id: item.message_id || item.id,
+        question: item.question,
+        response: item.response || '',
+        helpful: item.helpful === true,
+        notes: item.notes,
+        created_at: item.created_at || item.timestamp || new Date().toISOString(),
+        user_id: item.user_id,
+        matched_keywords: item.matched_keywords,
+        matched_regulation_ids: Array.isArray(item.matched_regulation_id) 
+          ? item.matched_regulation_id 
+          : (item.matched_regulation_id ? [item.matched_regulation_id] : []),
+        review_status: item.review_status,
+        review_label: item.review_label
+      }));
       
       setFeedbackData({
         rawData: processedData,
@@ -61,7 +77,7 @@ const PaulieFeedback = () => {
     }
   };
 
-  const processKeywords = (data: any[]) => {
+  const processKeywords = (data: FeedbackItem[]) => {
     const keywordCounts: Record<string, number> = {};
     
     data.forEach(item => {

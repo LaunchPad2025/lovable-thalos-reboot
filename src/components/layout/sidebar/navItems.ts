@@ -1,166 +1,162 @@
+
 import {
-  Home,
-  LayoutDashboard,
-  Users,
-  ShieldAlert,
-  MessageSquare,
-  ListChecks,
+  BarChart3,
+  Bell,
+  Clipboard,
+  Cog,
   FileText,
-  Calendar,
-  Settings,
-  Book,
-  AlertTriangle,
-  TrendingUp,
-  Package,
-  HelpCircle,
-  BarChart2,
-  PieChart,
+  Home,
+  Layout,
+  MessageSquare,
   ShieldCheck,
-  File,
-  MessageSquarePlus
+  Sparkles,
+  SquareCode,
+  Triangle,
+  Users,
+  Wand2,
+  FileBarChart,
+  ThumbsUp
 } from "lucide-react";
 
-export const navItems = [
+export interface NavItem {
+  title: string;
+  href: string;
+  icon: any;
+  badge?: string;
+  badgeColor?: string;
+  roles?: string[]; // Roles that can see this item
+}
+
+export interface NavSection {
+  title?: string;
+  items: NavItem[];
+  roles?: string[]; // Roles that can see this section
+}
+
+export const navItems: NavSection[] = [
   {
-    title: "Main",
     items: [
       {
         title: "Dashboard",
         href: "/dashboard",
-        icon: LayoutDashboard,
-        description: "Get an overview of your account",
+        icon: Home,
       },
-    ],
-  },
-  {
-    title: "AI",
-    items: [
       {
-        title: "AI Assistant",
+        title: "Chatbot",
         href: "/chatbot",
-        icon: MessageSquarePlus,
-        description: "Interact with the AI assistant",
+        icon: MessageSquare,
+        badge: "AI",
+        badgeColor: "bg-purple-500/20 text-purple-500",
       },
     ],
   },
   {
-    title: "Safety",
+    title: "Compliance",
     items: [
       {
         title: "Violations",
         href: "/violations",
-        icon: ShieldAlert,
-        description: "Manage safety violations",
+        icon: Triangle,
       },
       {
         title: "Tasks",
         href: "/tasks",
-        icon: ListChecks,
-        description: "Manage safety tasks",
+        icon: Clipboard,
       },
       {
         title: "Regulations",
         href: "/regulations",
-        icon: Book,
-        description: "View safety regulations",
+        icon: ShieldCheck,
       },
-    ],
-  },
-  {
-    title: "Content",
-    items: [
       {
         title: "Documents",
         href: "/docs",
         icon: FileText,
-        description: "Manage documents",
       },
       {
         title: "Audits",
         href: "/audits",
-        icon: AlertTriangle,
-        description: "Manage audits",
+        icon: BarChart3,
       },
       {
-        title: "Training",
-        href: "/training",
-        icon: Calendar,
-        description: "Manage training",
+        title: "Risk Assessment",
+        href: "/risk-assessment",
+        icon: BarChart3,
       },
     ],
   },
   {
-    title: "Admin",
+    title: "Learning",
     items: [
       {
-        title: "Users",
-        href: "/admin",
-        icon: Users,
-        description: "Manage users",
+        title: "Training",
+        href: "/training",
+        icon: Wand2,
       },
+    ],
+  },
+  {
+    title: "AI Tools",
+    items: [
       {
         title: "Models",
         href: "/models",
-        icon: Package,
-        description: "Manage models",
+        icon: Sparkles,
+      },
+      {
+        title: "Feedback",
+        href: "/feedback",
+        icon: ThumbsUp,
+        roles: ["admin"],
+      },
+    ],
+  },
+  {
+    title: "System",
+    items: [
+      {
+        title: "Notifications",
+        href: "/notifications",
+        icon: Bell,
+        badge: "3",
+        badgeColor: "bg-red-500/20 text-red-500",
       },
       {
         title: "Settings",
         href: "/settings",
-        icon: Settings,
-        description: "Manage settings",
+        icon: Cog,
       },
-    ],
-  },
-  {
-    title: "Reports",
-    icon: "bar-chart-2",
-    href: "",
-    items: [
-      {
-        title: "Analytics",
-        href: "/coming-soon?feature=Analytics",
-        icon: "pie-chart"
-      },
-      {
-        title: "Compliance",
-        href: "/coming-soon?feature=Compliance+Reports",
-        icon: "shield-check"
-      },
-      {
-        title: "Export",
-        href: "/coming-soon?feature=Report+Export",
-        icon: "file-text"
-      },
-      {
-        title: "Paulie Feedback",
-        href: "/feedback",
-        icon: "message-square"
-      }
-    ]
-  },
-  {
-    title: "Subscription",
-    items: [
       {
         title: "Subscription",
         href: "/subscription",
-        icon: TrendingUp,
-        description: "Manage subscription",
+        icon: FileBarChart,
+        roles: ["admin", "owner"],
+      },
+      {
+        title: "Admin",
+        href: "/admin",
+        icon: Users,
+        roles: ["admin", "owner"],
       },
     ],
   },
   {
-    title: "Help",
+    title: "Demo",
     items: [
       {
-        title: "Documentation",
-        href: "/documentation",
-        icon: HelpCircle,
-        description: "View documentation",
+        title: "Demo Dashboard",
+        href: "/demo",
+        icon: Layout,
+      },
+      {
+        title: "Sidebar Examples",
+        href: "/sidebar-examples",
+        icon: SquareCode,
       },
     ],
   },
 ];
 
-export type NavItem = (typeof navItems)[0];
+export const getNavItems = () => {
+  return navItems;
+};
