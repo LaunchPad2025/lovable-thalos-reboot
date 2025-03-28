@@ -22,15 +22,16 @@ export const useChatFeedback = () => {
   ) => {
     try {
       // Record feedback in the database
-      await supabase.from('feedback_log').insert({
-        user_id: userId || null,
-        message_id: messageId,
-        question,
-        response,
-        helpful: wasHelpful,
-        notes,
-        created_at: new Date().toISOString()
-      });
+      await supabase.from('paulie_queries')
+        .insert({
+          user_id: userId || null,
+          message_id: messageId,
+          question,
+          response,
+          helpful: wasHelpful,
+          notes,
+          created_at: new Date().toISOString()
+        });
       
       // Mark this message as having received feedback
       setFeedbackSubmitted(prev => ({
