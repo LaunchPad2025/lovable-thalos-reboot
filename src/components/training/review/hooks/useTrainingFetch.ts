@@ -63,18 +63,18 @@ export const useTrainingFetch = (initialFilters: TrainingFilters) => {
         query = query.or(`question.ilike.%${filters.searchQuery}%,response.ilike.%${filters.searchQuery}%`);
       }
       
-      // Execute query
-      const { data: queryData, error } = await query;
+      // Execute query with explicit typing to prevent deep type instantiation
+      const { data: queryData, error } = await query as unknown as {
+        data: PaulieQueryRow[] | null;
+        error: any;
+      };
       
       if (error) throw error;
       
       const formattedData: TrainingReviewItem[] = [];
       
       if (queryData) {
-        // Transform the data to a known type
-        const typedQueryData = queryData as unknown as PaulieQueryRow[];
-        
-        for (const item of typedQueryData) {
+        for (const item of queryData) {
           // Define status with proper type checking
           let status: 'pending' | 'approved' | 'rejected' | 'rewritten' = 'pending';
           
