@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { Message } from '../types';
 import { useImageProcessor } from './image-processing/useImageProcessor';
 import { useMessageProcessor } from './message-processing/useMessageProcessor';
+import { supabase } from '@/lib/supabase';
 
 export const useChatMessages = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -41,6 +42,20 @@ export const useChatMessages = () => {
     setFollowUpSuggestions([]); // Clear previous suggestions
     
     try {
+      // Log the user's query to paulie_queries table
+      try {
+        const user = await supabase.auth.getUser();
+        const userId = user.data?.user?.id;
+        
+        await supabase.from('paulie_queries').insert({
+          question: content,
+          user_id: userId || null
+        });
+      } catch (logError) {
+        console.error('Error logging initial query:', logError);
+        // Continue even if logging fails
+      }
+      
       // Processing image if provided
       if (imageFile) {
         console.log("Processing image for safety analysis");

@@ -5,6 +5,7 @@ import { generateAIResponse } from './localResponseGenerator';
 import { processWithAI, generateSuggestions } from './api/huggingfaceProcessor';
 import { enhanceResponse } from './utils/responseEnhancer';
 import { getTrainingMatrixResponse, getTrainingCalendarResponse } from './utils/follow-up/matrixCalendarResponses';
+import { findExactRegulationMatch } from './utils/regulationMatching';
 
 export const useMessageProcessor = () => {
   /**
@@ -56,7 +57,29 @@ export const useMessageProcessor = () => {
         return assistantMessage;
       }
       
-      // Extract safety topics to enhance context
+      // Try to find an exact regulation match from the database
+      const regulationMatch = await findExactRegulationMatch(content);
+      if (regulationMatch) {
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          content: regulationMatch,
+          role: 'assistant',
+          timestamp: new Date().toISOString(),
+        };
+        
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        // Generate regulation-specific follow-up suggestions
+        setFollowUpSuggestions([
+          "Can you explain how to implement this regulation?",
+          "What documentation is required for compliance?",
+          "Are there any exceptions to this regulation?"
+        ]);
+        
+        return assistantMessage;
+      }
+      
+      // Extract safety topics from conversation history to provide more relevant context
       const safetyTopics = extractSafetyTopics(allMessages);
       console.log("Detected safety topics for context:", safetyTopics);
       

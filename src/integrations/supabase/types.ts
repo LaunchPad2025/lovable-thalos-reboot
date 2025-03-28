@@ -183,6 +183,44 @@ export type Database = {
         }
         Relationships: []
       }
+      paulie_queries: {
+        Row: {
+          id: string
+          matched_category: string | null
+          matched_keywords: string[] | null
+          matched_regulation_id: string | null
+          question: string
+          timestamp: string | null
+          user_id: string | null
+        }
+        Insert: {
+          id?: string
+          matched_category?: string | null
+          matched_keywords?: string[] | null
+          matched_regulation_id?: string | null
+          question: string
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          id?: string
+          matched_category?: string | null
+          matched_keywords?: string[] | null
+          matched_regulation_id?: string | null
+          question?: string
+          timestamp?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "paulie_queries_matched_regulation_id_fkey"
+            columns: ["matched_regulation_id"]
+            isOneToOne: false
+            referencedRelation: "regulations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           company: string | null
