@@ -1,110 +1,73 @@
 
 import React from 'react';
-import ReactMarkdown from 'react-markdown';
-import { Bot, User } from 'lucide-react';
-import FeedbackButtons from './FeedbackButtons';
-import { Message } from '../types';
-import { useChatFeedback } from '../hooks/feedback/useChatFeedback';
+import { User, HardHat } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { Message } from '@/components/chatbot/types';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 interface MessageBubbleProps {
   message: Message;
-  isLoading?: boolean;
-  allMessages: Message[];
 }
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message, allMessages }) => {
-  const isUser = message.role === 'user';
-  const { 
-    feedbackSubmitted, 
-    showFeedbackForm, 
-    currentMessageId, 
-    feedbackNotes, 
-    isSubmitting,
-    error,
-    handleFeedbackClick, 
-    submitFeedbackWithNotes, 
-    setFeedbackNotes, 
-    cancelFeedback 
-  } = useChatFeedback();
-
-  // Extract regulation citations if present in AI responses
-  const hasCitation = !isUser && 
-    (message.content.includes('CFR') || 
-     message.content.includes('OSHA') || 
-     message.content.includes('1910.'));
+const MessageBubble = ({ message }: MessageBubbleProps) => {
+  const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  };
 
   return (
-    <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-4 last:mb-2`}>
-      <div className={`flex max-w-[85%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
-        <div className={`flex items-center justify-center h-8 w-8 rounded-full flex-shrink-0 ${isUser ? 'ml-2 bg-blue-600' : 'mr-2 bg-yellow-500'}`}>
-          {isUser ? <User className="h-4 w-4 text-white" /> : <Bot className="h-4 w-4 text-white" />}
+    <div 
+      className={cn(
+        "flex mb-4",
+        message.role === 'user' ? "justify-end" : "justify-start"
+      )}
+    >
+      {message.role === 'assistant' && (
+        <div className="mr-2">
+          <Avatar className="h-8 w-8 border-2 border-[#f59e0b] bg-[#1A1F2C]">
+            <AvatarFallback className="bg-[#f59e0b] text-white">
+              <HardHat className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      )}
+      
+      <div 
+        className={cn(
+          "max-w-[75%] px-4 py-3 rounded-lg flex flex-col",
+          message.role === 'user' 
+            ? "bg-[#4D7CFF] text-white rounded-tr-none" 
+            : "bg-[#1E293B] text-white border border-gray-700 rounded-tl-none"
+        )}
+      >
+        <div className="flex items-center space-x-2 mb-1">
+          <span className="text-xs opacity-75">
+            {message.role === 'user' ? 'You' : 'Paulie'} • {formatTime(message.timestamp)}
+          </span>
         </div>
         
-        <div className={`px-4 py-3 rounded-lg ${
-          isUser 
-            ? 'bg-blue-600 text-white' 
-            : 'bg-gray-800 text-gray-100 border border-gray-700'
-        }`}>
-          {isUser ? (
-            <p className="whitespace-pre-wrap break-words">{message.content}</p>
-          ) : (
-            <>
-              {hasCitation && (
-                <div className="text-xs text-yellow-500 mb-1">Contains regulatory citations</div>
-              )}
-              <ReactMarkdown 
-                components={{
-                  a: ({ node, ...props }) => (
-                    <a 
-                      {...props} 
-                      target="_blank" 
-                      rel="noopener noreferrer" 
-                      className="text-blue-400 hover:underline"
-                    />
-                  ),
-                  ul: ({ node, ...props }) => (
-                    <ul {...props} className="list-disc pl-5 my-2" />
-                  ),
-                  ol: ({ node, ...props }) => (
-                    <ol {...props} className="list-decimal pl-5 my-2" />
-                  ),
-                  li: ({ node, ...props }) => (
-                    <li {...props} className="my-1" />
-                  ),
-                  p: ({ node, ...props }) => (
-                    <p {...props} className="my-2" />
-                  ),
-                  pre: ({ node, ...props }) => (
-                    <pre {...props} className="bg-gray-900 p-2 rounded my-2 overflow-x-auto" />
-                  ),
-                  strong: ({ node, ...props }) => (
-                    <strong {...props} className="font-bold text-yellow-400" />
-                  ),
-                }}
-              >
-                {message.content}
-              </ReactMarkdown>
-              
-              {!isUser && (
-                <FeedbackButtons
-                  messageId={message.id}
-                  messages={allMessages}
-                  feedbackSubmitted={feedbackSubmitted}
-                  showFeedbackForm={showFeedbackForm}
-                  currentMessageId={currentMessageId}
-                  feedbackNotes={feedbackNotes}
-                  isSubmitting={isSubmitting}
-                  error={error}
-                  onFeedbackClick={handleFeedbackClick}
-                  onNotesChange={setFeedbackNotes}
-                  onSubmitNotes={submitFeedbackWithNotes}
-                  onCancelFeedback={cancelFeedback}
-                />
-              )}
-            </>
-          )}
-        </div>
+        {message.imageUrl && (
+          <div className="mb-2 max-w-[300px]">
+            <img 
+              src={message.imageUrl} 
+              alt="Uploaded" 
+              className="rounded-md max-h-[200px] object-contain" 
+            />
+          </div>
+        )}
+        
+        <p className="text-sm">{message.content}</p>
       </div>
+      
+      {message.role === 'user' && (
+        <div className="ml-2">
+          <Avatar className="h-8 w-8 bg-gray-700">
+            <AvatarFallback className="bg-gray-700 text-white">
+              <User className="h-4 w-4" />
+            </AvatarFallback>
+          </Avatar>
+        </div>
+      )}
     </div>
   );
 };

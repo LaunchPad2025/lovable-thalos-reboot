@@ -1,22 +1,15 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAuth } from "@/context/auth";
 import { useNavigate } from "react-router-dom";
 import { LoginFormValues, SignupFormValues } from "@/components/auth/schemas";
 
-export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: string = '', defaultIsSignup: boolean = false) {
-  const [isLogin, setIsLogin] = useState(!defaultIsSignup);
+export function useAuthForm() {
+  const [isLogin, setIsLogin] = useState(true);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signIn, signUp } = useAuth();
   const navigate = useNavigate();
-
-  // If signup is specified and a plan is selected, default to signup form
-  useEffect(() => {
-    if (defaultIsSignup || selectedPlan) {
-      setIsLogin(false);
-    }
-  }, [defaultIsSignup, selectedPlan]);
 
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
@@ -28,12 +21,7 @@ export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: st
       setAuthError(null);
       setIsSubmitting(true);
       await signIn(values.email, values.password);
-      
-      // If a plan was selected, redirect to subscription page after login
-      if (selectedPlan) {
-        navigate(`/subscription?plan=${selectedPlan}`);
-      }
-      // Auth.tsx will handle other redirects based on onboarding status
+      // Let the user be redirected by the main Auth component
     } catch (error: any) {
       console.error("Login error:", error);
       setAuthError(
@@ -49,13 +37,7 @@ export function useAuthForm(redirectUrl: string = '/dashboard', selectedPlan: st
     try {
       setAuthError(null);
       setIsSubmitting(true);
-      
-      // Include selected plan in user metadata if applicable
-      const additionalMetadata = selectedPlan ? { selectedPlan } : {};
-      
-      // Call signUp with the correct parameter count
-      await signUp(values.email, values.password, values.name, additionalMetadata);
-      
+      await signUp(values.email, values.password, values.name);
       setAuthError("Registration successful! Please check your email to confirm your account. After logging in, you'll complete a quick onboarding process.");
       // Don't navigate yet, let them confirm their email first
     } catch (error: any) {

@@ -1,33 +1,26 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
 import FreeTrial from '@/components/dashboard/FreeTrial';
 import WelcomeSection from '@/components/dashboard/WelcomeSection';
 import StatsCards from '@/components/dashboard/StatsCards';
 import DetailCards from '@/components/dashboard/DetailCards';
 import RecommendedFeatures from '@/components/dashboard/RecommendedFeatures';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
-import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
-import PageContainer from '@/components/layout/PageContainer';
+import ChatPopup from '@/components/chatbot/ChatPopup';
 
 const DashboardLayout = () => {
-  const { isDemoMode, isFreeTrial, planId, hasActiveSubscription } = useAuthStatus();
-  const navigate = useNavigate();
-  
-  // Determine if user should see the free trial banner
-  const showTrialBanner = isFreeTrial || isDemoMode;
+  const [activeTab, setActiveTab] = useState('personal');
   
   return (
     <div className="flex flex-col min-h-screen bg-[#0b0f14]">
       <DashboardHeader />
 
-      <PageContainer className="py-6 space-y-6">
-        {/* Free Trial Banner - only show if in free trial or demo mode */}
-        {showTrialBanner && <FreeTrial />}
+      <main className="flex-1 container mx-auto px-6 py-6 space-y-6 overflow-y-auto">
+        {/* Free Trial Banner */}
+        <FreeTrial />
 
-        {/* Welcome Section */}
-        <WelcomeSection />
+        {/* Welcome Section with Tabs */}
+        <WelcomeSection activeTab={activeTab} setActiveTab={setActiveTab} />
 
         {/* Stats Cards */}
         <StatsCards />
@@ -37,7 +30,12 @@ const DashboardLayout = () => {
 
         {/* Recommended Features */}
         <RecommendedFeatures />
-      </PageContainer>
+      </main>
+
+      {/* Footer removed from dashboard */}
+      
+      {/* Chat Popup - Fixed positioning ensures it doesn't affect scroll */}
+      <ChatPopup />
     </div>
   );
 };

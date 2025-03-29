@@ -6,18 +6,19 @@ import { useNavigate } from 'react-router-dom';
 const FreeTrial = () => {
   const navigate = useNavigate();
   
+  const handleContactSales = () => {
+    navigate('/subscription');
+  };
+  
   return (
-    <div className="bg-[#0d1117] border border-blue-900/50 rounded-lg p-4">
-      <div className="flex justify-between items-center">
+    <div className="bg-[#0d1117] border border-gray-800 rounded-lg p-6">
+      <div className="flex flex-col md:flex-row justify-between items-center">
         <div>
-          <h3 className="font-medium text-white">Free Trial Mode</h3>
-          <p className="text-sm text-gray-400">Unlock all safety compliance features by upgrading to a paid plan</p>
+          <h2 className="text-white font-medium mb-1">Free Trial Mode</h2>
+          <p className="text-gray-400 text-sm">Unlock all safety compliance features by contacting our sales team</p>
         </div>
-        <Button 
-          onClick={() => navigate('/subscription')} 
-          className="bg-blue-600 hover:bg-blue-700 text-white"
-        >
-          View Plans & Upgrade
+        <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4 md:mt-0" onClick={handleContactSales}>
+          Contact Sales
         </Button>
       </div>
     </div>

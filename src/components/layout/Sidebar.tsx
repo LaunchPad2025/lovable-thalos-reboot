@@ -1,116 +1,69 @@
 
-import React from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { NavItem, NavSection, navItems } from './sidebar/navItems';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
-import Logo from './sidebar/Logo';
-import {
-  Sidebar as SidebarUI,
-  SidebarContent,
-  SidebarHeader,
-  SidebarFooter,
-  SidebarProvider,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarTrigger
-} from '@/components/ui/sidebar';
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useMobile } from "@/hooks/useMobile";
+import { useTheme } from "@/providers/ThemeProvider";
+import { useAuth } from "@/context/auth";
+import { getNavItems } from "./sidebar/navItems";
+import MobileNav from "./sidebar/MobileNav";
+import DesktopNav from "./sidebar/DesktopNav";
 
-interface SidebarProps {
-  children?: React.ReactNode;
-}
-
-const Sidebar: React.FC<SidebarProps> = ({ children }) => {
+const Sidebar = () => {
   const location = useLocation();
-  
-  // Use a try-catch to handle the case when useAuth might not be available
-  let userRole = 'user';
-  try {
-    // Only call useAuthStatus if it's available and handle the case when it's not
-    const authStatus = useAuthStatus?.();
-    userRole = authStatus?.user?.role || 'user';
-  } catch (error) {
-    console.warn('Auth status unavailable, defaulting to user role');
-    // Continue with default role
-  }
-  
-  // Filter nav items based on user role
-  const filteredNavItems = navItems.filter(section => {
-    // If the section has roles specified, check if the user's role is included
-    if (section.roles && !section.roles.includes(userRole)) {
-      return false;
+  const isMobile = useMobile();
+  const { sidebarCollapsed, setSidebarCollapsed } = useTheme();
+  const { user } = useAuth();
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Get user role from auth context
+  const userRole = user?.user_metadata?.role || "worker";
+
+  // The initial state is expanded on desktop, closed on mobile
+  const [expanded, setExpanded] = useState(!isMobile && !sidebarCollapsed);
+
+  // Update expanded state when screen size or sidebarCollapsed changes
+  useEffect(() => {
+    setExpanded(!isMobile && !sidebarCollapsed);
+  }, [isMobile, sidebarCollapsed]);
+
+  const toggleMobileSidebar = () => {
+    setMobileOpen(!mobileOpen);
+  };
+
+  const toggleExpanded = () => {
+    setExpanded(!expanded);
+    if (setSidebarCollapsed) {
+      setSidebarCollapsed(!sidebarCollapsed);
     }
-    
-    // Filter items within each section
-    section.items = section.items.filter(item => {
-      if (item.roles && !item.roles.includes(userRole)) {
-        return false;
-      }
-      return true;
-    });
-    
-    return section.items.length > 0; // Only include sections with at least one visible item
-  });
+  };
+
+  // Close mobile sidebar when location changes
+  useEffect(() => {
+    if (mobileOpen) setMobileOpen(false);
+  }, [location.pathname]);
+
+  // Get navigation items
+  const navItems = getNavItems();
 
   return (
-    <SidebarProvider defaultOpen={true}>
-      <div className="flex h-screen overflow-hidden w-full">
-        <SidebarUI>
-          <SidebarHeader className="border-b border-gray-800 py-4">
-            <div className="px-4">
-              <Logo />
-            </div>
-          </SidebarHeader>
-          <SidebarContent>
-            {filteredNavItems.map((section, sectionIndex) => (
-              <div key={sectionIndex} className="px-3 py-2">
-                {section.title && (
-                  <h3 className="mb-2 px-2 text-xs font-semibold text-gray-400 uppercase tracking-wider">
-                    {section.title}
-                  </h3>
-                )}
-                <SidebarMenu>
-                  {section.items.map((item, itemIndex) => {
-                    const isActive = location.pathname === item.href;
-                    
-                    return (
-                      <SidebarMenuItem key={itemIndex}>
-                        <SidebarMenuButton
-                          asChild
-                          isActive={isActive}
-                          tooltip={item.title}
-                        >
-                          <Link to={item.href} className="w-full">
-                            <item.icon />
-                            <span>{item.title}</span>
-                            {item.badge && (
-                              <span className={`ml-auto inline-block py-0.5 px-2 text-xs font-medium rounded-full ${item.badgeColor || 'bg-gray-700 text-gray-300'}`}>
-                                {item.badge}
-                              </span>
-                            )}
-                          </Link>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    );
-                  })}
-                </SidebarMenu>
-              </div>
-            ))}
-          </SidebarContent>
-          <SidebarFooter className="border-t border-gray-800 p-4">
-            <div className="text-xs text-gray-400">
-              Thalos Dashboard v1.0
-            </div>
-          </SidebarFooter>
-        </SidebarUI>
-        <main className="flex-1 overflow-auto">
-          <div className="h-12 border-b border-gray-800 flex items-center px-4">
-            <SidebarTrigger />
-          </div>
-          {children}
-        </main>
-      </div>
-    </SidebarProvider>
+    <>
+      {isMobile ? (
+        <MobileNav
+          mobileOpen={mobileOpen}
+          setMobileOpen={setMobileOpen}
+          toggleMobileSidebar={toggleMobileSidebar}
+          navItems={navItems}
+          userRole={userRole}
+        />
+      ) : (
+        <DesktopNav
+          expanded={expanded}
+          navItems={navItems}
+          userRole={userRole}
+          toggleExpanded={toggleExpanded}
+        />
+      )}
+    </>
   );
 };
 

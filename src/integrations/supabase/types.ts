@@ -75,66 +75,6 @@ export type Database = {
           },
         ]
       }
-      media_violation_training: {
-        Row: {
-          category: string
-          copilot_response_sample: string | null
-          copilot_task_sample: string | null
-          created_at: string
-          id: string
-          industry: string
-          labels: string[]
-          media_type: string
-          regulation_citation: string | null
-          regulation_summary: string | null
-          remediation_steps: string[]
-          risk_level: string
-          sample_caption: string
-          status: string | null
-          tags: string[]
-          violation_id: string
-          violation_type: string
-        }
-        Insert: {
-          category: string
-          copilot_response_sample?: string | null
-          copilot_task_sample?: string | null
-          created_at?: string
-          id?: string
-          industry: string
-          labels: string[]
-          media_type: string
-          regulation_citation?: string | null
-          regulation_summary?: string | null
-          remediation_steps: string[]
-          risk_level: string
-          sample_caption: string
-          status?: string | null
-          tags: string[]
-          violation_id: string
-          violation_type: string
-        }
-        Update: {
-          category?: string
-          copilot_response_sample?: string | null
-          copilot_task_sample?: string | null
-          created_at?: string
-          id?: string
-          industry?: string
-          labels?: string[]
-          media_type?: string
-          regulation_citation?: string | null
-          regulation_summary?: string | null
-          remediation_steps?: string[]
-          risk_level?: string
-          sample_caption?: string
-          status?: string | null
-          tags?: string[]
-          violation_id?: string
-          violation_type?: string
-        }
-        Relationships: []
-      }
       ml_models: {
         Row: {
           accuracy: number | null
@@ -216,7 +156,6 @@ export type Database = {
       organizations: {
         Row: {
           created_at: string
-          domain: string | null
           id: string
           industry: string | null
           name: string
@@ -225,7 +164,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          domain?: string | null
           id?: string
           industry?: string | null
           name: string
@@ -234,7 +172,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          domain?: string | null
           id?: string
           industry?: string | null
           name?: string
@@ -242,65 +179,6 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
-      }
-      paulie_queries: {
-        Row: {
-          created_at: string | null
-          helpful: boolean | null
-          id: string
-          matched_category: string | null
-          matched_keywords: string[] | null
-          matched_regulation_id: string | null
-          message_id: string | null
-          notes: string | null
-          question: string
-          response: string | null
-          review_label: string | null
-          review_status: string | null
-          timestamp: string | null
-          user_id: string | null
-        }
-        Insert: {
-          created_at?: string | null
-          helpful?: boolean | null
-          id?: string
-          matched_category?: string | null
-          matched_keywords?: string[] | null
-          matched_regulation_id?: string | null
-          message_id?: string | null
-          notes?: string | null
-          question: string
-          response?: string | null
-          review_label?: string | null
-          review_status?: string | null
-          timestamp?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          created_at?: string | null
-          helpful?: boolean | null
-          id?: string
-          matched_category?: string | null
-          matched_keywords?: string[] | null
-          matched_regulation_id?: string | null
-          message_id?: string | null
-          notes?: string | null
-          question?: string
-          response?: string | null
-          review_label?: string | null
-          review_status?: string | null
-          timestamp?: string | null
-          user_id?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "paulie_queries_matched_regulation_id_fkey"
-            columns: ["matched_regulation_id"]
-            isOneToOne: false
-            referencedRelation: "regulations"
-            referencedColumns: ["id"]
-          },
-        ]
       }
       profiles: {
         Row: {
@@ -415,45 +293,8 @@ export type Database = {
           },
         ]
       }
-      regulation_match_failures: {
-        Row: {
-          feedback_given: boolean | null
-          id: string
-          matched_keywords: string[] | null
-          notes: string | null
-          question: string
-          reviewed: boolean | null
-          suggested_category: string | null
-          timestamp: string | null
-          user_id: string | null
-        }
-        Insert: {
-          feedback_given?: boolean | null
-          id?: string
-          matched_keywords?: string[] | null
-          notes?: string | null
-          question: string
-          reviewed?: boolean | null
-          suggested_category?: string | null
-          timestamp?: string | null
-          user_id?: string | null
-        }
-        Update: {
-          feedback_given?: boolean | null
-          id?: string
-          matched_keywords?: string[] | null
-          notes?: string | null
-          question?: string
-          reviewed?: boolean | null
-          suggested_category?: string | null
-          timestamp?: string | null
-          user_id?: string | null
-        }
-        Relationships: []
-      }
       regulations: {
         Row: {
-          alt_phrases: string[] | null
           applicable_to: string[] | null
           authority: string | null
           category: string | null
@@ -480,7 +321,6 @@ export type Database = {
           version: string | null
         }
         Insert: {
-          alt_phrases?: string[] | null
           applicable_to?: string[] | null
           authority?: string | null
           category?: string | null
@@ -507,7 +347,6 @@ export type Database = {
           version?: string | null
         }
         Update: {
-          alt_phrases?: string[] | null
           applicable_to?: string[] | null
           authority?: string | null
           category?: string | null

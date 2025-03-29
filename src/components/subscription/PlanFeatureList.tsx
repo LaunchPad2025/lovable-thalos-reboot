@@ -1,18 +1,25 @@
 
 import React from 'react';
-import { CheckCircle } from 'lucide-react';
+import { Check, X } from 'lucide-react';
+import { PlanFeature } from '@/data/subscriptionPlans';
 
-interface PlanFeatureProps {
-  features: string[];
+interface PlanFeatureListProps {
+  features: PlanFeature[];
 }
 
-const PlanFeatureList: React.FC<PlanFeatureProps> = ({ features }) => {
+const PlanFeatureList = ({ features }: PlanFeatureListProps) => {
   return (
-    <ul className="space-y-3">
+    <ul className="mt-6 space-y-3">
       {features.map((feature, index) => (
         <li key={index} className="flex items-start">
-          <CheckCircle className="h-5 w-5 text-green-500 mr-2 flex-shrink-0 mt-0.5" />
-          <span>{feature}</span>
+          {feature.included ? (
+            <Check className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+          ) : (
+            <X className="h-5 w-5 text-muted-foreground mr-2 shrink-0" />
+          )}
+          <span className={feature.included ? "text-foreground" : "text-muted-foreground"}>
+            {feature.text}
+          </span>
         </li>
       ))}
     </ul>

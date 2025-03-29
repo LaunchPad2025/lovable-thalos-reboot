@@ -1,177 +1,124 @@
 
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useIndustryRegulations } from '@/hooks/useRegulations';
-import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/context/auth';
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useRegulations, useRegulationDetails } from "@/hooks/useRegulations";
+import { useRegulationViolations } from "@/hooks/useViolationRegulations";
+import PageContainer from "@/components/layout/PageContainer";
+import RegulationDetails from "@/components/regulations/RegulationDetails";
+import SearchBar from "@/components/regulations/SearchBar";
+import FilterControls from "@/components/regulations/FilterControls";
+import IndustryTabs from "@/components/regulations/IndustryTabs";
+import RegulationFormDrawer from "@/components/regulations/RegulationFormDrawer";
 
 const Regulations = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('all');
-  const { user } = useAuth();
-  const userIndustry = user?.user_metadata?.industries?.[0] || 'Construction';
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { data: regulations, isLoading: regulationsLoading, refetch } = useRegulations();
+  const { data: regulationDetails } = useRegulationDetails(id);
+  const { data: relatedViolations } = useRegulationViolations(id);
   
-  const { data: regulations = [], isLoading, error } = useIndustryRegulations(userIndustry);
-  
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-  
-  // Filter regulations based on active tab and search term
-  const filteredRegulations = React.useMemo(() => {
-    if (!Array.isArray(regulations)) return [];
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("industry");
+  const [jurisdictionFilter, setJurisdictionFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!id) setActiveTab("all");
+  }, [id]);
+
+  // Extract unique values for filters
+  const industries = regulations 
+    ? [...new Set(regulations.filter(r => r.industry).map(r => r.industry))]
+    : [];
     
-    let filtered = [...regulations];
+  const jurisdictions = regulations 
+    ? [...new Set(regulations.filter(r => r.jurisdiction).map(r => r.jurisdiction))]
+    : [];
     
-    if (activeTab === 'federal') {
-      filtered = filtered.filter((reg: any) => reg.country === 'USA' && !reg.state);
-    } else if (activeTab === 'state') {
-      filtered = filtered.filter((reg: any) => reg.state && !reg.local);
-    } else if (activeTab === 'local') {
-      filtered = filtered.filter((reg: any) => reg.local);
-    } else if (activeTab === 'international') {
-      filtered = filtered.filter((reg: any) => reg.country !== 'USA');
-    }
+  const statuses = regulations 
+    ? [...new Set(regulations.filter(r => r.status).map(r => r.status))]
+    : [];
     
-    if (searchTerm) {
-      const search = searchTerm.toLowerCase();
-      filtered = filtered.filter((reg: any) => 
-        reg.title?.toLowerCase().includes(search) ||
-        reg.description?.toLowerCase().includes(search) ||
-        reg.citation?.toLowerCase().includes(search) ||
-        reg.keywords?.some((keyword: string) => keyword.toLowerCase().includes(search))
-      );
-    }
-    
-    return filtered;
-  }, [regulations, activeTab, searchTerm]);
-  
-  const getSeverityColor = (level: string) => {
-    switch (level?.toLowerCase()) {
-      case 'high': return 'bg-red-100 text-red-800 border-red-200';
-      case 'medium': return 'bg-amber-100 text-amber-800 border-amber-200';
-      case 'low': return 'bg-blue-100 text-blue-800 border-blue-200';
-      default: return 'bg-gray-100 text-gray-800 border-gray-200';
-    }
-  };
-  
-  // Count regulations in each category for the tabs
-  const counts = React.useMemo(() => {
-    if (!Array.isArray(regulations)) return { all: 0, federal: 0, state: 0, local: 0, international: 0 };
-    
-    return {
-      all: regulations.length,
-      federal: regulations.filter((reg: any) => reg.country === 'USA' && !reg.state).length,
-      state: regulations.filter((reg: any) => reg.state && !reg.local).length,
-      local: regulations.filter((reg: any) => reg.local).length,
-      international: regulations.filter((reg: any) => reg.country !== 'USA').length
-    };
-  }, [regulations]);
-  
-  if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Regulations</h1>
-        <div className="animate-pulse space-y-4">
-          <div className="h-10 bg-gray-700 rounded w-full"></div>
-          <div className="h-[400px] bg-gray-800 rounded"></div>
-        </div>
-      </div>
-    );
-  }
-  
-  if (error) {
-    return (
-      <div className="container mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Regulations</h1>
-        <Card className="bg-red-900/20 border-red-800">
-          <CardContent className="p-6">
-            <p>Error loading regulations. Please try again later.</p>
+  const documentTypes = regulations 
+    ? [...new Set(regulations.filter(r => r.document_type).map(r => r.document_type))]
+    : [];
+
+  // Apply filters and search
+  const filteredRegulations = regulations 
+    ? regulations.filter(r => {
+        // Match search term if provided
+        const matchesSearch = searchTerm 
+          ? (r.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             r.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             r.keywords?.some(k => k.toLowerCase().includes(searchTerm.toLowerCase())) ||
+             r.document_type?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             r.industry?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+             r.jurisdiction?.toLowerCase().includes(searchTerm.toLowerCase()))
+          : true;
+          
+        // Match selected industry if not "all"
+        const matchesIndustry = activeTab === "all" || r.industry === activeTab;
+        
+        // Match selected jurisdiction if provided
+        const matchesJurisdiction = !jurisdictionFilter || r.jurisdiction === jurisdictionFilter;
+        
+        // Match selected status if provided
+        const matchesStatus = !statusFilter || r.status === statusFilter;
+        
+        return matchesSearch && matchesIndustry && matchesJurisdiction && matchesStatus;
+      })
+    : [];
+
+  return (
+    <PageContainer title="Safety Regulations">
+      <div className="grid gap-4 md:grid-cols-7">
+        <Card className="md:col-span-7">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <div>
+              <CardTitle>Regulations</CardTitle>
+              <CardDescription>
+                Manage all your regulatory documents in one place
+              </CardDescription>
+            </div>
+            <RegulationFormDrawer onSuccess={refetch} />
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col md:flex-row gap-4 mb-4">
+              <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+              
+              <FilterControls
+                filterType={filterType}
+                setFilterType={setFilterType}
+                jurisdictionFilter={jurisdictionFilter}
+                setJurisdictionFilter={setJurisdictionFilter}
+                statusFilter={statusFilter}
+                setStatusFilter={setStatusFilter}
+                jurisdictions={jurisdictions}
+                statuses={statuses}
+                documentTypes={documentTypes}
+              />
+            </div>
+            
+            <IndustryTabs
+              activeTab={activeTab}
+              setActiveTab={setActiveTab}
+              industries={industries}
+              filteredRegulations={filteredRegulations}
+              isLoading={regulationsLoading}
+            />
           </CardContent>
         </Card>
+
+        {id && regulationDetails && (
+          <RegulationDetails 
+            regulation={regulationDetails} 
+            violations={relatedViolations}
+          />
+        )}
       </div>
-    );
-  }
-  
-  return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Safety Regulations</h1>
-      
-      <div className="flex flex-col md:flex-row gap-4 items-start mb-6">
-        <Input
-          placeholder="Search regulations..."
-          value={searchTerm}
-          onChange={handleSearch}
-          className="max-w-md"
-        />
-        <Button variant="outline">Filter</Button>
-      </div>
-      
-      <Tabs defaultValue="all" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          <TabsTrigger value="all">
-            All <Badge variant="outline" className="ml-2">{counts.all}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="federal">
-            Federal <Badge variant="outline" className="ml-2">{counts.federal}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="state">
-            State <Badge variant="outline" className="ml-2">{counts.state}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="local">
-            Local <Badge variant="outline" className="ml-2">{counts.local}</Badge>
-          </TabsTrigger>
-          <TabsTrigger value="international">
-            International <Badge variant="outline" className="ml-2">{counts.international}</Badge>
-          </TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value={activeTab} className="mt-6">
-          {filteredRegulations.length === 0 ? (
-            <Card>
-              <CardContent className="p-6 text-center">
-                <p>No regulations found. Try adjusting your search criteria.</p>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="grid grid-cols-1 gap-4">
-              {filteredRegulations.map((regulation: any) => (
-                <Card key={regulation.id} className="overflow-hidden">
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg font-medium">
-                        {regulation.title}
-                      </CardTitle>
-                      <Badge className={getSeverityColor(regulation.risk_level)}>
-                        {regulation.risk_level || 'Medium'} Risk
-                      </Badge>
-                    </div>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      {regulation.citation}
-                    </p>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm mb-4">
-                      {regulation.description}
-                    </p>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {regulation.keywords?.map((keyword: string, idx: number) => (
-                        <Badge key={idx} variant="secondary" className="text-xs">
-                          {keyword}
-                        </Badge>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-    </div>
+    </PageContainer>
   );
 };
 

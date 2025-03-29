@@ -1,16 +1,11 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, HardHat, MessageCircle } from 'lucide-react';
+import { ChevronRight, HardHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const PaulieSection = () => {
   const navigate = useNavigate();
-  
-  const handleChatWithPaulie = () => {
-    // Navigate to the chatbot page
-    navigate('/chatbot');
-  };
   
   return (
     <div className="py-24 bg-[#090D13]">
@@ -51,21 +46,12 @@ const PaulieSection = () => {
               </li>
             </ul>
             
-            <div className="flex flex-wrap gap-4">
-              <Button 
-                className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
-                onClick={() => navigate('/demo')}
-              >
-                Try Demo <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-              
-              <Button 
-                className="bg-blue-600 hover:bg-blue-700 rounded-md px-6 py-3 font-medium"
-                onClick={handleChatWithPaulie}
-              >
-                Chat with Paulie <MessageCircle className="ml-2 h-5 w-5" />
-              </Button>
-            </div>
+            <Button 
+              className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
+              onClick={() => navigate('/dashboard')}
+            >
+              Try Demo <ChevronRight className="ml-2 h-5 w-5" />
+            </Button>
           </div>
           
           <div className="bg-[#111724] border border-gray-800 rounded-xl p-6 shadow-lg">

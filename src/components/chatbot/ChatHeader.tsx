@@ -8,15 +8,15 @@ interface ChatHeaderProps {
 
 const ChatHeader = ({ onClose }: ChatHeaderProps) => {
   return (
-    <div className="p-4 bg-[#0d1117] border-b border-gray-800">
+    <div className="p-4 bg-card border-b border-border">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
-          <div className="w-10 h-10 rounded-full bg-yellow-500 flex items-center justify-center mr-3">
+          <div className="w-10 h-10 rounded-full bg-[#f59e0b] flex items-center justify-center mr-3">
             <HardHat className="text-white h-6 w-6" />
           </div>
           <div>
-            <h2 className="text-xl font-semibold text-white">Paulie</h2>
-            <p className="text-sm text-gray-400">AI-powered safety assistant</p>
+            <h2 className="text-xl font-semibold text-foreground">Paulie</h2>
+            <p className="text-sm text-muted-foreground">Your AI workplace safety assistant</p>
           </div>
         </div>
         

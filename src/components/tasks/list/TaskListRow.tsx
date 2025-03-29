@@ -4,7 +4,6 @@ import { ChevronDown, ChevronUp } from 'lucide-react';
 import StatusBadge from '@/components/ui/StatusBadge';
 import { Task } from '@/types/models';
 import { cn } from '@/lib/utils';
-import { getDateStatus } from '@/utils/dateUtils';
 
 interface TaskListRowProps {
   task: Task;
@@ -21,8 +20,7 @@ const TaskListRow: React.FC<TaskListRowProps> = ({
   onSelect, 
   onToggleExpand 
 }) => {
-  // Get the date status information
-  const dueDateStatus = task.due_date ? getDateStatus(new Date(task.due_date)) : null;
+  const isOverdue = task.due_date && new Date(task.due_date) < new Date();
   
   return (
     <tr 
@@ -54,13 +52,9 @@ const TaskListRow: React.FC<TaskListRowProps> = ({
         {task.assignee_id || "Unassigned"}
       </td>
       <td className="px-4 py-4">
-        <div className={dueDateStatus ? dueDateStatus.className : "text-gray-300"}>
+        <div className={isOverdue ? "text-red-500" : "text-gray-300"}>
           {task.due_date ? new Date(task.due_date).toLocaleDateString() : "No due date"}
-          {dueDateStatus && dueDateStatus.isPastDue && <div className="text-xs text-red-500">Past Due</div>}
-          {dueDateStatus && dueDateStatus.isDueToday && <div className="text-xs text-yellow-500">Due Today</div>}
-          {dueDateStatus && !dueDateStatus.isPastDue && !dueDateStatus.isDueToday && dueDateStatus.daysUntilDue && dueDateStatus.daysUntilDue <= 3 && 
-            <div className="text-xs text-blue-500">Due Soon</div>
-          }
+          {isOverdue && <div className="text-xs text-red-500">Overdue</div>}
         </div>
       </td>
       <td className="px-4 py-4">

@@ -34,6 +34,4 @@ export interface TestResult {
   detections?: Detection[];
   regulationIds?: string[];
   relevanceScores?: number[];
-  // Add timestamp field to match what's being used
-  timestamp?: string;
 }

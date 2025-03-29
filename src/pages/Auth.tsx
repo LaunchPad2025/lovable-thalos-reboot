@@ -1,5 +1,5 @@
 
-import { Navigate, useNavigate, useLocation } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/auth";
 import { LoginForm } from "@/components/auth/LoginForm";
 import { SignupForm } from "@/components/auth/SignupForm";
@@ -9,14 +9,6 @@ import { useAuthForm } from "@/hooks/useAuthForm";
 export default function Auth() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Extract redirect URL and plan from query params if present
-  const searchParams = new URLSearchParams(location.search);
-  const redirectUrl = searchParams.get('redirect') || '/dashboard';
-  const selectedPlan = searchParams.get('plan') || '';
-  const isSignup = searchParams.get('signup') === 'true';
-  
   const {
     isLogin,
     authError,
@@ -24,22 +16,22 @@ export default function Auth() {
     toggleAuthMode,
     onLoginSubmit,
     onSignupSubmit
-  } = useAuthForm(redirectUrl, selectedPlan, isSignup);
+  } = useAuthForm();
+
+  // Handle successful login and redirect to appropriate page
+  const handleSuccessfulAuth = () => {
+    // Check if user has completed onboarding
+    if (user?.user_metadata?.onboarded === false) {
+      navigate("/onboarding");
+    } else {
+      navigate("/dashboard");
+    }
+  };
 
   // Redirect if user is already logged in
   if (user) {
-    // Check if user has completed onboarding
-    if (user?.user_metadata?.onboarded === false) {
-      // Pass the selected plan to onboarding if it exists
-      const onboardingUrl = `/onboarding?redirect=${encodeURIComponent(redirectUrl)}`;
-      const finalUrl = selectedPlan ? `${onboardingUrl}&plan=${selectedPlan}` : onboardingUrl;
-      return <Navigate to={finalUrl} replace />;
-    } else if (selectedPlan) {
-      // If user is logged in and has a plan selected, redirect to subscription page
-      return <Navigate to={`/subscription?plan=${selectedPlan}`} replace />;
-    } else {
-      return <Navigate to={redirectUrl} replace />;
-    }
+    handleSuccessfulAuth();
+    return null;
   }
 
   return (

@@ -13,7 +13,7 @@ const DashboardHeader = () => {
     setActiveTab(value);
     // In a real implementation, this would fetch different data
     toast({
-      title: `${value === 'personal' ? 'My Dashboard' : 'Organization'} selected`,
+      title: `${value === 'personal' ? 'Personal' : 'Organization'} dashboard selected`,
       description: "This would load different data in a production environment.",
       duration: 3000,
     });
@@ -37,12 +37,6 @@ const DashboardHeader = () => {
               <p className="text-gray-400 text-sm">Overview of your safety compliance status</p>
             </div>
             <div className="flex gap-3">
-              <Button 
-                variant="outline" 
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                Upgrade Plan
-              </Button>
               <Button variant="outline" 
                 className="border-gray-700 text-gray-300" 
                 size="icon"

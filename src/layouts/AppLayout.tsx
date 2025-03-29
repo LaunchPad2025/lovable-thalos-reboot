@@ -2,15 +2,15 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
-import { AuthProvider } from '@/context/auth';
 
 const AppLayout: React.FC = () => {
     return (
-        <AuthProvider>
-            <Sidebar>
+        <div className="flex min-h-screen bg-background">
+            <Sidebar />
+            <main className="flex-1 overflow-y-auto">
                 <Outlet />
-            </Sidebar>
-        </AuthProvider>
+            </main>
+        </div>
     );
 };
 

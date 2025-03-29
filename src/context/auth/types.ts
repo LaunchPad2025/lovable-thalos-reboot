@@ -1,22 +1,23 @@
 
-import { Session, User } from '@supabase/supabase-js';
+import { User, Session } from '@supabase/supabase-js';
 
-export interface UserMetadata {
+export type UserMetadata = {
   name?: string;
-  role?: string;
-  onboarded?: boolean;
+  role?: 'admin' | 'safety_officer' | 'worker';
   industries?: string[];
   preferredModules?: string[];
-  has_subscription?: boolean;
-  subscription_plan?: string;
-  subscription_status?: string;
-  organization_id?: string;
+  onboarded?: boolean;
   [key: string]: any;
 }
 
-export interface UseAuthMethodsProps {
+export interface AuthContextType {
   user: User | null;
-  setUser: (user: User | null) => void;
+  session: Session | null;
+  loading: boolean;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<void>;
+  signOut: () => Promise<void>;
+  updateUserProfile: (metadata: UserMetadata) => Promise<void>;
 }
 
 export interface UseAuthListenersProps {
@@ -25,12 +26,7 @@ export interface UseAuthListenersProps {
   setLoading: (loading: boolean) => void;
 }
 
-export interface AuthContextType {
+export interface UseAuthMethodsProps {
   user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string, additionalMetadata?: Record<string, any>) => Promise<void>;
-  signOut: () => Promise<void>;
-  updateUserProfile: (metadata: UserMetadata) => Promise<void>;
+  setUser: (user: User | null) => void;
 }

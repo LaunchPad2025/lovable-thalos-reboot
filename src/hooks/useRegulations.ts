@@ -1,74 +1,144 @@
-
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 
-export interface RegulationProps {
+interface Regulation {
   id: string;
   title: string;
-  description: string;
-  industry: string;
-  category: string;
+  description: string | null;
+  industry: string | null;
   document_type: string;
-  jurisdiction: string;
-  authority: string;
-  status: string;
-  severity_level: string;
-  version: string;
-  effective_date: string;
-  keywords: string[];
-  tags: string[];
+  file_path: string | null;
+  file_type: string | null;
+  version: string | null;
+  effective_date: string | null;
   created_at: string;
-  updated_at: string;
+  // New fields
+  jurisdiction: string | null;
+  authority: string | null;
+  keywords: string[] | null;
+  source_url: string | null;
+  status: string | null;
+  category: string | null;
+  applicable_to: string[] | null;
+  last_reviewed_date: string | null;
+  reference_number: string | null; // Optional with null to match database structure
 }
 
-// Fetch regulations related to a specific worksite
-export const useWorksiteRegulations = (worksiteId: string) => {
-  return useQuery({
-    queryKey: ['worksite-regulations', worksiteId],
-    queryFn: async () => {
-      // First, fetch the violation IDs associated with this worksite
-      const { data: violations, error: violationsError } = await supabase
-        .from('violations')
-        .select('id')
-        .eq('worksite_id', worksiteId);
+export function useRegulations() {
+  const { data, error, isLoading } = useQuery(['regulations'], async () => {
+    const { data, error } = await supabase.from('regulations').select('*');
+    if (error) throw new Error(error.message);
+    return data;
+  });
 
-      if (violationsError) throw violationsError;
+  if (error) {
+    console.error('Error fetching regulations:', error.message);
+  }
+
+  return { data, error, isLoading };
+}
+
+export function useRegulationDetails(id: string | undefined) {
+  const { data, error, isLoading } = useQuery(['regulationDetails', id], async () => {
+    if (!id) return null;
+    const { data, error } = await supabase.from('regulations').select('*').eq('id', id).single();
+    if (error) throw new Error(error.message);
+    return data;
+  });
+
+  if (error) {
+    console.error('Error fetching regulation details:', error.message);
+  }
+
+  return { data, error, isLoading };
+}
+
+// Define simple primitive types for filters to avoid deep nesting
+export interface SearchFilters {
+  industry?: string | null;
+  jurisdiction?: string | null;
+  status?: string | null;
+  document_type?: string | null;
+  authority?: string | null;
+}
+
+export function useRegulationSearch(searchTerm: string, filters: SearchFilters) {
+  // Create stable primitive values for the query key
+  const filterKeys: string[] = [];
+  
+  // Only add filters that have values
+  if (filters.industry) filterKeys.push(`industry:${filters.industry}`);
+  if (filters.jurisdiction) filterKeys.push(`jurisdiction:${filters.jurisdiction}`);
+  if (filters.status) filterKeys.push(`status:${filters.status}`);
+  if (filters.document_type) filterKeys.push(`document_type:${filters.document_type}`);
+  if (filters.authority) filterKeys.push(`authority:${filters.authority}`);
+  
+  const queryKey = [
+    'regulations', 
+    'search', 
+    searchTerm || '',
+    ...filterKeys
+  ];
+  
+  return useQuery({
+    queryKey,
+    queryFn: async () => {
+      let query = supabase
+        .from('regulations')
+        .select('*');
       
-      if (!violations || violations.length === 0) {
-        return [];
+      // Apply text search if provided
+      if (searchTerm) {
+        query = query.textSearch('search_text', searchTerm);
       }
       
-      // Then, get the regulations linked to these violations
-      const violationIds = violations.map(v => v.id);
-      const { data: linkedRegulations, error: linkedError } = await supabase
-        .from('violation_regulations')
-        .select(`
-          regulation_id,
-          regulations:regulation_id (*)
-        `)
-        .in('violation_id', violationIds);
+      // Apply each filter only if it has a value
+      if (filters.industry) {
+        query = query.eq('industry', filters.industry);
+      }
       
-      if (linkedError) throw linkedError;
+      if (filters.jurisdiction) {
+        query = query.eq('jurisdiction', filters.jurisdiction);
+      }
       
-      return linkedRegulations?.map(item => item.regulations) || [];
-    },
-    enabled: !!worksiteId
+      if (filters.status) {
+        query = query.eq('status', filters.status);
+      }
+      
+      if (filters.document_type) {
+        query = query.eq('document_type', filters.document_type);
+      }
+      
+      if (filters.authority) {
+        query = query.eq('authority', filters.authority);
+      }
+      
+      const { data, error } = await query.order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation[];
+    }
   });
-};
+}
 
-// Fetch regulations related to a specific industry
-export const useIndustryRegulations = (industry: string) => {
+// Add a hook for checking if a regulation needs updating based on last review date
+export function useRegulationNeedsUpdate(days: number = 90) {
   return useQuery({
-    queryKey: ['industry-regulations', industry],
+    queryKey: ['regulations', 'needs-update', days],
     queryFn: async () => {
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - days);
+      
       const { data, error } = await supabase
         .from('regulations')
         .select('*')
-        .eq('industry', industry);
-
+        .lt('last_reviewed_date', cutoffDate.toISOString())
+        .or(`last_reviewed_date.is.null`);
+      
       if (error) throw error;
-      return data || [];
-    },
-    enabled: !!industry
+      // Use as assertion to handle potential missing fields
+      return data as unknown as Regulation[];
+    }
   });
-};
+}

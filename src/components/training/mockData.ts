@@ -14,21 +14,21 @@ export const upcomingTrainings = [
     title: "Fall Protection Awareness",
     duration: "60 minutes",
     daysLeft: 7,
-    startDate: "2025-04-04"
+    startDate: "2023-11-17"
   },
   {
     id: 2,
     title: "Chemical Handling Procedures",
     duration: "90 minutes",
     daysLeft: 14,
-    startDate: "2025-04-11"
+    startDate: "2023-11-24"
   },
   {
     id: 3,
     title: "Confined Space Entry",
     duration: "120 minutes",
     daysLeft: 21,
-    startDate: "2025-04-18"
+    startDate: "2023-12-01"
   }
 ];
 
@@ -36,14 +36,14 @@ export const completedTrainings = [
   {
     id: 101,
     title: "Fire Safety Fundamentals",
-    completedDate: "2025-02-25",
-    certificateExpires: "2026-02-24"
+    completedDate: "2023-02-25",
+    certificateExpires: "2024-02-24"
   },
   {
     id: 102,
     title: "Electrical Safety",
-    completedDate: "2025-01-23",
-    certificateExpires: "2026-01-24"
+    completedDate: "2023-01-23",
+    certificateExpires: "2024-01-24"
   }
 ];
 
@@ -55,7 +55,7 @@ export const teamComplianceData = {
       name: "John Smith",
       role: "Foreman",
       compliance: 100,
-      nextDue: "2025-06-30",
+      nextDue: "2024-03-31",
       courseId: "FS15"
     },
     {
@@ -71,7 +71,7 @@ export const teamComplianceData = {
       name: "Mike Chen",
       role: "Equipment Operator",
       compliance: 76,
-      nextDue: "2025-04-28",
+      nextDue: "2024-03-28",
       courseId: "FS12"
     },
     {
@@ -79,7 +79,7 @@ export const teamComplianceData = {
       name: "Lisa Rodriguez",
       role: "Site Engineer",
       compliance: 65,
-      nextDue: "2025-05-07",
+      nextDue: "2024-04-07",
       courseId: "FS14"
     }
   ]
@@ -96,7 +96,7 @@ export const courseCategories = [
         required: true,
         duration: "45 minutes",
         description: "Basic fire safety, prevention, and emergency procedures",
-        dueDate: "2025-05-15"
+        dueDate: "2024-05-15"
       },
       {
         id: "electrical-safety",
@@ -112,7 +112,7 @@ export const courseCategories = [
         required: false,
         duration: "120 minutes",
         description: "Safety protocols for confined space entry and monitoring",
-        dueDate: "2025-04-11"
+        dueDate: "2024-03-11"
       }
     ]
   },
@@ -126,7 +126,7 @@ export const courseCategories = [
         required: true,
         duration: "90 minutes",
         description: "Learn about handling chemicals safely and the hazardous materials schedules",
-        dueDate: "2025-04-07"
+        dueDate: "2024-04-07"
       }
     ]
   },

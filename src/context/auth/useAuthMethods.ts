@@ -7,25 +7,18 @@ import { UseAuthMethodsProps, UserMetadata } from './types';
 export function useAuthMethods({ user, setUser }: UseAuthMethodsProps) {
   const { toast: uiToast } = useToast();
 
-  const signUp = async (email: string, password: string, name: string, additionalMetadata = {}) => {
+  const signUp = async (email: string, password: string, name: string) => {
     try {
       console.log("Attempting to sign up:", email);
-      
-      // Ensure we have base metadata with the name
-      const metadata: UserMetadata = {
-        name,
-        role: 'worker', // Default role
-        onboarded: false, // Flag to indicate onboarding status
-        ...additionalMetadata // Include any additional metadata like selected plan
-      };
-      
-      console.log("Sign up with metadata:", metadata);
-      
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: metadata
+          data: {
+            name,
+            role: 'worker', // Default role
+            onboarded: false // Flag to indicate onboarding status
+          }
         }
       });
 

@@ -39,20 +39,6 @@ serve(async (req) => {
         await handleSubscriptionDeleted(event.data.object);
         break;
       
-      case 'invoice.payment_succeeded':
-        // Handle successful recurring payments
-        const invoice = event.data.object;
-        if (invoice.subscription) {
-          // Update subscription with new period end date
-          await handleSubscriptionUpdated(await stripe.subscriptions.retrieve(invoice.subscription));
-        }
-        break;
-        
-      case 'invoice.payment_failed':
-        // Handle failed payments - could send email notification or update subscription status
-        console.log(`Payment failed for subscription: ${event.data.object.subscription}`);
-        break;
-      
       default:
         console.log(`Unhandled event type: ${event.type}`);
     }

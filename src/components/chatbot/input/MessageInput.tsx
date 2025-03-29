@@ -1,80 +1,131 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Send, Loader2, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
+import ImagePreview from './ImagePreview';
 
 interface MessageInputProps {
   onSendMessage: (message: string, imageFile?: File | null) => Promise<void>;
   isLoading: boolean;
-  onFileSelect?: () => void;
 }
 
-const MessageInput = ({ onSendMessage, isLoading, onFileSelect }: MessageInputProps) => {
+const MessageInput = ({ onSendMessage, isLoading }: MessageInputProps) => {
   const [newMessage, setNewMessage] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
   
-  const handleSendClick = async () => {
-    if (!newMessage.trim()) return;
-    
-    try {
-      await onSendMessage(newMessage);
-      setNewMessage('');
-    } catch (error) {
-      console.error('Failed to send message:', error);
-      toast.error('Failed to send message. Please try again.');
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      
+      // Check if file is an image
+      if (!file.type.startsWith('image/')) {
+        toast({
+          title: "File type not supported",
+          description: "Please upload an image file",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      // Check file size (limit to 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        toast({
+          title: "File too large",
+          description: "Please upload an image less than 5MB",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      setImageFile(file);
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
   };
   
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      handleSendClick();
+  const removeImage = () => {
+    setImageFile(null);
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+  
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if ((!newMessage.trim() && !imageFile) || isLoading) return;
+    
+    try {
+      await onSendMessage(newMessage, imageFile);
+      setNewMessage('');
+      removeImage();
+    } catch (error) {
+      console.error("Error sending message:", error);
+      toast({
+        title: "Error sending message",
+        description: "Please try again",
+        variant: "destructive"
+      });
     }
   };
   
   return (
-    <div className="relative">
-      <div className="flex items-center gap-2 bg-gray-800 border border-gray-700 rounded-lg p-1">
+    <form onSubmit={handleSubmit} className="p-2">
+      <ImagePreview imagePreview={imagePreview} removeImage={removeImage} />
+      
+      <div className="flex space-x-2">
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className="flex-shrink-0 border-gray-700 text-gray-300 hover:bg-gray-700 hover:text-white"
+          onClick={() => fileInputRef.current?.click()}
+          disabled={isLoading}
+        >
+          <ImageIcon size={18} />
+          <input
+            ref={fileInputRef}
+            type="file"
+            className="hidden"
+            accept="image/*"
+            onChange={handleFileChange}
+            disabled={isLoading}
+          />
+        </Button>
+        
         <Input
+          type="text"
+          placeholder="Type your message..."
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          onKeyDown={handleKeyDown}
-          placeholder="Ask Paulie about safety regulations..."
-          className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="flex-1 bg-gray-800 border-gray-700 text-white placeholder-gray-400"
           disabled={isLoading}
         />
         
-        {onFileSelect && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            onClick={onFileSelect}
-            className="text-gray-400 hover:text-white hover:bg-gray-700"
-            disabled={isLoading}
-            title="Upload image for safety analysis"
-          >
-            <ImageIcon className="h-5 w-5" />
-          </Button>
-        )}
-        
         <Button 
-          type="button" 
-          variant="ghost" 
-          size="icon"
-          onClick={handleSendClick}
-          className="text-blue-500 hover:text-blue-400 hover:bg-gray-700"
-          disabled={isLoading || !newMessage.trim()}
+          type="submit"
+          className="flex-shrink-0 bg-blue-600 hover:bg-blue-700"
+          disabled={(!newMessage.trim() && !imageFile) || isLoading}
         >
-          {isLoading ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <Send className="h-5 w-5" />
-          )}
+          {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
         </Button>
       </div>
-    </div>
+      
+      <p className="text-xs text-gray-400 mt-2">
+        Upload images of safety concerns for AI analysis or ask questions about workplace safety regulations.
+      </p>
+    </form>
   );
 };
 

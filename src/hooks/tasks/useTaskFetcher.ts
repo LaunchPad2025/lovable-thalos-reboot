@@ -5,11 +5,8 @@ import { Task } from '@/types/models';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { mockTasks } from './mockTasks';
-import { useAuthStatus } from '@/hooks/useAuthStatus';
 
 export function useTaskFetcher() {
-  const { isAuthenticated, isDemoMode } = useAuthStatus();
-
   const {
     data: tasks,
     isLoading,
@@ -28,42 +25,30 @@ export function useTaskFetcher() {
         
         if (error) {
           console.error("Error fetching tasks from Supabase:", error);
-          
-          // Only use fallback data in demo mode
-          if (isDemoMode) {
-            console.log("Using demo data since in demo mode");
-            toast.info("Using demo data since we're in demo mode");
-            return mockTasks;
-          }
-          
-          // For authenticated users, show the error but return empty array
-          toast.error("Error fetching your tasks. Please try again.");
-          return [];
+          console.log("Returning fallback data");
+          // Show a toast notification about using mock data
+          toast("Using demo data since we couldn't connect to the database");
+          // Return fallback data when Supabase fails
+          return mockTasks;
         }
         
         console.log(`Successfully fetched ${data?.length} tasks`);
         
-        // In demo mode, if no tasks were found, return mock data
-        if (isDemoMode && (!data || data.length === 0)) {
-          console.log("No tasks found in demo mode, returning demo data");
+        // If no tasks were found, return mock data for demonstration
+        if (!data || data.length === 0) {
+          console.log("No tasks found, returning demo data");
+          toast("No tasks found. Showing demo data.");
           return mockTasks;
         }
         
-        // For authenticated users or if we have real data, return it
         return data as Task[];
       } catch (err) {
         console.error("Exception in task fetch:", err);
-        
-        // Only use fallback data in demo mode
-        if (isDemoMode) {
-          console.log("Returning fallback data in demo mode due to exception");
-          toast.info("Using demo data instead");
-          return mockTasks;
-        }
-        
-        // For authenticated users, return empty array
-        toast.error("Error connecting to database. Please try again later.");
-        return [];
+        console.log("Returning fallback data due to exception");
+        // Show a toast notification about using mock data
+        toast.error("Error connecting to database. Using demo data instead.");
+        // Return fallback data for any other errors
+        return mockTasks;
       }
     },
     retry: 3,
@@ -80,9 +65,7 @@ export function useTaskFetcher() {
   }, [error]);
 
   return {
-    // For authenticated users with errors, return empty array
-    // For demo mode with errors, return mock data
-    tasks: isAuthenticated ? (isError ? [] : tasks) : (isError ? mockTasks : tasks || mockTasks),
+    tasks: isError && (!tasks || tasks.length === 0) ? mockTasks : tasks,
     isLoading,
     isError,
     refetch,
