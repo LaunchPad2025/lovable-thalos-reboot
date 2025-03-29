@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -58,7 +57,7 @@ const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
 
   if (loading) return null;
 
-  if (user && !user.onboarded) {
+  if (user && !user.metadata?.onboarded) {
     return <Navigate to="/onboarding" replace />;
   }
 
@@ -91,49 +90,41 @@ function App() {
             <TooltipProvider>
               <Toaster />
               <BrowserRouter>
-                <Routes>
-                  {/* Public routes - These don't use AppLayout */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/demo" element={<DemoDashboard />} />
-                  
-                  {/* Documentation routes */}
-                  <Route path="/documentation/features" element={<Features />} />
-                  <Route path="/documentation/pricing" element={<Pricing />} />
-                  <Route path="/documentation/integrations" element={<Integrations />} />
-                  <Route path="/documentation/updates" element={<Updates />} />
-                  <Route path="/documentation/help-center" element={<HelpCenter />} />
-                  <Route path="/documentation/guides" element={<Guides />} />
-                  <Route path="/documentation/api-docs" element={<ApiDocs />} />
-                  <Route path="/documentation/about-us" element={<AboutUs />} />
-                  <Route path="/documentation/careers" element={<Careers />} />
-                  <Route path="/documentation/contact" element={<Contact />} />
-                  <Route path="/documentation/legal" element={<LegalDocs />} />
+                <AppLayout>
+                  <Routes>
+                    {/* Public routes - ensure these are at the top */}
+                    <Route path="/" element={<Index />} />
+                    <Route path="/auth" element={<Auth />} />
+                    <Route path="/legal" element={<Legal />} />
+                    <Route path="/onboarding" element={<Onboarding />} />
+                    <Route path="/demo" element={<DemoDashboard />} />
+                    
+                    {/* Documentation routes */}
+                    <Route path="/documentation/features" element={<Features />} />
+                    <Route path="/documentation/pricing" element={<Pricing />} />
+                    <Route path="/documentation/integrations" element={<Integrations />} />
+                    <Route path="/documentation/updates" element={<Updates />} />
+                    <Route path="/documentation/help-center" element={<HelpCenter />} />
+                    <Route path="/documentation/guides" element={<Guides />} />
+                    <Route path="/documentation/api-docs" element={<ApiDocs />} />
+                    <Route path="/documentation/about-us" element={<AboutUs />} />
+                    <Route path="/documentation/careers" element={<Careers />} />
+                    <Route path="/documentation/contact" element={<Contact />} />
+                    <Route path="/documentation/legal" element={<LegalDocs />} />
 
-                  {/* Protected routes with layout */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route element={<AppLayout />}>
-                      <Route path="dashboard" element={<OnboardingCheck><Dashboard /></OnboardingCheck>} />
-                      <Route path="violations" element={<OnboardingCheck><Violations /></OnboardingCheck>} />
-                      <Route path="tasks" element={<OnboardingCheck><Tasks /></OnboardingCheck>} />
-                      <Route path="risk-assessment" element={<OnboardingCheck><RiskAssessment /></OnboardingCheck>} />
-                      <Route path="documents" element={<OnboardingCheck><Documents /></OnboardingCheck>} />
-                      <Route path="notifications" element={<OnboardingCheck><Notifications /></OnboardingCheck>} />
-                      <Route path="audits" element={<OnboardingCheck><Audits /></OnboardingCheck>} />
-                      <Route path="training" element={<OnboardingCheck><Training /></OnboardingCheck>} />
-                      <Route path="chatbot" element={<OnboardingCheck><Chatbot /></OnboardingCheck>} />
-                      <Route path="subscription" element={<OnboardingCheck><Subscription /></OnboardingCheck>} />
-                      <Route path="settings" element={<OnboardingCheck><Settings /></OnboardingCheck>} />
-                      <Route path="admin" element={<OnboardingCheck><Admin /></OnboardingCheck>} />
-                      <Route path="regulations" element={<OnboardingCheck><Regulations /></OnboardingCheck>} />
-                      <Route path="models" element={<OnboardingCheck><Models /></OnboardingCheck>} />
-                      <Route path="sidebar-examples" element={<OnboardingCheck><SidebarExamples /></OnboardingCheck>} />
-                      <Route path="*" element={<NotFound />} />
+                    {/* Protected routes with layout */}
+                    <Route element={<ProtectedRoute />}>
+                      <Route
+                        path="/*"
+                        element={
+                          <OnboardingCheck>
+                            <AppLayout />
+                          </OnboardingCheck>
+                        }
+                      />
                     </Route>
-                  </Route>
-                </Routes>
+                  </Routes>
+                </AppLayout>
               </BrowserRouter>
             </TooltipProvider>
           </AuthProvider>

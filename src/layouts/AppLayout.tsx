@@ -1,14 +1,12 @@
-
 import React from 'react';
-import { Outlet } from 'react-router-dom';
-import Sidebar from '../components/layout/Sidebar';
+import Sidebar from '../components/Sidebar';
 
-const AppLayout: React.FC = () => {
+const AppLayout: React.FC = ({ children }) => {
     return (
-        <div className="flex min-h-screen bg-background">
+        <div className="app-layout">
             <Sidebar />
-            <main className="flex-1 overflow-y-auto">
-                <Outlet />
+            <main className="content">
+                {children}
             </main>
         </div>
     );
