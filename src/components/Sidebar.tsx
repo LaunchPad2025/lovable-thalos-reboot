@@ -1,9 +1,10 @@
+
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Sidebar: React.FC = () => {
     return (
-        <aside className="sidebar">
+        <aside className="sidebar hidden">
             <nav>
                 <ul>
                     <li>
