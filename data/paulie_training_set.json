@@ -1,0 +1,35 @@
+{
+  "training_data": [
+    {
+      "prompt": "What are the OSHA requirements for fall protection?",
+      "response": "Under OSHA 29 CFR 1926.501, fall protection is required at elevations of 6 feet in construction...",
+      "tags": ["fall protection", "construction", "osha", "1926.501"],
+      "industry": "construction",
+      "status": "approved"
+    },
+    {
+      "prompt": "What PPE is needed for chemical handling?",
+      "response": "Employers must provide chemical-resistant gloves, eye protection, and lab coats as per OSHA 1910.120...",
+      "tags": ["PPE", "chemical", "hazard", "1910.120"],
+      "industry": "manufacturing",
+      "status": "approved"
+    },
+    {
+      "prompt": "What are the confined space entry requirements for manufacturing?",
+      "response": "According to OSHA 29 CFR 1910.146, confined spaces must be evaluated for hazards, and employers must implement a permit-required program including atmospheric testing, entry permits, rescue procedures, and training.",
+      "tags": ["confined space", "manufacturing", "osha", "1910.146"],
+      "industry": "manufacturing",
+      "status": "approved"
+    },
+    {
+      "media_type": "image",
+      "cue_type": "fall hazard",
+      "detected_violation": "Missing guardrails near elevated platform",
+      "regulation_code": "29 CFR 1926.501(b)(1)",
+      "industry": "construction",
+      "severity": "High",
+      "keywords": ["fall protection", "elevated surfaces", "guardrails", "scaffolds"],
+      "status": "approved"
+    }
+  ]
+}

@@ -60,6 +60,54 @@ This project is built with .
 - shadcn-ui
 - Tailwind CSS
 
+## AI Model: Paulie-Finetune-v1
+
+**Thalos Technologies Inc. — AI Safety Assistant Fine-Tuned Model**
+
+Paulie-Finetune-v1 is a domain-specific language model trained on workplace safety regulation data and real-world conversational prompts across multiple industries including construction, manufacturing, oil & gas, maritime, and aviation.
+
+### 🧠 Purpose
+
+This model is fine-tuned to:
+- Accurately answer regulatory questions using OSHA, EPA, and ISO codes
+- Provide remediation guidance based on media cues (image/audio/video)
+- Handle industry-specific queries with context-aware responses
+- Cite regulatory standards when answering safety compliance prompts
+
+### 📦 Dataset Types
+
+1. **Prompt-Based Safety QA**
+    ```json
+    {
+      "prompt": "What are the confined space entry requirements for manufacturing?",
+      "response": "According to OSHA 29 CFR 1910.146, confined spaces must be evaluated for hazards, and employers must implement a permit-required program including atmospheric testing, entry permits, rescue procedures, and training."
+    }
+
+    {
+      "media_type": "image",
+      "cue_type": "fall hazard",
+      "detected_violation": "Missing guardrails near elevated platform",
+      "regulation_code": "29 CFR 1926.501(b)(1)",
+      "industry": "Construction",
+      "severity": "High",
+      "keywords": ["fall protection", "elevated surfaces", "guardrails", "scaffolds"]
+    }
+    ```
+
+2. **Media Cue Detection**
+    - Example: "Image shows a worker near an open trench without edge protection."
+
+### 🛠️ Training Specs
+- **Base Model**: EleutherAI/gpt-neo-125M
+- **Fine-Tuning Rounds**: 3 Epochs
+- **Optimizer**: AdamW
+- **Input Format**: JSONL (Hugging Face-ready)
+- **Training Date**: March 28, 2025
+
+### 🔐 Licensing & Use
+
+This model is proprietary to Thalos Technologies Inc. and intended for use in workplace safety and compliance software platforms.
+
 ## How can I deploy this project?
 
 Simply open [Lovable](https://lovable.dev/projects/083105be-b024-4a13-b1e1-ab43c59229fc) and click on Share -> Publish.

@@ -1,5 +1,5 @@
-
 import React from "react";
+import { useRouter } from "next/router";
 import PageContainer from "@/components/layout/PageContainer";
 import PageTitle from "@/components/ui/PageTitle";
 import TrainingStatusCards from "@/components/training/TrainingStatusCards";
@@ -10,6 +10,8 @@ import ComingSoonOverlay from "@/components/admin/ComingSoonOverlay";
 import MockDataAlert from "@/components/ui/MockDataAlert";
 
 const Training = () => {
+  const router = useRouter();
+
   return (
     <PageContainer>
       <div className="relative space-y-6">
@@ -21,6 +23,13 @@ const Training = () => {
           <p className="text-muted-foreground">
             Manage your training requirements, track completion status, and view upcoming certifications.
           </p>
+          {/* Button to navigate to TrainingDatasetExport */}
+          <button
+            className="btn btn-primary mt-4"
+            onClick={() => router.push("/training-dataset-export")}
+          >
+            Export Training Dataset
+          </button>
         </div>
 
         <TrainingStatusCards />
