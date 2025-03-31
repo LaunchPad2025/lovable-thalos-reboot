@@ -95,7 +95,7 @@ export const industryData: Industry[] = [
       {
         time: '7:30 AM',
         activity: 'Daily Safety Briefing',
-        description: 'Review hazards for today's tasks, ensure crew understanding of protocols.',
+        description: 'Review hazards for today\'s tasks, ensure crew understanding of protocols.',
         withThalos: 'Access site-specific safety briefing templates pre-populated with current project risks and weather conditions.'
       },
       {
@@ -317,7 +317,7 @@ export const industryData: Industry[] = [
       {
         time: '6:00 AM',
         activity: 'Operational Risk Assessment',
-        description: 'Review today's high-risk activities and ensure appropriate controls are in place.',
+        description: 'Review today\'s high-risk activities and ensure appropriate controls are in place.',
         withThalos: 'Access digital permit-to-work system showing all planned activities with automated risk level calculation and control verification.'
       },
       {
@@ -428,7 +428,7 @@ export const industryData: Industry[] = [
       {
         time: '7:00 AM',
         activity: 'Production Safety Review',
-        description: 'Review safety considerations for today's production schedule and any new processes.',
+        description: 'Review safety considerations for today\'s production schedule and any new processes.',
         withThalos: 'Access dashboard showing safety status of all production lines with alerts for any new or changed processes requiring review.'
       },
       {
