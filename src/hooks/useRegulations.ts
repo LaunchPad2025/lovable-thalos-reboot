@@ -22,7 +22,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
-  reference_number: string | null; // Optional with null to match database structure
+  reference_number: string | null; // Required for type compatibility
 }
 
 export function useRegulations() {
@@ -31,7 +31,7 @@ export function useRegulations() {
     queryFn: async () => {
       const { data, error } = await supabase.from('regulations').select('*');
       if (error) throw new Error(error.message);
-      return data;
+      return data as Regulation[];
     }
   });
 }
@@ -43,7 +43,7 @@ export function useRegulationDetails(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase.from('regulations').select('*').eq('id', id).single();
       if (error) throw new Error(error.message);
-      return data;
+      return data as Regulation;
     },
     enabled: !!id
   });
