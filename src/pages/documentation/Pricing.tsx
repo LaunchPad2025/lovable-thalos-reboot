@@ -6,8 +6,30 @@ import { Shield, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { plans, formatPrice } from '@/data/subscriptionPlans';
+import { useAuth } from '@/context/auth';
+import { useNavigate } from 'react-router-dom';
+import { useToast } from '@/hooks/use-toast';
 
 const Pricing = () => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { toast } = useToast();
+  
+  const handleSubscribe = (planId: string) => {
+    if (!user) {
+      toast({
+        title: "Login required",
+        description: "Please log in to subscribe to a plan",
+        variant: "destructive",
+      });
+      navigate('/auth');
+      return;
+    }
+    
+    // Navigate to subscription page with plan pre-selected
+    navigate(`/subscription?plan=${planId}`);
+  };
+
   const handleContactSales = () => {
     window.location.href = "https://cal.com/annieeser/30min";
   };
@@ -49,7 +71,7 @@ const Pricing = () => {
             </CardContent>
             <CardFooter>
               <Button 
-                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=basic"} 
+                onClick={() => handleSubscribe('basic')} 
                 className="w-full">
                 Subscribe to Basic
               </Button>
@@ -87,7 +109,7 @@ const Pricing = () => {
             </CardContent>
             <CardFooter>
               <Button 
-                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=pro"} 
+                onClick={() => handleSubscribe('pro')} 
                 className="w-full bg-blue-600 hover:bg-blue-700">
                 Subscribe to Pro
               </Button>
@@ -123,7 +145,7 @@ const Pricing = () => {
             </CardContent>
             <CardFooter>
               <Button 
-                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=premium"} 
+                onClick={() => handleSubscribe('premium')} 
                 className="w-full">
                 Subscribe to Premium
               </Button>

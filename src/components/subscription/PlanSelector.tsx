@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Loader2, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -9,7 +9,7 @@ import { useCheckout } from '@/hooks/useCheckout';
 import { useStripeStatus } from '@/hooks/useStripeStatus';
 import { useAuth } from '@/context/auth';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 interface PlanSelectorProps {
   billingCycle: 'monthly' | 'annual';
@@ -22,9 +22,20 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Use the hook to handle Stripe status
   useStripeStatus();
+  
+  // Check for plan parameter in URL
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const planParam = searchParams.get('plan');
+    
+    if (planParam && plans.some(p => p.id === planParam)) {
+      setSelectedPlan(planParam);
+    }
+  }, [location.search]);
   
   const handleSubscription = async () => {
     setError(null);
