@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -51,7 +52,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
 
     if (selectedPlan === 'enterprise') {
-      window.location.href = "https://cal.com/annie/30min";
+      window.location.href = "https://cal.com/annieeser/30min";
       return;
     }
     
