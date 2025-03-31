@@ -26,10 +26,8 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Use the hook to handle Stripe status
   useStripeStatus();
   
-  // Check for plan parameter in URL
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const planParam = searchParams.get('plan');
@@ -52,14 +50,12 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
       return;
     }
 
-    // If Enterprise plan is selected, redirect to contact sales
     if (selectedPlan === 'enterprise') {
-      window.location.href = "https://cal.com/sales/30min";
+      window.location.href = "https://cal.com/annie/30min";
       return;
     }
     
     try {
-      // Redirect to Replit for subscription purchase - use the correct URL format
       window.location.href = `https://replit.com/@thalos/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
     } catch (err) {
       console.error('Subscription error:', err);
@@ -96,7 +92,6 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
           ))}
         </div>
 
-        {/* Enterprise plan special card */}
         <div className="mb-8 p-6 border border-blue-500/30 bg-blue-500/5 rounded-lg">
           <h3 className="text-xl font-bold mb-2">Enterprise Plan</h3>
           <p className="text-gray-400 mb-4">Custom solutions for large organizations with complex compliance needs</p>

@@ -7,7 +7,7 @@ const CTASection = () => {
   const navigate = useNavigate();
   
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/sales/30min";
+    window.location.href = "https://cal.com/annie/30min";
   };
   
   return (

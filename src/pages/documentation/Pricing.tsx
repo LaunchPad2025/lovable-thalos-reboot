@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -29,7 +30,7 @@ const Pricing = () => {
     }
     
     if (planId === 'enterprise') {
-      window.location.href = "https://cal.com/sales/30min";
+      window.location.href = "https://cal.com/annie/30min";
       return;
     }
     
@@ -37,7 +38,7 @@ const Pricing = () => {
   };
 
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/sales/30min";
+    window.location.href = "https://cal.com/annie/30min";
   };
 
   return (
