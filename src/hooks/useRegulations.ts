@@ -22,7 +22,7 @@ interface Regulation {
   category: string | null;
   applicable_to: string[] | null;
   last_reviewed_date: string | null;
-  reference_number: string | null; // Required for type compatibility
+  reference_number: string | null; // Making this field optional with null
 }
 
 export function useRegulations() {
@@ -31,7 +31,14 @@ export function useRegulations() {
     queryFn: async () => {
       const { data, error } = await supabase.from('regulations').select('*');
       if (error) throw new Error(error.message);
-      return data as Regulation[];
+      
+      // Add default reference_number field if it's missing
+      const regulationsWithDefaults = data.map((regulation: any) => ({
+        ...regulation,
+        reference_number: regulation.reference_number || null
+      }));
+      
+      return regulationsWithDefaults as Regulation[];
     }
   });
 }
@@ -43,7 +50,14 @@ export function useRegulationDetails(id: string | undefined) {
       if (!id) return null;
       const { data, error } = await supabase.from('regulations').select('*').eq('id', id).single();
       if (error) throw new Error(error.message);
-      return data as Regulation;
+      
+      // Add default reference_number field if it's missing
+      const regulationWithDefaults = {
+        ...data,
+        reference_number: data.reference_number || null
+      };
+      
+      return regulationWithDefaults as Regulation;
     },
     enabled: !!id
   });
@@ -105,8 +119,14 @@ export function useRegulationSearch(searchTerm: string, filters: SearchFilters) 
       const { data, error } = await query.order('created_at', { ascending: false });
       
       if (error) throw error;
-      // Use as assertion to handle potential missing fields
-      return data as Regulation[];
+      
+      // Add default reference_number field if it's missing
+      const regulationsWithDefaults = data.map((regulation: any) => ({
+        ...regulation,
+        reference_number: regulation.reference_number || null
+      }));
+      
+      return regulationsWithDefaults as Regulation[];
     }
   });
 }
@@ -126,8 +146,14 @@ export function useRegulationNeedsUpdate(days: number = 90) {
         .or(`last_reviewed_date.is.null`);
       
       if (error) throw error;
-      // Use as assertion to handle potential missing fields
-      return data as Regulation[];
+      
+      // Add default reference_number field if it's missing
+      const regulationsWithDefaults = data.map((regulation: any) => ({
+        ...regulation,
+        reference_number: regulation.reference_number || null
+      }));
+      
+      return regulationsWithDefaults as Regulation[];
     }
   });
 }
