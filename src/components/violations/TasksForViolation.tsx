@@ -70,7 +70,7 @@ const TasksForViolation = ({ violationId, violationTasks, isLoading }: TasksForV
                     {task.title}
                   </TableCell>
                   <TableCell>
-                    <StatusBadge status={task.status} />
+                    <StatusBadge status={task.status as 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled'} />
                   </TableCell>
                   <TableCell>
                     <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium

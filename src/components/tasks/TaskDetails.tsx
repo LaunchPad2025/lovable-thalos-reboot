@@ -52,7 +52,7 @@ const TaskDetails = ({ task, onStatusChange }: TaskDetailsProps) => {
               <span>ID: {task.id}</span>
             </div>
           </div>
-          <StatusBadge status={task.status} />
+          <StatusBadge status={task.status as 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled'} />
         </div>
       </div>
       

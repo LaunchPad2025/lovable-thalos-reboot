@@ -66,7 +66,7 @@ const TaskListRow: React.FC<TaskListRowProps> = ({
         </div>
       </td>
       <td className="px-4 py-4">
-        <StatusBadge status={task.status} />
+        <StatusBadge status={task.status as 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled'} />
       </td>
       <td className="px-4 py-4 text-gray-500">
         ...
