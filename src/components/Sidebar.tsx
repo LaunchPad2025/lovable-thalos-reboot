@@ -8,10 +8,10 @@ const Sidebar: React.FC = () => {
             <nav>
                 <ul>
                     <li>
-                        <NavLink to="/" activeClassName="active">Home</NavLink>
+                        <NavLink to="/" className={({ isActive }) => isActive ? "active" : ""}>Home</NavLink>
                     </li>
                     <li>
-                        <NavLink to="/tasks" activeClassName="active">Tasks</NavLink>
+                        <NavLink to="/tasks" className={({ isActive }) => isActive ? "active" : ""}>Tasks</NavLink>
                     </li>
                 </ul>
             </nav>

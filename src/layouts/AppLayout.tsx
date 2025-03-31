@@ -1,9 +1,13 @@
 
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 
-const AppLayout: React.FC = ({ children }) => {
+interface AppLayoutProps {
+  children: ReactNode;
+}
+
+const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
     const location = useLocation();
     
     // Don't show sidebar on the landing page or public routes

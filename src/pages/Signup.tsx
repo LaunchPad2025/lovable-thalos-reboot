@@ -1,9 +1,10 @@
+
 import React from 'react';
-import { useHistory } from 'react-router-dom';
-import { supabase } from '../supabaseClient'; // Ensure Supabase client is configured
+import { useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase';
 
 const Signup = () => {
-    const history = useHistory();
+    const navigate = useNavigate();
 
     const handleSignup = async (email: string, password: string) => {
         const { user, error } = await supabase.auth.signUp({ email, password });
@@ -11,7 +12,7 @@ const Signup = () => {
             console.error('Signup error:', error.message);
         } else {
             // Redirect to dashboard or empty state
-            history.push('/dashboard');
+            navigate('/dashboard');
         }
     };
 

@@ -44,7 +44,7 @@ const ViolationUploadSection = ({
       ) : (
         <ViolationAnalysisProvider>
           <ViolationUpload 
-            onUploadComplete={onUploadComplete} 
+            onUploadComplete={onUploadComplete as any}
             userIndustry={userIndustry}
             hideModelSelection={true}
             modelInitError={modelInitError}

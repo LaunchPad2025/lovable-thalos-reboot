@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
-import { supabase } from '@/integrations/supabase/client';
+import { supabase } from '@/lib/supabase';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -31,13 +32,24 @@ type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [subject, setSubject] = useState("general");
+  
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      subject: "general"
+    }
   });
+
+  const handleSelectChange = (value: string) => {
+    setSubject(value);
+  };
 
   const onSubmit = async (data: FormValues) => {
     setIsSubmitting(true);
@@ -143,7 +155,7 @@ const ContactForm = () => {
           
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
-            <Select value={formData.subject} onValueChange={handleSelectChange}>
+            <Select value={subject} onValueChange={handleSelectChange}>
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
