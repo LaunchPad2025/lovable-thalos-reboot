@@ -1,4 +1,3 @@
-
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -94,7 +93,7 @@ const Integration = () => {
                   <h3 className="text-xl font-semibold mb-3">Integration Token</h3>
                   <p className="text-gray-300">
                     For secured endpoints, Lovable must provide a valid integration token in the format 
-                    <Code className="mx-2">lovable_integration_org_{orgId}</Code>. 
+                    <Code className="mx-2">lovable_integration_org_{'{organizationId}'}</Code>. 
                     This token verifies that requests are coming from authorized Lovable services.
                   </p>
                 </div>
