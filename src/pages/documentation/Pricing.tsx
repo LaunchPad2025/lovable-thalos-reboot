@@ -34,7 +34,7 @@ const Pricing = () => {
   };
 
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/annieeser/30min";
+    window.location.href = "https://cal.com/sales/30min";
   };
 
   return (

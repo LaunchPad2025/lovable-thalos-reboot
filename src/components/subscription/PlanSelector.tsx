@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -54,12 +55,14 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
 
     // If Enterprise plan is selected, redirect to contact sales
     if (selectedPlan === 'enterprise') {
-      window.location.href = "https://cal.com/annieeser/30min";
+      window.location.href = "https://cal.com/sales/30min";
       return;
     }
     
     try {
-      await handleSubscribe(selectedPlan, billingCycle, plans);
+      // Redirect to Replit for subscription purchase
+      const replicUrl = `https://your-replit-app.replit.app/subscribe?plan=${selectedPlan}&cycle=${billingCycle}`;
+      window.location.href = replicUrl;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');
@@ -116,9 +119,9 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
           <div className="text-center">
             <Button 
               className="bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-500/10"
-              onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
+              onClick={() => window.location.href = "https://cal.com/sales/30min"}
             >
-              Contact Annie for Enterprise Pricing
+              Contact Sales for Enterprise Pricing
             </Button>
           </div>
         </div>
@@ -134,7 +137,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
           <Button 
             className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
             onClick={handleSubscription}
-            disabled={isLoading || selectedPlan === 'enterprise'}
+            disabled={isLoading}
           >
             {isLoading ? (
               <>
@@ -146,7 +149,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
             )}
           </Button>
           <p className="mt-4 text-sm text-muted-foreground">
-            Secure payment processing by Stripe. Cancel anytime.
+            Secure payment processing. Cancel anytime.
           </p>
         </div>
       </div>

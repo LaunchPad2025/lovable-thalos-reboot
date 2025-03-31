@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 
 const Subscription = () => {
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/annieeser/30min";
+    window.location.href = "https://cal.com/sales/30min";
   };
 
   return (
@@ -78,7 +78,7 @@ const Subscription = () => {
             className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
             onClick={handleContactSales}
           >
-            Schedule a Call with Annie
+            Schedule a Call with Sales
           </Button>
         </div>
         
@@ -130,7 +130,7 @@ const Subscription = () => {
               
               <div className="mt-6">
                 <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10" onClick={handleContactSales}>
-                  Contact Annie for Custom Quote
+                  Contact Sales for Custom Quote
                 </Button>
               </div>
             </div>
