@@ -28,8 +28,8 @@ export const plans: PlanData[] = [
     name: 'Basic',
     description: 'For small teams getting started with safety management',
     pricing: {
-      monthly: 99,
-      annual: 1009.80,
+      monthly: 199,
+      annual: 2149.20, // 10% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4YqoGCrRkrgEFrxnYFNfd8',
@@ -50,8 +50,8 @@ export const plans: PlanData[] = [
     name: 'Professional',
     description: 'For growing organizations with advanced needs',
     pricing: {
-      monthly: 149,
-      annual: 1519.80,
+      monthly: 350,
+      annual: 3780.00, // 10% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
@@ -69,16 +69,38 @@ export const plans: PlanData[] = [
     popular: true,
   },
   {
-    id: 'enterprise',
-    name: 'Enterprise',
-    description: 'For large organizations requiring full compliance',
+    id: 'premium',
+    name: 'Premium',
+    description: 'For medium-sized organizations requiring full compliance',
     pricing: {
-      monthly: 350,
-      annual: 3570.00,
+      monthly: 750,
+      annual: 8100.00, // 10% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4YwjGCrRkrgEFrOCo5qMhv',
       annual: 'price_1R4Yw3GCrRkrgEFrredMrTtQ',
+    },
+    features: [
+      { text: 'Up to 200 users', included: true },
+      { text: 'Premium incident reporting', included: true },
+      { text: 'Custom compliance & auditing', included: true },
+      { text: 'Dedicated support team', included: true },
+      { text: 'Advanced analytics & reporting', included: true },
+      { text: 'Custom workflows & integrations', included: true },
+      { text: 'AI safety assistant', included: true },
+    ],
+  },
+  {
+    id: 'enterprise',
+    name: 'Enterprise',
+    description: 'Custom solutions for large organizations',
+    pricing: {
+      monthly: 0, // Contact sales
+      annual: 0, // Contact sales
+    },
+    stripe_price_id: {
+      monthly: '',
+      annual: '',
     },
     features: [
       { text: 'Unlimited users', included: true },
@@ -88,6 +110,8 @@ export const plans: PlanData[] = [
       { text: 'Advanced analytics & reporting', included: true },
       { text: 'Custom workflows & integrations', included: true },
       { text: 'AI safety assistant', included: true },
+      { text: 'On-premises deployment option', included: true },
+      { text: 'Custom integrations', included: true },
     ],
   },
 ];

@@ -38,6 +38,12 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
       navigate('/auth');
       return;
     }
+
+    // If Enterprise plan is selected, redirect to contact sales
+    if (selectedPlan === 'enterprise') {
+      window.location.href = "https://cal.com/annieeser/30min";
+      return;
+    }
     
     try {
       await handleSubscribe(selectedPlan, billingCycle, plans);
@@ -49,9 +55,9 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
   
   return (
     <div className="py-8">
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          {plans.map((plan) => (
+          {plans.filter(plan => plan.id !== 'enterprise').map((plan) => (
             <PlanCard 
               key={plan.id}
               plan={plan}
@@ -60,6 +66,18 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
               onSelectPlan={setSelectedPlan}
             />
           ))}
+        </div>
+
+        {/* Enterprise plan special card */}
+        <div className="mb-8 p-6 border border-blue-500/30 bg-blue-500/5 rounded-lg text-center">
+          <h3 className="text-xl font-bold mb-2">Enterprise Plan</h3>
+          <p className="text-gray-400 mb-4">Custom solutions for large organizations with complex compliance needs</p>
+          <Button 
+            className="bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-500/10"
+            onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
+          >
+            Contact Annie for Enterprise Pricing
+          </Button>
         </div>
         
         {error && (
@@ -73,7 +91,7 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
           <Button 
             className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
             onClick={handleSubscription}
-            disabled={isLoading}
+            disabled={isLoading || selectedPlan === 'enterprise'}
           >
             {isLoading ? (
               <>
@@ -81,7 +99,7 @@ const PlanSelector = ({ billingCycle }: PlanSelectorProps) => {
                 Processing...
               </>
             ) : (
-              'Subscribe Now'
+              selectedPlan === 'enterprise' ? 'Contact Sales' : 'Subscribe Now'
             )}
           </Button>
           <p className="mt-4 text-sm text-muted-foreground">

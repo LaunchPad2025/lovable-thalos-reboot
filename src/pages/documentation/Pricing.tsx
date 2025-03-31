@@ -5,7 +5,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import { Shield, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { plans } from '@/data/subscriptionPlans';
+import { plans, formatPrice } from '@/data/subscriptionPlans';
 
 const Pricing = () => {
   const handleContactSales = () => {
@@ -21,7 +21,7 @@ const Pricing = () => {
           className="mb-12 text-center"
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
           {/* Basic Plan */}
           <Card className="border-border">
             <CardHeader>
@@ -35,7 +35,7 @@ const Pricing = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">$99</span>
+                <span className="text-4xl font-bold">{formatPrice(199)}</span>
                 <span className="text-muted-foreground ml-2">/ month</span>
               </div>
               
@@ -68,7 +68,7 @@ const Pricing = () => {
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">$149</span>
+                <span className="text-4xl font-bold">{formatPrice(350)}</span>
                 <span className="text-muted-foreground ml-2">/ month</span>
               </div>
               
@@ -86,6 +86,38 @@ const Pricing = () => {
             </CardFooter>
           </Card>
           
+          {/* Premium Plan */}
+          <Card className="border-border">
+            <CardHeader>
+              <div className="mb-4 p-2 w-fit rounded-full bg-blue-100 dark:bg-blue-900/30">
+                <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+              </div>
+              <CardTitle className="text-2xl">Premium</CardTitle>
+              <CardDescription>
+                For medium-sized organizations requiring full compliance
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="mb-4">
+                <span className="text-4xl font-bold">{formatPrice(750)}</span>
+                <span className="text-muted-foreground ml-2">/ month</span>
+              </div>
+              
+              <ul className="space-y-3">
+                <PricingFeature>Up to 200 users</PricingFeature>
+                <PricingFeature>Premium incident reporting</PricingFeature>
+                <PricingFeature>Custom compliance & auditing</PricingFeature>
+                <PricingFeature>Dedicated support team</PricingFeature>
+                <PricingFeature>Advanced analytics & reporting</PricingFeature>
+                <PricingFeature>Custom workflows & integrations</PricingFeature>
+                <PricingFeature>AI safety assistant</PricingFeature>
+              </ul>
+            </CardContent>
+            <CardFooter>
+              <Button onClick={handleContactSales} className="w-full">Contact Sales</Button>
+            </CardFooter>
+          </Card>
+          
           {/* Enterprise Plan */}
           <Card className="border-border">
             <CardHeader>
@@ -94,13 +126,13 @@ const Pricing = () => {
               </div>
               <CardTitle className="text-2xl">Enterprise</CardTitle>
               <CardDescription>
-                For organizations with complex compliance requirements
+                Custom solutions for large organizations
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="mb-4">
-                <span className="text-4xl font-bold">$350</span>
-                <span className="text-muted-foreground ml-2">/ month</span>
+                <span className="text-2xl font-bold">Custom Pricing</span>
+                <p className="text-muted-foreground text-sm mt-1">Tailored to your needs</p>
               </div>
               
               <ul className="space-y-3">
@@ -111,10 +143,11 @@ const Pricing = () => {
                 <PricingFeature>Advanced analytics & reporting</PricingFeature>
                 <PricingFeature>Custom workflows & integrations</PricingFeature>
                 <PricingFeature>AI safety assistant</PricingFeature>
+                <PricingFeature>On-premises deployment option</PricingFeature>
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} variant="outline" className="w-full">Contact Sales</Button>
+              <Button onClick={handleContactSales} variant="outline" className="w-full">Talk to Sales</Button>
             </CardFooter>
           </Card>
         </div>
@@ -152,7 +185,7 @@ const Pricing = () => {
             className="bg-primary hover:bg-primary/90"
             onClick={handleContactSales}
           >
-            Schedule a Consultation
+            Schedule a Consultation with Annie
           </Button>
         </div>
       </div>

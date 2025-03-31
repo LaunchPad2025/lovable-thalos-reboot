@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 const CTASection = () => {
   const navigate = useNavigate();
   
+  const handleContactSales = () => {
+    window.location.href = "https://cal.com/annieeser/30min";
+  };
+  
   return (
     <div className="py-24">
       <div className="container mx-auto px-4">
@@ -16,11 +20,11 @@ const CTASection = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
-              onClick={() => navigate('/auth?signup=true')} 
+              onClick={handleContactSales} 
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-md text-lg"
             >
-              Start Free Trial
+              Contact Sales
             </Button>
             <Button 
               onClick={() => navigate('/demo')} 

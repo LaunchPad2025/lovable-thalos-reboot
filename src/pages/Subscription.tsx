@@ -78,7 +78,7 @@ const Subscription = () => {
             className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
             onClick={handleContactSales}
           >
-            Schedule a Call
+            Schedule a Call with Annie
           </Button>
         </div>
         
@@ -130,7 +130,7 @@ const Subscription = () => {
               
               <div className="mt-6">
                 <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10" onClick={handleContactSales}>
-                  Contact for Custom Quote
+                  Contact Annie for Custom Quote
                 </Button>
               </div>
             </div>
