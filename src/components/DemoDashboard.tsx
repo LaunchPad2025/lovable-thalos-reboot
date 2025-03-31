@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { TabsContent, Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { AlertTriangle, CheckSquare, FileText, ClipboardList, ArrowRight, Shield, Bell } from 'lucide-react';
-import { mockTasks } from '@/components/admin/mockData';
+import { mockTasks } from '@/hooks/tasks/mockTasks';
 import { mockDocuments } from '@/components/documents/mockData';
 
 // Mock violation data
