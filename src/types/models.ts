@@ -1,3 +1,4 @@
+
 export interface User {
   id: string;
   email: string;
@@ -31,4 +32,36 @@ export interface Subscription {
   created_at: string;
   analyses_remaining?: number;
   analyses_total?: number;
+}
+
+// Add Task interface to fix build errors
+export interface Task {
+  id: string;
+  title: string;
+  description?: string;
+  status: string;
+  priority: string;
+  due_date?: string;
+  created_at: string;
+  updated_at: string;
+  assignee_id?: string;
+  created_by: string;
+  organization_id: string;
+  worksite_id?: string;
+}
+
+// Add Violation interface to fix build errors
+export interface Violation {
+  id: string;
+  violation: string;
+  description?: string;
+  severity: string;
+  status: string;
+  detected_at: string;
+  created_at: string;
+  location?: string;
+  confidence?: number;
+  regulation?: string;
+  organization_id: string;
+  worksite_id?: string;
 }
