@@ -34,7 +34,7 @@ export interface Subscription {
   analyses_total?: number;
 }
 
-// Add Task interface to fix build errors
+// Update Task interface with required properties
 export interface Task {
   id: string;
   title: string;
@@ -48,9 +48,10 @@ export interface Task {
   created_by: string;
   organization_id: string;
   worksite_id?: string;
+  violation_id?: string; // Add violation_id property
 }
 
-// Add Violation interface to fix build errors
+// Update Violation interface to ensure it has all required properties
 export interface Violation {
   id: string;
   violation: string;

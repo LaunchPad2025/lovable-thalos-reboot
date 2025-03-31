@@ -24,8 +24,8 @@ const TaskListItem = ({ task, isSelected, onSelect }: TaskListItemProps) => {
           <h3 className="text-sm font-medium text-gray-900">{task.title}</h3>
           <p className="text-xs text-gray-500 mt-1 line-clamp-2">{task.description}</p>
           <div className="mt-2 flex items-center">
-            <span className="text-xs text-gray-500 mr-2">Due: {task.dueDate}</span>
-            <span className="text-xs text-gray-500">Assignee: {task.assignee}</span>
+            <span className="text-xs text-gray-500 mr-2">Due: {task.due_date ? new Date(task.due_date).toLocaleDateString() : 'No due date'}</span>
+            <span className="text-xs text-gray-500">Assignee: {task.assignee_id || 'Unassigned'}</span>
           </div>
         </div>
         <div className="flex flex-col items-end space-y-2">

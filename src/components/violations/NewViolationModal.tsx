@@ -36,6 +36,7 @@ const NewViolationModal: React.FC<NewViolationModalProps> = ({ isOpen, onClose, 
         regulation,
         detected_at: new Date().toISOString(),
         organization_id: '00000000-0000-0000-0000-000000000000',
+        status: 'open' // Add the missing status property
       });
       
       // Reset form

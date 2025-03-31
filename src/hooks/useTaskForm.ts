@@ -84,7 +84,7 @@ export function useTaskForm({ violationId, onSubmit }: UseTaskFormProps) {
       assignee_id: data.assignee_id,
       priority: data.priority,
       status: data.status,
-      violation_id: data.violation_id,
+      violation_id: data.violation_id, // This property is now valid in the Task interface
       // Required fields for DB
       created_by: user.id,
       organization_id: '00000000-0000-0000-0000-000000000000', // Placeholder, should come from user's context
