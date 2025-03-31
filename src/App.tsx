@@ -31,6 +31,8 @@ import Training from "./pages/Training";
 import Audits from "./pages/Audits";
 import Admin from "./pages/Admin";
 import Index from "./pages/Index";
+import Industries from "./pages/Industries";
+import IndustryLayout from "./components/industries/IndustryLayout";
 
 // Documentation Pages
 import { 
@@ -100,6 +102,10 @@ function App() {
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/demo" element={<DemoDashboard />} />
                   
+                  {/* Industry pages */}
+                  <Route path="/industries" element={<Industries />} />
+                  <Route path="/industries/:industry" element={<IndustryLayout />} />
+                  
                   {/* Documentation routes */}
                   <Route path="/documentation/features" element={<Features />} />
                   <Route path="/documentation/pricing" element={<Pricing />} />
@@ -107,7 +113,6 @@ function App() {
                   <Route path="/documentation/updates" element={<Updates />} />
                   <Route path="/documentation/help-center" element={<HelpCenter />} />
                   <Route path="/documentation/guides" element={<Guides />} />
-                  <Route path="/documentation/api-docs" element={<ApiDocs />} />
                   <Route path="/documentation/about-us" element={<AboutUs />} />
                   <Route path="/documentation/careers" element={<Careers />} />
                   <Route path="/documentation/contact" element={<Contact />} />

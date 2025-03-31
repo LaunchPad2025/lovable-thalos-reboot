@@ -9,7 +9,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { LogIn, HardHat, Menu, X, ChevronRight } from "lucide-react";
+import { LogIn, HardHat, Menu, X, ChevronRight, Construction, Pickaxe, Oil, Factory, BatteryCharging } from "lucide-react";
 import IndustryItem from './IndustriesMenu';
 
 const LandingNavbar = () => {
@@ -51,19 +51,24 @@ const LandingNavbar = () => {
                         description="Safety compliance and risk management for construction sites."
                       />
                       <IndustryItem
+                        title="Mining"
+                        href="/industries/mining"
+                        description="Comprehensive safety solutions for underground and surface mining operations."
+                      />
+                      <IndustryItem
+                        title="Oil & Gas"
+                        href="/industries/oil-gas"
+                        description="Safety compliance for drilling, refining, and distribution operations."
+                      />
+                      <IndustryItem
                         title="Manufacturing"
                         href="/industries/manufacturing"
                         description="Automated safety oversight for manufacturing facilities."
                       />
                       <IndustryItem
-                        title="Healthcare"
-                        href="/industries/healthcare"
-                        description="Compliance management for healthcare environments."
-                      />
-                      <IndustryItem
-                        title="Logistics"
-                        href="/industries/logistics"
-                        description="Safety protocol management for logistics operations."
+                        title="Energy & Utilities"
+                        href="/industries/energy-utilities"
+                        description="Specialized safety solutions for power generation and distribution."
                       />
                     </ul>
                   </NavigationMenuContent>
@@ -138,6 +143,21 @@ const LandingNavbar = () => {
             aria-label="Mobile navigation"
           >
             <Link to="/industries" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Industries</Link>
+            <Link to="/industries/construction" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
+              <Construction className="h-4 w-4 inline mr-2" /> Construction
+            </Link>
+            <Link to="/industries/mining" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
+              <Pickaxe className="h-4 w-4 inline mr-2" /> Mining
+            </Link>
+            <Link to="/industries/oil-gas" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
+              <Oil className="h-4 w-4 inline mr-2" /> Oil & Gas
+            </Link>
+            <Link to="/industries/manufacturing" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
+              <Factory className="h-4 w-4 inline mr-2" /> Manufacturing
+            </Link>
+            <Link to="/industries/energy-utilities" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
+              <BatteryCharging className="h-4 w-4 inline mr-2" /> Energy & Utilities
+            </Link>
             <Link to="/documentation/features" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Features</Link>
             <Link to="/documentation/pricing" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Pricing</Link>
             <Link to="/documentation/contact" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Contact</Link>
