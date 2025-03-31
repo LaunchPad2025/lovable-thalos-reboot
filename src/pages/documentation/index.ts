@@ -1,13 +1,30 @@
 
-export { default as Features } from './Features';
-export { default as Pricing } from './Pricing';
-export { default as Integrations } from './Integrations';
-export { default as Updates } from './Updates';
-// Blog removed
-export { default as HelpCenter } from './HelpCenter';
-export { default as Guides } from './Guides';
-export { default as ApiDocs } from './ApiDocs';
-export { default as AboutUs } from './AboutUs';
-export { default as Careers } from './Careers';
-export { default as Contact } from './Contact';
-export { default as Legal } from './Legal';
+import AboutUs from './AboutUs';
+import ApiDocs from './ApiDocs';
+import Blog from './Blog';
+import Careers from './Careers';
+import Contact from './Contact';
+import Features from './Features';
+import Guides from './Guides';
+import HelpCenter from './HelpCenter';
+import Integration from './Integration';
+import Integrations from './Integrations';
+import Legal from './Legal';
+import Pricing from './Pricing';
+import Updates from './Updates';
+
+export {
+  AboutUs,
+  ApiDocs,
+  Blog,
+  Careers,
+  Contact,
+  Features,
+  Guides,
+  HelpCenter,
+  Integration,
+  Integrations,
+  Legal,
+  Pricing,
+  Updates,
+};
