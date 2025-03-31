@@ -27,6 +27,13 @@ const CTASection = () => {
               Contact Sales
             </Button>
             <Button 
+              onClick={() => window.location.href = "https://your-replit-app.replit.app/signup"}
+              size="lg"
+              className="bg-green-600 hover:bg-green-700 text-white px-8 py-6 rounded-md text-lg"
+            >
+              Sign Up Now
+            </Button>
+            <Button 
               onClick={() => navigate('/demo')} 
               size="lg"
               variant="outline"

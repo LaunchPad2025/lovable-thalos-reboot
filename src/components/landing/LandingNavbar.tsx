@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -98,16 +99,16 @@ const LandingNavbar = () => {
           <div className="flex items-center gap-2">
             <Button 
               variant="ghost" 
-              onClick={() => navigate('/auth')}
               className="text-gray-300 hover:text-white hidden md:flex"
               aria-label="Sign in to your account"
+              onClick={() => window.location.href = "https://your-replit-app.replit.app/login"}
             >
               Sign in
             </Button>
             <Button 
-              onClick={() => navigate('/auth?signup=true')} 
               className="bg-blue-600 hover:bg-blue-700 hidden md:flex items-center"
               aria-label="Get started with Thalos"
+              onClick={() => window.location.href = "https://your-replit-app.replit.app/signup"}
             >
               Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Button>
@@ -143,14 +144,14 @@ const LandingNavbar = () => {
             <div className="flex flex-col space-y-2 pt-2">
               <Button 
                 variant="outline" 
-                onClick={() => navigate('/auth')}
                 className="justify-center w-full"
+                onClick={() => window.location.href = "https://your-replit-app.replit.app/login"}
               >
                 <LogIn className="mr-2 h-4 w-4" aria-hidden="true" /> Sign in
               </Button>
               <Button 
-                onClick={() => navigate('/auth?signup=true')} 
                 className="bg-blue-600 hover:bg-blue-700 justify-center w-full"
+                onClick={() => window.location.href = "https://your-replit-app.replit.app/signup"}
               >
                 Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Button>
