@@ -31,7 +31,7 @@ const HeroSection = () => {
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-16">
           <Button 
-            onClick={() => navigate('/dashboard')} 
+            onClick={() => navigate('/demo')} 
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-md flex items-center justify-center text-lg shadow-lg shadow-blue-900/30 group transition-all duration-300"
           >
             Try Demo <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />

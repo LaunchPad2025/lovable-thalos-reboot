@@ -14,13 +14,23 @@ const CTASection = () => {
           <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
             Join hundreds of companies already using Thalos to enhance safety compliance and reduce incidents.
           </p>
-          <Button 
-            onClick={() => navigate('/auth?signup=true')} 
-            size="lg"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-md text-lg"
-          >
-            Start Free Trial
-          </Button>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Button 
+              onClick={() => navigate('/auth?signup=true')} 
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 rounded-md text-lg"
+            >
+              Start Free Trial
+            </Button>
+            <Button 
+              onClick={() => navigate('/demo')} 
+              size="lg"
+              variant="outline"
+              className="border-blue-700/50 text-white hover:bg-blue-900/30 px-8 py-6 rounded-md text-lg"
+            >
+              Try Interactive Demo
+            </Button>
+          </div>
         </div>
       </div>
     </div>
