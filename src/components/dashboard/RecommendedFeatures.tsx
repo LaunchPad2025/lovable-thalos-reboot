@@ -2,15 +2,12 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
 import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const RecommendedFeatures = () => {
-  const navigate = useNavigate();
-  
   const handleContactSales = () => {
-    navigate('/subscription');
+    window.location.href = "https://cal.com/annieeser/30min";
   };
   
   return (

@@ -7,7 +7,7 @@ const FreeTrial = () => {
   const navigate = useNavigate();
   
   const handleContactSales = () => {
-    navigate('/subscription');
+    window.location.href = "https://cal.com/annieeser/30min";
   };
   
   return (

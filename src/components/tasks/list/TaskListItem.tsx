@@ -29,7 +29,7 @@ const TaskListItem = ({ task, isSelected, onSelect }: TaskListItemProps) => {
           </div>
         </div>
         <div className="flex flex-col items-end space-y-2">
-          <StatusBadge status={task.status} />
+          <StatusBadge status={task.status as 'open' | 'in-progress' | 'resolved' | 'pending' | 'completed' | 'overdue' | 'cancelled'} />
           <span
             className={`text-xs font-medium px-2 py-0.5 rounded-full
               ${task.priority === 'low' ? 'bg-green-100 text-green-800' : 
