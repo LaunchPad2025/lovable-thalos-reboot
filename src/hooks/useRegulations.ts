@@ -51,10 +51,13 @@ export function useRegulationDetails(id: string | undefined) {
       const { data, error } = await supabase.from('regulations').select('*').eq('id', id).single();
       if (error) throw new Error(error.message);
       
+      // Handle data as any and safely extract reference_number
+      const regulationData = data as any;
+      
       // Add default reference_number field if it's missing
       const regulationWithDefaults = {
-        ...data,
-        reference_number: data.reference_number || null
+        ...regulationData,
+        reference_number: regulationData.reference_number || null
       };
       
       return regulationWithDefaults as Regulation;
