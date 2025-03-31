@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { PlanData, formatPrice } from '@/data/subscriptionPlans';
 import PlanFeatureList from './PlanFeatureList';
+import { CheckCircle } from 'lucide-react';
 
 interface PlanCardProps {
   plan: PlanData;
@@ -38,11 +39,13 @@ const PlanCard = ({
         <h3 className="text-xl font-bold text-foreground mb-1">{plan.name}</h3>
         <div className="flex items-baseline mb-2">
           <span className="text-3xl font-extrabold text-foreground">
-            {formatPrice(plan.pricing[billingCycle])}
+            {plan.id === 'enterprise' ? 'Custom' : formatPrice(plan.pricing[billingCycle])}
           </span>
-          <span className="text-muted-foreground text-sm font-medium ml-1">
-            {billingCycle === 'monthly' ? '/month' : '/year'}
-          </span>
+          {plan.id !== 'enterprise' && (
+            <span className="text-muted-foreground text-sm font-medium ml-1">
+              /{billingCycle === 'monthly' ? 'month' : 'year'}
+            </span>
+          )}
         </div>
         <p className="text-sm text-muted-foreground mb-4">{plan.description}</p>
         
@@ -58,7 +61,17 @@ const PlanCard = ({
           {isSelected ? 'Selected' : 'Select Plan'}
         </Button>
         
-        <PlanFeatureList features={plan.features} />
+        <div className="mt-6">
+          <div className="text-sm font-medium mb-2">Plan includes:</div>
+          <ul className="space-y-3">
+            {plan.features.filter(f => f.included).map((feature, index) => (
+              <li key={index} className="flex items-start">
+                <CheckCircle className="h-5 w-5 text-green-500 mr-2 shrink-0" />
+                <span className="text-foreground">{feature.text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );

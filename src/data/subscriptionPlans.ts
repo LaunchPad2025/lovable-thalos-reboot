@@ -26,68 +26,72 @@ export const plans: PlanData[] = [
   {
     id: 'basic',
     name: 'Basic',
-    description: 'For small teams getting started with safety management',
+    description: 'For teams getting started with safety management',
     pricing: {
       monthly: 199,
-      annual: 2149.20, // 10% discount on annual
+      annual: 2029.80, // 15% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4YqoGCrRkrgEFrxnYFNfd8',
       annual: 'price_1R4YsZGCrRkrgEFruQgqFdUi',
     },
     features: [
-      { text: 'Up to 10 users', included: true },
-      { text: 'Basic incident reporting', included: true },
-      { text: 'Standard compliance checklists', included: true },
-      { text: 'Email support', included: true },
-      { text: 'Advanced analytics', included: false },
-      { text: 'Custom workflows', included: false },
-      { text: 'AI safety assistant', included: false },
+      { text: '50 safety analyses per month', included: true },
+      { text: 'Full access to Paulie AI assistant', included: true },
+      { text: 'Comprehensive violation detection', included: true },
+      { text: 'Task tracking and management', included: true },
+      { text: 'Dashboard with analytics', included: true },
+      { text: 'Remediation plan generation', included: true },
+      { text: 'Access to all regulation information', included: true },
+      { text: 'Multi-modal analysis (image, text, audio)', included: false },
+      { text: 'Enhanced detection with AI insights', included: false },
+      { text: 'Advanced reporting capabilities', included: false },
     ],
   },
   {
     id: 'pro',
     name: 'Professional',
-    description: 'For growing organizations with advanced needs',
+    description: 'For growing businesses with advanced safety needs',
     pricing: {
       monthly: 350,
-      annual: 3780.00, // 10% discount on annual
+      annual: 3570.00, // 15% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4Yv1GCrRkrgEFr3bBkqIy1',
       annual: 'price_1R4Yv1GCrRkrgEFrTMkY8gMF',
     },
     features: [
-      { text: 'Up to 50 users', included: true },
-      { text: 'Advanced incident reporting', included: true },
-      { text: 'Custom compliance checklists', included: true },
-      { text: 'Priority email & phone support', included: true },
-      { text: 'Advanced analytics', included: true },
-      { text: 'Custom workflows', included: true },
-      { text: 'AI safety assistant', included: false },
+      { text: '100 safety analyses per month', included: true },
+      { text: 'All Basic plan features', included: true },
+      { text: 'Multi-modal analysis (image, text, audio)', included: true },
+      { text: 'Enhanced detection with AI insights', included: true },
+      { text: 'Advanced reporting capabilities', included: true },
+      { text: 'Risk level assessment', included: true },
+      { text: 'Priority support', included: false },
+      { text: 'Custom industry profiles', included: false },
+      { text: 'Advanced analytics dashboard', included: false },
     ],
     popular: true,
   },
   {
     id: 'premium',
     name: 'Premium',
-    description: 'For medium-sized organizations requiring full compliance',
+    description: 'For organizations requiring comprehensive safety solutions',
     pricing: {
       monthly: 750,
-      annual: 8100.00, // 10% discount on annual
+      annual: 7650.00, // 15% discount on annual
     },
     stripe_price_id: {
       monthly: 'price_1R4YwjGCrRkrgEFrOCo5qMhv',
       annual: 'price_1R4Yw3GCrRkrgEFrredMrTtQ',
     },
     features: [
-      { text: 'Up to 200 users', included: true },
-      { text: 'Premium incident reporting', included: true },
-      { text: 'Custom compliance & auditing', included: true },
-      { text: 'Dedicated support team', included: true },
-      { text: 'Advanced analytics & reporting', included: true },
-      { text: 'Custom workflows & integrations', included: true },
-      { text: 'AI safety assistant', included: true },
+      { text: '250 safety analyses per month', included: true },
+      { text: 'All Pro plan features', included: true },
+      { text: 'Priority support', included: true },
+      { text: 'Custom industry profiles', included: true },
+      { text: 'Advanced analytics dashboard', included: true },
+      { text: 'Comprehensive audit trails', included: true },
     ],
   },
   {
@@ -95,23 +99,20 @@ export const plans: PlanData[] = [
     name: 'Enterprise',
     description: 'Custom solutions for large organizations',
     pricing: {
-      monthly: 0, // Contact sales
-      annual: 0, // Contact sales
+      monthly: 0, // Custom pricing
+      annual: 0, // Custom pricing
     },
     stripe_price_id: {
       monthly: '',
       annual: '',
     },
     features: [
-      { text: 'Unlimited users', included: true },
-      { text: 'Enterprise incident reporting', included: true },
-      { text: 'Custom compliance & auditing', included: true },
-      { text: 'Dedicated support team', included: true },
-      { text: 'Advanced analytics & reporting', included: true },
-      { text: 'Custom workflows & integrations', included: true },
-      { text: 'AI safety assistant', included: true },
-      { text: 'On-premises deployment option', included: true },
-      { text: 'Custom integrations', included: true },
+      { text: 'Custom integration', included: true },
+      { text: 'Multiple user accounts', included: true },
+      { text: 'Custom reporting', included: true },
+      { text: 'All Premium plan features', included: true },
+      { text: 'Custom deployment options', included: true },
+      { text: 'Dedicated account manager', included: true },
     ],
   },
 ];
