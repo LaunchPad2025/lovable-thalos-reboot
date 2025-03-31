@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { HardHat, Shield, AlertCircle, FileText, Calendar, CheckSquare, VideoIcon, Users, ClipboardCheck, Construction, Industry as IndustryIcon, Briefcase, Factory } from 'lucide-react';
+import { HardHat, Shield, AlertCircle, FileText, Calendar, CheckSquare, VideoIcon, Users, ClipboardCheck, Construction, Briefcase, Factory } from 'lucide-react';
 import { Oil } from '@/components/ui/icons/Oil';
 import { Pickaxe } from '@/components/ui/icons/Pickaxe';
 import { BatteryCharging } from '@/components/ui/icons/BatteryCharging';

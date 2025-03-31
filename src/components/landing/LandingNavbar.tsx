@@ -9,7 +9,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { LogIn, HardHat, Menu, X, ChevronRight, Construction, Pickaxe, Oil, Factory, BatteryCharging } from "lucide-react";
+import { LogIn, HardHat, Menu, X, ChevronRight, Construction, Factory } from "lucide-react";
+import { Oil } from '@/components/ui/icons/Oil';
+import { Pickaxe } from '@/components/ui/icons/Pickaxe';
+import { BatteryCharging } from '@/components/ui/icons/BatteryCharging';
 import IndustryItem from './IndustriesMenu';
 
 const LandingNavbar = () => {

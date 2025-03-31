@@ -1,11 +1,10 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import LandingNavbar from '@/components/landing/LandingNavbar';
-import { Footer } from '@/components/layout/Footer';
+import Footer from '@/components/layout/Footer';
 import { industryData } from '@/components/industries/industryData';
 import { Search } from 'lucide-react';
 
