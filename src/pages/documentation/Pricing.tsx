@@ -48,7 +48,11 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} className="w-full">Contact Sales</Button>
+              <Button 
+                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=basic"} 
+                className="w-full">
+                Subscribe to Basic
+              </Button>
             </CardFooter>
           </Card>
           
@@ -82,7 +86,11 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} className="w-full bg-blue-600 hover:bg-blue-700">Contact Sales</Button>
+              <Button 
+                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=pro"} 
+                className="w-full bg-blue-600 hover:bg-blue-700">
+                Subscribe to Pro
+              </Button>
             </CardFooter>
           </Card>
           
@@ -114,7 +122,11 @@ const Pricing = () => {
               </ul>
             </CardContent>
             <CardFooter>
-              <Button onClick={handleContactSales} className="w-full">Contact Sales</Button>
+              <Button 
+                onClick={() => window.location.href = "https://your-replit-app.replit.app/subscription?plan=premium"} 
+                className="w-full">
+                Subscribe to Premium
+              </Button>
             </CardFooter>
           </Card>
           
