@@ -1,6 +1,9 @@
 
 import React from 'react';
-import { HardHat, Shield, AlertCircle, FileText, Calendar, CheckSquare, VideoIcon, Users, ClipboardCheck, Construction, Industry as IndustryIcon, Pickaxe, Briefcase, Factory, Oil, BatteryCharging } from 'lucide-react';
+import { HardHat, Shield, AlertCircle, FileText, Calendar, CheckSquare, VideoIcon, Users, ClipboardCheck, Construction, Industry as IndustryIcon, Briefcase, Factory } from 'lucide-react';
+import { Oil } from '@/components/ui/icons/Oil';
+import { Pickaxe } from '@/components/ui/icons/Pickaxe';
+import { BatteryCharging } from '@/components/ui/icons/BatteryCharging';
 import { Industry } from './types';
 
 export const industryData: Industry[] = [
@@ -9,7 +12,7 @@ export const industryData: Industry[] = [
     name: 'Construction',
     slug: 'construction',
     heroDescription: 'Thalos helps construction companies navigate complex OSHA regulations, identify safety hazards in real-time, and maintain comprehensive compliance documentation for projects of all sizes.',
-    heroImage: '/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
+    heroImage: '/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
     icon: <Construction className="h-6 w-6" />,
     color: 'orange',
     description: 'Comprehensive safety compliance solutions for the construction industry.',
@@ -120,7 +123,7 @@ export const industryData: Industry[] = [
     name: 'Mining',
     slug: 'mining',
     heroDescription: 'Thalos provides comprehensive safety solutions for the mining industry, helping companies comply with MSHA regulations, monitor hazardous conditions, and protect worker health and safety in challenging underground and surface operations.',
-    heroImage: '/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
+    heroImage: '/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
     icon: <Pickaxe className="h-6 w-6" />,
     color: 'slate',
     description: 'Advanced safety compliance solutions for mining operations.',
@@ -231,7 +234,7 @@ export const industryData: Industry[] = [
     name: 'Oil & Gas',
     slug: 'oil-gas',
     heroDescription: 'Thalos helps oil and gas companies navigate complex regulatory environments, manage high-risk operations, and implement rigorous safety protocols across drilling sites, refineries, and transportation networks.',
-    heroImage: '/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
+    heroImage: '/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
     icon: <Oil className="h-6 w-6" />,
     color: 'yellow',
     description: 'Comprehensive safety compliance solutions for the oil and gas industry.',
@@ -342,7 +345,7 @@ export const industryData: Industry[] = [
     name: 'Manufacturing',
     slug: 'manufacturing',
     heroDescription: 'Thalos transforms safety management in manufacturing environments, helping facilities maintain OSHA compliance, reduce workplace injuries, and optimize safety processes across production lines, equipment operations, and material handling.',
-    heroImage: '/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
+    heroImage: '/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
     icon: <Factory className="h-6 w-6" />,
     color: 'blue',
     description: 'Comprehensive safety compliance solutions for the manufacturing industry.',
@@ -453,7 +456,7 @@ export const industryData: Industry[] = [
     name: 'Energy & Utilities',
     slug: 'energy-utilities',
     heroDescription: 'Thalos provides specialized safety compliance solutions for the energy and utilities sector, addressing the unique challenges of electrical safety, renewable energy, infrastructure maintenance, and regulatory compliance across diverse operations.',
-    heroImage: '/public/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
+    heroImage: '/lovable-uploads/f4b67c18-aa53-452b-b131-aa1a6ae0779d.png',
     icon: <BatteryCharging className="h-6 w-6" />,
     color: 'green',
     description: 'Comprehensive safety compliance solutions for the energy and utilities industry.',
