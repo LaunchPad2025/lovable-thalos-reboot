@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Loader2, AlertCircle, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -60,9 +59,8 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
     
     try {
-      // Redirect to Replit for subscription purchase
-      const replicUrl = `https://your-replit-app.replit.app/subscribe?plan=${selectedPlan}&cycle=${billingCycle}`;
-      window.location.href = replicUrl;
+      // Redirect to Replit for subscription purchase - use the correct URL format
+      window.location.href = `https://replit.com/@thalos/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -29,8 +28,12 @@ const Pricing = () => {
       return;
     }
     
-    // Navigate to subscription page with plan pre-selected
-    navigate(`/subscription?plan=${planId}`);
+    if (planId === 'enterprise') {
+      window.location.href = "https://cal.com/sales/30min";
+      return;
+    }
+    
+    window.location.href = `https://replit.com/@thalos/subscription?plan=${planId}&cycle=${billingCycle}`;
   };
 
   const handleContactSales = () => {
