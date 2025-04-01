@@ -1,285 +1,119 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { getSeverityColor } from './mockData';
 
-export const getFeatureInfo = (activeSection: string, selectedItem: any) => {
-  switch (activeSection) {
-    case 'violations':
+export const getFeatureInfo = (section: string, selectedItem: any = null) => {
+  // Default info if nothing is selected
+  let defaultInfo = {
+    title: 'Thalos Safety Platform Demo',
+    content: (
+      <div>
+        <p className="mb-4">
+          Welcome to the Thalos Safety Platform demo. This interactive demonstration showcases the key features of our safety compliance management system.
+        </p>
+        <p className="mb-4">
+          Navigate through the different sections using the sidebar to explore how Thalos can help your organization manage safety compliance effectively.
+        </p>
+        <p>
+          This is a simulated environment with mock data for demonstration purposes.
+        </p>
+      </div>
+    ),
+  };
+
+  // Return specific info based on section
+  switch (section) {
+    case 'dashboard':
       return {
-        title: "Safety Violation Details",
-        description: "Review and analyze safety violations detected in your workplace.",
-        features: [
-          "View severity level and impact assessment",
-          "Track violation status and resolution progress",
-          "Assign tasks to team members for remediation",
-          "View location information and affected areas",
-          "Access historical violation data and trends"
-        ],
-        content: selectedItem ? (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Violation: {selectedItem.description}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Severity</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className={`text-sm px-2 py-1 rounded-full ${getSeverityColor(selectedItem.severity)}`}>
-                    {selectedItem.severity}
-                  </span>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Location</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.location}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Date Reported</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.date}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className="text-sm px-2 py-1 rounded-full bg-amber-500/10 text-amber-500">
-                    Open
-                  </span>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="mt-4">
-              <Button className="mr-2">Assign Task</Button>
-              <Button variant="outline">Mark as Resolved</Button>
-            </div>
+        title: 'Safety Dashboard',
+        content: (
+          <div>
+            <p className="mb-4">
+              The Dashboard provides an overview of your organization's safety compliance status, including:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Compliance scores and trends</li>
+              <li>Priority tasks that need attention</li>
+              <li>Recent safety violations and incidents</li>
+              <li>Quick access to key features</li>
+            </ul>
+            <p>
+              Use this centralized view to monitor your organization's safety performance at a glance and quickly identify areas that need attention.
+            </p>
           </div>
-        ) : (
-          <div className="p-4 text-center">
-            <p className="text-gray-400">Select a violation from the list to view details</p>
-          </div>
-        )
+        ),
       };
+
     case 'tasks':
       return {
-        title: "Task Management",
-        description: "Assign, track, and manage safety-related tasks across your organization.",
-        features: [
-          "Create and assign tasks to team members",
-          "Track task status and completion progress",
-          "Set priority levels and due dates",
-          "Link tasks to violations and audit findings",
-          "Receive notifications for overdue tasks"
-        ],
-        content: selectedItem ? (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Task: {selectedItem.title}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
-                    selectedItem.status === 'completed' ? 'bg-green-500/10 text-green-500' :
-                    selectedItem.status === 'in-progress' ? 'bg-blue-500/10 text-blue-500' :
-                    'bg-amber-500/10 text-amber-500'
-                  }`}>
-                    {selectedItem.status === 'in-progress' ? 'In Progress' : 
-                     selectedItem.status === 'completed' ? 'Completed' : 'Pending'}
-                  </span>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Assignee</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.assignee_id || 'Unassigned'}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Due Date</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.due_date?.slice(0, 10) || 'No date set'}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Priority</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className="text-sm px-2 py-1 rounded-full bg-blue-500/10 text-blue-500">
-                    Medium
-                  </span>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="mt-4">
-              <Button className="mr-2">Update Status</Button>
-              <Button variant="outline">Re-assign Task</Button>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 text-center">
-            <p className="text-gray-400">Select a task from the list to view details</p>
-          </div>
-        )
-      };
-    case 'documents':
-      return {
-        title: "Safety Documentation",
-        description: "Manage, store, and access all your safety-related documents in one place.",
-        features: [
-          "Upload and categorize safety documents",
-          "Maintain version control of critical documentation",
-          "Schedule document reviews and updates",
-          "Search and filter documentation library",
-          "Share documents with team members"
-        ],
-        content: selectedItem ? (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Document: {selectedItem.title}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Type</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.type}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">File Format</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className="text-sm px-2 py-1 rounded-full bg-blue-500/10 text-blue-500">
-                    {selectedItem.fileType.toUpperCase()}
-                  </span>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Last Updated</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.lastModified}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Size</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.size || '1.2 MB'}</p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="mt-4">
-              <Button className="mr-2">View Document</Button>
-              <Button variant="outline">Download</Button>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 text-center">
-            <p className="text-gray-400">Select a document from the list to view details</p>
-          </div>
-        )
-      };
-    case 'audits':
-      return {
-        title: "Safety Audits & Inspections",
-        description: "Schedule, conduct, and track safety audits across your organization.",
-        features: [
-          "Create custom audit templates by industry",
-          "Schedule recurring audits for compliance",
-          "Track findings and corrective actions",
-          "Generate audit reports for stakeholders",
-          "Monitor compliance scores and trends"
-        ],
-        content: selectedItem ? (
-          <div className="space-y-4">
-            <h3 className="text-xl font-semibold">Audit: {selectedItem.title}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Status</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <span className={`text-sm px-2 py-1 rounded-full ${
-                    selectedItem.status === 'Completed' ? 'bg-green-500/10 text-green-500' :
-                    selectedItem.status === 'In Progress' ? 'bg-blue-500/10 text-blue-500' :
-                    'bg-amber-500/10 text-amber-500'
-                  }`}>
-                    {selectedItem.status}
-                  </span>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Date</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.date}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Score</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.score}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-[#1a1f29] border-gray-800">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-sm font-normal">Findings</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p>{selectedItem.findings || '3 findings'}</p>
-                </CardContent>
-              </Card>
-            </div>
-            <div className="mt-4">
-              <Button className="mr-2">View Report</Button>
-              <Button variant="outline">Create Tasks</Button>
-            </div>
-          </div>
-        ) : (
-          <div className="p-4 text-center">
-            <p className="text-gray-400">Select an audit from the list to view details</p>
-          </div>
-        )
-      };
-    default:
-      return {
-        title: "Safety Compliance Dashboard",
-        description: "Your central hub for monitoring safety performance across your organization.",
-        features: [
-          "Real-time safety compliance metrics",
-          "Critical violation alerts and notifications",
-          "Task completion and assignment tracking",
-          "Upcoming audit schedule visibility",
-          "Document and training status overview"
-        ],
+        title: 'Task Management',
         content: (
-          <div className="p-4 text-center">
-            <p className="text-gray-400">This dashboard provides an overview of your safety compliance status</p>
-            <p className="text-gray-400 mt-2">Select a specific section from the sidebar to explore its features</p>
+          <div>
+            <p className="mb-4">
+              The Tasks section helps you manage and track safety compliance tasks, including:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Creating and assigning remediation tasks</li>
+              <li>Tracking task status and due dates</li>
+              <li>Prioritizing tasks based on severity</li>
+              <li>Viewing task history and completion rates</li>
+            </ul>
+            <p>
+              Effective task management ensures that identified safety violations are addressed promptly and systematically.
+            </p>
           </div>
-        )
+        ),
       };
+
+    case 'reports':
+      return {
+        title: 'Safety Reports',
+        content: (
+          <div>
+            <p className="mb-4">
+              The Reports section provides comprehensive analytics and insights about your safety program:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Compliance score reports showing trends over time</li>
+              <li>Violation analysis by type, severity, and regulation</li>
+              <li>Task management metrics and completion rates</li>
+              <li>Media analysis performance statistics</li>
+              <li>Customizable report filters and export options</li>
+            </ul>
+            <p className="mb-4">
+              Use these reports to identify patterns, demonstrate compliance to stakeholders, and make data-driven decisions to improve your safety program.
+            </p>
+            <p>
+              Reports can be exported in various formats for sharing with management, regulators, or other stakeholders.
+            </p>
+          </div>
+        ),
+      };
+
+    case 'violations':
+      return {
+        title: 'Safety Violations',
+        content: (
+          <div>
+            <p className="mb-4">
+              The Violations section allows you to:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>View detected safety violations from AI analysis</li>
+              <li>Understand violation severity and applicable regulations</li>
+              <li>Track remediation status for each violation</li>
+              <li>Create tasks to address identified issues</li>
+              <li>View historical violation data and trends</li>
+            </ul>
+            <p>
+              Proactively identifying and addressing safety violations helps prevent incidents and maintain compliance with safety regulations.
+            </p>
+          </div>
+        ),
+      };
+
+    // Add more sections as needed
+
+    default:
+      return defaultInfo;
   }
 };

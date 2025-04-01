@@ -10,6 +10,7 @@ import DemoSidebar from './demo/DemoSidebar';
 import DashboardSection from './demo/sections/DashboardSection';
 import ViolationsSection from './demo/sections/ViolationsSection';
 import TasksSection from './demo/sections/TasksSection';
+import ReportsSection from './demo/sections/ReportsSection';
 import DocumentsSection from './demo/sections/DocumentsSection';
 import AuditsSection from './demo/sections/AuditsSection';
 import FeatureInfo from './demo/FeatureInfo';
@@ -41,7 +42,7 @@ const DemoDashboard = () => {
       <DemoHeader />
       <DemoSidebar activeSection={activeSection} onNavigate={handleNavigation} />
       
-      <main className="ml-64 p-6">
+      <main className="ml-64 p-6 pt-20">
         {showFeatureInfo && selectedItem ? (
           <ItemDetailView 
             content={featureInfo.content} 
@@ -62,6 +63,13 @@ const DemoDashboard = () => {
             
             {activeSection === 'tasks' && (
               <TasksSection 
+                onShowFeatureInfo={() => setShowFeatureInfo(true)}
+                onItemSelect={handleItemSelect}
+              />
+            )}
+            
+            {activeSection === 'reports' && (
+              <ReportsSection 
                 onShowFeatureInfo={() => setShowFeatureInfo(true)}
                 onItemSelect={handleItemSelect}
               />

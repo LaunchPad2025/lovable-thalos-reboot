@@ -1,6 +1,15 @@
 
 import React from 'react';
-import { LayoutDashboard, ClipboardList, BarChart } from 'lucide-react';
+import { 
+  LayoutDashboard, 
+  ClipboardList, 
+  BarChart, 
+  UploadCloud, 
+  FileText, 
+  Bell, 
+  Settings, 
+  HelpCircle 
+} from 'lucide-react';
 
 interface DemoSidebarProps {
   activeSection: string;
@@ -14,23 +23,73 @@ const DemoSidebar = ({ activeSection, onNavigate }: DemoSidebarProps) => {
     { id: 'reports', label: 'Reports', icon: BarChart },
   ];
 
+  const secondaryNavItems = [
+    { id: 'media-analysis', label: 'Media Analysis', icon: UploadCloud },
+    { id: 'subscription', label: 'Subscription', icon: FileText },
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'help', label: 'Help & Tour', icon: HelpCircle },
+  ];
+
   return (
     <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#0b0f14] border-r border-gray-800 z-30">
-      <div className="flex flex-col h-full p-3">
-        {navItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => onNavigate(item.id)}
-            className={`w-full flex items-center space-x-3 px-3 py-2.5 my-1 rounded-md text-sm transition-colors ${
-              activeSection === item.id 
-                ? 'bg-blue-600 text-white' 
-                : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-            }`}
-          >
-            <item.icon size={20} />
-            <span>{item.label}</span>
-          </button>
-        ))}
+      <div className="flex flex-col h-full">
+        <div className="p-4">
+          <div className="flex items-center space-x-2 mb-6">
+            <span className="text-white font-semibold text-xl">Thalos</span>
+            <span className="bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-sm">Pro</span>
+          </div>
+        </div>
+        
+        <nav className="flex-1 p-4">
+          <ul className="space-y-1">
+            {navItems.map((item) => (
+              <li key={item.id}>
+                <button
+                  onClick={() => onNavigate(item.id)}
+                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                    activeSection === item.id 
+                      ? 'bg-blue-600 text-white' 
+                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                  }`}
+                >
+                  <item.icon size={18} />
+                  <span>{item.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+          
+          <div className="mt-8">
+            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 mb-2">Account</h3>
+            <ul className="space-y-1">
+              {secondaryNavItems.map((item) => (
+                <li key={item.id}>
+                  <button
+                    onClick={() => onNavigate(item.id)}
+                    className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
+                      activeSection === item.id 
+                        ? 'bg-[#1a1f29] text-white' 
+                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+                    }`}
+                  >
+                    <item.icon size={18} />
+                    <span>{item.label}</span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </nav>
+        
+        <div className="p-4 border-t border-gray-800 flex items-center">
+          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white mr-2">
+            HS
+          </div>
+          <div className="text-sm">
+            <p className="text-white font-medium">Hal Spencer</p>
+            <p className="text-gray-400 text-xs">Safety Manager</p>
+          </div>
+        </div>
       </div>
     </aside>
   );
