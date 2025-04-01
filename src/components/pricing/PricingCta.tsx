@@ -12,7 +12,7 @@ const PricingCta = ({ onContactSales }: PricingCtaProps) => {
     <div className="text-center mb-12">
       <h2 className="text-2xl font-bold mb-4">Need a custom solution?</h2>
       <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-        Our team can create a tailored package to meet your specific safety compliance requirements.
+        Our team can create a tailored package to meet your specific safety compliance requirements for construction, oil & gas, or utilities & energy sectors.
       </p>
       <Button 
         size="lg" 
