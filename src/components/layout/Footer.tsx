@@ -37,7 +37,7 @@ const Footer = () => {
               {/* Blog link removed */}
               <li><Link to="/documentation/help-center" className="hover:text-white transition-colors">Help Center</Link></li>
               {/* Removed Guides link */}
-              <li><Link to="/documentation/api-docs" className="hover:text-white transition-colors">API Docs</Link></li>
+              {/* Removed API Docs link */}
             </ul>
           </div>
           
