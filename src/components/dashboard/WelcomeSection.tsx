@@ -17,7 +17,7 @@ const WelcomeSection = ({ activeTab, setActiveTab }: WelcomeSectionProps) => {
     <div className="bg-[#0d1117] rounded-lg border border-gray-800">
       <div className="p-6">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-white">Welcome back, Alex</h2>
+          <h2 className="text-2xl font-semibold text-white">Welcome back, Hal</h2>
           
           <div className="flex space-x-2 bg-gray-800 p-1 rounded-md">
             <Button
