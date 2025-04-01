@@ -3,7 +3,6 @@ import React from 'react';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import DemoCard from '../DemoCard';
 import DashboardHeader from './dashboard/DashboardHeader';
-import FreeTrialBanner from './dashboard/FreeTrialBanner';
 import WelcomeMessage from './dashboard/WelcomeMessage';
 import StatCards from './dashboard/StatCards';
 import PriorityTasksSection from './dashboard/PriorityTasksSection';
@@ -31,8 +30,6 @@ const DashboardSection = ({ onShowFeatureInfo }: DashboardSectionProps) => {
           </TabsTrigger>
         </TabsList>
       </Tabs>
-      
-      <FreeTrialBanner />
       
       <WelcomeMessage />
       
