@@ -1,6 +1,8 @@
 
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Send } from 'lucide-react';
 import MessageList from '@/components/chatbot/messages/MessageList';
 import MessageInput from '@/components/chatbot/input/MessageInput';
 import { useChatMessages } from './hooks/useChatMessages';
@@ -12,16 +14,51 @@ interface ChatInterfaceProps {
 
 const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
   const { messages, isLoading, handleSendMessage } = useChatMessages();
+  const inputRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    // Scroll to bottom when messages change
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    }
+  }, [messages]);
 
   return (
-    <Card className="flex flex-col h-full border-none shadow-none bg-transparent">
-      <CardContent className="flex flex-col h-full p-0">
-        <div className="flex-1 overflow-auto mb-4">
-          <MessageList messages={messages} isLoading={isLoading} />
-        </div>
-        <MessageInput onSendMessage={handleSendMessage} isLoading={isLoading} />
-      </CardContent>
-    </Card>
+    <div className="flex flex-col h-full bg-[#0f1419] rounded-lg overflow-hidden">
+      <div className="flex-1 overflow-auto" ref={containerRef}>
+        <MessageList messages={messages} isLoading={isLoading} />
+      </div>
+      
+      <div className="border-t border-gray-800 p-3">
+        <form 
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (inputRef.current?.value) {
+              handleSendMessage(inputRef.current.value);
+              inputRef.current.value = '';
+            }
+          }}
+          className="flex gap-2"
+        >
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="Ask Paulie a safety question..."
+            className="flex-1 bg-[#1a1f29] text-white border border-gray-700 rounded-md px-4 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500"
+            disabled={isLoading}
+          />
+          <Button 
+            type="submit" 
+            className="bg-blue-600 hover:bg-blue-700"
+            disabled={isLoading}
+          >
+            <Send size={18} />
+            <span className="ml-2">Send</span>
+          </Button>
+        </form>
+      </div>
+    </div>
   );
 };
 

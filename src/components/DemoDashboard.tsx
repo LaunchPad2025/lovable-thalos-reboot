@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Info } from 'lucide-react';
+import { Info, Lightbulb } from 'lucide-react';
 
 // Import our components
 import DemoHeader from './demo/DemoHeader';
@@ -15,6 +15,7 @@ import DocumentsSection from './demo/sections/DocumentsSection';
 import AuditsSection from './demo/sections/AuditsSection';
 import FeatureInfo from './demo/FeatureInfo';
 import ItemDetailView from './demo/ItemDetailView';
+import ChatInterface from './chatbot/ChatInterface';
 
 // Import utility data
 import { getFeatureInfo } from './demo/featureInfoData';
@@ -88,10 +89,36 @@ const DemoDashboard = () => {
                 onItemSelect={handleItemSelect}
               />
             )}
+            
+            {activeSection === 'copilot' && (
+              <div className="space-y-4">
+                <div className="flex justify-between items-center mb-6">
+                  <h1 className="text-2xl font-bold">Safety Copilot</h1>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Lightbulb size={16} />
+                    Suggest a Feature
+                  </Button>
+                </div>
+                
+                <Card className="border border-gray-800 bg-[#0d1117] shadow-xl">
+                  <div className="p-4 border-b border-gray-800">
+                    <h2 className="text-xl font-bold text-white flex items-center">
+                      <span className="bg-blue-600 text-white rounded-full w-7 h-7 inline-flex items-center justify-center mr-2">
+                        <span className="font-semibold">P</span>
+                      </span>
+                      Ask Paulie
+                    </h2>
+                  </div>
+                  <CardContent className="p-0 h-[600px]">
+                    <ChatInterface />
+                  </CardContent>
+                </Card>
+              </div>
+            )}
           </>
         )}
         
-        {!showFeatureInfo && (
+        {!showFeatureInfo && activeSection !== 'copilot' && (
           <FeatureInfo featureInfo={featureInfo} />
         )}
       </main>
