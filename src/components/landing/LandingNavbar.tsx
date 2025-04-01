@@ -109,14 +109,14 @@ const LandingNavbar = () => {
               variant="ghost" 
               className="text-gray-300 hover:text-white hidden md:flex"
               aria-label="Sign in to your account"
-              onClick={() => window.location.href = "https://your-replit-app.replit.app/login"}
+              onClick={() => window.location.href = "https://www.thalostech.replit.app/auth"}
             >
               Sign in
             </Button>
             <Button 
               className="bg-blue-600 hover:bg-blue-700 hidden md:flex items-center"
               aria-label="Get started with Thalos"
-              onClick={() => window.location.href = "https://your-replit-app.replit.app/signup"}
+              onClick={() => window.location.href = "https://www.thalostech.replit.app/auth"}
             >
               Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
             </Button>
@@ -168,13 +168,13 @@ const LandingNavbar = () => {
               <Button 
                 variant="outline" 
                 className="justify-center w-full"
-                onClick={() => window.location.href = "https://your-replit-app.replit.app/login"}
+                onClick={() => window.location.href = "https://www.thalostech.replit.app/auth"}
               >
                 <LogIn className="mr-2 h-4 w-4" aria-hidden="true" /> Sign in
               </Button>
               <Button 
                 className="bg-blue-600 hover:bg-blue-700 justify-center w-full"
-                onClick={() => window.location.href = "https://your-replit-app.replit.app/signup"}
+                onClick={() => window.location.href = "https://www.thalostech.replit.app/auth"}
               >
                 Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
               </Button>
