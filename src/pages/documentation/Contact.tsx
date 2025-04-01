@@ -2,10 +2,11 @@
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
+import ContactHero from '@/components/contact/ContactHero';
 import ContactForm from '@/components/contact/ContactForm';
-import FaqSection from '@/components/contact/FaqSection';
-import MapSection from '@/components/contact/MapSection';
-import NewsletterSignup from '@/components/contact/NewsletterSignup';
+import ContactCards from '@/components/contact/ContactCards';
+import CompanyInfo from '@/components/contact/CompanyInfo';
+import { Badge } from '@/components/ui/badge';
 
 const Contact = () => {
   return (
@@ -17,15 +18,30 @@ const Contact = () => {
           className="mb-12"
         />
         
-        <div className="max-w-3xl mx-auto mb-16">
-          <ContactForm />
+        <ContactHero />
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="md:col-span-2">
+            <div className="text-left mb-8">
+              <Badge className="mb-4" variant="outline">Send a Message</Badge>
+              <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
+              <p className="text-muted-foreground max-w-2xl">
+                Fill out the form below and we'll get back to you as soon as possible.
+              </p>
+            </div>
+            <ContactForm />
+          </div>
+          
+          <div>
+            <div className="text-left mb-8">
+              <Badge className="mb-4" variant="outline">Our Details</Badge>
+              <h2 className="text-3xl font-bold mb-4">Company Info</h2>
+            </div>
+            <CompanyInfo />
+          </div>
         </div>
         
-        <FaqSection />
-        
-        <MapSection />
-        
-        <NewsletterSignup />
+        <ContactCards />
       </div>
     </PageContainer>
   );

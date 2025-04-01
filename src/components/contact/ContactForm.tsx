@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,65 +14,58 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/components/ui/use-toast";
 import { supabase } from '@/lib/supabase';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-
-const formSchema = z.object({
-  firstName: z.string().nonempty("First name is required"),
-  lastName: z.string().nonempty("Last name is required"),
-  email: z.string().email("Invalid email address"),
-  phone: z.string().optional(),
-  company: z.string().optional(),
-  subject: z.string().nonempty("Subject is required"),
-  message: z.string().nonempty("Message is required"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [subject, setSubject] = useState("general");
-  
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      subject: "general"
-    }
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phone: '',
+    company: '',
+    subject: 'general',
+    message: ''
   });
 
-  const handleSelectChange = (value: string) => {
-    setSubject(value);
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
 
-  const onSubmit = async (data: FormValues) => {
+  const handleSelectChange = (value: string) => {
+    setFormData(prev => ({ ...prev, subject: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsSubmitting(true);
 
     try {
-      console.log("Form submitted with data:", data);
+      console.log("Form submitted with data:", formData);
       
       // Call the Supabase Edge Function to send the email
-      const { data: responseData, error } = await supabase.functions.invoke('send-contact-email', {
-        body: data,
+      const { data, error } = await supabase.functions.invoke('send-contact-email', {
+        body: formData,
       });
 
-      if (error) {
-        throw new Error(error.message);
-      }
-
+      if (error) throw new Error(error.message);
+      
       toast({
         title: "Message sent successfully",
         description: "Thank you for contacting us. We'll get back to you soon!",
       });
       
       // Reset form
-      reset();
+      setFormData({
+        firstName: '',
+        lastName: '',
+        email: '',
+        phone: '',
+        company: '',
+        subject: 'general',
+        message: ''
+      });
     } catch (error) {
       console.error("Error submitting form:", error);
       toast({
@@ -87,36 +80,28 @@ const ContactForm = () => {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Send us a message</CardTitle>
-        <CardDescription>
-          Fill out the form below and we'll get back to you as soon as possible.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
+      <CardContent className="pt-6">
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="firstName">First name</Label>
               <Input 
                 id="firstName" 
                 placeholder="John"
-                {...register('firstName')}
-                className="...existing styles..."
+                value={formData.firstName}
+                onChange={handleInputChange}
                 required
               />
-              {errors.firstName && <p className="text-red-500 text-sm">{errors.firstName.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="lastName">Last name</Label>
               <Input 
                 id="lastName" 
                 placeholder="Doe"
-                {...register('lastName')}
-                className="...existing styles..."
+                value={formData.lastName}
+                onChange={handleInputChange}
                 required
               />
-              {errors.lastName && <p className="text-red-500 text-sm">{errors.lastName.message}</p>}
             </div>
           </div>
           
@@ -126,19 +111,19 @@ const ContactForm = () => {
               <Input 
                 id="email" 
                 type="email" 
-                {...register('email')}
-                className="...existing styles..."
+                placeholder="john.doe@example.com"
+                value={formData.email}
+                onChange={handleInputChange}
                 required
               />
-              {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="phone">Phone (optional)</Label>
               <Input 
                 id="phone" 
                 placeholder="+1 (555) 123-4567"
-                {...register('phone')}
-                className="...existing styles..."
+                value={formData.phone}
+                onChange={handleInputChange}
               />
             </div>
           </div>
@@ -148,15 +133,15 @@ const ContactForm = () => {
             <Input 
               id="company" 
               placeholder="Acme Corporation"
-              {...register('company')}
-              className="...existing styles..."
+              value={formData.company}
+              onChange={handleInputChange}
             />
           </div>
           
           <div className="space-y-2">
             <Label htmlFor="subject">Subject</Label>
-            <Select value={subject} onValueChange={handleSelectChange}>
-              <SelectTrigger className="w-full">
+            <Select value={formData.subject} onValueChange={handleSelectChange}>
+              <SelectTrigger id="subject">
                 <SelectValue placeholder="Select a subject" />
               </SelectTrigger>
               <SelectContent>
@@ -167,7 +152,6 @@ const ContactForm = () => {
                 <SelectItem value="other">Other</SelectItem>
               </SelectContent>
             </Select>
-            {errors.subject && <p className="text-red-500 text-sm">{errors.subject.message}</p>}
           </div>
           
           <div className="space-y-2">
@@ -176,11 +160,10 @@ const ContactForm = () => {
               id="message" 
               placeholder="Please provide details about your inquiry..."
               rows={5}
-              {...register('message')}
-              className="...existing styles..."
+              value={formData.message}
+              onChange={handleInputChange}
               required
             />
-            {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
           </div>
           
           <Button type="submit" className="w-full" disabled={isSubmitting}>

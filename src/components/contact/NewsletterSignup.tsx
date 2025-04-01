@@ -1,62 +1,39 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/auth/AuthProvider';
-import { toast } from 'sonner';
-import { supabase } from '@/lib/supabase';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const NewsletterSignup = () => {
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const { user, updateUserProfile } = useAuth();
-  
-  const handleSubscribe = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    
-    try {
-      // If user is logged in, update their profile with newsletter preference
-      if (user) {
-        await updateUserProfile({ 
-          newsletterOptIn: true,
-          newsletterOptInDate: new Date().toISOString()
-        });
-        toast.success("You've been subscribed to our newsletter!");
-      } else {
-        // For non-logged in users, just store their email - in a real implementation
-        // this would need to be connected to a newsletter service
-        // This is just a placeholder
-        toast.success("You've been subscribed to our newsletter!");
-      }
-      setEmail('');
-    } catch (error) {
-      console.error("Error subscribing to newsletter:", error);
-      toast.error("Failed to subscribe. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    <div className="bg-card border border-border rounded-lg p-8 text-center">
-      <h2 className="text-2xl font-bold mb-4">Stay Updated</h2>
-      <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-        Subscribe to our newsletter to receive the latest updates, industry news, and safety compliance tips.
-      </p>
-      <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row max-w-md mx-auto gap-4">
-        <Input 
-          placeholder="Enter your email" 
-          className="flex-grow" 
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Subscribing...' : 'Subscribe'}
-        </Button>
-      </form>
+    <div className="mb-16">
+      <div className="text-center mb-12">
+        <Badge className="mb-4" variant="outline">Stay Updated</Badge>
+        <h2 className="text-3xl font-bold mb-4">Subscribe to Our Newsletter</h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Get the latest updates on product features, safety regulations, and industry best practices
+        </p>
+      </div>
+      
+      <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
+        <CardContent className="p-8">
+          <div className="max-w-lg mx-auto">
+            <form className="flex flex-col sm:flex-row gap-3">
+              <Input 
+                placeholder="Enter your email address" 
+                type="email" 
+                className="flex-grow"
+                required
+              />
+              <Button type="submit">Subscribe</Button>
+            </form>
+            <p className="text-sm text-muted-foreground mt-3">
+              We respect your privacy. Unsubscribe at any time.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

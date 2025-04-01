@@ -40,12 +40,6 @@ const CompanyInfo = () => {
           title="Website"
           text="www.thalostech.io"
         />
-        
-        <div className="pt-4 text-sm text-muted-foreground">
-          <p>
-            All support requests are sent to our dedicated team at contact@thalostech.io and annie.eser@thalostech.io.
-          </p>
-        </div>
       </CardContent>
     </Card>
   );
