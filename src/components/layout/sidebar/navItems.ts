@@ -44,6 +44,12 @@ export const getNavItems = (): NavItem[] => [
     roles: ["admin", "safety_officer", "worker"]
   },
   {
+    title: "Reports",
+    path: "/reports",
+    icon: BarChart2,
+    roles: ["admin", "safety_officer", "worker"]
+  },
+  {
     title: "Documents",
     path: "/documents",
     icon: FileText,
@@ -59,13 +65,6 @@ export const getNavItems = (): NavItem[] => [
     title: "Audits",
     path: "/audits",
     icon: ClipboardList,
-    roles: ["admin", "safety_officer", "worker"],
-    badge: "Soon"
-  },
-  {
-    title: "Reports",
-    path: "/reports",
-    icon: BarChart2,
     roles: ["admin", "safety_officer", "worker"],
     badge: "Soon"
   },

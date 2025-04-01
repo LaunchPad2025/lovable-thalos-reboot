@@ -2,8 +2,7 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Calendar, ArrowDownToLine, RefreshCw } from 'lucide-react';
-import { ChartContainer, ChartTooltipContent, ChartTooltip } from '@/components/ui/chart';
+import { RefreshCw, ArrowDownToLine, Calendar } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, ResponsiveContainer, PieChart, Pie, Cell, BarChart, Bar } from 'recharts';
 import DemoCard from '../DemoCard';
 
@@ -173,11 +172,11 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
         {activeTab === 'violations' && (
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-400">Date Range:</span>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 bg-[#0d1117]">
               <Calendar className="h-4 w-4" />
               Pick a start date
             </Button>
-            <Button variant="outline" size="sm" className="flex items-center gap-2">
+            <Button variant="outline" size="sm" className="flex items-center gap-2 bg-[#0d1117]">
               <Calendar className="h-4 w-4" />
               Pick an end date
             </Button>
@@ -240,7 +239,7 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
         )}
       </div>
 
-      {/* Report Content */}
+      {/* Content Specific to Each Tab */}
       {activeTab === 'compliance' && (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -274,9 +273,6 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
                   <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
                   <XAxis dataKey="month" stroke="#64748b" />
                   <YAxis domain={[0, 100]} stroke="#64748b" />
-                  <ChartTooltip
-                    content={<ChartTooltipContent />}
-                  />
                   <Line type="monotone" dataKey="compliance" stroke="#3b82f6" strokeWidth={2} name="Compliance Score %" />
                   <Line type="monotone" dataKey="violations" stroke="#ef4444" strokeWidth={2} name="Violations" />
                 </LineChart>
@@ -320,7 +316,6 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
                         <Cell key={`cell-${index}`} fill={entry.fill} />
                       ))}
                     </Pie>
-                    <ChartTooltip />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
@@ -356,7 +351,6 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
                   <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
                   <XAxis dataKey="month" stroke="#64748b" />
                   <YAxis domain={[0, 5]} stroke="#64748b" />
-                  <ChartTooltip />
                   <Line type="monotone" dataKey="violations" stroke="#3b82f6" strokeWidth={2} name="Violations Detected" />
                 </LineChart>
               </ResponsiveContainer>
@@ -418,7 +412,6 @@ const ReportsSection = ({ onShowFeatureInfo }: ReportsSectionProps) => {
                   <CartesianGrid stroke="#1e293b" strokeDasharray="3 3" />
                   <XAxis dataKey="name" stroke="#64748b" />
                   <YAxis domain={[0, 5]} stroke="#64748b" />
-                  <ChartTooltip />
                   <Bar dataKey="value" fill="#3b82f6" name="Tasks" />
                 </BarChart>
               </ResponsiveContainer>

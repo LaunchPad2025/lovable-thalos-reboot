@@ -3,7 +3,7 @@ import React from 'react';
 import { 
   LayoutDashboard, 
   ClipboardList, 
-  BarChart, 
+  BarChart2, 
   UploadCloud, 
   FileText, 
   Bell, 
@@ -24,7 +24,7 @@ const DemoSidebar = ({ activeSection, onNavigate }: DemoSidebarProps) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'violations', label: 'Violations', icon: AlertTriangle },
     { id: 'tasks', label: 'Tasks', icon: ClipboardList },
-    { id: 'reports', label: 'Reports', icon: BarChart },
+    { id: 'reports', label: 'Reports', icon: BarChart2 },
     { id: 'documents', label: 'Documents', icon: FileText },
     { id: 'audits', label: 'Audits', icon: Bell },
   ];
