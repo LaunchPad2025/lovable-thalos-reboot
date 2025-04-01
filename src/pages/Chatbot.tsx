@@ -2,7 +2,7 @@
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import ChatInterface from '@/components/chatbot/ChatInterface';
-import { PageTitle } from '@/components/ui/PageTitle';
+import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
 import { Lightbulb } from 'lucide-react';
 
