@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
@@ -86,7 +87,7 @@ const Industries = () => {
               Contact us to discuss your specific industry needs.
             </p>
             <Button size="lg" asChild>
-              <a href="https://cal.com/company/thalos/demo" target="_blank" rel="noopener noreferrer">Schedule a Consultation</a>
+              <a href="https://cal.com/annieeser/30min" target="_blank" rel="noopener noreferrer">Schedule a Consultation</a>
             </Button>
           </div>
         </div>

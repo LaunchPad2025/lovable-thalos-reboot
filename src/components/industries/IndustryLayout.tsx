@@ -57,7 +57,7 @@ const IndustryLayout = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" asChild>
-                <a href="https://cal.com/company/thalos/demo" target="_blank" rel="noopener noreferrer">Schedule a Demo</a>
+                <a href="https://cal.com/annieeser/30min" target="_blank" rel="noopener noreferrer">Schedule a Demo</a>
               </Button>
               <Button variant="outline" size="lg">
                 <Link to="/documentation/pricing">View Pricing</Link>

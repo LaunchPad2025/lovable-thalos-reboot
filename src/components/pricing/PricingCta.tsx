@@ -17,7 +17,7 @@ const PricingCta = ({ onContactSales }: PricingCtaProps) => {
       <Button 
         size="lg" 
         className="bg-primary hover:bg-primary/90"
-        onClick={onContactSales}
+        onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
       >
         <ArrowRight className="mr-2 h-4 w-4" />
         Schedule a Consultation
