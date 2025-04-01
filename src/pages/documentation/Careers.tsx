@@ -24,7 +24,7 @@ const Careers = () => {
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Make an impact with your work</h2>
             <p className="text-white/80 mb-6 max-w-2xl text-lg">
-              At Steel Toe Technologies, we're building AI-powered safety solutions that help organizations
+              At Thalos Technologies, we're building AI-powered safety solutions that help organizations
               protect their most valuable asset: their people.
             </p>
           </div>
@@ -147,11 +147,11 @@ const Careers = () => {
           </div>
         </div>
         
-        {/* Life at Steel Toe */}
+        {/* Life at Thalos */}
         <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Team Life</Badge>
-            <h2 className="text-3xl font-bold mb-4">Life at Steel Toe</h2>
+            <h2 className="text-3xl font-bold mb-4">Life at Thalos</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               What you can expect when you join our team
             </p>
@@ -227,7 +227,7 @@ const Careers = () => {
             <Badge className="mb-4" variant="outline">Our Process</Badge>
             <h2 className="text-3xl font-bold mb-4">Our Recruiting Process</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              What to expect when you apply to Steel Toe Technologies
+              What to expect when you apply to Thalos Technologies
             </p>
           </div>
           

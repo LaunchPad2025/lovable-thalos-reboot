@@ -19,7 +19,7 @@ const ContactCards = () => {
             <ContactItem 
               icon={<Mail className="h-5 w-5 text-blue-500" />} 
               title="Email"
-              text="contact@steeltoetech.io" 
+              text="contact@thalostech.io" 
             />
             <ContactItem 
               icon={<MapPin className="h-5 w-5 text-blue-500" />} 
