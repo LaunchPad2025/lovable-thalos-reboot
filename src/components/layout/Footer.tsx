@@ -18,7 +18,7 @@ const Footer = () => {
             <p className="text-sm mb-6">
               Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
             </p>
-            {/* Social icons hidden for now */}
+            {/* Social icons removed completely */}
           </div>
           
           <div>
