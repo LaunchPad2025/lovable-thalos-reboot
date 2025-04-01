@@ -44,27 +44,9 @@ export const useCheckout = () => {
         throw new Error(`No price ID available for ${plan.name} with ${billingCycle} billing cycle`);
       }
       
-      // Call our Supabase Edge Function to create a checkout session
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          priceId,
-          billingCycle,
-          planName: plan.name,
-          userId,
-        },
-      });
+      // Redirect to the replit app with the appropriate URL parameters
+      window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
       
-      if (error) {
-        console.error("Supabase function error:", error);
-        throw new Error(error.message || "Error creating checkout session");
-      }
-      
-      // Redirect to Stripe checkout
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL returned from server');
-      }
     } catch (error) {
       console.error('Error creating checkout session:', error);
       toast({

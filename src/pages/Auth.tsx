@@ -18,7 +18,7 @@ export default function Auth() {
     const redirectToAuth = async () => {
       try {
         // Call the API to get the auth URL with proper token
-        const response = await fetch(`https://your-replit-app.replit.app/${isSignup ? 'signup' : 'login'}`, {
+        const response = await fetch(`https://thalostech.replit.app/${isSignup ? 'signup' : 'login'}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

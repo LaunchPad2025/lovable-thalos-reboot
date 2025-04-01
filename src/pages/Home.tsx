@@ -11,13 +11,13 @@ function Home() {
             
             <div className="flex gap-4 mt-4">
                 <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-100 px-6 py-2 rounded-md">
-                    <a href="https://www.thalostech.replit.app/auth" className="no-underline">
+                    <a href="https://thalostech.replit.app/auth" className="no-underline">
                         Log In
                     </a>
                 </Button>
                 
                 <Button className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md">
-                    <a href="https://www.thalostech.replit.app/auth" className="text-white no-underline">
+                    <a href="https://thalostech.replit.app/auth" className="text-white no-underline">
                         Sign Up
                     </a>
                 </Button>
