@@ -27,7 +27,7 @@ const Footer = () => {
               <li><Link to="/documentation/features" className="hover:text-white transition-colors">Features</Link></li>
               <li><Link to="/documentation/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
               {/* Removed Integrations link */}
-              <li><Link to="/documentation/updates" className="hover:text-white transition-colors">Updates</Link></li>
+              {/* Removed Updates link */}
             </ul>
           </div>
           
@@ -36,7 +36,7 @@ const Footer = () => {
             <ul className="space-y-2 text-sm">
               {/* Blog link removed */}
               <li><Link to="/documentation/help-center" className="hover:text-white transition-colors">Help Center</Link></li>
-              <li><Link to="/documentation/guides" className="hover:text-white transition-colors">Guides</Link></li>
+              {/* Removed Guides link */}
               <li><Link to="/documentation/api-docs" className="hover:text-white transition-colors">API Docs</Link></li>
             </ul>
           </div>
