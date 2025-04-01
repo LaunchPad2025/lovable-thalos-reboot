@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { PlusIcon, Search, MoreHorizontal } from 'lucide-react';
@@ -125,11 +124,6 @@ const TasksSection = ({ onShowFeatureInfo, onItemSelect }: TasksSectionProps) =>
           >
             <div className="col-span-4 flex items-center">
               <div className="w-8 h-8 mr-2 flex-shrink-0 rounded bg-blue-900/30 flex items-center justify-center">
-                <img 
-                  src="public/lovable-uploads/0ddb45e2-4cee-47a1-aece-cb5ce365bf6f.png" 
-                  alt="Task" 
-                  className="w-5 h-5 opacity-70"
-                />
               </div>
               <div className="truncate">
                 <div className="font-medium text-white truncate">{task.title}</div>
