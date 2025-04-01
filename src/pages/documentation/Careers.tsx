@@ -17,10 +17,10 @@ const Careers = () => {
           className="mb-12"
         />
         
-        {/* Hero Section */}
+        {/* Hero Section - Removed background image */}
         <div className="relative mb-16 overflow-hidden rounded-xl border border-border z-10">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-900/90 to-blue-900/30 z-10"></div>
-          <div className="bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center h-96"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-900 to-blue-900/70 z-10"></div>
+          <div className="h-96"></div>
           <div className="absolute bottom-0 left-0 right-0 p-8 z-20">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Make an impact with your work</h2>
             <p className="text-white/80 mb-6 max-w-2xl text-lg">
@@ -147,7 +147,7 @@ const Careers = () => {
           </div>
         </div>
         
-        {/* Life at Thalos */}
+        {/* Life at Thalos - Removed background images and "See More Team Photos" button */}
         <div className="mb-16 relative z-10">
           <div className="text-center mb-12">
             <Badge className="mb-4" variant="outline">Team Life</Badge>
@@ -159,7 +159,7 @@ const Careers = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <Card className="overflow-hidden">
-              <div className="h-48 bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center"></div>
+              <div className="h-48 bg-blue-900 bg-opacity-50"></div>
               <CardContent className="pt-6">
                 <div className="flex items-center mb-2">
                   <BookOpen className="h-5 w-5 text-blue-500 mr-2" />
@@ -172,7 +172,7 @@ const Careers = () => {
             </Card>
             
             <Card className="overflow-hidden">
-              <div className="h-48 bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center"></div>
+              <div className="h-48 bg-blue-900 bg-opacity-50"></div>
               <CardContent className="pt-6">
                 <div className="flex items-center mb-2">
                   <Users className="h-5 w-5 text-blue-500 mr-2" />
@@ -185,7 +185,7 @@ const Careers = () => {
             </Card>
             
             <Card className="overflow-hidden">
-              <div className="h-48 bg-[url('/public/lovable-uploads/1c8abfb3-eab0-4bfb-a7c6-2739457ac932.png')] bg-cover bg-center"></div>
+              <div className="h-48 bg-blue-900 bg-opacity-50"></div>
               <CardContent className="pt-6">
                 <div className="flex items-center mb-2">
                   <Coffee className="h-5 w-5 text-blue-500 mr-2" />
@@ -198,9 +198,7 @@ const Careers = () => {
             </Card>
           </div>
           
-          <div className="text-center">
-            <Button variant="outline">See More Team Photos</Button>
-          </div>
+          {/* Removed "See More Team Photos" button */}
         </div>
         
         {/* Open Positions - Replaced with notice */}
