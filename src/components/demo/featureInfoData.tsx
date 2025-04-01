@@ -5,6 +5,13 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
   // Default info if nothing is selected
   let defaultInfo = {
     title: 'Thalos Safety Platform Demo',
+    description: 'Interactive demonstration of safety compliance management features',
+    features: [
+      'AI-powered safety violation detection',
+      'Task management for compliance issues',
+      'Comprehensive safety reports',
+      'Document management system',
+    ],
     content: (
       <div>
         <p className="mb-4">
@@ -25,6 +32,13 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
     case 'dashboard':
       return {
         title: 'Safety Dashboard',
+        description: 'Get a comprehensive overview of safety metrics and compliance status',
+        features: [
+          'Real-time compliance scoring',
+          'Safety violation tracking',
+          'Priority task management',
+          'Performance trend analysis',
+        ],
         content: (
           <div>
             <p className="mb-4">
@@ -46,6 +60,13 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
     case 'tasks':
       return {
         title: 'Task Management',
+        description: 'Organize and track safety compliance tasks efficiently',
+        features: [
+          'Task prioritization and assignment',
+          'Due date tracking',
+          'Status updates and history',
+          'Violation-linked remediation',
+        ],
         content: (
           <div>
             <p className="mb-4">
@@ -67,6 +88,13 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
     case 'reports':
       return {
         title: 'Safety Reports',
+        description: 'Generate and analyze comprehensive safety compliance reports',
+        features: [
+          'Customizable report generation',
+          'Compliance trend analysis',
+          'Violation pattern detection',
+          'Exportable reports for stakeholders',
+        ],
         content: (
           <div>
             <p className="mb-4">
@@ -92,6 +120,13 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
     case 'violations':
       return {
         title: 'Safety Violations',
+        description: 'Track and manage detected safety violations',
+        features: [
+          'AI-powered violation detection',
+          'Severity classification',
+          'Regulatory reference lookup',
+          'Remediation task creation',
+        ],
         content: (
           <div>
             <p className="mb-4">
@@ -106,6 +141,62 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
             </ul>
             <p>
               Proactively identifying and addressing safety violations helps prevent incidents and maintain compliance with safety regulations.
+            </p>
+          </div>
+        ),
+      };
+
+    case 'documents':
+      return {
+        title: 'Safety Documents',
+        description: 'Store and manage all safety-related documentation',
+        features: [
+          'Centralized document repository',
+          'Version control tracking',
+          'Role-based access controls',
+          'Integration with compliance workflows',
+        ],
+        content: (
+          <div>
+            <p className="mb-4">
+              The Documents section helps you organize and manage all safety-related documentation:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Store safety protocols, procedures, and training materials</li>
+              <li>Track document versions and update history</li>
+              <li>Control access based on user roles and permissions</li>
+              <li>Link documents to relevant tasks and violations</li>
+            </ul>
+            <p>
+              Centralizing your safety documentation ensures that your team always has access to the most current safety information and protocols.
+            </p>
+          </div>
+        ),
+      };
+
+    case 'audits':
+      return {
+        title: 'Safety Audits',
+        description: 'Schedule and track safety compliance audits',
+        features: [
+          'Audit scheduling and planning',
+          'Customizable audit templates',
+          'Finding tracking and verification',
+          'Historical audit records',
+        ],
+        content: (
+          <div>
+            <p className="mb-4">
+              The Audits section helps you plan, conduct, and track safety audits:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Schedule regular safety audits</li>
+              <li>Use customizable templates for different audit types</li>
+              <li>Track audit findings and corrective actions</li>
+              <li>Generate audit reports for management and regulators</li>
+            </ul>
+            <p>
+              Regular safety audits are essential for maintaining compliance and identifying potential safety issues before they lead to incidents.
             </p>
           </div>
         ),
