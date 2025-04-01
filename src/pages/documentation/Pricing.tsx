@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -33,7 +34,7 @@ const Pricing = () => {
       return;
     }
     
-    window.location.href = `https://replit.com/@thalos/subscription?plan=${planId}&cycle=${billingCycle}`;
+    window.location.href = `https://thalostech.replit.app/subscription?plan=${planId}&cycle=${billingCycle}`;
   };
 
   const handleContactSales = () => {

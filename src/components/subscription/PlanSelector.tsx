@@ -57,7 +57,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
     
     try {
-      window.location.href = `https://replit.com/@thalos/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
+      window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');
@@ -113,7 +113,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
           <div className="text-center">
             <Button 
               className="bg-transparent border border-blue-500 text-blue-500 hover:bg-blue-500/10"
-              onClick={() => window.location.href = "https://cal.com/sales/30min"}
+              onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
             >
               Contact Sales for Enterprise Pricing
             </Button>
