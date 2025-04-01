@@ -8,7 +8,6 @@ import WelcomeMessage from './dashboard/WelcomeMessage';
 import StatCards from './dashboard/StatCards';
 import PriorityTasksSection from './dashboard/PriorityTasksSection';
 import DocumentsSection from './dashboard/DocumentsSection';
-import RecommendedFeaturesSection from './dashboard/RecommendedFeaturesSection';
 
 interface DashboardSectionProps {
   onShowFeatureInfo: () => void;
@@ -43,8 +42,6 @@ const DashboardSection = ({ onShowFeatureInfo }: DashboardSectionProps) => {
         <PriorityTasksSection />
         <DocumentsSection />
       </div>
-      
-      <RecommendedFeaturesSection />
       
       <DemoCard message="You're viewing simulated data for demonstration purposes" />
     </>
