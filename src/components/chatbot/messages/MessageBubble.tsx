@@ -2,7 +2,6 @@
 import React from 'react';
 import { HardHat } from 'lucide-react';
 import { Message } from '@/components/chatbot/types';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
 interface MessageBubbleProps {
   message: Message;
@@ -10,14 +9,14 @@ interface MessageBubbleProps {
 
 const MessageBubble = ({ message }: MessageBubbleProps) => {
   return (
-    <div className="p-4 border-b border-gray-800 last:border-0">
+    <div className="py-4 border-b border-gray-800 last:border-0">
       <div className="flex items-start gap-3">
         {message.role === 'assistant' ? (
-          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center flex-shrink-0">
             <HardHat className="h-5 w-5 text-white" />
           </div>
         ) : (
-          <div className="w-8 h-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
+          <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center flex-shrink-0">
             <span className="text-white text-sm">You</span>
           </div>
         )}

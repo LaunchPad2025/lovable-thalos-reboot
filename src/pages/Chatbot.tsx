@@ -24,7 +24,7 @@ const Chatbot = () => {
       <div className="border border-gray-800 rounded-lg bg-[#0d1117] shadow-xl h-[calc(100vh-12rem)]">
         <div className="p-4 border-b border-gray-800 bg-[#0d1117]">
           <h2 className="text-xl font-bold text-white flex items-center">
-            <span className="bg-blue-600 text-white rounded-full w-7 h-7 inline-flex items-center justify-center mr-2">
+            <span className="bg-yellow-500 text-white rounded-full w-7 h-7 inline-flex items-center justify-center mr-2">
               <span className="font-semibold">P</span>
             </span>
             Ask Paulie

@@ -1,10 +1,8 @@
 
 import React, { useRef, useEffect } from 'react';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Send } from 'lucide-react';
 import MessageList from '@/components/chatbot/messages/MessageList';
-import MessageInput from '@/components/chatbot/input/MessageInput';
 import { useChatMessages } from './hooks/useChatMessages';
 
 interface ChatInterfaceProps {
@@ -13,7 +11,7 @@ interface ChatInterfaceProps {
 }
 
 const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
-  const { messages, isLoading, handleSendMessage } = useChatMessages();
+  const { messages, isLoading, sendMessage } = useChatMessages();
   const inputRef = useRef<HTMLInputElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -24,9 +22,15 @@ const ChatInterface = ({ isPopup = false, onClose }: ChatInterfaceProps) => {
     }
   }, [messages]);
 
+  const handleSendMessage = (message: string) => {
+    if (message.trim()) {
+      sendMessage(message);
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full bg-[#0f1419] rounded-lg overflow-hidden">
-      <div className="flex-1 overflow-auto" ref={containerRef}>
+    <div className="flex flex-col h-full bg-[#0d1117] rounded-lg overflow-hidden">
+      <div className="flex-1 overflow-auto p-2" ref={containerRef}>
         <MessageList messages={messages} isLoading={isLoading} />
       </div>
       
