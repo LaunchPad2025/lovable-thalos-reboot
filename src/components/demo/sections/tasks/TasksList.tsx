@@ -59,6 +59,25 @@ interface TasksListProps {
 }
 
 const TasksList = ({ tasks, onItemSelect }: TasksListProps) => {
+  if (tasks.length === 0) {
+    return (
+      <div className="flex items-center justify-center h-64 border border-gray-800 rounded-md bg-[#161b22]">
+        <div className="text-center p-6">
+          <h3 className="text-lg font-medium text-white mb-2">No tasks found</h3>
+          <p className="text-gray-400 mb-4">
+            There are no tasks matching your current filters
+          </p>
+          <Button 
+            className="bg-blue-600 hover:bg-blue-700"
+            onClick={() => {}}
+          >
+            Create a new task
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {/* Table header */}

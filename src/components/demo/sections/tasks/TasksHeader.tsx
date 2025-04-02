@@ -5,9 +5,11 @@ import { PlusIcon, Search } from 'lucide-react';
 
 interface TasksHeaderProps {
   onShowFeatureInfo: () => void;
+  onSearchChange: (query: string) => void;
+  searchQuery: string;
 }
 
-const TasksHeader = ({ onShowFeatureInfo }: TasksHeaderProps) => {
+const TasksHeader = ({ onShowFeatureInfo, onSearchChange, searchQuery }: TasksHeaderProps) => {
   return (
     <>
       {/* Header */}
@@ -31,6 +33,8 @@ const TasksHeader = ({ onShowFeatureInfo }: TasksHeaderProps) => {
         <input
           type="text"
           placeholder="Search tasks..."
+          value={searchQuery}
+          onChange={(e) => onSearchChange(e.target.value)}
           className="w-full bg-[#161b22] border border-gray-800 rounded-md py-2 pl-10 pr-4 text-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500"
         />
       </div>
