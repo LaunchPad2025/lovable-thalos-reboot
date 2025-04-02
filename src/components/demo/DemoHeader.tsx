@@ -1,12 +1,15 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
+import { Menu, X } from 'lucide-react';
 
 interface DemoHeaderProps {
   activeSection: string;
+  onToggleSidebar?: () => void;
+  sidebarCollapsed?: boolean;
 }
 
-const DemoHeader = ({ activeSection }: DemoHeaderProps) => {
+const DemoHeader = ({ activeSection, onToggleSidebar, sidebarCollapsed }: DemoHeaderProps) => {
   // Get the page title based on the active section
   const getPageTitle = () => {
     switch (activeSection) {
@@ -22,14 +25,28 @@ const DemoHeader = ({ activeSection }: DemoHeaderProps) => {
         return 'Copilot';
       case 'media-analysis':
         return 'Media Analysis';
+      case 'documents':
+        return 'Documents';
+      case 'audits':
+        return 'Audits';
       default:
         return 'Dashboard';
     }
   };
 
   return (
-    <header className="fixed top-0 right-0 left-64 h-16 bg-[#0b0f14] border-b border-gray-800 z-20 flex items-center px-6">
+    <header className={`fixed top-0 right-0 ${sidebarCollapsed ? 'left-16' : 'left-64'} h-16 bg-[#0b0f14] border-b border-gray-800 z-20 flex items-center px-4 md:px-6 transition-all duration-300`}>
       <div className="flex-1 flex items-center">
+        {onToggleSidebar && (
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={onToggleSidebar}
+            className="mr-2 text-gray-400 hover:text-white"
+          >
+            {sidebarCollapsed ? <Menu size={18} /> : <X size={18} />}
+          </Button>
+        )}
         <div className="flex items-center mr-4">
           <span className="ml-2 text-blue-400">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -41,11 +58,11 @@ const DemoHeader = ({ activeSection }: DemoHeaderProps) => {
       </div>
       
       <div className="flex items-center space-x-2">
-        <div className="bg-green-600 text-white text-xs px-3 py-1.5 rounded-md mr-2">
+        <div className="bg-green-600 text-white text-xs px-2 md:px-3 py-1 md:py-1.5 rounded-md mr-2">
           Pro Plan - Active
         </div>
         
-        <Button className="border border-gray-700 bg-transparent hover:bg-gray-800 text-white">
+        <Button className="border border-gray-700 bg-transparent hover:bg-gray-800 text-white text-sm md:text-base">
           Sign Out
         </Button>
       </div>

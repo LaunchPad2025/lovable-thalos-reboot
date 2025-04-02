@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DemoSidebar from './demo/DemoSidebar';
 import DemoHeader from './demo/DemoHeader';
 import DashboardSection from './demo/sections/DashboardSection';
@@ -8,9 +8,17 @@ import TasksSection from './demo/sections/TasksSection';
 import ReportsSection from './demo/sections/ReportsSection';
 import DocumentsSection from './demo/sections/DocumentsSection';
 import AuditsSection from './demo/sections/AuditsSection';
+import { useMobile } from '@/hooks/useMobile';
 
 const DemoDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const isMobile = useMobile();
+  
+  // Auto-collapse sidebar on mobile
+  useEffect(() => {
+    setSidebarCollapsed(isMobile);
+  }, [isMobile]);
   
   // Define common handlers for all sections
   const handleShowFeatureInfo = () => {
@@ -42,11 +50,23 @@ const DemoDashboard = () => {
     }
   };
   
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+  
   return (
     <div className="flex h-screen overflow-hidden bg-[#0c1117]">
-      <DemoSidebar activeSection={activeSection} onNavigate={setActiveSection} />
-      <div className="flex-1 flex flex-col ml-64"> {/* Added ml-64 to offset the sidebar width */}
-        <DemoHeader activeSection={activeSection} />
+      <DemoSidebar 
+        activeSection={activeSection} 
+        onNavigate={setActiveSection}
+        collapsed={sidebarCollapsed}
+      />
+      <div className={`flex-1 flex flex-col ${!sidebarCollapsed ? 'ml-64' : 'ml-16'} transition-all duration-300`}>
+        <DemoHeader 
+          activeSection={activeSection} 
+          onToggleSidebar={toggleSidebar}
+          sidebarCollapsed={sidebarCollapsed}
+        />
         <main className="flex-1 overflow-y-auto pt-16">
           {renderActiveSection()}
         </main>

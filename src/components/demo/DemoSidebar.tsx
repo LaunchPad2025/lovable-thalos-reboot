@@ -1,101 +1,63 @@
 
 import React from 'react';
 import { 
-  LayoutDashboard, 
-  ClipboardList, 
-  BarChart2, 
-  AlertTriangle,
-  MessageSquare,
-  UploadCloud
+  BarChart4, 
+  AlertCircle, 
+  CheckSquare, 
+  FileText, 
+  Folder, 
+  ClipboardCheck, 
+  Bot, 
+  Image 
 } from 'lucide-react';
 
 interface DemoSidebarProps {
   activeSection: string;
   onNavigate: (section: string) => void;
+  collapsed?: boolean;
 }
 
-const DemoSidebar = ({ activeSection, onNavigate }: DemoSidebarProps) => {
-  const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'violations', label: 'Violations', icon: AlertTriangle },
-    { id: 'tasks', label: 'Tasks', icon: ClipboardList },
-    { id: 'reports', label: 'Reports', icon: BarChart2 },
-  ];
-
-  const secondaryNavItems = [
-    { id: 'copilot', label: 'Copilot', icon: MessageSquare, badge: 'AI' },
-    { id: 'media-analysis', label: 'Media Analysis', icon: UploadCloud },
+const DemoSidebar = ({ activeSection, onNavigate, collapsed = false }: DemoSidebarProps) => {
+  const navigationItems = [
+    { id: 'dashboard', icon: <BarChart4 size={20} />, label: 'Dashboard' },
+    { id: 'violations', icon: <AlertCircle size={20} />, label: 'Violations' },
+    { id: 'tasks', icon: <CheckSquare size={20} />, label: 'Tasks' },
+    { id: 'reports', icon: <FileText size={20} />, label: 'Reports' },
+    { id: 'documents', icon: <Folder size={20} />, label: 'Documents' },
+    { id: 'audits', icon: <ClipboardCheck size={20} />, label: 'Audits' },
+    { id: 'copilot', icon: <Bot size={20} />, label: 'AI Copilot' },
+    { id: 'media-analysis', icon: <Image size={20} />, label: 'Media Analysis' }
   ];
 
   return (
-    <aside className="fixed left-0 top-0 bottom-0 w-64 bg-[#0b0f14] border-r border-gray-800 z-30">
-      <div className="flex flex-col h-full">
-        <div className="p-4">
-          <div className="flex items-center space-x-2 mb-6">
-            <span className="text-white font-semibold text-xl">Thalos</span>
-            <span className="bg-blue-500 text-white text-xs px-1.5 py-0.5 rounded-sm">Pro</span>
+    <div className={`fixed top-0 left-0 h-full bg-[#0b0f14] border-r border-gray-800 transition-all duration-300 ease-in-out z-30 ${collapsed ? 'w-16' : 'w-64'}`}>
+      <div className="h-16 border-b border-gray-800 flex items-center px-4">
+        <div className={`flex items-center ${collapsed ? 'justify-center w-full' : ''}`}>
+          <div className="bg-blue-600 w-8 h-8 rounded-md flex items-center justify-center">
+            <span className="text-white font-bold">T</span>
           </div>
-        </div>
-        
-        <nav className="flex-1 p-4">
-          <ul className="space-y-1">
-            {navItems.map((item) => (
-              <li key={item.id}>
-                <button
-                  onClick={() => onNavigate(item.id)}
-                  className={`w-full flex items-center space-x-3 px-3 py-2 rounded-md text-sm transition-colors ${
-                    activeSection === item.id 
-                      ? 'bg-blue-600 text-white' 
-                      : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                  }`}
-                >
-                  <item.icon size={18} />
-                  <span>{item.label}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          
-          <div className="mt-8">
-            <h3 className="text-xs uppercase text-gray-500 font-medium px-3 mb-2">Account</h3>
-            <ul className="space-y-1">
-              {secondaryNavItems.map((item) => (
-                <li key={item.id}>
-                  <button
-                    onClick={() => onNavigate(item.id)}
-                    className={`w-full flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
-                      activeSection === item.id 
-                        ? 'bg-[#1a1f29] text-white' 
-                        : 'text-gray-400 hover:bg-gray-800 hover:text-white'
-                    }`}
-                  >
-                    <div className="flex items-center space-x-3">
-                      <item.icon size={18} />
-                      <span>{item.label}</span>
-                    </div>
-                    {item.badge && (
-                      <span className="bg-blue-600 text-white text-xs px-1.5 py-0.5 rounded">
-                        {item.badge}
-                      </span>
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </nav>
-        
-        <div className="p-4 border-t border-gray-800 flex items-center">
-          <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-white mr-2">
-            HS
-          </div>
-          <div className="text-sm">
-            <p className="text-white font-medium">Hal Spencer</p>
-            <p className="text-gray-400 text-xs">Safety Manager</p>
-          </div>
+          {!collapsed && <span className="ml-2 text-white font-semibold">Thalos Safety</span>}
         </div>
       </div>
-    </aside>
+      
+      <nav className="mt-4">
+        <ul>
+          {navigationItems.map((item) => (
+            <li key={item.id} className="mb-1">
+              <button
+                onClick={() => onNavigate(item.id)}
+                className={`flex items-center w-full px-4 py-3 hover:bg-blue-900/20 transition-colors ${
+                  activeSection === item.id ? 'bg-blue-900/30 text-blue-400 border-l-2 border-blue-500' : 'text-gray-400'
+                } ${collapsed ? 'justify-center' : ''}`}
+              >
+                <span className={activeSection === item.id ? 'text-blue-400' : ''}>{item.icon}</span>
+                {!collapsed && <span className="ml-3">{item.label}</span>}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
   );
 };
 

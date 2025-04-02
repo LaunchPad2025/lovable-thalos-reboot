@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { 
@@ -14,11 +14,23 @@ import { Oil } from '@/components/ui/icons/Oil';
 import { Pickaxe } from '@/components/ui/icons/Pickaxe';
 import { BatteryCharging } from '@/components/ui/icons/BatteryCharging';
 import IndustryItem from './IndustriesMenu';
+import { useMobile } from '@/hooks/useMobile';
 
 const LandingNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isMobile = useMobile();
+  const [scrolled, setScrolled] = useState(false);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
   
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
@@ -30,13 +42,13 @@ const LandingNavbar = () => {
   };
   
   return (
-    <header className="w-full border-b border-blue-900/20 bg-[#0C1117] sticky top-0 z-50">
+    <header className={`w-full border-b border-blue-900/20 bg-[#0C1117] sticky top-0 z-50 ${scrolled ? 'shadow-md shadow-blue-900/10' : ''}`}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-8">
             <Link to="/" className="flex items-center group transition-all duration-300">
-              <span className="text-2xl font-bold text-white mr-0 group-hover:text-blue-400 transition-colors">Thalos<span className="text-blue-500">.</span></span>
-              <HardHat size={20} className="text-blue-500 ml-1" aria-hidden="true" />
+              <span className="text-xl sm:text-2xl font-bold text-white mr-0 group-hover:text-blue-400 transition-colors">Thalos<span className="text-blue-500">.</span></span>
+              <HardHat size={isMobile ? 18 : 20} className="text-blue-500 ml-1" aria-hidden="true" />
               <span className="sr-only">Thalos - Workplace Safety Compliance</span>
             </Link>
             
@@ -123,7 +135,7 @@ const LandingNavbar = () => {
             
             <Button 
               variant="ghost" 
-              className="md:hidden" 
+              className="md:hidden p-2" 
               onClick={toggleMenu}
               aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
