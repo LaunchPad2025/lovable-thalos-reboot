@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
@@ -10,11 +10,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import IndustryItem from '../IndustriesMenu';
-
-interface DesktopNavProps {
-  isActive: (path: string) => boolean;
-}
+import IndustriesMenuList from '../IndustriesMenuList';
+import { DesktopNavProps } from './types';
 
 const DesktopNav = ({ isActive }: DesktopNavProps) => {
   return (
@@ -26,33 +23,7 @@ const DesktopNav = ({ isActive }: DesktopNavProps) => {
               Industries
             </NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid w-[400px] gap-3 p-4 md:w-[500px] md:grid-cols-2 lg:w-[600px]" role="menu">
-                <IndustryItem
-                  title="Construction"
-                  href="/industries/construction"
-                  description="Safety compliance and risk management for construction sites."
-                />
-                <IndustryItem
-                  title="Mining"
-                  href="/industries/mining"
-                  description="Comprehensive safety solutions for underground and surface mining operations."
-                />
-                <IndustryItem
-                  title="Oil & Gas"
-                  href="/industries/oil-gas"
-                  description="Safety compliance for drilling, refining, and distribution operations."
-                />
-                <IndustryItem
-                  title="Manufacturing"
-                  href="/industries/manufacturing"
-                  description="Automated safety oversight for manufacturing facilities."
-                />
-                <IndustryItem
-                  title="Energy & Utilities"
-                  href="/industries/energy-utilities"
-                  description="Specialized safety solutions for power generation and distribution."
-                />
-              </ul>
+              <IndustriesMenuList />
             </NavigationMenuContent>
           </NavigationMenuItem>
           <NavigationMenuItem>

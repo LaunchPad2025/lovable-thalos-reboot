@@ -6,10 +6,17 @@ import { Button } from '@/components/ui/button';
 import { Oil } from '@/components/ui/icons/Oil';
 import { Pickaxe } from '@/components/ui/icons/Pickaxe';
 import { BatteryCharging } from '@/components/ui/icons/BatteryCharging';
+import { industriesData } from '../IndustriesMenuList';
+import { MobileNavProps } from './types';
 
-interface MobileNavProps {
-  isMenuOpen: boolean;
-}
+// Map of industry icons by title
+const industryIcons: Record<string, React.ReactNode> = {
+  "Construction": <Construction className="h-4 w-4 inline mr-2" />,
+  "Mining": <Pickaxe className="h-4 w-4 inline mr-2" />,
+  "Oil & Gas": <Oil className="h-4 w-4 inline mr-2" />,
+  "Manufacturing": <Factory className="h-4 w-4 inline mr-2" />,
+  "Energy & Utilities": <BatteryCharging className="h-4 w-4 inline mr-2" />
+};
 
 const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
   if (!isMenuOpen) return null;
@@ -22,21 +29,17 @@ const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
       aria-label="Mobile navigation"
     >
       <Link to="/industries" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Industries</Link>
-      <Link to="/industries/construction" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
-        <Construction className="h-4 w-4 inline mr-2" /> Construction
-      </Link>
-      <Link to="/industries/mining" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
-        <Pickaxe className="h-4 w-4 inline mr-2" /> Mining
-      </Link>
-      <Link to="/industries/oil-gas" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
-        <Oil className="h-4 w-4 inline mr-2" /> Oil & Gas
-      </Link>
-      <Link to="/industries/manufacturing" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
-        <Factory className="h-4 w-4 inline mr-2" /> Manufacturing
-      </Link>
-      <Link to="/industries/energy-utilities" className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm">
-        <BatteryCharging className="h-4 w-4 inline mr-2" /> Energy & Utilities
-      </Link>
+      
+      {industriesData.map((industry, index) => (
+        <Link 
+          key={index}
+          to={industry.href} 
+          className="text-gray-300 hover:text-white py-2 pl-4 border-b border-blue-900/20 text-sm"
+        >
+          {industryIcons[industry.title]} {industry.title}
+        </Link>
+      ))}
+      
       <Link to="/documentation/features" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Features</Link>
       <Link to="/documentation/pricing" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Pricing</Link>
       <Link to="/documentation/contact" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Contact</Link>
