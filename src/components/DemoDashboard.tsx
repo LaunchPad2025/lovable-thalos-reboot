@@ -12,20 +12,31 @@ import AuditsSection from './demo/sections/AuditsSection';
 const DemoDashboard = () => {
   const [activeSection, setActiveSection] = useState('dashboard');
   
+  // Define common handlers for all sections
+  const handleShowFeatureInfo = () => {
+    console.log('Feature info requested');
+    // This could show a modal or other UI in a real implementation
+  };
+  
+  const handleItemSelect = (item: any) => {
+    console.log('Item selected:', item);
+    // This could open a detail view in a real implementation
+  };
+  
   const renderActiveSection = () => {
     switch (activeSection) {
       case 'dashboard':
-        return <DashboardSection />;
+        return <DashboardSection onShowFeatureInfo={handleShowFeatureInfo} />;
       case 'violations':
-        return <ViolationsSection />;
+        return <ViolationsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       case 'tasks':
-        return <TasksSection />;
+        return <TasksSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       case 'reports':
-        return <ReportsSection />;
+        return <ReportsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       case 'documents':
-        return <DocumentsSection />;
+        return <DocumentsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       case 'audits':
-        return <AuditsSection />;
+        return <AuditsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       default:
         return <div className="p-6 text-white">Feature Coming Soon</div>;
     }
