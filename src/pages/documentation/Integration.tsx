@@ -1,3 +1,4 @@
+
 import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
@@ -61,6 +62,7 @@ const Integration = () => {
                     <li><strong>For login:</strong> username, password, optional return_url</li>
                     <li><strong>For signup:</strong> username, email, password, optional return_url</li>
                     <li><strong>For SSO URL generation:</strong> email, redirectUrl, token (Lovable integration token)</li>
+                    <li><strong>For user lookup:</strong> email, token (token is optional in development but required in production)</li>
                   </ul>
                 </div>
 
@@ -114,7 +116,7 @@ const Integration = () => {
                   <h3 className="text-xl font-semibold mb-3">Endpoints</h3>
                   <ul className="space-y-2 list-disc ml-6">
                     <li><strong>Create payment intent:</strong> POST /api/create-payment-intent</li>
-                    <li><strong>Get or create subscription:</strong> POST /api/get-or-create-subscription</li>
+                    <li><strong>Select plan:</strong> POST /api/lovable/select-plan</li>
                     <li><strong>Pricing information:</strong> GET /api/lovable/pricing</li>
                     <li><strong>Subscription management:</strong> POST /api/update-subscription</li>
                     <li><strong>Cancel subscription:</strong> POST /api/cancel-subscription</li>
@@ -125,12 +127,37 @@ const Integration = () => {
                 <Separator />
 
                 <div>
-                  <h3 className="text-xl font-semibold mb-3">Checkout Flow</h3>
+                  <h3 className="text-xl font-semibold mb-3">Plan Selection Flow</h3>
                   <ul className="space-y-2 list-disc ml-6">
-                    <li>Lovable redirects users to our checkout page with plan selection</li>
-                    <li>Our system handles payment processing through Stripe</li>
+                    <li>Lovable redirects users to our plan selection endpoint</li>
+                    <li>Our system handles payment processing through our backend</li>
                     <li>After successful payment, user is redirected back to Lovable</li>
                   </ul>
+                  <div className="mt-4 p-4 bg-[#1a1f29] rounded-md">
+                    <p className="text-sm font-medium mb-2">Example API call:</p>
+                    <pre className="text-xs text-gray-300 overflow-x-auto">
+{`fetch('https://thalos-safety.replit.app/api/lovable/select-plan', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  credentials: 'include',
+  body: JSON.stringify({
+    plan: 'pro',           // 'basic', 'pro', 'premium', or 'enterprise'
+    interval: 'monthly',   // 'monthly' or 'annual' (not 'month' or 'year')
+    email: 'customer@example.com',  // Optional
+    returnUrl: 'https://thalostech.io/success'  // Required
+  })
+})`}
+                    </pre>
+                  </div>
+                  <div className="mt-4 p-4 bg-blue-900/20 border border-blue-800 rounded-md">
+                    <p className="text-sm font-medium mb-2 text-blue-400">Important Note:</p>
+                    <p className="text-sm text-gray-300">Requests must come from an allowed domain:</p>
+                    <ul className="list-disc ml-6 text-sm text-gray-300">
+                      <li>https://www.thalostech.io</li>
+                      <li>https://thalostech.io</li>
+                      <li>http://localhost:3000</li>
+                    </ul>
+                  </div>
                 </div>
 
                 <Separator />
