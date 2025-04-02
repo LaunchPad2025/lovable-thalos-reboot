@@ -23,13 +23,19 @@ export const useCheckout = () => {
         throw new Error("Selected plan not found");
       }
       
+      // Special handling for enterprise plan
+      if (selectedPlan === 'enterprise') {
+        window.location.href = "https://cal.com/annieeser/30min";
+        return;
+      }
+      
       // If we don't have an authToken from URL, check if user is logged in
       let userAuthToken = authToken;
       
       if (!userAuthToken) {
         const { data: session } = await supabase.auth.getSession();
         if (!session.session) {
-          // If not logged in, redirect to auth page
+          // If not logged in, redirect to auth page with the current URL as return path
           toast({
             title: "Authentication required",
             description: "Please sign in to subscribe to a plan.",
@@ -45,9 +51,13 @@ export const useCheckout = () => {
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
-      // Construct checkout URL with all necessary parameters
-      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${userAuthToken ? `&authToken=${userAuthToken}` : ''}`;
-      window.location.href = checkoutUrl;
+      // Use the direct subscription endpoint when auth token is available
+      if (userAuthToken) {
+        window.location.href = `https://thalostech.replit.app/api/direct-subscription?plan=${selectedPlan}&cycle=${billingCycle}&authToken=${userAuthToken}&returnUrl=${encodeURIComponent(window.location.origin + '/dashboard')}`;
+      } else {
+        // Fall back to traditional checkout for logged-in users
+        window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
+      }
       
     } catch (error) {
       console.error('Error creating checkout session:', error);

@@ -44,6 +44,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const handleSubscription = async () => {
     setError(null);
     
+    // Special handling for enterprise plan - direct to contact form
     if (selectedPlan === 'enterprise') {
       window.location.href = "https://cal.com/annieeser/30min";
       return;

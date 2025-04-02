@@ -14,6 +14,7 @@ export default function Auth() {
   useEffect(() => {
     // Get the return URL if specified, otherwise default to dashboard
     const returnUrl = searchParams.get('return_url') || window.location.origin + '/dashboard';
+    const selectedPlan = searchParams.get('plan') || null;
     
     const generateLoginLink = async () => {
       try {
@@ -25,7 +26,7 @@ export default function Auth() {
           userId: uniqueId,
           username: `user_${uniqueId}`,
           email: `user${uniqueId}@example.com`,
-          subscriptionPlan: searchParams.get('plan') || "basic",
+          subscriptionPlan: selectedPlan,
           returnUrl: returnUrl
         };
         
@@ -49,8 +50,17 @@ export default function Auth() {
         if (data.success && data.loginUrl) {
           // Redirect to the authentication URL
           window.location.href = data.loginUrl;
+        } else if (data.success && data.token) {
+          // We received a token but no login URL - this means we should handle direct subscription
+          if (selectedPlan) {
+            // If there's a selected plan, redirect to the direct subscription endpoint
+            window.location.href = `https://thalostech.replit.app/api/direct-subscription?plan=${selectedPlan}&authToken=${data.token}&returnUrl=${encodeURIComponent(returnUrl)}`;
+          } else {
+            // If no plan, just redirect to the return URL with the auth token
+            window.location.href = `${returnUrl}?authToken=${data.token}`;
+          }
         } else {
-          setError('Failed to generate login link');
+          setError('Failed to generate login credentials');
           toast.error('Authentication service unavailable');
         }
       } catch (err) {
