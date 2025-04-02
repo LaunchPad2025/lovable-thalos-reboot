@@ -8,6 +8,7 @@ import TasksSection from './demo/sections/TasksSection';
 import ReportsSection from './demo/sections/ReportsSection';
 import DocumentsSection from './demo/sections/DocumentsSection';
 import AuditsSection from './demo/sections/AuditsSection';
+import AICopilotsSection from './demo/sections/AICopilotsSection';
 import { useMobile } from '@/hooks/useMobile';
 
 const DemoDashboard = () => {
@@ -45,6 +46,8 @@ const DemoDashboard = () => {
         return <DocumentsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
       case 'audits':
         return <AuditsSection onShowFeatureInfo={handleShowFeatureInfo} onItemSelect={handleItemSelect} />;
+      case 'copilot':
+        return <AICopilotsSection onShowFeatureInfo={handleShowFeatureInfo} />;
       default:
         return <div className="p-6 text-white">Feature Coming Soon</div>;
     }

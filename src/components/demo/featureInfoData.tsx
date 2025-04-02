@@ -202,6 +202,35 @@ export const getFeatureInfo = (section: string, selectedItem: any = null) => {
         ),
       };
 
+    case 'copilot':
+      return {
+        title: 'Safety Copilot "Paulie"',
+        description: 'Your AI-powered safety assistant',
+        features: [
+          'Instant safety regulation guidance',
+          'PPE recommendations',
+          'Safety procedure explanations',
+          'Hazard identification assistance',
+        ],
+        content: (
+          <div>
+            <p className="mb-4">
+              Paulie is your AI safety assistant that provides immediate guidance on workplace safety:
+            </p>
+            <ul className="list-disc pl-5 mb-4 space-y-2">
+              <li>Get answers about safety regulations and compliance requirements</li>
+              <li>Receive recommendations for proper PPE in different scenarios</li>
+              <li>Learn about safety procedures for specific environments</li>
+              <li>Access hazard identification and mitigation guidance</li>
+              <li>Get real-time support for safety decision-making</li>
+            </ul>
+            <p>
+              Using advanced AI technology, Paulie helps your team make informed safety decisions and maintain compliance with industry regulations.
+            </p>
+          </div>
+        ),
+      };
+
     // Add more sections as needed
 
     default:
