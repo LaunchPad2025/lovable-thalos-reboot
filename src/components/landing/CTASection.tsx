@@ -39,7 +39,7 @@ const CTASection = () => {
               variant="outline"
               className="border-blue-700/50 text-white hover:bg-blue-900/30 px-8 py-6 rounded-md text-lg"
             >
-              Try Interactive Demo
+              View Demo
             </Button>
           </div>
         </div>

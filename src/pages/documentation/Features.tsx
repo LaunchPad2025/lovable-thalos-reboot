@@ -55,7 +55,7 @@ const Features = () => {
                   onClick={() => navigate('/violations')}
                   className="mt-2"
                 >
-                  Try AI Safety Checks
+                  View Demo
                 </Button>
               </div>
             </div>
@@ -87,7 +87,7 @@ const Features = () => {
                   onClick={() => navigate('/tasks')}
                   className="mt-2"
                 >
-                  Explore Task Management
+                  View Demo
                 </Button>
               </div>
             </div>
@@ -120,7 +120,7 @@ const Features = () => {
                   onClick={() => navigate('/risk-assessment')}
                   className="mt-2"
                 >
-                  Explore Risk Assessment
+                  View Demo
                 </Button>
               </div>
             </div>
@@ -153,7 +153,7 @@ const Features = () => {
                   onClick={() => navigate('/reports')}
                   className="mt-2"
                 >
-                  Explore Analytics & Reports
+                  View Demo
                 </Button>
               </div>
             </div>
@@ -187,7 +187,7 @@ const Features = () => {
                     onClick={() => navigate('/chatbot')}
                     className="mt-2"
                   >
-                    Chat with Paulie
+                    View Demo
                   </Button>
                   
                   <Button 
