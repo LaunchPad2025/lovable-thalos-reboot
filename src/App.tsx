@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -38,7 +37,7 @@ import IndustryLayout from "./components/industries/IndustryLayout";
 import { 
   Features, 
   Pricing, 
-  Integrations, 
+  Integration, 
   Updates, 
   HelpCenter, 
   Guides, 
@@ -109,7 +108,8 @@ function App() {
                   {/* Documentation routes */}
                   <Route path="/documentation/features" element={<Features />} />
                   <Route path="/documentation/pricing" element={<Pricing />} />
-                  <Route path="/documentation/integrations" element={<Integrations />} />
+                  <Route path="/documentation/integration" element={<Integration />} />
+                  <Route path="/documentation/integrations" element={<Integration />} /> {/* Redirect to singular version */}
                   <Route path="/documentation/updates" element={<Updates />} />
                   <Route path="/documentation/help-center" element={<HelpCenter />} />
                   <Route path="/documentation/guides" element={<Guides />} />

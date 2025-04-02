@@ -1,7 +1,7 @@
 
 import Features from './Features';
 import Pricing from './Pricing';
-import Integrations from './Integrations';
+import Integration from './Integration';
 import Updates from './Updates';
 import HelpCenter from './HelpCenter';
 import Guides from './Guides';
@@ -14,7 +14,7 @@ import Legal from './Legal';
 export { 
   Features, 
   Pricing, 
-  Integrations, 
+  Integration, 
   Updates, 
   HelpCenter, 
   Guides, 
