@@ -45,7 +45,7 @@ const DemoDashboard = () => {
   return (
     <div className="flex h-screen overflow-hidden bg-[#0c1117]">
       <DemoSidebar activeSection={activeSection} onNavigate={setActiveSection} />
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col ml-64"> {/* Added ml-64 to offset the sidebar width */}
         <DemoHeader activeSection={activeSection} />
         <main className="flex-1 overflow-y-auto pt-16">
           {renderActiveSection()}
