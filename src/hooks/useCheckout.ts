@@ -23,16 +23,19 @@ export const useCheckout = () => {
         throw new Error("Selected plan not found");
       }
       
-      // Check if user is logged in (if we don't already have an authToken)
-      if (!authToken) {
+      // If we don't have an authToken from URL, check if user is logged in
+      let userAuthToken = authToken;
+      
+      if (!userAuthToken) {
         const { data: session } = await supabase.auth.getSession();
         if (!session.session) {
+          // If not logged in, redirect to auth page
           toast({
             title: "Authentication required",
             description: "Please sign in to subscribe to a plan.",
             variant: "destructive",
           });
-          navigate('/auth');
+          navigate('/auth?return_url=' + encodeURIComponent(window.location.href));
           return;
         }
       }
@@ -42,8 +45,8 @@ export const useCheckout = () => {
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
-      // Redirect to the replit app with the appropriate URL parameters including authToken if available
-      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${authToken ? `&authToken=${authToken}` : ''}`;
+      // Construct checkout URL with all necessary parameters
+      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${userAuthToken ? `&authToken=${userAuthToken}` : ''}`;
       window.location.href = checkoutUrl;
       
     } catch (error) {
@@ -53,7 +56,6 @@ export const useCheckout = () => {
         description: error.message || "An error occurred during checkout. Please try again.",
         variant: "destructive",
       });
-      throw error; // Re-throw to allow the component to handle it
     } finally {
       setIsLoading(false);
     }

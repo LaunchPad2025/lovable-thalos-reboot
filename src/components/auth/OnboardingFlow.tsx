@@ -21,9 +21,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase } from "@/lib/supabase";
 
 type UserRole = 'admin' | 'safety_officer' | 'worker';
+
+interface OnboardingFlowProps {
+  authToken?: string | null;
+}
 
 const industries = [
   "Construction",
@@ -53,7 +57,7 @@ const companySize = [
   { value: "1000+", label: "1000+ employees" },
 ];
 
-export function OnboardingFlow() {
+export function OnboardingFlow({ authToken }: OnboardingFlowProps) {
   const [step, setStep] = useState(1);
   const [role, setRole] = useState<UserRole>("worker");
   const [organization, setOrganization] = useState<string>("");
@@ -93,39 +97,70 @@ export function OnboardingFlow() {
   };
 
   const handleSubmit = async () => {
-    if (!user) return;
+    if (!user && !authToken) {
+      toast({
+        title: "Authentication required",
+        description: "You must be logged in to complete onboarding.",
+        variant: "destructive",
+      });
+      navigate('/auth');
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
-      await updateUserProfile({
-        role,
-        industries: selectedIndustries,
-        preferredModules: selectedModules,
-        onboarded: true
-      });
-      
-      if (createOrg && organization) {
-        const { data, error } = await supabase
-          .from('organizations')
-          .insert({
-            name: organization,
-            created_by: user.id,
-            industries: selectedIndustries,
-            size: size || null,
-          })
-          .select();
-          
-        if (error) throw error;
+      if (user) {
+        await updateUserProfile({
+          role,
+          industries: selectedIndustries,
+          preferredModules: selectedModules,
+          onboarded: true
+        });
         
-        if (data && data[0]) {
-          await supabase
-            .from('organization_members')
+        if (createOrg && organization) {
+          const { data, error } = await supabase
+            .from('organizations')
             .insert({
-              organization_id: data[0].id,
-              user_id: user.id,
-              role: 'admin'
-            });
+              name: organization,
+              created_by: user.id,
+              industries: selectedIndustries,
+              size: size || null,
+            })
+            .select();
+            
+          if (error) throw error;
+          
+          if (data && data[0]) {
+            await supabase
+              .from('organization_members')
+              .insert({
+                organization_id: data[0].id,
+                user_id: user.id,
+                role: 'admin'
+              });
+          }
+        }
+      } else if (authToken) {
+        const response = await fetch(`https://thalostech.replit.app/api/auth/update-user-preferences`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${authToken}`
+          },
+          body: JSON.stringify({
+            role,
+            industries: selectedIndustries,
+            preferredModules: selectedModules,
+            organization: createOrg ? organization : null,
+            organizationSize: size || null,
+            onboarded: true
+          }),
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Failed to update user preferences');
         }
       }
       

@@ -44,25 +44,13 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const handleSubscription = async () => {
     setError(null);
     
-    if (!user && !authToken) {
-      toast({
-        title: "Login required",
-        description: "Please log in to subscribe to a plan",
-        variant: "destructive",
-      });
-      navigate('/auth');
-      return;
-    }
-
     if (selectedPlan === 'enterprise') {
       window.location.href = "https://cal.com/annieeser/30min";
       return;
     }
     
     try {
-      // If we have an auth token from URL, pass it along to the checkout service
-      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${authToken ? `&authToken=${authToken}` : ''}`;
-      window.location.href = checkoutUrl;
+      await handleSubscribe(selectedPlan, billingCycle, plans);
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');

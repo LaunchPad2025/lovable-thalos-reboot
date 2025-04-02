@@ -17,12 +17,15 @@ export default function Auth() {
     
     const generateLoginLink = async () => {
       try {
+        // Generate a unique identifier for the user based on timestamp and random number
+        const uniqueId = Date.now() + Math.floor(Math.random() * 10000);
+        
         // Prepare payload for the direct login API
         const payload = {
-          userId: 123, // Example user ID, would be dynamic in production
-          username: `user_${Date.now()}`, // Generate a unique username
-          email: `user${Date.now()}@example.com`, // Generate a unique email
-          subscriptionPlan: "basic", // Default plan
+          userId: uniqueId,
+          username: `user_${uniqueId}`,
+          email: `user${uniqueId}@example.com`,
+          subscriptionPlan: searchParams.get('plan') || "basic",
           returnUrl: returnUrl
         };
         
@@ -35,6 +38,11 @@ export default function Auth() {
           },
           body: JSON.stringify(payload),
         });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Authentication service error');
+        }
         
         const data = await response.json();
         
@@ -58,7 +66,7 @@ export default function Auth() {
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [isSignup, searchParams]);
+  }, [isSignup, searchParams, navigate]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
