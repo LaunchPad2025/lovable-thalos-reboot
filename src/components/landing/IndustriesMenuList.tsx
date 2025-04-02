@@ -1,6 +1,7 @@
 
 import React from 'react';
 import IndustryItem from './IndustriesMenu';
+import { cn } from "@/lib/utils";
 
 export const industriesData = [
   {
