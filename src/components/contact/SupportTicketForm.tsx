@@ -1,21 +1,17 @@
 
 import React, { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { 
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from "@/components/ui/use-toast";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { AlertCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+
+// Import refactored components
+import FormHeader from './support-ticket/FormHeader';
+import PersonalInfoFields from './support-ticket/PersonalInfoFields';
+import SupportInfoFields from './support-ticket/SupportInfoFields';
+import UrgencyRadioGroup from './support-ticket/UrgencyRadioGroup';
+import MessageFields from './support-ticket/MessageFields';
+import SupportMessage from './support-ticket/SupportMessage';
+import SubmitButton from './support-ticket/SubmitButton';
 
 const SupportTicketForm = () => {
   const { toast } = useToast();
@@ -39,6 +35,10 @@ const SupportTicketForm = () => {
 
   const handleSelectChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleUrgencyChange = (value: string) => {
+    handleSelectChange('urgency', value);
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -102,156 +102,32 @@ ${formData.description}
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Submit a Support Ticket</CardTitle>
-        <CardDescription>
-          Fill out the form below to get assistance from our support team.
-        </CardDescription>
-      </CardHeader>
+      <FormHeader />
       <CardContent>
         <form className="space-y-6" onSubmit={handleSubmit}>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Full name</Label>
-              <Input 
-                id="name" 
-                placeholder="John Doe"
-                value={formData.name}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input 
-                id="email" 
-                type="email" 
-                placeholder="john.doe@example.com"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
+          <PersonalInfoFields 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+          />
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone (optional)</Label>
-              <Input 
-                id="phone" 
-                placeholder="+1 (555) 123-4567"
-                value={formData.phone}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="company">Company</Label>
-              <Input 
-                id="company" 
-                placeholder="Acme Corporation"
-                value={formData.company}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-          </div>
+          <SupportInfoFields 
+            formData={formData} 
+            handleSelectChange={handleSelectChange} 
+          />
           
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="supportTier">Support Tier</Label>
-              <Select 
-                value={formData.supportTier} 
-                onValueChange={(value) => handleSelectChange('supportTier', value)}
-              >
-                <SelectTrigger id="supportTier">
-                  <SelectValue placeholder="Select your support tier" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="standard">Standard</SelectItem>
-                  <SelectItem value="professional">Professional</SelectItem>
-                  <SelectItem value="enterprise">Enterprise</SelectItem>
-                  <SelectItem value="trial">Free Trial</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="issueType">Issue Type</Label>
-              <Select 
-                value={formData.issueType} 
-                onValueChange={(value) => handleSelectChange('issueType', value)}
-              >
-                <SelectTrigger id="issueType">
-                  <SelectValue placeholder="Select issue type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="technical">Technical Issue</SelectItem>
-                  <SelectItem value="billing">Billing Question</SelectItem>
-                  <SelectItem value="account">Account Management</SelectItem>
-                  <SelectItem value="feature">Feature Request</SelectItem>
-                  <SelectItem value="other">Other</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+          <UrgencyRadioGroup 
+            value={formData.urgency} 
+            onChange={handleUrgencyChange} 
+          />
           
-          <div className="space-y-3">
-            <Label>Urgency Level</Label>
-            <RadioGroup 
-              defaultValue="medium" 
-              value={formData.urgency}
-              onValueChange={(value) => handleSelectChange('urgency', value)}
-              className="flex flex-col space-y-1"
-            >
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="low" id="urgency-low" />
-                <Label htmlFor="urgency-low" className="font-normal">Low - Not blocking work</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="medium" id="urgency-medium" />
-                <Label htmlFor="urgency-medium" className="font-normal">Medium - Partially blocking work</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="high" id="urgency-high" />
-                <Label htmlFor="urgency-high" className="font-normal">High - Blocking critical work</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <RadioGroupItem value="critical" id="urgency-critical" />
-                <Label htmlFor="urgency-critical" className="font-normal">Critical - System outage or security issue</Label>
-              </div>
-            </RadioGroup>
-          </div>
+          <MessageFields 
+            formData={formData} 
+            handleInputChange={handleInputChange} 
+          />
           
-          <div className="space-y-2">
-            <Label htmlFor="subject">Subject</Label>
-            <Input 
-              id="subject" 
-              placeholder="Brief summary of your issue"
-              value={formData.subject}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
+          <SupportMessage />
           
-          <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
-            <Textarea 
-              id="description" 
-              placeholder="Please provide detailed information about your issue..."
-              rows={5}
-              value={formData.description}
-              onChange={handleInputChange}
-              required
-            />
-          </div>
-          
-          <div className="flex items-center text-sm text-muted-foreground p-3 bg-muted rounded-md">
-            <AlertCircle className="h-4 w-4 mr-2 text-blue-500" />
-            <p>Our support team will respond as soon as possible</p>
-          </div>
-          
-          <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Submitting..." : "Submit Support Ticket"}
-          </Button>
+          <SubmitButton isSubmitting={isSubmitting} />
         </form>
       </CardContent>
     </Card>
