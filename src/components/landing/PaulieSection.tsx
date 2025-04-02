@@ -46,12 +46,22 @@ const PaulieSection = () => {
               </li>
             </ul>
             
-            <Button 
-              className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
-              onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
-            >
-              Schedule a Consultation <ChevronRight className="ml-2 h-5 w-5" />
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                className="bg-yellow-600 hover:bg-yellow-700 rounded-md px-6 py-3 font-medium"
+                onClick={() => window.location.href = "https://cal.com/annieeser/30min"}
+              >
+                Schedule a Consultation <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+              
+              <Button 
+                variant="outline" 
+                className="border-gray-600 hover:bg-gray-800 px-6 py-3"
+                onClick={() => navigate("/chatbot")}
+              >
+                Try Paulie Now <ChevronRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
           </div>
           
           <div className="bg-[#111724] border border-gray-800 rounded-xl p-6 shadow-lg">
@@ -102,7 +112,10 @@ const PaulieSection = () => {
                 placeholder="Ask Paulie about safety regulations..."
                 className="w-full bg-gray-800 border border-gray-700 rounded-full py-3 px-4 pr-10 text-sm focus:outline-none focus:border-yellow-500"
               />
-              <button className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-500">
+              <button 
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 text-yellow-500"
+                onClick={() => navigate("/chatbot")}
+              >
                 <ChevronRight className="h-5 w-5" />
               </button>
             </div>

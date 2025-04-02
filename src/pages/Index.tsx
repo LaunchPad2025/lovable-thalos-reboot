@@ -1,6 +1,5 @@
 
 import React from 'react';
-import ChatPopup from '@/components/chatbot/ChatPopup';
 import LandingNavbar from '@/components/landing/LandingNavbar';
 import HeroSection from '@/components/landing/HeroSection';
 import FeaturesSection from '@/components/landing/FeaturesSection';
@@ -32,9 +31,6 @@ const Index = () => {
 
       {/* Footer */}
       <Footer />
-
-      {/* Chat popup */}
-      <ChatPopup />
     </div>
   );
 };
