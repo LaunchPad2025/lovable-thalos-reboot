@@ -1,7 +1,8 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 interface DemoHeaderProps {
   activeSection: string;
@@ -37,6 +38,13 @@ const DemoHeader = ({ activeSection, onToggleSidebar, sidebarCollapsed }: DemoHe
   return (
     <header className={`fixed top-0 right-0 ${sidebarCollapsed ? 'left-16' : 'left-64'} h-16 bg-[#0b0f14] border-b border-gray-800 z-20 flex items-center px-4 md:px-6 transition-all duration-300`}>
       <div className="flex-1 flex items-center">
+        <Link to="/" className="mr-4 text-gray-400 hover:text-white">
+          <Button variant="ghost" size="icon" className="text-gray-400 hover:text-white">
+            <ArrowLeft size={18} />
+          </Button>
+          <span className="sr-only">Back to homepage</span>
+        </Link>
+        
         {onToggleSidebar && (
           <Button 
             variant="ghost" 
