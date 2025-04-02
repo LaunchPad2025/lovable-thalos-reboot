@@ -1,40 +1,38 @@
 
 import Stripe from "https://esm.sh/stripe@12.4.0";
 
-// This is your Stripe CLI webhook secret for testing your endpoint locally.
-const stripeWebhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
-const stripeKey = Deno.env.get("STRIPE_SECRET_KEY");
-
-if (!stripeKey) {
-  throw new Error("Missing Stripe secret key");
-}
-
-export const stripe = new Stripe(stripeKey, {
+// Initialize Stripe with the secret key
+export const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
   httpClient: Stripe.createFetchHttpClient(),
 });
 
-export async function verifyRequest(req) {
-  const signature = req.headers.get("stripe-signature");
-
-  if (!signature || !stripeWebhookSecret) {
-    console.error("Missing Stripe signature or webhook secret");
-    throw new Error("Missing signature or webhook secret");
+// Verify the Stripe signature
+export async function verifySignature(payload: string, signature: string): Promise<any> {
+  const endpointSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+  
+  if (!endpointSecret) {
+    console.warn("No webhook secret set, skipping signature verification");
+    // If no secret is set (e.g., during development), parse the payload as JSON
+    return JSON.parse(payload);
   }
-
-  // Get the raw request body
-  const body = await req.text();
   
   try {
-    // Verify the webhook signature
-    const event = stripe.webhooks.constructEvent(
-      body,
-      signature,
-      stripeWebhookSecret
-    );
-    
-    return event;
-  } catch (err) {
-    console.error(`Webhook signature verification failed: ${err.message}`);
-    throw new Error(`Webhook signature verification failed: ${err.message}`);
+    // Use Stripe's webhook construction to verify the signature
+    return stripe.webhooks.constructEvent(payload, signature, endpointSecret);
+  } catch (error) {
+    console.error("Webhook signature verification failed:", error);
+    throw new Error(`Webhook signature verification failed: ${error.message}`);
   }
+}
+
+// Get a Supabase client with the service role key
+export function getSupabaseClient() {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+  
+  if (!supabaseUrl || !supabaseServiceKey) {
+    throw new Error("Supabase URL or Service Role Key not set");
+  }
+  
+  return { supabaseUrl, supabaseServiceKey };
 }

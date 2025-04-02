@@ -46,17 +46,35 @@ export const useCheckout = () => {
         }
       }
       
+      // Get the stripe price ID based on the selected plan and billing cycle
+      const priceId = plan.stripe_price_id[billingCycle];
+      
+      if (!priceId) {
+        throw new Error("Invalid price ID for the selected plan and billing cycle");
+      }
+      
       toast({
         title: "Subscription in progress",
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
-      // Use the direct subscription endpoint when auth token is available
-      if (userAuthToken) {
-        window.location.href = `https://thalostech.replit.app/api/direct-subscription?plan=${selectedPlan}&cycle=${billingCycle}&authToken=${userAuthToken}&returnUrl=${encodeURIComponent(window.location.origin + '/dashboard')}`;
+      // Create a checkout session using the Supabase Edge Function
+      const { data, error } = await supabase.functions.invoke('create-checkout', {
+        body: {
+          priceId,
+          billingCycle,
+          planName: selectedPlan,
+          userId: (await supabase.auth.getUser()).data.user?.id
+        }
+      });
+      
+      if (error) throw error;
+      
+      if (data && data.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
       } else {
-        // Fall back to traditional checkout for logged-in users
-        window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
+        throw new Error("Failed to create checkout session");
       }
       
     } catch (error) {
