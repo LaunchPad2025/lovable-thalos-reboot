@@ -4,14 +4,9 @@ import {
   LayoutDashboard, 
   ClipboardList, 
   BarChart2, 
-  UploadCloud, 
-  FileText, 
-  Bell, 
-  Settings, 
-  HelpCircle,
   AlertTriangle,
   MessageSquare,
-  Bot
+  UploadCloud
 } from 'lucide-react';
 
 interface DemoSidebarProps {
@@ -25,16 +20,11 @@ const DemoSidebar = ({ activeSection, onNavigate }: DemoSidebarProps) => {
     { id: 'violations', label: 'Violations', icon: AlertTriangle },
     { id: 'tasks', label: 'Tasks', icon: ClipboardList },
     { id: 'reports', label: 'Reports', icon: BarChart2 },
-    { id: 'documents', label: 'Documents', icon: FileText },
-    { id: 'audits', label: 'Audits', icon: Bell },
   ];
 
   const secondaryNavItems = [
     { id: 'copilot', label: 'Copilot', icon: MessageSquare, badge: 'AI' },
     { id: 'media-analysis', label: 'Media Analysis', icon: UploadCloud },
-    { id: 'subscription', label: 'Subscription', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings },
-    { id: 'help', label: 'Help & Tour', icon: HelpCircle },
   ];
 
   return (
