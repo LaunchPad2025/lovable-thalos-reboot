@@ -15,27 +15,34 @@ export default function Auth() {
     // Get the return URL if specified, otherwise default to dashboard
     const returnUrl = searchParams.get('return_url') || window.location.origin + '/dashboard';
     
-    const redirectToAuth = async () => {
+    const generateLoginLink = async () => {
       try {
-        // Call the API to get the auth URL with proper token
-        const response = await fetch(`https://thalostech.replit.app/${isSignup ? 'signup' : 'login'}`, {
+        // Prepare payload for the direct login API
+        const payload = {
+          userId: 123, // Example user ID, would be dynamic in production
+          username: `user_${Date.now()}`, // Generate a unique username
+          email: `user${Date.now()}@example.com`, // Generate a unique email
+          subscriptionPlan: "basic", // Default plan
+          returnUrl: returnUrl
+        };
+        
+        // Call the API to get the direct login URL
+        const response = await fetch(`https://thalostech.replit.app/api/auth/generate-login-link`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Authorization': 'Bearer lovable_integration_org_123'
           },
-          body: JSON.stringify({ 
-            return_url: returnUrl,
-            integration_token: 'lovable_integration_org_123'
-          }),
+          body: JSON.stringify(payload),
         });
         
         const data = await response.json();
         
-        if (data.auth_url) {
+        if (data.success && data.loginUrl) {
           // Redirect to the authentication URL
-          window.location.href = data.auth_url;
+          window.location.href = data.loginUrl;
         } else {
-          setError('Failed to get authentication URL');
+          setError('Failed to generate login link');
           toast.error('Authentication service unavailable');
         }
       } catch (err) {
@@ -47,7 +54,7 @@ export default function Auth() {
     
     // Wait a moment to show the loading state, then redirect
     const timer = setTimeout(() => {
-      redirectToAuth();
+      generateLoginLink();
     }, 1000);
     
     return () => clearTimeout(timer);
@@ -61,7 +68,7 @@ export default function Auth() {
             {isSignup ? "Creating your account..." : "Signing you in..."}
           </h1>
           <p className="mt-2 text-sm text-gray-400">
-            {error || "Redirecting to authentication page..."}
+            {error || "Generating secure login link..."}
           </p>
           
           {!error && (

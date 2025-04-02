@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/lib/supabase';
 import { PlanData } from '@/data/subscriptionPlans';
 
@@ -9,6 +9,11 @@ export const useCheckout = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Look for auth token in the URL if available
+  const searchParams = new URLSearchParams(location.search);
+  const authToken = searchParams.get('authToken');
   
   const handleSubscribe = async (selectedPlan: string, billingCycle: 'monthly' | 'annual', plans: PlanData[]) => {
     try {
@@ -18,34 +23,28 @@ export const useCheckout = () => {
         throw new Error("Selected plan not found");
       }
       
-      // Check if user is logged in
-      const { data: session } = await supabase.auth.getSession();
-      if (!session.session) {
-        toast({
-          title: "Authentication required",
-          description: "Please sign in to subscribe to a plan.",
-          variant: "destructive",
-        });
-        navigate('/auth');
-        return;
+      // Check if user is logged in (if we don't already have an authToken)
+      if (!authToken) {
+        const { data: session } = await supabase.auth.getSession();
+        if (!session.session) {
+          toast({
+            title: "Authentication required",
+            description: "Please sign in to subscribe to a plan.",
+            variant: "destructive",
+          });
+          navigate('/auth');
+          return;
+        }
       }
-      
-      // Get the user ID from the session
-      const userId = session.session.user.id;
       
       toast({
         title: "Subscription in progress",
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
-      // Validate the stripe price ID before proceeding
-      const priceId = plan.stripe_price_id[billingCycle];
-      if (!priceId) {
-        throw new Error(`No price ID available for ${plan.name} with ${billingCycle} billing cycle`);
-      }
-      
-      // Redirect to the replit app with the appropriate URL parameters
-      window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
+      // Redirect to the replit app with the appropriate URL parameters including authToken if available
+      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${authToken ? `&authToken=${authToken}` : ''}`;
+      window.location.href = checkoutUrl;
       
     } catch (error) {
       console.error('Error creating checkout session:', error);

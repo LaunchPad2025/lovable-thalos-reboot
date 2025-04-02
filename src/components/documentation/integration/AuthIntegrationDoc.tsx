@@ -17,11 +17,9 @@ const AuthIntegrationDoc = () => {
         <div>
           <h3 className="text-xl font-semibold mb-3">Endpoints</h3>
           <ul className="space-y-2 list-disc ml-6">
-            <li><strong>Login:</strong> POST /api/login</li>
-            <li><strong>Signup:</strong> POST /api/signup</li>
+            <li><strong>Generate Login Link:</strong> POST /api/auth/generate-login-link</li>
             <li><strong>Token validation:</strong> GET /api/validate-token</li>
-            <li><strong>SSO redirect:</strong> GET /api/lovable/sso</li>
-            <li><strong>SSO URL generation:</strong> POST /api/lovable/generate-sso-url</li>
+            <li><strong>Direct login:</strong> GET /api/direct-login?token=xxx</li>
             <li><strong>User lookup by email:</strong> POST /api/lovable/find-user</li>
           </ul>
         </div>
@@ -29,10 +27,11 @@ const AuthIntegrationDoc = () => {
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Authentication Flow</h3>
+          <h3 className="text-xl font-semibold mb-3">Direct Login Authentication Flow</h3>
           <ul className="space-y-2 list-disc ml-6">
-            <li><strong>Direct login/signup:</strong> Submit credentials to /api/login or /api/signup with a return_url parameter to receive an auth_token for redirection.</li>
-            <li><strong>SSO flow:</strong> Generate an SSO URL with /api/lovable/generate-sso-url and redirect users there.</li>
+            <li><strong>Step 1:</strong> Generate a direct login link by sending user information to /api/auth/generate-login-link</li>
+            <li><strong>Step 2:</strong> Redirect users to the returned loginUrl</li>
+            <li><strong>Step 3:</strong> Upon successful authentication, users will be redirected to the specified returnUrl</li>
           </ul>
         </div>
 
@@ -40,32 +39,30 @@ const AuthIntegrationDoc = () => {
 
         <div>
           <h3 className="text-xl font-semibold mb-3">Required Parameters</h3>
-          <ul className="space-y-2 list-disc ml-6">
-            <li><strong>For login:</strong> username, password, optional return_url</li>
-            <li><strong>For signup:</strong> username, email, password, optional return_url</li>
-            <li><strong>For SSO URL generation:</strong> email, redirectUrl, token (Lovable integration token)</li>
-            <li><strong>For user lookup:</strong> email, token (token is optional in development but required in production)</li>
-          </ul>
+          <div className="bg-[#1a1f29] p-4 rounded-md">
+            <pre className="text-sm text-gray-300 overflow-x-auto">
+{`{
+  "userId": 123,
+  "username": "user_from_lovable",
+  "email": "user@example.com", 
+  "subscriptionPlan": "basic",  // or the selected plan
+  "returnUrl": "https://thalos-safety.com/dashboard"  // optional redirect path
+}`}
+            </pre>
+          </div>
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Response Data After Authentication</h3>
+          <h3 className="text-xl font-semibold mb-3">Response Data</h3>
           <div className="bg-[#1a1f29] p-4 rounded-md">
             <pre className="text-sm text-gray-300 overflow-x-auto">
 {`{
-  "user": {
-    "id": 123,
-    "username": "user123",
-    "email": "user@example.com",
-    "subscriptionPlan": "basic",
-    "analysesRemaining": 50,
-    "fullName": "John Doe",
-    "organizationId": 1
-  },
-  "token": "jwt_token_here",
-  "message": "Login successful"
+  "success": true,
+  "loginUrl": "https://thalos-safety.com/direct-login?token=xxx&redirect=/dashboard",
+  "token": "jwt_token_string",
+  "expiresIn": "24 hours"
 }`}
             </pre>
           </div>

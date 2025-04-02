@@ -11,13 +11,37 @@ const PaymentIntegrationTab = () => {
   const navigate = useNavigate();
   const isProduction = useIsProduction();
 
-  // Function to redirect to plan selection
-  const redirectToPlanSelection = (plan: string) => {
-    // Example API call - would be replaced with real implementation
-    const returnUrl = window.location.origin + '/dashboard';
-    
+  // Function to redirect to plan selection with login token
+  const redirectToPlanSelection = async (plan: string) => {
     try {
-      window.location.href = `https://thalos-safety.replit.app/api/lovable/select-plan?plan=${plan}&interval=monthly&returnUrl=${encodeURIComponent(returnUrl)}`;
+      // First, generate a direct login token
+      const loginResponse = await fetch('https://thalos-safety.replit.app/api/auth/generate-login-link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer lovable_integration_org_123'
+        },
+        body: JSON.stringify({
+          userId: 123,
+          username: "demo_user",
+          email: "demo@example.com",
+          subscriptionPlan: plan,
+          returnUrl: window.location.origin + '/dashboard'
+        })
+      });
+      
+      const loginData = await loginResponse.json();
+      
+      if (!loginData.success || !loginData.token) {
+        throw new Error('Failed to generate authentication token');
+      }
+      
+      // Now redirect to plan selection with the token
+      const returnUrl = window.location.origin + '/dashboard';
+      const authToken = loginData.token;
+      
+      // Example API call - would be replaced with real implementation
+      window.location.href = `https://thalos-safety.replit.app/api/lovable/select-plan?plan=${plan}&interval=monthly&returnUrl=${encodeURIComponent(returnUrl)}&authToken=${encodeURIComponent(authToken)}`;
     } catch (error) {
       console.error('Redirect error:', error);
       toast.error('Error redirecting to plan selection');
@@ -74,17 +98,17 @@ const PaymentIntegrationTab = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="text-xl font-semibold mb-3">Payment Options</h3>
-          <p className="mb-4">Implement payment processing for your Lovable application:</p>
+          <h3 className="text-xl font-semibold mb-3">Payment Options with Automatic Login</h3>
+          <p className="mb-4">Implement payment processing with seamless authentication:</p>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="bg-[#1a1f29] border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Plan Selection</CardTitle>
+                <CardTitle className="text-lg">Plan Selection with Auto-Login</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-400 mb-4">
-                  Redirect users to our plan selection system for subscription setup.
+                  Redirect users to our plan selection system with automatic login after payment.
                 </p>
                 <Button 
                   onClick={() => redirectToPlanSelection('pro')}
@@ -95,15 +119,19 @@ const PaymentIntegrationTab = () => {
                 <div className="mt-3 text-xs text-blue-400">
                   <p className="font-medium">Example API Code:</p>
                   <pre className="mt-1 p-2 bg-gray-800 rounded text-gray-300 overflow-x-auto">
-{`fetch('https://thalos-safety.replit.app/api/lovable/select-plan', {
+{`// First generate a login token
+const loginResponse = await fetch('/api/auth/generate-login-link', {...});
+const { token } = await loginResponse.json();
+
+// Then redirect to plan selection with the token
+fetch('/api/lovable/select-plan', {
   method: 'POST',
   headers: { 'Content-Type': 'application/json' },
-  credentials: 'include',
   body: JSON.stringify({
-    plan: 'pro',           // 'basic', 'pro', 'premium'
-    interval: 'monthly',   // 'monthly' or 'annual'
-    email: 'user@example.com',  // Optional
-    returnUrl: 'https://yourdomain.com/success'  // Required
+    plan: 'pro',
+    interval: 'monthly',
+    authToken: token,  // Include auth token
+    returnUrl: 'https://yourdomain.com/success'
   })
 })`}
                   </pre>
@@ -185,21 +213,21 @@ const PaymentIntegrationTab = () => {
         <div className="p-4 bg-blue-900/20 border border-blue-800 rounded-md">
           <h3 className="text-xl font-semibold mb-3">Important Integration Notes</h3>
           <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>The <strong>authToken</strong> parameter enables automatic login after payment completion</li>
             <li>The <strong>returnUrl</strong> parameter is required for all plan selection requests</li>
             <li>Use <strong>'monthly'</strong> or <strong>'annual'</strong> for billing intervals (not 'month' or 'year')</li>
             <li>Requests must come from allowed domains (<code>thalostech.io</code>, <code>www.thalostech.io</code>, or <code>localhost:3000</code>)</li>
-            <li>For user lookup, the token is optional in development but required in production</li>
           </ul>
         </div>
 
         <div>
           <h3 className="text-xl font-semibold mb-3">Implementation Guide</h3>
-          <p className="mb-4">Follow these steps to implement the payment integration:</p>
+          <p className="mb-4">Follow these steps to implement the payment integration with automatic login:</p>
           
           <ol className="space-y-2 list-decimal ml-6">
-            <li>Configure your Lovable app to use our payment endpoints</li>
-            <li>Implement the subscription webhook endpoint in your app</li>
-            <li>Test the plan selection flow with different subscription plans</li>
+            <li>Generate a direct login token using the authentication API</li>
+            <li>Include this token when redirecting to the payment/subscription endpoint</li>
+            <li>After payment completion, users will be automatically logged in</li>
             <li>Use the pricing API to display current subscription options</li>
           </ol>
           

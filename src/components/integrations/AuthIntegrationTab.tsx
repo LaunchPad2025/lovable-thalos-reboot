@@ -12,27 +12,36 @@ const AuthIntegrationTab = () => {
   const navigate = useNavigate();
   const isProduction = useIsProduction();
 
-  // Function to generate SSO URL for Lovable
-  const generateSsoUrl = async (email: string, redirectUrl: string) => {
+  // Function to generate direct login URL
+  const generateDirectLoginUrl = async (email: string, redirectUrl: string) => {
     try {
+      const payload = {
+        userId: 123, // Example ID
+        username: "demo_user",
+        email: email,
+        subscriptionPlan: "basic",
+        returnUrl: redirectUrl
+      };
+      
       // This would call the real API in production
-      const response = await fetch('https://thalos-safety.replit.app/api/lovable/generate-sso-url', {
+      const response = await fetch('https://thalos-safety.replit.app/api/auth/generate-login-link', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...(isProduction && {'Authorization': `Bearer lovable_integration_org_123`})
         },
-        body: JSON.stringify({ email, redirectUrl })
+        body: JSON.stringify(payload)
       });
       
       const data = await response.json();
-      if (data.url) {
-        window.location.href = data.url;
+      if (data.success && data.loginUrl) {
+        toast.success('Login link generated successfully');
+        window.location.href = data.loginUrl;
       } else {
-        toast.error('Failed to generate SSO URL');
+        toast.error('Failed to generate login link');
       }
     } catch (error) {
-      console.error('SSO generation error:', error);
+      console.error('Login link generation error:', error);
       toast.error('Error connecting to authentication service');
     }
   };
@@ -65,8 +74,8 @@ const AuthIntegrationTab = () => {
     }
   };
 
-  // Mock function to redirect to Replit auth
-  const redirectToReplitAuth = (isSignup = false) => {
+  // Function to redirect to Auth page
+  const redirectToAuth = (isSignup = false) => {
     const returnUrl = window.location.origin + '/dashboard';
     navigate(`/auth?signup=${isSignup}&return_url=${encodeURIComponent(returnUrl)}`);
   };
@@ -87,17 +96,17 @@ const AuthIntegrationTab = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Card className="bg-[#1a1f29] border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">Direct Authentication</CardTitle>
+                <CardTitle className="text-lg">Direct Login Authentication</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-400 mb-4">
-                  Redirect users to our authentication pages and receive tokens for validation.
+                  Generate direct login URLs for seamless user authentication.
                 </p>
                 <div className="flex flex-col space-y-2">
-                  <Button onClick={() => redirectToReplitAuth(false)}>
+                  <Button onClick={() => redirectToAuth(false)}>
                     Implement Login
                   </Button>
-                  <Button onClick={() => redirectToReplitAuth(true)} variant="outline">
+                  <Button onClick={() => redirectToAuth(true)} variant="outline">
                     Implement Signup
                   </Button>
                 </div>
@@ -106,17 +115,17 @@ const AuthIntegrationTab = () => {
             
             <Card className="bg-[#1a1f29] border-gray-700">
               <CardHeader className="pb-2">
-                <CardTitle className="text-lg">SSO Integration</CardTitle>
+                <CardTitle className="text-lg">Test Direct Login</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-sm text-gray-400 mb-4">
-                  Generate SSO URLs to seamlessly authenticate users from your Lovable app.
+                  Test the direct login flow with our authentication system.
                 </p>
                 <Button 
-                  onClick={() => generateSsoUrl('demo@example.com', window.location.origin + '/dashboard')}
+                  onClick={() => generateDirectLoginUrl('demo@example.com', window.location.origin + '/dashboard')}
                   className="w-full"
                 >
-                  Test SSO Flow
+                  Generate Login Link
                 </Button>
               </CardContent>
             </Card>
@@ -165,6 +174,32 @@ const AuthIntegrationTab = () => {
                 </Button>
               </CardContent>
             </Card>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Direct Login API</h3>
+          <p className="mb-4">Example API call for generating a direct login link:</p>
+          <div className="p-4 bg-[#1a1f29] rounded-md">
+            <pre className="text-xs text-gray-300 overflow-x-auto">
+{`// Generate a direct login link
+fetch('https://thalos-safety.replit.app/api/auth/generate-login-link', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer lovable_integration_org_123'
+  },
+  body: JSON.stringify({
+    userId: 123,
+    username: "user_from_lovable",
+    email: "user@example.com", 
+    subscriptionPlan: "basic",
+    returnUrl: "https://thalos-safety.com/dashboard"
+  })
+})`}
+            </pre>
           </div>
         </div>
 

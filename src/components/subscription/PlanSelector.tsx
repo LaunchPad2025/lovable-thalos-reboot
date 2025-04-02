@@ -29,8 +29,11 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   
   useStripeStatus();
   
+  // Look for auth token in the URL
+  const searchParams = new URLSearchParams(location.search);
+  const authToken = searchParams.get('authToken');
+  
   useEffect(() => {
-    const searchParams = new URLSearchParams(location.search);
     const planParam = searchParams.get('plan');
     
     if (planParam && plans.some(p => p.id === planParam)) {
@@ -41,7 +44,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const handleSubscription = async () => {
     setError(null);
     
-    if (!user) {
+    if (!user && !authToken) {
       toast({
         title: "Login required",
         description: "Please log in to subscribe to a plan",
@@ -57,7 +60,9 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
     
     try {
-      window.location.href = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}`;
+      // If we have an auth token from URL, pass it along to the checkout service
+      const checkoutUrl = `https://thalostech.replit.app/subscription?plan=${selectedPlan}&cycle=${billingCycle}${authToken ? `&authToken=${authToken}` : ''}`;
+      window.location.href = checkoutUrl;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');
