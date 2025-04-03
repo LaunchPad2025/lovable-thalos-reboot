@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Code } from "@/components/ui/code";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ExternalLinkIcon } from "lucide-react";
+import { ExternalLinkIcon, InfoIcon } from "lucide-react";
 
 const LovableIntegrationDoc = () => {
   return (
@@ -17,14 +17,13 @@ const LovableIntegrationDoc = () => {
       </CardHeader>
       <CardContent className="space-y-6">
         <div>
-          <h3 className="text-xl font-semibold mb-3">URL Parameters for Linking</h3>
+          <h3 className="text-xl font-semibold mb-3">Direct Subscription API</h3>
           <p className="mb-2 text-gray-300">
-            When creating "Subscribe Now" or "Get Started" buttons on Lovable that direct users to Thalos, 
-            use the following URL format:
+            Use the direct subscription API endpoint to integrate Lovable with Thalos subscription services:
           </p>
           <div className="bg-[#1a1f29] p-4 rounded-md">
             <Code className="text-sm text-gray-300 overflow-x-auto">
-              https://your-thalos-domain.com/lovable-signup?plan=PLAN_ID&return_url=RETURN_URL&email=USER_EMAIL
+              POST https://thalostech.io/api/direct-subscription
             </Code>
           </div>
         </div>
@@ -32,128 +31,125 @@ const LovableIntegrationDoc = () => {
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Required Parameters</h3>
-          <ul className="space-y-2 list-disc ml-6 text-gray-300">
-            <li>
-              <strong>plan</strong> - The subscription plan ID (required)
-              <ul className="ml-6 mt-1 list-disc">
-                <li>Valid values: basic, pro, premium, or enterprise</li>
-                <li>Example: <Code className="text-xs">plan=pro</Code></li>
-              </ul>
-            </li>
-            <li>
-              <strong>return_url</strong> - The URL to return to after signup (optional)
-              <ul className="ml-6 mt-1 list-disc">
-                <li>This should be a URL on the Lovable domain</li>
-                <li>Example: <Code className="text-xs">return_url=https://lovable-website.com/thank-you</Code></li>
-              </ul>
-            </li>
-            <li>
-              <strong>email</strong> - Pre-fill the user's email (optional)
-              <ul className="ml-6 mt-1 list-disc">
-                <li>If you have the user's email, include it to pre-populate the form</li>
-                <li>Example: <Code className="text-xs">email=user@example.com</Code></li>
-              </ul>
-            </li>
-          </ul>
-        </div>
-
-        <Separator />
-
-        <div>
-          <h3 className="text-xl font-semibold mb-3">Example Links</h3>
-          <div className="space-y-2">
-            <p className="font-medium text-gray-300">For Basic Plan:</p>
-            <div className="bg-[#1a1f29] p-3 rounded-md">
-              <Code className="text-sm text-gray-300 overflow-x-auto">
-                https://your-thalos-domain.com/lovable-signup?plan=basic&return_url=https://lovable-website.com/thank-you
-              </Code>
-            </div>
-            
-            <p className="font-medium text-gray-300 mt-4">For Pro Plan with email:</p>
-            <div className="bg-[#1a1f29] p-3 rounded-md">
-              <Code className="text-sm text-gray-300 overflow-x-auto">
-                https://your-thalos-domain.com/lovable-signup?plan=pro&email=user@example.com&return_url=https://lovable-website.com/thank-you
-              </Code>
-            </div>
-          </div>
-        </div>
-
-        <Separator />
-
-        <div>
-          <h3 className="text-xl font-semibold mb-3">Authentication Token Return</h3>
-          <p className="text-gray-300">
-            If you include a return_url, Thalos will append an auth_token parameter when redirecting back to Lovable:
+          <h3 className="text-xl font-semibold mb-3">Request Format</h3>
+          <p className="mb-2 text-gray-300">
+            Here's an example of how to call the API:
           </p>
-          <div className="bg-[#1a1f29] p-3 rounded-md mt-2">
-            <Code className="text-sm text-gray-300 overflow-x-auto">
-              https://lovable-website.com/thank-you?auth_token=TOKEN_VALUE
-            </Code>
-          </div>
-          <p className="text-gray-300 mt-2">
-            You can use this token for SSO authentication with Thalos APIs.
-          </p>
-        </div>
-
-        <Separator />
-
-        <div>
-          <h3 className="text-xl font-semibold mb-3">API Verification Endpoint</h3>
-          <p className="text-gray-300 mb-2">
-            To verify a token or find a user by email, use the following endpoint:
-          </p>
-          <div className="bg-[#1a1f29] p-3 rounded-md">
+          <div className="bg-[#1a1f29] p-4 rounded-md">
             <pre className="text-sm text-gray-300 overflow-x-auto">
-{`POST /api/lovable/find-user
-{
-  "token": "lovable_integration_token",
-  "email": "user@example.com"
+{`const response = await fetch('https://thalostech.io/api/direct-subscription', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    email: 'customer@example.com',
+    name: 'Customer Name',
+    plan: 'pro',  // 'basic', 'pro', 'premium', or 'enterprise'
+    interval: 'month'  // 'month' or 'year'
+  })
+});
+
+const data = await response.json();
+
+if (data.success) {
+  // For regular plans (basic, pro, premium)
+  if (data.checkoutUrl) {
+    window.location.href = data.checkoutUrl;
+  }
+  // For enterprise plan
+  else if (data.contactUrl) {
+    window.location.href = data.contactUrl;
+  }
+} else {
+  // Handle error
+  console.error(data.message);
 }`}
             </pre>
           </div>
-          <p className="text-gray-300 mt-2">
-            The response will include user information if the user exists, or a 404 if not found.
-          </p>
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Security Notes</h3>
-          <ul className="space-y-1 list-disc ml-6 text-gray-300">
-            <li>Thalos validates return URLs against an allowlist of domains:
-              <ul className="ml-6 mt-1 list-disc">
-                <li>'localhost'</li>
-                <li>'thalos-safety.com'</li>
-                <li>'lovable-website.com'</li>
-                <li>'thalostech.io'</li>
-              </ul>
-            </li>
-            <li>Token validation requires a valid integration token for production environments</li>
+          <h3 className="text-xl font-semibold mb-3">Plan Information</h3>
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse">
+              <thead>
+                <tr className="bg-gray-800">
+                  <th className="p-2 text-left border border-gray-700">Plan</th>
+                  <th className="p-2 text-left border border-gray-700">Monthly Price</th>
+                  <th className="p-2 text-left border border-gray-700">Annual Price</th>
+                  <th className="p-2 text-left border border-gray-700">Features</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td className="p-2 border border-gray-700">Basic</td>
+                  <td className="p-2 border border-gray-700">$49</td>
+                  <td className="p-2 border border-gray-700">$499</td>
+                  <td className="p-2 border border-gray-700">50 safety checks/month</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border border-gray-700">Pro</td>
+                  <td className="p-2 border border-gray-700">$149</td>
+                  <td className="p-2 border border-gray-700">$1499</td>
+                  <td className="p-2 border border-gray-700">100 safety checks/month</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border border-gray-700">Premium</td>
+                  <td className="p-2 border border-gray-700">$249</td>
+                  <td className="p-2 border border-gray-700">$2499</td>
+                  <td className="p-2 border border-gray-700">250 safety checks/month</td>
+                </tr>
+                <tr>
+                  <td className="p-2 border border-gray-700">Enterprise</td>
+                  <td className="p-2 border border-gray-700" colSpan={2}>Custom pricing</td>
+                  <td className="p-2 border border-gray-700">500+ safety checks/month</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Post-Checkout Flow</h3>
+          <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>After successful payment, Stripe will automatically redirect to the success URL</li>
+            <li>The user will be automatically logged in to Thalos (no additional authentication needed)</li>
+            <li>No action required from Lovable for post-checkout handling</li>
           </ul>
         </div>
 
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Plan Features</h3>
-          <p className="text-gray-300 mb-2">
-            The LovableSignup page will display different features based on the plan parameter:
-          </p>
-          <ul className="space-y-1 list-disc ml-6 text-gray-300">
-            <li><strong>Basic Plan:</strong> 10 AI Safety Checks/month, Basic compliance reports, 1 industry profile</li>
-            <li><strong>Pro Plan:</strong> 50 AI Safety Checks/month, Advanced reports, 2 industry profiles, Task management</li>
-            <li><strong>Premium Plan:</strong> 250 AI Safety Checks/month, Advanced reports, All industry profiles, API access</li>
-            <li><strong>Enterprise Plan:</strong> Unlimited AI Safety Checks, Custom reports, All features, Dedicated support</li>
+          <h3 className="text-xl font-semibold mb-3">Testing</h3>
+          <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>Use <Code className="text-xs">test@example.com</Code> as a test email</li>
+            <li>In development, mock checkout is available by setting <Code className="text-xs">USE_MOCK_CHECKOUT=true</Code></li>
+            <li>Use the provided JavaScript test script in <Code className="text-xs">docs/lovable-integration-test.js</Code></li>
+            <li>For Stripe test payments, use card <Code className="text-xs">4242 4242 4242 4242</Code></li>
           </ul>
         </div>
 
-        <Alert className="bg-amber-500/10 border-amber-500/20 mt-6">
-          <ExternalLinkIcon className="h-5 w-5 text-amber-500" />
-          <AlertDescription className="text-amber-100">
-            For implementation assistance or integration issues, please contact our developer support at 
-            <a href="mailto:dev-support@thalostech.io" className="underline ml-1 text-amber-300">dev-support@thalostech.io</a>
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Error Handling</h3>
+          <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>Check for <Code className="text-xs">success: false</Code> in the API response</li>
+            <li>Display error messages from <Code className="text-xs">message</Code> field</li>
+            <li>For network errors, provide a fallback contact form</li>
+          </ul>
+        </div>
+
+        <Alert className="bg-blue-500/10 border-blue-500/20 mt-6">
+          <InfoIcon className="h-5 w-5 text-blue-500" />
+          <AlertDescription className="text-blue-100">
+            Security is handled via Stripe checkout verification. No separate API key is needed as the Thalos API handles user creation, authentication, and subscription management.
           </AlertDescription>
         </Alert>
       </CardContent>
