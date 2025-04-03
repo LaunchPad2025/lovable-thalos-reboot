@@ -11,10 +11,13 @@ export default function Auth() {
   const isSignup = searchParams.get('signup') === 'true';
   const [error, setError] = useState<string | null>(null);
   
+  // Get Lovable integration parameters
+  const selectedPlan = searchParams.get('plan') || null;
+  const returnUrlParam = searchParams.get('return_url') || null;
+  
   useEffect(() => {
     // Get the return URL if specified, otherwise default to dashboard
-    const returnUrl = searchParams.get('return_url') || window.location.origin + '/dashboard';
-    const selectedPlan = searchParams.get('plan') || null;
+    const returnUrl = returnUrlParam || searchParams.get('return_url') || window.location.origin + '/dashboard';
     
     const generateLoginLink = async () => {
       try {
@@ -76,7 +79,7 @@ export default function Auth() {
     }, 1000);
     
     return () => clearTimeout(timer);
-  }, [isSignup, searchParams, navigate]);
+  }, [isSignup, searchParams, navigate, selectedPlan, returnUrlParam]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">

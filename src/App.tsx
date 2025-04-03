@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -32,6 +33,7 @@ import Admin from "./pages/Admin";
 import Index from "./pages/Index";
 import Industries from "./pages/Industries";
 import IndustryLayout from "./components/industries/IndustryLayout";
+import LovableSignup from "./pages/LovableSignup";
 
 // Documentation Pages
 import { 
@@ -100,6 +102,7 @@ function App() {
                   <Route path="/legal" element={<Legal />} />
                   <Route path="/onboarding" element={<Onboarding />} />
                   <Route path="/demo" element={<DemoDashboard />} />
+                  <Route path="/lovable-signup" element={<LovableSignup />} />
                   
                   {/* Industry pages */}
                   <Route path="/industries" element={<Industries />} />

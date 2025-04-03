@@ -14,6 +14,7 @@ export const useCheckout = () => {
   // Look for auth token in the URL if available
   const searchParams = new URLSearchParams(location.search);
   const authToken = searchParams.get('authToken');
+  const returnUrl = searchParams.get('return_url');
   
   const handleSubscribe = async (selectedPlan: string, billingCycle: 'monthly' | 'annual', plans: PlanData[]) => {
     try {
@@ -64,7 +65,8 @@ export const useCheckout = () => {
           priceId,
           billingCycle,
           planName: selectedPlan,
-          userId: (await supabase.auth.getUser()).data.user?.id
+          userId: (await supabase.auth.getUser()).data.user?.id,
+          returnUrl: returnUrl || window.location.origin + '/dashboard'
         }
       });
       

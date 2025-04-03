@@ -5,6 +5,7 @@ import PageTitle from '@/components/ui/PageTitle';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuthIntegrationDoc from '@/components/documentation/integration/AuthIntegrationDoc';
 import PaymentIntegrationDoc from '@/components/documentation/integration/PaymentIntegrationDoc';
+import LovableIntegrationDoc from '@/components/documentation/integration/LovableIntegrationDoc';
 
 const Integration = () => {
   return (
@@ -16,11 +17,16 @@ const Integration = () => {
           className="mb-8"
         />
 
-        <Tabs defaultValue="authentication" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-8">
+        <Tabs defaultValue="lovable" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsTrigger value="lovable">Lovable Integration</TabsTrigger>
             <TabsTrigger value="authentication">Authentication</TabsTrigger>
             <TabsTrigger value="payment">Payment Processing</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="lovable" className="space-y-6">
+            <LovableIntegrationDoc />
+          </TabsContent>
 
           <TabsContent value="authentication" className="space-y-6">
             <AuthIntegrationDoc />
