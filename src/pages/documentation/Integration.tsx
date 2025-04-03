@@ -6,16 +6,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AuthIntegrationDoc from '@/components/documentation/integration/AuthIntegrationDoc';
 import PaymentIntegrationDoc from '@/components/documentation/integration/PaymentIntegrationDoc';
 import LovableIntegrationDoc from '@/components/documentation/integration/LovableIntegrationDoc';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 const Integration = () => {
   return (
     <PageContainer>
       <div className="max-w-5xl mx-auto">
         <PageTitle 
-          title="Thalos - Lovable Integration" 
-          subtitle="Technical documentation for integrating Thalos with Lovable services"
+          title="Thalos - Integration Documentation" 
+          subtitle="Technical documentation for integrating Thalos with third-party services"
           className="mb-8"
         />
+        
+        <Alert className="mb-6 bg-blue-500/10 border-blue-500/20">
+          <InfoIcon className="h-5 w-5 text-blue-500" />
+          <AlertDescription className="text-blue-100">
+            These technical documents are intended for developers integrating Thalos with external services.
+          </AlertDescription>
+        </Alert>
 
         <Tabs defaultValue="lovable" className="w-full">
           <TabsList className="grid w-full grid-cols-3 mb-8">

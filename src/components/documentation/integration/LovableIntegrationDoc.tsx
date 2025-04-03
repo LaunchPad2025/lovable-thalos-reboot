@@ -3,6 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Code } from "@/components/ui/code";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ExternalLinkIcon } from "lucide-react";
 
 const LovableIntegrationDoc = () => {
   return (
@@ -146,6 +148,14 @@ const LovableIntegrationDoc = () => {
             <li><strong>Enterprise Plan:</strong> Unlimited AI Safety Checks, Custom reports, All features, Dedicated support</li>
           </ul>
         </div>
+
+        <Alert className="bg-amber-500/10 border-amber-500/20 mt-6">
+          <ExternalLinkIcon className="h-5 w-5 text-amber-500" />
+          <AlertDescription className="text-amber-100">
+            For implementation assistance or integration issues, please contact our developer support at 
+            <a href="mailto:dev-support@thalostech.io" className="underline ml-1 text-amber-300">dev-support@thalostech.io</a>
+          </AlertDescription>
+        </Alert>
       </CardContent>
     </Card>
   );

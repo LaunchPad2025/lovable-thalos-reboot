@@ -1,0 +1,3 @@
+
+[functions.lovable-find-user]
+verify_jwt = false
