@@ -15,6 +15,7 @@ import WebhookNotifications from './lovable/WebhookNotifications';
 import PlanInformation from './lovable/PlanInformation';
 import SupportSection from './lovable/SupportSection';
 import IntegrationAlerts from './lovable/IntegrationAlerts';
+import FrequentlyAskedQuestions from './lovable/FrequentlyAskedQuestions';
 
 const LovableIntegrationDoc = () => {
   return (
@@ -61,6 +62,12 @@ const LovableIntegrationDoc = () => {
         <Separator />
         
         <PlanInformation />
+        
+        <Separator />
+        
+        <FrequentlyAskedQuestions />
+        
+        <Separator />
         
         <IntegrationAlerts />
         
