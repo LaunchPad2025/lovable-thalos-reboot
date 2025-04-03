@@ -34,7 +34,7 @@ const LovableIntegrationDoc = () => {
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Direct API Integration (New)</h3>
+          <h3 className="text-xl font-semibold mb-3">Direct API Integration (Updated)</h3>
           <p className="mb-2 text-gray-300">
             Alternatively, you can use our direct API endpoints for a more customized integration:
           </p>
@@ -44,24 +44,26 @@ const LovableIntegrationDoc = () => {
               <h4 className="text-lg font-medium mb-2">Direct Subscription Endpoint</h4>
               <div className="bg-[#1a1f29] p-4 rounded-md">
                 <div className="text-sm text-gray-300 overflow-x-auto">
-                  <p><strong>URL:</strong> <Code>https://2251c125-3707-4acd-b4ff-f15472580dbb-00-27u5i9s18md93.picard.replit.dev/api/lovable/simplified-direct-subscription</Code></p>
+                  <p><strong>URL:</strong> <Code>https://[your-deployment-url]/api/lovable/direct-subscription</Code></p>
                   <p><strong>Method:</strong> <Code>POST</Code></p>
                   <p><strong>Headers:</strong> <Code>Content-Type: application/json</Code></p>
                   <p><strong>Body:</strong></p>
                   <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
                     {`{
   "email": "[customer_email]",
-  "name": "[customer_name]",
+  "password": "[customer_password]",
+  "firstName": "[customer_first_name]",
+  "lastName": "[customer_last_name]",
   "company": "[company_name]",
-  "plan": "[basic|pro|premium|enterprise]",
-  "billingCycle": "[monthly|annual]"
+  "planId": "[basic-monthly|basic-yearly|pro-monthly|pro-yearly|premium-monthly|premium-yearly|enterprise-monthly|enterprise-yearly]"
 }`}
                   </pre>
                   <p><strong>Success Response:</strong></p>
                   <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
                     {`{
   "success": true,
-  "url": "[stripe_checkout_url]"
+  "token": "[jwt_token]",
+  "redirectUrl": "[stripe_checkout_url]"
 }`}
                   </pre>
                 </div>
@@ -69,30 +71,87 @@ const LovableIntegrationDoc = () => {
             </div>
 
             <div>
-              <h4 className="text-lg font-medium mb-2">Direct Login Endpoint</h4>
+              <h4 className="text-lg font-medium mb-2">Auto-Login Endpoint</h4>
               <div className="bg-[#1a1f29] p-4 rounded-md">
                 <div className="text-sm text-gray-300 overflow-x-auto">
-                  <p><strong>URL:</strong> <Code>https://2251c125-3707-4acd-b4ff-f15472580dbb-00-27u5i9s18md93.picard.replit.dev/api/auth/simplified-direct-login</Code></p>
-                  <p><strong>Method:</strong> <Code>POST</Code></p>
-                  <p><strong>Headers:</strong> <Code>Content-Type: application/json</Code></p>
-                  <p><strong>Body:</strong></p>
-                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
-                    {`{
-  "email": "[customer_email]",
-  "token": "[token_from_subscription_response]"
-}`}
-                  </pre>
-                  <p><strong>Success Response:</strong></p>
-                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
-                    {`{
-  "success": true,
-  "token": "[jwt_token]"
-}`}
-                  </pre>
+                  <p><strong>URL:</strong> <Code>https://[your-deployment-url]/direct-login?token=[JWT_TOKEN]</Code></p>
+                  <p><strong>Method:</strong> <Code>GET (via redirect)</Code></p>
+                  <p><strong>Description:</strong> This endpoint allows seamless authentication for users coming from Lovable after payment.</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Implementation Steps</h3>
+          <ol className="space-y-2 list-decimal ml-6 text-gray-300">
+            <li>
+              <strong>Update Purchase Flow:</strong>
+              <ul className="list-disc ml-6 mt-1">
+                <li>Add Thalos subscription buttons to your marketing pages</li>
+                <li>Implement a form to collect user information (email, password, first name, last name, company)</li>
+                <li>Add subscription plan selection</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Update API Integration:</strong>
+              <ul className="list-disc ml-6 mt-1">
+                <li>Modify API calls to use the direct subscription endpoint</li>
+                <li>Store the returned JWT token</li>
+                <li>Update redirect logic to use the auto-login URL</li>
+              </ul>
+            </li>
+            <li>
+              <strong>Example Implementation:</strong>
+              <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
+                {`// Function to handle subscription creation
+async function subscribeToPlatform(userData) {
+  const response = await fetch('https://[your-deployment-url]/api/lovable/direct-subscription', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      email: userData.email,
+      password: userData.password,
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      company: userData.company,
+      planId: userData.planId  // e.g., "basic-monthly"
+    })
+  });
+  const data = await response.json();
+  
+  if (data.success) {
+    // Store token for future use
+    localStorage.setItem('thalosToken', data.token);
+    
+    // Redirect to the auto-login URL
+    window.location.href = data.redirectUrl;
+  } else {
+    // Handle error
+    displayError(data.message);
+  }
+}`}
+              </pre>
+            </li>
+            <li>
+              <strong>Update Subscription Plan IDs:</strong>
+              <ul className="list-disc ml-6 mt-1">
+                <li>basic-monthly</li>
+                <li>basic-yearly</li>
+                <li>pro-monthly</li>
+                <li>pro-yearly</li>
+                <li>premium-monthly</li>
+                <li>premium-yearly</li>
+                <li>enterprise-monthly</li>
+                <li>enterprise-yearly</li>
+              </ul>
+            </li>
+          </ol>
         </div>
 
         <Separator />
@@ -144,13 +203,38 @@ const LovableIntegrationDoc = () => {
         <div>
           <h3 className="text-xl font-semibold mb-3">Customer Flow</h3>
           <ol className="space-y-2 list-decimal ml-6 text-gray-300">
-            <li>Lovable should collect customer information (email, name, company)</li>
+            <li>Lovable collects customer information (email, password, name, company)</li>
             <li>Customer selects a plan (basic, pro, premium, enterprise) and billing cycle (monthly, annual)</li>
-            <li>Call the direct subscription endpoint to get a Stripe checkout URL</li>
+            <li>Call the direct subscription endpoint to create user account and get Stripe checkout URL</li>
             <li>Redirect the customer to the Stripe checkout URL</li>
-            <li>After payment, Stripe will redirect the customer back to your success page</li>
-            <li>The success page will automatically log the customer in and redirect to their dashboard</li>
+            <li>After payment, Stripe will redirect the customer back to the auto-login URL</li>
+            <li>The customer will be automatically logged in and redirected to their dashboard</li>
           </ol>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Testing Before Going Live</h3>
+          <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>Test the subscription flow with test credentials</li>
+            <li>Verify automatic login functionality</li>
+            <li>Confirm subscription plan creation in Stripe</li>
+            <li>Test the redirect back to the dashboard</li>
+            <li>For successful payments: Card number <Code>4242 4242 4242 4242</Code>, any future expiration date, any CVC, any postal code</li>
+            <li>For failed payments: Card number <Code>4000 0000 0000 0002</Code></li>
+          </ul>
+        </div>
+
+        <Separator />
+
+        <div>
+          <h3 className="text-xl font-semibold mb-3">Documentation Updates</h3>
+          <ul className="space-y-2 list-disc ml-6 text-gray-300">
+            <li>Update documentation to include the new subscription options</li>
+            <li>Add information on how users can access their Thalos dashboard</li>
+            <li>Include support contact information for Thalos-related inquiries</li>
+          </ul>
         </div>
 
         <Separator />
@@ -212,16 +296,12 @@ const LovableIntegrationDoc = () => {
           </div>
         </div>
 
-        <Separator />
-
-        <div>
-          <h3 className="text-xl font-semibold mb-3">Testing</h3>
-          <ul className="space-y-2 list-disc ml-6 text-gray-300">
-            <li>You can test the integration flow with Stripe's test cards</li>
-            <li>For successful payments: Card number <Code>4242 4242 4242 4242</Code>, any future expiration date, any CVC, any postal code</li>
-            <li>For failed payments: Card number <Code>4000 0000 0000 0002</Code></li>
-          </ul>
-        </div>
+        <Alert className="bg-blue-500/10 border-blue-500/20 mt-6">
+          <InfoIcon className="h-5 w-5 text-blue-500" />
+          <AlertDescription className="text-blue-100">
+            The Enterprise plan links redirect to a contact form instead of direct checkout, allowing for custom pricing and feature discussions.
+          </AlertDescription>
+        </Alert>
 
         <Separator />
 
@@ -232,13 +312,6 @@ const LovableIntegrationDoc = () => {
             <li>Please include "Lovable Integration" in the subject line for faster routing</li>
           </ul>
         </div>
-
-        <Alert className="bg-blue-500/10 border-blue-500/20 mt-6">
-          <InfoIcon className="h-5 w-5 text-blue-500" />
-          <AlertDescription className="text-blue-100">
-            The Enterprise plan links redirect to a contact form instead of direct checkout, allowing for custom pricing and feature discussions.
-          </AlertDescription>
-        </Alert>
       </CardContent>
     </Card>
   );
