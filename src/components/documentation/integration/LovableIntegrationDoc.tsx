@@ -40,7 +40,8 @@ const LovableIntegrationDoc = () => {
 {`const response = await fetch('https://thalostech.io/api/direct-subscription', {
   method: 'POST',
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer lovable_integration_org_123' // Include integration token
   },
   body: JSON.stringify({
     email: 'customer@example.com',
@@ -68,6 +69,13 @@ if (data.success) {
             </pre>
           </div>
         </div>
+
+        <Alert className="bg-blue-500/10 border-blue-500/20 mt-6 mb-6">
+          <InfoIcon className="h-5 w-5 text-blue-500" />
+          <AlertDescription className="text-blue-100">
+            <strong>Important:</strong> Users do NOT need to create a Thalos account before subscribing. The API handles account creation automatically during checkout.
+          </AlertDescription>
+        </Alert>
 
         <Separator />
 

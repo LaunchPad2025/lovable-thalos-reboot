@@ -30,7 +30,6 @@ serve(async (req) => {
     }
 
     // Validate the integration token
-    // This is a simplified check - in production you would verify against a stored token
     const validTokens = [
       'lovable_integration_org_123',
       'lovable_integration_org_456',
@@ -67,11 +66,16 @@ serve(async (req) => {
         .single();
 
       if (userError || !userData) {
+        // If user not found, return success with null user data (don't treat as error)
         return new Response(
-          JSON.stringify({ error: "User not found", detail: userError?.message }),
+          JSON.stringify({ 
+            success: true, 
+            user: null,
+            userExists: false 
+          }),
           { 
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-            status: 404 
+            status: 200 
           }
         );
       }
@@ -86,6 +90,7 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({
           success: true,
+          userExists: true,
           user: {
             id: userData.id,
             email: userData.email,
