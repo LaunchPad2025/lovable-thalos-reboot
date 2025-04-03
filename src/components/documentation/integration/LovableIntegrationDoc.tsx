@@ -34,6 +34,70 @@ const LovableIntegrationDoc = () => {
         <Separator />
 
         <div>
+          <h3 className="text-xl font-semibold mb-3">Direct API Integration (New)</h3>
+          <p className="mb-2 text-gray-300">
+            Alternatively, you can use our direct API endpoints for a more customized integration:
+          </p>
+
+          <div className="space-y-4">
+            <div>
+              <h4 className="text-lg font-medium mb-2">Direct Subscription Endpoint</h4>
+              <div className="bg-[#1a1f29] p-4 rounded-md">
+                <div className="text-sm text-gray-300 overflow-x-auto">
+                  <p><strong>URL:</strong> <Code>https://2251c125-3707-4acd-b4ff-f15472580dbb-00-27u5i9s18md93.picard.replit.dev/api/lovable/simplified-direct-subscription</Code></p>
+                  <p><strong>Method:</strong> <Code>POST</Code></p>
+                  <p><strong>Headers:</strong> <Code>Content-Type: application/json</Code></p>
+                  <p><strong>Body:</strong></p>
+                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
+                    {`{
+  "email": "[customer_email]",
+  "name": "[customer_name]",
+  "company": "[company_name]",
+  "plan": "[basic|pro|premium|enterprise]",
+  "billingCycle": "[monthly|annual]"
+}`}
+                  </pre>
+                  <p><strong>Success Response:</strong></p>
+                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
+                    {`{
+  "success": true,
+  "url": "[stripe_checkout_url]"
+}`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <h4 className="text-lg font-medium mb-2">Direct Login Endpoint</h4>
+              <div className="bg-[#1a1f29] p-4 rounded-md">
+                <div className="text-sm text-gray-300 overflow-x-auto">
+                  <p><strong>URL:</strong> <Code>https://2251c125-3707-4acd-b4ff-f15472580dbb-00-27u5i9s18md93.picard.replit.dev/api/auth/simplified-direct-login</Code></p>
+                  <p><strong>Method:</strong> <Code>POST</Code></p>
+                  <p><strong>Headers:</strong> <Code>Content-Type: application/json</Code></p>
+                  <p><strong>Body:</strong></p>
+                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
+                    {`{
+  "email": "[customer_email]",
+  "token": "[token_from_subscription_response]"
+}`}
+                  </pre>
+                  <p><strong>Success Response:</strong></p>
+                  <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
+                    {`{
+  "success": true,
+  "token": "[jwt_token]"
+}`}
+                  </pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <Separator />
+
+        <div>
           <h3 className="text-xl font-semibold mb-3">URL Parameters</h3>
           <p className="mb-2 text-gray-300">
             The following URL parameters can be included when redirecting users:
@@ -78,13 +142,14 @@ const LovableIntegrationDoc = () => {
         <Separator />
 
         <div>
-          <h3 className="text-xl font-semibold mb-3">Authentication Flow</h3>
+          <h3 className="text-xl font-semibold mb-3">Customer Flow</h3>
           <ol className="space-y-2 list-decimal ml-6 text-gray-300">
-            <li>Users will be directed to our custom signup page where they can create an account</li>
-            <li>They'll proceed to Stripe checkout to complete payment</li>
-            <li>After successful payment, they'll be redirected back to the URL specified in <Code className="text-xs">redirect_url</Code></li>
-            <li>A secure token is generated and passed via the redirect: <Code className="text-xs">https://lovable.ai/dashboard?token=[secure_token]</Code></li>
-            <li>This token can be used to automatically authenticate the user on your side</li>
+            <li>Lovable should collect customer information (email, name, company)</li>
+            <li>Customer selects a plan (basic, pro, premium, enterprise) and billing cycle (monthly, annual)</li>
+            <li>Call the direct subscription endpoint to get a Stripe checkout URL</li>
+            <li>Redirect the customer to the Stripe checkout URL</li>
+            <li>After payment, Stripe will redirect the customer back to your success page</li>
+            <li>The success page will automatically log the customer in and redirect to their dashboard</li>
           </ol>
         </div>
 
@@ -98,7 +163,7 @@ const LovableIntegrationDoc = () => {
           <div className="bg-[#1a1f29] p-4 rounded-md">
             <div className="text-sm text-gray-300 overflow-x-auto">
               <p><strong>URL:</strong> <Code>https://api.lovable.ai/webhooks/thalos</Code></p>
-              <p><strong>Events:</strong> subscription.created, subscription.updated, subscription.canceled</p>
+              <p><strong>Events:</strong> checkout.session.completed, customer.subscription.updated, customer.subscription.deleted</p>
               <p><strong>Format:</strong> {`{event: string, userId: number, plan: string, data: object}`}</p>
             </div>
           </div>
@@ -152,10 +217,9 @@ const LovableIntegrationDoc = () => {
         <div>
           <h3 className="text-xl font-semibold mb-3">Testing</h3>
           <ul className="space-y-2 list-disc ml-6 text-gray-300">
-            <li>Use the test environment at <Code className="text-xs">https://staging.thalostech.io/lovable-signup?plan=basic&test=true</Code></li>
-            <li>This allows you to test the complete flow without actual charges</li>
-            <li>Stripe test cards can be used in the test environment</li>
-            <li>For Stripe test payments, use card <Code className="text-xs">4242 4242 4242 4242</Code></li>
+            <li>You can test the integration flow with Stripe's test cards</li>
+            <li>For successful payments: Card number <Code>4242 4242 4242 4242</Code>, any future expiration date, any CVC, any postal code</li>
+            <li>For failed payments: Card number <Code>4000 0000 0000 0002</Code></li>
           </ul>
         </div>
 
