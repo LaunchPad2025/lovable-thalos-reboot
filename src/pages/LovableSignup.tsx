@@ -18,7 +18,8 @@ export default function LovableSignup() {
     if (!hasShownInitialToast) {
       toast({
         title: "Connecting to subscription service",
-        description: "This might take a moment if the service is waking up...",
+        description: "This might take a moment if the service is waking up from idle state...",
+        duration: 8000, // Extended duration for better visibility
       });
       setHasShownInitialToast(true);
       safeLog('Initial connection attempt started');
@@ -36,6 +37,7 @@ export default function LovableSignup() {
         toast({
           title: `Connection attempt ${connectionAttempts}`,
           description: description,
+          duration: 5000,
         });
         
         safeLog(`Subscription connection attempt: ${connectionAttempts}`);
@@ -52,8 +54,9 @@ export default function LovableSignup() {
     if (timerExpired) {
       toast({
         title: "Connection taking longer than expected",
-        description: "The subscription service might be waking up or experiencing high traffic.",
+        description: "The subscription service might be waking up or experiencing high traffic. Please be patient or try again.",
         variant: "destructive",
+        duration: 10000, // Longer duration for important message
       });
       safeLog('Connection timeout detected');
     }

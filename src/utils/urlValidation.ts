@@ -38,6 +38,7 @@ export const validateReturnUrl = (url: string | null): boolean => {
       'replit.app', // Allow all replit subdomains
       'repl.co',    // Allow all replit.co domains
       'repl.run',   // Allow all repl.run domains
+      'replit.dev', // Add replit.dev domains
       'lovable.app',
       'lovableproject.com' // Allow Lovable preview domains
     ];
@@ -88,4 +89,39 @@ export const buildSafeUrl = (baseUrl: string, params: Record<string, string>): s
     // Return the base URL as fallback
     return baseUrl;
   }
+};
+
+/**
+ * Checks if the current environment is running on a mobile device
+ * @returns Boolean indicating if the current device is mobile
+ */
+export const isMobileDevice = (): boolean => {
+  const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
+  
+  // Regular expressions for mobile devices
+  const mobileRegex = [
+    /Android/i,
+    /webOS/i,
+    /iPhone/i,
+    /iPad/i,
+    /iPod/i,
+    /BlackBerry/i,
+    /Windows Phone/i
+  ];
+  
+  return mobileRegex.some(regex => userAgent.match(regex));
+};
+
+/**
+ * Gets a more detailed error message based on connection issues
+ * @param attempt The connection attempt number
+ * @returns A user-friendly error message
+ */
+export const getConnectionErrorMessage = (attempt: number): string => {
+  if (attempt >= 3) {
+    return 'Multiple connection attempts failed. The subscription service may be temporarily unavailable or experiencing high traffic. Please try again later.';
+  } else if (attempt >= 1) {
+    return 'Connection issue detected. Replit services may be starting up from an idle state. Please try again.';
+  } 
+  return 'Unable to connect to the subscription service. This might be temporary.';
 };

@@ -20,8 +20,8 @@ function Home() {
         });
         safeLog("User clicked subscribe button, redirecting to signup");
         
-        // Direct link to pro monthly plan
-        window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+        // Use lovable-signup route instead of direct Replit API call for better error handling
+        window.location.href = "/lovable-signup?plan=pro";
     };
     
     return (
