@@ -40,7 +40,10 @@ export const validateReturnUrl = (url: string | null): boolean => {
       'repl.run',   // Allow all repl.run domains
       'replit.dev', // Add replit.dev domains
       'lovable.app',
-      'lovableproject.com' // Allow Lovable preview domains
+      'lovableproject.com', // Allow Lovable preview domains
+      'replit.page', // Add additional Replit domains
+      'id.replit.com', // Replit authentication domain
+      'replit.com'     // Main Replit domain
     ];
     
     // Check if the hostname is a direct match or a subdomain of an allowed domain
@@ -96,6 +99,8 @@ export const buildSafeUrl = (baseUrl: string, params: Record<string, string>): s
  * @returns Boolean indicating if the current device is mobile
  */
 export const isMobileDevice = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+  
   const userAgent = navigator.userAgent || navigator.vendor || (window as any).opera;
   
   // Regular expressions for mobile devices
@@ -124,4 +129,20 @@ export const getConnectionErrorMessage = (attempt: number): string => {
     return 'Connection issue detected. Replit services may be starting up from an idle state. Please try again.';
   } 
   return 'Unable to connect to the subscription service. This might be temporary.';
+};
+
+/**
+ * Check if a URL is a Replit service URL
+ * @param url The URL to check
+ * @returns Boolean indicating if the URL is a Replit service
+ */
+export const isReplitUrl = (url: string): boolean => {
+  try {
+    const parsedUrl = new URL(url);
+    return parsedUrl.hostname.includes('replit') || 
+           parsedUrl.hostname.endsWith('repl.co') || 
+           parsedUrl.hostname.endsWith('repl.run');
+  } catch {
+    return false;
+  }
 };

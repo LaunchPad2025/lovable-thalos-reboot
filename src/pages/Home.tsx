@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, LogIn, ArrowRight } from 'lucide-react';
+import { ExternalLink, LogIn, ArrowRight, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
@@ -17,11 +17,23 @@ function Home() {
         toast({
           title: "Redirecting to signup",
           description: "Please wait while we connect to the subscription service...",
+          duration: 8000,
         });
         safeLog("User clicked subscribe button, redirecting to signup");
         
-        // Use lovable-signup route instead of direct Replit API call for better error handling
-        window.location.href = "/lovable-signup?plan=pro";
+        try {
+            // Use lovable-signup route instead of direct Replit API call for better error handling
+            window.location.href = "/lovable-signup?plan=pro";
+        } catch (err) {
+            setLoading(false);
+            toast({
+                title: "Connection Error",
+                description: "Failed to redirect to signup. Please try again later.",
+                variant: "destructive",
+                duration: 5000,
+            });
+            safeLog("Redirect error:", err);
+        }
     };
     
     return (
@@ -43,7 +55,7 @@ function Home() {
             <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 mt-4 w-full sm:w-auto max-w-md`}>
                 <Button 
                     variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 
+                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 px-4 py-2 
                                rounded-md w-full transition-all duration-200 
                                flex items-center justify-center"
                 >
@@ -65,8 +77,17 @@ function Home() {
                                rounded-md w-full transition-all duration-200 
                                shadow-md hover:shadow-lg flex items-center justify-center"
                 >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    {loading ? 'Connecting...' : 'Sign Up'}
+                    {loading ? (
+                        <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Connecting...
+                        </>
+                    ) : (
+                        <>
+                            <ExternalLink className="mr-2 h-4 w-4" />
+                            Sign Up
+                        </>
+                    )}
                 </Button>
             </div>
             
