@@ -32,6 +32,12 @@ export async function handleCheckoutComplete(session: any) {
     const { supabaseUrl, supabaseServiceKey } = getSupabaseClient();
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
     
+    // Extract plan information from plan name (e.g., "pro_monthly" becomes "pro")
+    let plan = planName || "pro";
+    if (plan.includes('_')) {
+      plan = plan.split('_')[0];
+    }
+    
     // Update or create the subscription record in the database
     const { error: upsertError } = await supabase
       .from('subscriptions')
@@ -39,15 +45,15 @@ export async function handleCheckoutComplete(session: any) {
         user_id: userId,
         stripe_customer_id: subscription.customer as string,
         stripe_subscription_id: subscription.id,
-        plan_id: planName || "pro", // Default to pro if not specified
+        plan_id: plan, 
         status: subscription.status,
         price_id: subscription.items.data[0].price.id,
         current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
         current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
         cancel_at_period_end: subscription.cancel_at_period_end,
         created_at: new Date().toISOString(),
-        analyses_total: getAnalysesTotal(planName || "pro"),
-        analyses_remaining: getAnalysesTotal(planName || "pro")
+        analyses_total: getAnalysesTotal(plan),
+        analyses_remaining: getAnalysesTotal(plan)
       });
     
     if (upsertError) {
@@ -81,7 +87,7 @@ export async function handleCheckoutComplete(session: any) {
         },
         body: JSON.stringify({
           userId: userId,
-          plan: planName,
+          plan: plan,
           status: 'active',
           auth_token: tokenData.token
         })

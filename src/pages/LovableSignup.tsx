@@ -8,13 +8,11 @@ import { useToast } from "@/hooks/use-toast";
 import { plans } from "@/data/subscriptionPlans";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useCheckout } from "@/hooks/useCheckout";
 
 export default function LovableSignup() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { isLoading: checkoutLoading, handleSubscribe } = useCheckout();
   const { user, loading } = useAuth();
   
   const [processingState, setProcessingState] = useState<'validating' | 'creating-account' | 'subscribing' | 'done'>('validating');
@@ -79,10 +77,9 @@ export default function LovableSignup() {
             return;
           }
           
-          // Subscribe to the selected plan
-          await handleSubscribe(planId, 'monthly', plans);
+          // Redirect to the new subscription URL
+          window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly`;
           
-          // The user will be redirected to Stripe by handleSubscribe
           return;
         }
         
@@ -134,10 +131,9 @@ export default function LovableSignup() {
               return;
             }
             
-            // Subscribe to the selected plan
-            await handleSubscribe(planId, 'monthly', plans);
+            // Redirect to the new subscription URL
+            window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly`;
             
-            // The user will be redirected to Stripe by handleSubscribe
             return;
           } else {
             // Email confirmation required - direct the user to check their email
@@ -159,7 +155,7 @@ export default function LovableSignup() {
     if (!loading && processingState === 'validating') {
       processSignupFlow();
     }
-  }, [user, loading, planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, navigate, toast, handleSubscribe]);
+  }, [user, loading, planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, navigate, toast]);
 
   // Show loading state while processing
   if (processingState !== 'done' && !error) {

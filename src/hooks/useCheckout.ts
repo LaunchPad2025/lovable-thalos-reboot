@@ -30,6 +30,9 @@ export const useCheckout = () => {
         return;
       }
       
+      // Format the planId according to the new requirements
+      const planId = `${selectedPlan}_${billingCycle}`;
+      
       // If we don't have an authToken from URL, check if user is logged in
       let userAuthToken = authToken;
       
@@ -47,43 +50,19 @@ export const useCheckout = () => {
         }
       }
       
-      // Get the stripe price ID based on the selected plan and billing cycle
-      const priceId = plan.stripe_price_id[billingCycle];
-      
-      if (!priceId) {
-        throw new Error("Invalid price ID for the selected plan and billing cycle");
-      }
-      
       toast({
         title: "Subscription in progress",
         description: `Redirecting to checkout for ${plan.name} (${billingCycle}) plan.`,
       });
       
-      // Create a checkout session using the Supabase Edge Function
-      const { data, error } = await supabase.functions.invoke('create-checkout', {
-        body: {
-          priceId,
-          billingCycle,
-          planName: selectedPlan,
-          userId: (await supabase.auth.getUser()).data.user?.id,
-          returnUrl: returnUrl || window.location.origin + '/dashboard'
-        }
-      });
-      
-      if (error) throw error;
-      
-      if (data && data.url) {
-        // Redirect to Stripe Checkout
-        window.location.href = data.url;
-      } else {
-        throw new Error("Failed to create checkout session");
-      }
+      // Redirect to the new subscription URL
+      window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}`;
       
     } catch (error) {
-      console.error('Error creating checkout session:', error);
+      console.error('Error during subscription process:', error);
       toast({
-        title: "Checkout failed",
-        description: error.message || "An error occurred during checkout. Please try again.",
+        title: "Subscription failed",
+        description: error.message || "An error occurred. Please try again.",
         variant: "destructive",
       });
     } finally {

@@ -51,7 +51,9 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
     
     try {
-      await handleSubscribe(selectedPlan, billingCycle, plans);
+      // Format the planId according to the new requirements
+      const planId = `${selectedPlan}_${billingCycle}`;
+      window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}`;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');
