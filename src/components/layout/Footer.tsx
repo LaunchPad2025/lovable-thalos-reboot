@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, ArrowRight } from 'lucide-react';
+import { Shield, ArrowRight, HardHat } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Footer = () => {
@@ -43,9 +43,11 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
-              <Shield className="h-7 w-7 text-blue-500" />
-              <div>
-                <span className="text-xl font-semibold text-white">Thalos</span>
+              <div className="flex items-center">
+                <span className="text-xl font-semibold text-white">
+                  Thalos<span className="text-blue-500">.</span>
+                </span>
+                <HardHat className="h-5 w-5 text-blue-500 ml-1" />
               </div>
             </div>
             <p className="text-sm mb-6">
