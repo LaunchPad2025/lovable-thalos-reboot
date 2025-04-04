@@ -5,13 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import PlanCard from './PlanCard';
 import { plans } from '@/data/subscriptionPlans';
-import { useCheckout } from '@/hooks/useCheckout';
-import { useStripeStatus } from '@/hooks/useStripeStatus';
-import { useAuth } from '@/context/auth';
-import { useToast } from '@/hooks/use-toast';
-import { useNavigate, useLocation } from 'react-router-dom';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
+import { useLocation } from 'react-router-dom';
 
 interface PlanSelectorProps {
   billingCycle: 'monthly' | 'annual';
@@ -21,19 +17,11 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const [selectedPlan, setSelectedPlan] = useState<string>('pro');
   const [error, setError] = useState<string | null>(null);
   const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>(initialBillingCycle);
-  const { isLoading, handleSubscribe } = useCheckout();
-  const { user } = useAuth();
-  const { toast } = useToast();
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const location = useLocation();
   
-  useStripeStatus();
-  
-  // Look for auth token in the URL
-  const searchParams = new URLSearchParams(location.search);
-  const authToken = searchParams.get('authToken');
-  
   useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
     const planParam = searchParams.get('plan');
     
     if (planParam && plans.some(p => p.id === planParam)) {
@@ -51,12 +39,14 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
     }
     
     try {
-      // Format the planId according to the new requirements
+      setIsLoading(true);
+      // Format the planId according to the requirements
       const planId = `${selectedPlan}_${billingCycle}`;
       window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}`;
     } catch (err) {
       console.error('Subscription error:', err);
       setError('There was a problem processing your subscription. Please try again later.');
+      setIsLoading(false);
     }
   };
   
