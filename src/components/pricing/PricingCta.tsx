@@ -20,7 +20,7 @@ const PricingCta = ({ onContactSales }: PricingCtaProps) => {
         onClick={onContactSales}
       >
         <Calendar className="mr-2 h-4 w-4" />
-        Schedule a Setup Call
+        Contact Sales
       </Button>
     </div>
   );

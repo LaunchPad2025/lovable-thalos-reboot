@@ -13,7 +13,7 @@ const FreeTrial = () => {
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div>
           <h2 className="text-white font-medium mb-1">Demo Mode</h2>
-          <p className="text-gray-400 text-sm">Book a 30-minute setup call to get access to all safety compliance features</p>
+          <p className="text-gray-400 text-sm">Contact our sales team to get access to all safety compliance features</p>
         </div>
         <div className="flex gap-2 mt-4 md:mt-0">
           <Button 
@@ -21,7 +21,7 @@ const FreeTrial = () => {
             onClick={handleScheduleCall}
           >
             <Calendar className="mr-2 h-4 w-4" />
-            Schedule a Setup Call
+            Contact Sales
           </Button>
         </div>
       </div>

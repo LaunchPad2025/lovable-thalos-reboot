@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -50,7 +51,7 @@ const PricingCard = ({ plan, billingCycle, isPopular, onSubscribe }: PricingCard
           onClick={() => onSubscribe(plan.id)} 
           className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
           variant={plan.id === 'enterprise' ? 'outline' : 'default'}>
-          {plan.id === 'enterprise' ? 'Contact Sales' : `Subscribe to ${plan.name}`}
+          Contact Sales
         </Button>
       </CardFooter>
     </Card>

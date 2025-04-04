@@ -31,20 +31,12 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
   const handleSubscription = async () => {
     setError(null);
     
-    // Special handling for enterprise plan - direct to contact form
-    if (selectedPlan === 'enterprise') {
-      window.location.href = "https://cal.com/annieeser/30min";
-      return;
-    }
-    
     try {
       setIsLoading(true);
-      // Format the planId according to the requirements
-      const planId = `${selectedPlan}_${billingCycle}`;
-      window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}`;
+      window.location.href = "https://cal.com/annieeser/30min";
     } catch (err) {
       console.error('Subscription error:', err);
-      setError('There was a problem processing your subscription. Please try again later.');
+      setError('There was a problem processing your request. Please try again later.');
       setIsLoading(false);
     }
   };
@@ -124,7 +116,7 @@ const PlanSelector = ({ billingCycle: initialBillingCycle }: PlanSelectorProps) 
                 Processing...
               </>
             ) : (
-              selectedPlan === 'enterprise' ? 'Contact Sales' : `Subscribe to ${billingCycle === 'annual' ? 'Annual' : 'Monthly'} Plan`
+              'Contact Sales'
             )}
           </Button>
           <p className="mt-4 text-sm text-muted-foreground">

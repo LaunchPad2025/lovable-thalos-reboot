@@ -23,14 +23,14 @@ const DefaultCard: React.FC = () => {
         <CardContent>
           <div className="flex flex-col items-center space-y-4">
             <p className="text-gray-400 text-center">
-              Ready to get started with Thalos? Book a setup call with our team.
+              Ready to get started with Thalos? Contact our sales team.
             </p>
             <Button 
               className="bg-blue-600 hover:bg-blue-700 flex items-center"
               onClick={handleScheduleCall}
             >
               <Calendar className="mr-2 h-4 w-4" />
-              Book a 30-Minute Setup Call
+              Contact Sales
             </Button>
             <Button 
               variant="outline" 

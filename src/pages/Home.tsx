@@ -84,14 +84,14 @@ function Home() {
                     ) : (
                         <>
                             <Calendar className="mr-2 h-4 w-4" />
-                            Book a 30-Minute Setup Call
+                            Contact Sales
                         </>
                     )}
                 </Button>
             </div>
             
             <p className="text-xs text-gray-500 mt-4 text-center max-w-md px-2">
-                Get personalized onboarding assistance by scheduling a 30-minute setup call with our team.
+                Get personalized onboarding assistance by scheduling a call with our sales team.
             </p>
         </div>
     );
