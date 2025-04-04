@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 
 function Home() {
     const handleSubscribe = () => {
+        // Direct link to pro monthly plan
         window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
     };
     

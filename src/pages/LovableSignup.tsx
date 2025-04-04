@@ -1,8 +1,6 @@
 
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "@/context/auth";
-import { supabase } from "@/lib/supabase";
 import { Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { plans } from "@/data/subscriptionPlans";
@@ -13,9 +11,8 @@ export default function LovableSignup() {
   const navigate = useNavigate();
   const location = useLocation();
   const { toast } = useToast();
-  const { user, loading } = useAuth();
   
-  const [processingState, setProcessingState] = useState<'validating' | 'creating-account' | 'subscribing' | 'done'>('validating');
+  const [processingState, setProcessingState] = useState<'validating' | 'redirecting' | 'done'>('validating');
   const [error, setError] = useState<string | null>(null);
   
   // Parse URL parameters
@@ -67,84 +64,17 @@ export default function LovableSignup() {
           return;
         }
         
-        // If user is already logged in
-        if (user) {
-          setProcessingState('subscribing');
+        setProcessingState('redirecting');
           
-          // If enterprise plan, redirect to contact page
-          if (planId === 'enterprise') {
-            window.location.href = "https://cal.com/annieeser/30min";
-            return;
-          }
-          
-          // Redirect to the new subscription URL
-          window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly`;
-          
+        // If enterprise plan, redirect to contact page
+        if (planId === 'enterprise') {
+          window.location.href = "https://cal.com/annieeser/30min";
           return;
         }
         
-        // If user is not logged in, create a temporary account
-        if (!user && !loading) {
-          setProcessingState('creating-account');
-          
-          // Generate a random password for the user
-          const tempPassword = Math.random().toString(36).slice(-10);
-          
-          // Create a new account with the provided email or a generated one
-          const userEmail = email || `temp_user_${Date.now()}@thalostech.temp`;
-          
-          const { data, error } = await supabase.auth.signUp({
-            email: userEmail,
-            password: tempPassword,
-            options: {
-              data: {
-                from_lovable: true,
-                selected_plan: planId,
-                return_url: returnUrl
-              }
-            }
-          });
-          
-          if (error) {
-            // If the user already exists, try to sign them in
-            if (error.message.includes('already registered')) {
-              toast({
-                title: "Welcome back!",
-                description: "You already have an account. Please sign in to continue.",
-              });
-              
-              // Redirect to the auth page with the plan parameter
-              navigate(`/auth?plan=${planId}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`);
-              return;
-            }
-            
-            setError(`Error creating account: ${error.message}`);
-            return;
-          }
-          
-          if (data.session) {
-            setProcessingState('subscribing');
-            
-            // If enterprise plan, redirect to contact page
-            if (planId === 'enterprise') {
-              window.location.href = "https://cal.com/annieeser/30min";
-              return;
-            }
-            
-            // Redirect to the new subscription URL
-            window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly`;
-            
-            return;
-          } else {
-            // Email confirmation required - direct the user to check their email
-            toast({
-              title: "Check your email",
-              description: "Please check your email to confirm your account before subscribing.",
-            });
-            
-            setProcessingState('done');
-          }
-        }
+        // Redirect to the Replit subscription URL with plan ID
+        window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${email ? `&email=${encodeURIComponent(email)}` : ''}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
+        
       } catch (err) {
         console.error('Error processing signup flow:', err);
         setError('An unexpected error occurred. Please try again.');
@@ -152,10 +82,10 @@ export default function LovableSignup() {
       }
     };
     
-    if (!loading && processingState === 'validating') {
+    if (processingState === 'validating') {
       processSignupFlow();
     }
-  }, [user, loading, planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, navigate, toast]);
+  }, [planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, email]);
 
   // Show loading state while processing
   if (processingState !== 'done' && !error) {
@@ -165,8 +95,7 @@ export default function LovableSignup() {
           <CardHeader>
             <CardTitle className="text-2xl font-bold text-white text-center">
               {processingState === 'validating' && "Validating your request..."}
-              {processingState === 'creating-account' && "Creating your account..."}
-              {processingState === 'subscribing' && "Setting up your subscription..."}
+              {processingState === 'redirecting' && "Setting up your subscription..."}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -174,8 +103,7 @@ export default function LovableSignup() {
               <Loader2 className="h-12 w-12 animate-spin text-blue-500" />
               <p className="text-gray-400 text-center">
                 {processingState === 'validating' && "We're validating your request parameters..."}
-                {processingState === 'creating-account' && "We're creating your Thalos account..."}
-                {processingState === 'subscribing' && "We're setting up your subscription to the " + selectedPlan.name + " plan..."}
+                {processingState === 'redirecting' && "We're setting up your subscription to the " + selectedPlan.name + " plan..."}
               </p>
             </div>
           </CardContent>
@@ -230,7 +158,7 @@ export default function LovableSignup() {
         <CardContent>
           <div className="flex flex-col items-center space-y-4">
             <p className="text-gray-400 text-center">
-              Please check your email to confirm your account before subscribing to the {selectedPlan.name} plan.
+              Redirecting you to sign up for the {selectedPlan.name} plan...
             </p>
             <Button 
               className="bg-blue-600 hover:bg-blue-700"

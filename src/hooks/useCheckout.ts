@@ -1,13 +1,11 @@
 
 import { useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { useNavigate } from 'react-router-dom';
 import { PlanData } from '@/data/subscriptionPlans';
 
 export const useCheckout = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { toast } = useToast();
-  const navigate = useNavigate();
   
   const handleSubscribe = async (selectedPlan: string, billingCycle: 'monthly' | 'annual', plans: PlanData[]) => {
     try {
@@ -34,7 +32,7 @@ export const useCheckout = () => {
       // Redirect to the Replit subscription URL
       window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}`;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error during subscription process:', error);
       toast({
         title: "Subscription failed",

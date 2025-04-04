@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase';
 import { toast } from 'sonner';
 
 const Signup = () => {
@@ -15,23 +14,12 @@ const Signup = () => {
         setLoading(true);
         
         try {
-            const { data, error } = await supabase.auth.signUp({ 
-                email, 
-                password 
-            });
-            
-            if (error) {
-                toast.error(`Signup error: ${error.message}`);
-            } else if (data && data.session) {
-                toast.success('Signup successful! Welcome aboard.');
-                navigate('/dashboard');
-            } else {
-                toast.info('Please check your email to confirm your signup.');
-            }
+            // For marketing website, redirect to Replit signup
+            toast.success('Redirecting to signup...');
+            window.location.href = "https://thalostech.replit.app/api/auth/signup";
         } catch (err) {
             console.error('Unexpected error during signup:', err);
             toast.error('An unexpected error occurred. Please try again.');
-        } finally {
             setLoading(false);
         }
     };
@@ -77,7 +65,7 @@ const Signup = () => {
                 
                 <p className="text-center text-sm">
                     Already have an account?{' '}
-                    <a href="/signin" className="text-blue-600 hover:underline">
+                    <a href="https://thalostech.replit.app/api/auth" className="text-blue-600 hover:underline">
                         Sign In
                     </a>
                 </p>
