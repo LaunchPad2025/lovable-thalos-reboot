@@ -15,37 +15,41 @@ const DirectApiIntegration = () => {
           <h4 className="text-lg font-medium mb-2">Direct Subscription Endpoint</h4>
           <div className="bg-[#1a1f29] p-4 rounded-md">
             <div className="text-sm text-gray-300 overflow-x-auto">
-              <p><strong>URL:</strong> <Code>https://[your-deployment-url]/api/lovable/direct-subscription</Code></p>
-              <p><strong>Method:</strong> <Code>POST</Code></p>
-              <p><strong>Headers:</strong> <Code>Content-Type: application/json</Code></p>
-              <p><strong>Body:</strong></p>
+              <p><strong>URL:</strong> <Code>https://thalostech.replit.app/api/subscribe</Code></p>
+              <p><strong>Method:</strong> <Code>GET</Code> or <Code>POST</Code></p>
+              <p><strong>Parameters:</strong></p>
               <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
                 {`{
   "email": "user@example.com",
   "name": "John Doe",
-  "plan": "basic",
-  "interval": "monthly"
+  "planId": "pro_monthly"  // See plan mapping below
 }`}
               </pre>
-              <p><strong>Success Response:</strong></p>
+              <p><strong>Plan Mapping:</strong></p>
               <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
-                {`{
-  "success": true,
-  "token": "[jwt_token]",
-  "redirectUrl": "[stripe_checkout_url]"
-}`}
+                {`- Basic (annual): basic_annual
+- Basic (monthly): basic_monthly
+- Pro (annual): pro_annual
+- Pro (monthly): pro_monthly
+- Premium (annual): premium_annual
+- Premium (monthly): premium_monthly`}
               </pre>
             </div>
           </div>
         </div>
 
         <div>
-          <h4 className="text-lg font-medium mb-2">Auto-Login Endpoint</h4>
+          <h4 className="text-lg font-medium mb-2">Post-Subscription Flow</h4>
           <div className="bg-[#1a1f29] p-4 rounded-md">
             <div className="text-sm text-gray-300 overflow-x-auto">
-              <p><strong>URL:</strong> <Code>https://[your-deployment-url]/direct-login?token=[JWT_TOKEN]</Code></p>
-              <p><strong>Method:</strong> <Code>GET (via redirect)</Code></p>
-              <p><strong>Description:</strong> This endpoint allows seamless authentication for users coming from Lovable after payment.</p>
+              <p><strong>Description:</strong> After redirecting to our endpoint, the system will:</p>
+              <ul className="list-disc ml-6 mt-1">
+                <li>Check for an existing account (or create one if needed)</li>
+                <li>Generate a Stripe Checkout session</li>
+                <li>Redirect the user to Stripe for payment</li>
+                <li>After successful payment, provision the user's environment</li>
+                <li>Automatically log in the user and redirect to the dashboard</li>
+              </ul>
             </div>
           </div>
         </div>

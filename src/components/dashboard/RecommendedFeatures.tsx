@@ -6,6 +6,10 @@ import { Badge } from '@/components/ui/badge';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 const RecommendedFeatures = () => {
+  const handleUpgrade = () => {
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   const handleContactSales = () => {
     window.location.href = "https://cal.com/annieeser/30min";
   };
@@ -14,7 +18,7 @@ const RecommendedFeatures = () => {
     <Card className="bg-[#0d1117] border-gray-800 shadow-none text-white">
       <CardContent className="p-6">
         <h3 className="font-medium mb-1">Recommended Features</h3>
-        <p className="text-gray-400 text-sm mb-4">Contact our sales team to access these powerful safety compliance tools</p>
+        <p className="text-gray-400 text-sm mb-4">Upgrade your plan to access these powerful safety compliance tools</p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
           <div className="bg-[#161b22] border border-gray-800 rounded-lg p-4">
@@ -25,7 +29,7 @@ const RecommendedFeatures = () => {
                     <Badge variant="simulation">Pro</Badge>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Simulation Only - Coming Soon</p>
+                    <p>Available with Pro Plan</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -42,7 +46,7 @@ const RecommendedFeatures = () => {
                     <Badge variant="simulation">Pro</Badge>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Simulation Only - Coming Soon</p>
+                    <p>Available with Pro Plan</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -57,11 +61,11 @@ const RecommendedFeatures = () => {
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <Badge variant="simulation" className="bg-blue-500/20 text-blue-300 border-blue-400/30">
-                      Coming Soon
+                      Premium
                     </Badge>
                   </TooltipTrigger>
                   <TooltipContent>
-                    <p>Simulation Only - Coming Soon</p>
+                    <p>Available with Premium Plan</p>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
@@ -71,9 +75,14 @@ const RecommendedFeatures = () => {
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={handleContactSales}>
-          Contact Sales
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={handleUpgrade}>
+            Upgrade Your Plan
+          </Button>
+          <Button className="w-full bg-transparent border border-gray-700 hover:bg-gray-800 text-white" onClick={handleContactSales}>
+            Contact Sales
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

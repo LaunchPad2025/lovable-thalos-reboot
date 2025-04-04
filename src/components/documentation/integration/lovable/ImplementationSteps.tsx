@@ -17,49 +17,35 @@ const ImplementationSteps = () => {
         <li>
           <strong>Update API Integration:</strong>
           <ul className="list-disc ml-6 mt-1">
-            <li>Modify API calls to use the direct subscription endpoint</li>
-            <li>Store the returned JWT token</li>
-            <li>Update redirect logic to use the auto-login URL</li>
+            <li>Redirect users to the Replit subscription endpoint</li>
+            <li>Pass required parameters (email, name, planId)</li>
+            <li>Let Replit handle all account and payment processing</li>
           </ul>
         </li>
         <li>
           <strong>Example Implementation:</strong>
           <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
             {`// Function to handle subscription creation
-async function subscribeToPlatform(userData) {
-  const response = await fetch('https://[your-deployment-url]/api/lovable/direct-subscription', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      email: userData.email,
-      name: userData.name,
-      plan: userData.plan,  // e.g., "basic"
-      interval: userData.interval  // e.g., "monthly"
-    })
+function redirectToSubscription(userData) {
+  // Build the URL with query parameters
+  const baseUrl = 'https://thalostech.replit.app/api/subscribe';
+  const params = new URLSearchParams({
+    email: userData.email,
+    name: userData.name,
+    planId: \`\${userData.plan}_\${userData.interval}\`  // e.g., "pro_monthly"
   });
-  const data = await response.json();
   
-  if (data.success) {
-    // Store token for future use
-    localStorage.setItem('thalosToken', data.token);
-    
-    // Redirect to the auto-login URL
-    window.location.href = data.redirectUrl;
-  } else {
-    // Handle error
-    displayError(data.message);
-  }
+  // Redirect the user
+  window.location.href = \`\${baseUrl}?\${params.toString()}\`;
 }`}
           </pre>
         </li>
         <li>
           <strong>Supported Plan Types:</strong>
           <ul className="list-disc ml-6 mt-1">
-            <li>Plans: basic, pro, premium, enterprise</li>
-            <li>Intervals: monthly, yearly</li>
-            <li>Note: Enterprise plan will redirect to contact page</li>
+            <li>Plans: basic, pro, premium</li>
+            <li>Intervals: monthly, annual</li>
+            <li>Note: All account creation and payment processing is now handled by Replit</li>
           </ul>
         </li>
       </ol>

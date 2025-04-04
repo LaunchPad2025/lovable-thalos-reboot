@@ -19,6 +19,10 @@ const industryIcons: Record<string, React.ReactNode> = {
 };
 
 const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
+  const handleGetStarted = () => {
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   if (!isMenuOpen) return null;
   
   return (
@@ -47,13 +51,13 @@ const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
         <Button 
           variant="outline" 
           className="justify-center w-full"
-          onClick={() => window.location.href = "https://thalostech.replit.app/auth"}
+          onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
         >
           <LogIn className="mr-2 h-4 w-4" aria-hidden="true" /> Sign in
         </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 justify-center w-full"
-          onClick={() => window.location.href = "https://thalostech.replit.app/auth"}
+          onClick={handleGetStarted}
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
         </Button>

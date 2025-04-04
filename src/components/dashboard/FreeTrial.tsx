@@ -6,6 +6,10 @@ import { useNavigate } from 'react-router-dom';
 const FreeTrial = () => {
   const navigate = useNavigate();
   
+  const handleUpgrade = () => {
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   const handleContactSales = () => {
     window.location.href = "https://cal.com/annieeser/30min";
   };
@@ -15,11 +19,16 @@ const FreeTrial = () => {
       <div className="flex flex-col md:flex-row justify-between items-center">
         <div>
           <h2 className="text-white font-medium mb-1">Free Trial Mode</h2>
-          <p className="text-gray-400 text-sm">Unlock all safety compliance features by contacting our sales team</p>
+          <p className="text-gray-400 text-sm">Unlock all safety compliance features by upgrading to a paid plan</p>
         </div>
-        <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-4 md:mt-0" onClick={handleContactSales}>
-          Contact Sales
-        </Button>
+        <div className="flex gap-2 mt-4 md:mt-0">
+          <Button className="bg-blue-600 hover:bg-blue-700 text-white" onClick={handleUpgrade}>
+            Upgrade Plan
+          </Button>
+          <Button variant="outline" className="border-gray-700 text-white hover:bg-gray-800" onClick={handleContactSales}>
+            Contact Sales
+          </Button>
+        </div>
       </div>
     </div>
   );

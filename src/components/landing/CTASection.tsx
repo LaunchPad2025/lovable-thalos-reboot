@@ -1,13 +1,20 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 const CTASection = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   
   const handleContactSales = () => {
     window.location.href = "https://cal.com/annieeser/30min";
+  };
+  
+  const handleSignUp = () => {
+    setLoading(true);
+    // Redirect to the Replit subscription endpoint with default plan
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
   };
   
   return (
@@ -27,11 +34,12 @@ const CTASection = () => {
               Contact Sales
             </Button>
             <Button 
-              onClick={() => window.location.href = "https://thalostech.replit.app/auth"}
+              onClick={handleSignUp}
+              disabled={loading}
               size="lg"
               className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md text-base sm:text-lg"
             >
-              Sign Up Now
+              {loading ? 'Redirecting...' : 'Sign Up Now'}
             </Button>
             <Button 
               onClick={() => navigate('/demo')} 

@@ -14,6 +14,10 @@ import IndustriesMenuList from '../IndustriesMenuList';
 import { DesktopNavProps } from './types';
 
 const DesktopNav = ({ isActive }: DesktopNavProps) => {
+  const handleGetStarted = () => {
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   return (
     <div className="hidden md:flex items-center gap-2">
       <NavigationMenu className="hidden md:flex">
@@ -58,14 +62,14 @@ const DesktopNav = ({ isActive }: DesktopNavProps) => {
           variant="ghost" 
           className="text-gray-300 hover:text-white"
           aria-label="Sign in to your account"
-          onClick={() => window.location.href = "https://thalostech.replit.app/auth"}
+          onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
         >
           Sign in
         </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 items-center"
           aria-label="Get started with Thalos"
-          onClick={() => window.location.href = "https://thalostech.replit.app/auth"}
+          onClick={handleGetStarted}
         >
           Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
         </Button>

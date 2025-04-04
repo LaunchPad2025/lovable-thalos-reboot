@@ -11,10 +11,12 @@ const SubscriptionLinks = () => {
       </p>
       <div className="bg-[#1a1f29] p-4 rounded-md mb-4">
         <div className="text-sm text-gray-300 overflow-x-auto">
-          <p><strong>Basic Plan:</strong> <Code>https://thalostech.io/lovable-signup?plan=basic&redirect_url=https://lovable.ai/dashboard</Code></p>
-          <p><strong>Pro Plan:</strong> <Code>https://thalostech.io/lovable-signup?plan=pro&redirect_url=https://lovable.ai/dashboard</Code></p>
-          <p><strong>Premium Plan:</strong> <Code>https://thalostech.io/lovable-signup?plan=premium&redirect_url=https://lovable.ai/dashboard</Code></p>
-          <p><strong>Enterprise Plan:</strong> <Code>https://thalostech.io/contact?plan=enterprise&redirect_url=https://lovable.ai/dashboard</Code></p>
+          <p><strong>Basic Plan (Monthly):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=basic_monthly</Code></p>
+          <p><strong>Basic Plan (Annual):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=basic_annual</Code></p>
+          <p><strong>Pro Plan (Monthly):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=pro_monthly</Code></p>
+          <p><strong>Pro Plan (Annual):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=pro_annual</Code></p>
+          <p><strong>Premium Plan (Monthly):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=premium_monthly</Code></p>
+          <p><strong>Premium Plan (Annual):</strong> <Code>https://thalostech.replit.app/api/subscribe?planId=premium_annual</Code></p>
         </div>
       </div>
     </div>

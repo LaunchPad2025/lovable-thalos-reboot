@@ -9,6 +9,11 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const isMobile = useMobile();
   
+  const handleGetStarted = () => {
+    // Redirect to the Replit subscription endpoint with default plan
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   return (
     <div className="container mx-auto px-4 pt-16 md:pt-24 pb-16 md:pb-20 text-center relative overflow-hidden">
       {/* Background decorative elements */}
@@ -44,10 +49,10 @@ const HeroSection = () => {
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10 md:mb-16">
           <Button 
-            onClick={() => navigate('/demo')} 
+            onClick={handleGetStarted} 
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md flex items-center justify-center text-base sm:text-lg shadow-lg shadow-blue-900/30 group transition-all duration-300"
           >
-            View Demo <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            Get Started <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
           <Button 

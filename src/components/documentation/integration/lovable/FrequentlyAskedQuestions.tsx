@@ -47,6 +47,31 @@ const FrequentlyAskedQuestions = () => {
             of the previously more detailed format.
           </AccordionContent>
         </AccordionItem>
+        
+        <AccordionItem value="item-5">
+          <AccordionTrigger className="text-gray-100">How does the new subscription flow work?</AccordionTrigger>
+          <AccordionContent className="text-gray-300">
+            When a user clicks the subscription button, they are redirected to our Replit subscription endpoint.
+            Our backend will check for an existing account (or create one), generate a Stripe Checkout session,
+            and redirect the user to Stripe for payment. After successful payment, the user's environment is
+            provisioned and they are automatically logged in and redirected to the dashboard.
+          </AccordionContent>
+        </AccordionItem>
+        
+        <AccordionItem value="item-6">
+          <AccordionTrigger className="text-gray-100">What are the correct planId values to use?</AccordionTrigger>
+          <AccordionContent className="text-gray-300">
+            The planId parameter must be one of:
+            <ul className="list-disc ml-6 mt-2">
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">basic_monthly</code> - Basic plan, monthly billing</li>
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">basic_annual</code> - Basic plan, annual billing</li>
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">pro_monthly</code> - Pro plan, monthly billing</li>
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">pro_annual</code> - Pro plan, annual billing</li>
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">premium_monthly</code> - Premium plan, monthly billing</li>
+              <li><code className="bg-gray-800 px-1 mx-1 rounded text-xs">premium_annual</code> - Premium plan, annual billing</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );

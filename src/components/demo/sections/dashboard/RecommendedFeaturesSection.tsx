@@ -4,6 +4,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 const RecommendedFeaturesSection = () => {
+  const handleUpgrade = () => {
+    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  };
+  
   return (
     <Card className="bg-[#0d1117] border-gray-800 mb-6">
       <CardContent className="p-6">
@@ -36,7 +40,7 @@ const RecommendedFeaturesSection = () => {
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white">
+        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={handleUpgrade}>
           Upgrade Your Plan
         </Button>
       </CardContent>
