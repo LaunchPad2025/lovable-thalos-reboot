@@ -72,7 +72,7 @@ function Home() {
                 <Button 
                     onClick={handleScheduleCall}
                     disabled={loading}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 
                                rounded-md w-full transition-all duration-200 
                                shadow-md hover:shadow-lg flex items-center justify-center"
                 >
@@ -84,7 +84,7 @@ function Home() {
                     ) : (
                         <>
                             <Calendar className="mr-2 h-4 w-4" />
-                            Book a Setup Call
+                            Book a 30-Minute Setup Call
                         </>
                     )}
                 </Button>
