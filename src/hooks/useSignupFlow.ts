@@ -1,9 +1,10 @@
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { plans, PlanData } from "@/data/subscriptionPlans";
 import { validateReturnUrl } from "@/utils/urlValidation";
+import { safeLog } from "@/utils/environmentUtils";
 
 export function useSignupFlow() {
   const location = useLocation();
@@ -13,6 +14,15 @@ export function useSignupFlow() {
   const [error, setError] = useState<string | null>(null);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  
+  // Track if component is mounted to prevent state updates after unmount
+  const isMounted = useRef(true);
+  
+  useEffect(() => {
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
   
   // Parse URL parameters
   const searchParams = new URLSearchParams(location.search);
@@ -32,10 +42,15 @@ export function useSignupFlow() {
   
   // Function to retry connection
   const retryConnection = useCallback(() => {
-    console.log("Retrying connection, attempt:", connectionAttempts + 1);
+    const newAttempt = connectionAttempts + 1;
+    safeLog("Retrying connection, attempt:", newAttempt);
+    
+    // Don't update state if component is unmounted
+    if (!isMounted.current) return;
+    
     setError(null);
     setProcessingState('validating');
-    setConnectionAttempts(prev => prev + 1);
+    setConnectionAttempts(newAttempt);
     setIsRedirecting(false);
     
     // Show toast when retrying
@@ -47,25 +62,28 @@ export function useSignupFlow() {
   
   // Handle the signup and subscription process
   useEffect(() => {
-    if (processingState !== 'validating' || isRedirecting) return;
+    if (processingState !== 'validating' || isRedirecting || !isMounted.current) return;
     
     const processSignupFlow = async () => {
       try {
-        console.log("Processing signup flow, plan:", planId, "attempt:", connectionAttempts);
+        safeLog("Processing signup flow, plan:", planId, "attempt:", connectionAttempts);
         
         // Validate parameters first
         if (!isValidPlan) {
+          if (!isMounted.current) return;
           setError(`Invalid plan: '${planId}'. Please use one of: basic, pro, premium, enterprise.`);
           setProcessingState('error');
           return;
         }
         
         if (returnUrl && !isValidReturnUrl) {
+          if (!isMounted.current) return;
           setError(`Invalid return URL. For security reasons, only approved domains are allowed.`);
           setProcessingState('error');
           return;
         }
         
+        if (!isMounted.current) return;
         setProcessingState('redirecting');
         setIsRedirecting(true);
           
@@ -79,14 +97,18 @@ export function useSignupFlow() {
         const subscriptionUrl = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${email ? `&email=${encodeURIComponent(email)}` : ''}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
         
         // Show the redirect toast
+        if (!isMounted.current) return;
         toast({
           title: "Redirecting to subscription service",
           description: `Setting up ${selectedPlan.name} plan...`,
         });
         
-        // Setup timeout for detecting connection issues - now with a longer timeout for Replit
+        // Setup timeout for detecting connection issues - adaptive timeout
+        // For first attempt set shorter timeout, for retry attempts increase the timeout
+        const timeoutMs = connectionAttempts === 0 ? 15000 : 25000;
+        
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Connection timed out')), 20000); // Increased timeout for Replit
+          setTimeout(() => reject(new Error('Connection timed out')), timeoutMs);
         });
         
         // Add a small delay to ensure the user sees the loading state
@@ -96,17 +118,26 @@ export function useSignupFlow() {
         ]);
         
         // Log the redirect URL for debugging
-        console.log("Redirecting to:", subscriptionUrl);
+        safeLog("Redirecting to:", subscriptionUrl);
         
         // Redirect to subscription URL
         window.location.href = subscriptionUrl;
         
       } catch (err) {
-        console.error('Error processing signup flow:', err);
+        safeLog('Error processing signup flow:', err);
         
-        const errorMessage = connectionAttempts >= 2 
-          ? 'Multiple connection attempts failed. The subscription service may be temporarily unavailable. Please try again later.'
-          : 'Connection issue detected. The subscription service may be temporarily unavailable.';
+        // Don't update state if component is unmounted
+        if (!isMounted.current) return;
+        
+        // Customize error message based on connection attempts
+        let errorMessage = "";
+        if (connectionAttempts >= 3) {
+          errorMessage = 'Multiple connection attempts failed. The subscription service may be temporarily unavailable. Please try again later.';
+        } else if (connectionAttempts >= 1) {
+          errorMessage = 'Connection issue detected. Replit services may be starting up. Please try again.';
+        } else {
+          errorMessage = 'Unable to connect to the subscription service. This might be temporary.';
+        }
           
         setError(errorMessage);
         setProcessingState('error');

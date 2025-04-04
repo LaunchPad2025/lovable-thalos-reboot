@@ -2,9 +2,21 @@
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { ExternalLink, LogIn, ArrowRight } from 'lucide-react';
+import { useState } from 'react';
+import useMobile from '@/hooks/useMobile';
+import { useToast } from '@/hooks/use-toast';
 
 function Home() {
+    const [loading, setLoading] = useState(false);
+    const isMobile = useMobile();
+    const { toast } = useToast();
+    
     const handleSubscribe = () => {
+        setLoading(true);
+        toast({
+          title: "Redirecting to signup",
+          description: "Please wait while we connect to the subscription service...",
+        });
         // Direct link to pro monthly plan
         window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
     };
@@ -18,10 +30,10 @@ function Home() {
                 </Link>
             </Button>
             
-            <div className="flex flex-col sm:flex-row gap-3 mt-4 w-full sm:w-auto max-w-md">
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 mt-4 w-full sm:w-auto max-w-md`}>
                 <Button 
                     variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md w-full sm:w-auto transition-all duration-200 flex items-center justify-center"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md w-full transition-all duration-200 flex items-center justify-center"
                 >
                     <a 
                         href="https://thalostech.replit.app/api/auth" 
@@ -35,14 +47,15 @@ function Home() {
                 
                 <Button 
                     onClick={handleSubscribe}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full sm:w-auto transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                    disabled={loading}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                     <ExternalLink className="mr-2 h-4 w-4" />
-                    Sign Up
+                    {loading ? 'Connecting...' : 'Sign Up'}
                 </Button>
             </div>
             
-            <p className="text-xs text-gray-500 mt-4 text-center max-w-md">
+            <p className="text-xs text-gray-500 mt-4 text-center max-w-md px-2">
                 Our subscription service is hosted on Replit. First connection may take a few seconds if the service is idle.
             </p>
         </div>
