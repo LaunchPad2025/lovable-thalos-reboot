@@ -9,13 +9,13 @@ function Home() {
     };
     
     return (
-        <div className="flex flex-col justify-center items-center min-h-[200px] gap-4">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-lg">
+        <div className="flex flex-col justify-center items-center min-h-[200px] gap-4 px-4 py-8">
+            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-md text-lg w-full sm:w-auto">
                 <Link to="/demo" className="text-white no-underline">Try Interactive Demo</Link>
             </Button>
             
-            <div className="flex gap-4 mt-4">
-                <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-100 px-6 py-2 rounded-md">
+            <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full sm:w-auto">
+                <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-100 px-6 py-2 rounded-md w-full sm:w-auto">
                     <a href="https://thalostech.replit.app/api/auth" className="no-underline">
                         Log In
                     </a>
@@ -23,7 +23,7 @@ function Home() {
                 
                 <Button 
                     onClick={handleSubscribe}
-                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md"
+                    className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md w-full sm:w-auto"
                 >
                     Sign Up
                 </Button>

@@ -10,6 +10,7 @@ export default function Auth() {
   const searchParams = new URLSearchParams(location.search);
   const isSignup = searchParams.get('signup') === 'true';
   const [error, setError] = useState<string | null>(null);
+  const [isTimedOut, setIsTimedOut] = useState(false);
   
   // Get Lovable integration parameters
   const selectedPlan = searchParams.get('plan') || null;
@@ -73,12 +74,20 @@ export default function Auth() {
       }
     };
     
+    // Set a timeout to detect if the API call is taking too long
+    const timeoutTimer = setTimeout(() => {
+      setIsTimedOut(true);
+    }, 10000);
+    
     // Wait a moment to show the loading state, then redirect
     const timer = setTimeout(() => {
       generateLoginLink();
     }, 1000);
     
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(timeoutTimer);
+    };
   }, [isSignup, searchParams, navigate, selectedPlan, returnUrlParam]);
 
   return (
@@ -92,19 +101,34 @@ export default function Auth() {
             {error || "Generating secure login link..."}
           </p>
           
-          {!error && (
+          {!error && !isTimedOut && (
             <div className="mt-6 flex justify-center">
               <Loader2 className="h-8 w-8 animate-spin text-blue-500" />
             </div>
           )}
           
-          {error && (
-            <button
-              onClick={() => navigate('/')}
-              className="mt-6 rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
-            >
-              Return Home
-            </button>
+          {(error || isTimedOut) && (
+            <>
+              {isTimedOut && !error && (
+                <p className="mt-4 text-amber-400">
+                  Connection is taking longer than expected. The authentication service might be temporarily unavailable.
+                </p>
+              )}
+              <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
+                <button
+                  onClick={() => window.location.reload()}
+                  className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={() => navigate('/')}
+                  className="mt-2 sm:mt-0 rounded bg-gray-700 px-4 py-2 text-white hover:bg-gray-600"
+                >
+                  Return Home
+                </button>
+              </div>
+            </>
           )}
         </div>
       </div>
