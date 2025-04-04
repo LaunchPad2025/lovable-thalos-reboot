@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { plans, PlanData } from "@/data/subscriptionPlans";
@@ -12,6 +12,7 @@ export function useSignupFlow() {
   const [processingState, setProcessingState] = useState<'validating' | 'redirecting' | 'done' | 'error'>('validating');
   const [error, setError] = useState<string | null>(null);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
+  const [isRedirecting, setIsRedirecting] = useState(false);
   
   // Parse URL parameters
   const searchParams = new URLSearchParams(location.search);
@@ -30,16 +31,28 @@ export function useSignupFlow() {
   const isValidReturnUrl = returnUrl ? validateReturnUrl(returnUrl) : true;
   
   // Function to retry connection
-  const retryConnection = () => {
+  const retryConnection = useCallback(() => {
+    console.log("Retrying connection, attempt:", connectionAttempts + 1);
     setError(null);
     setProcessingState('validating');
     setConnectionAttempts(prev => prev + 1);
-  };
+    setIsRedirecting(false);
+    
+    // Show toast when retrying
+    toast({
+      title: "Retrying connection",
+      description: "Attempting to reconnect to subscription service...",
+    });
+  }, [connectionAttempts, toast]);
   
   // Handle the signup and subscription process
   useEffect(() => {
+    if (processingState !== 'validating' || isRedirecting) return;
+    
     const processSignupFlow = async () => {
       try {
+        console.log("Processing signup flow, plan:", planId, "attempt:", connectionAttempts);
+        
         // Validate parameters first
         if (!isValidPlan) {
           setError(`Invalid plan: '${planId}'. Please use one of: basic, pro, premium, enterprise.`);
@@ -54,6 +67,7 @@ export function useSignupFlow() {
         }
         
         setProcessingState('redirecting');
+        setIsRedirecting(true);
           
         // If enterprise plan, redirect to contact page
         if (planId === 'enterprise') {
@@ -61,12 +75,18 @@ export function useSignupFlow() {
           return;
         }
         
-        // Redirect to the Replit subscription URL with plan ID
+        // Build the subscription URL with all parameters
         const subscriptionUrl = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${email ? `&email=${encodeURIComponent(email)}` : ''}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
         
-        // Setup timeout for detecting connection issues
+        // Show the redirect toast
+        toast({
+          title: "Redirecting to subscription service",
+          description: `Setting up ${selectedPlan.name} plan...`,
+        });
+        
+        // Setup timeout for detecting connection issues - now with a longer timeout for Replit
         const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Connection timed out')), 15000);
+          setTimeout(() => reject(new Error('Connection timed out')), 20000); // Increased timeout for Replit
         });
         
         // Add a small delay to ensure the user sees the loading state
@@ -75,13 +95,23 @@ export function useSignupFlow() {
           timeoutPromise
         ]);
         
+        // Log the redirect URL for debugging
+        console.log("Redirecting to:", subscriptionUrl);
+        
         // Redirect to subscription URL
         window.location.href = subscriptionUrl;
         
       } catch (err) {
         console.error('Error processing signup flow:', err);
-        setError('Connection issue detected. The subscription service may be temporarily unavailable.');
+        
+        const errorMessage = connectionAttempts >= 2 
+          ? 'Multiple connection attempts failed. The subscription service may be temporarily unavailable. Please try again later.'
+          : 'Connection issue detected. The subscription service may be temporarily unavailable.';
+          
+        setError(errorMessage);
         setProcessingState('error');
+        setIsRedirecting(false);
+        
         toast({
           title: "Connection Error",
           description: "Failed to connect to subscription service. Please try again.",
@@ -90,15 +120,14 @@ export function useSignupFlow() {
       }
     };
     
-    if (processingState === 'validating') {
-      processSignupFlow();
-    }
-  }, [planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, email, toast, connectionAttempts]);
+    processSignupFlow();
+  }, [planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, email, toast, connectionAttempts, selectedPlan.name, isRedirecting]);
 
   return {
     processingState,
     error,
     selectedPlan,
-    retryConnection
+    retryConnection,
+    connectionAttempts
   };
 }

@@ -4,9 +4,21 @@ import { useSignupFlow } from "@/hooks/useSignupFlow";
 import LoadingCard from "@/components/signup/LoadingCard";
 import ErrorCard from "@/components/signup/ErrorCard";
 import DefaultCard from "@/components/signup/DefaultCard";
+import { useToast } from "@/hooks/use-toast";
 
 export default function LovableSignup() {
-  const { processingState, error, selectedPlan, retryConnection } = useSignupFlow();
+  const { processingState, error, selectedPlan, retryConnection, connectionAttempts } = useSignupFlow();
+  const { toast } = useToast();
+  
+  // Display connection attempt info
+  React.useEffect(() => {
+    if (connectionAttempts > 0) {
+      toast({
+        title: `Connection attempt ${connectionAttempts}`,
+        description: "Trying to connect to subscription service...",
+      });
+    }
+  }, [connectionAttempts, toast]);
 
   // Show loading state while processing
   if ((processingState === 'validating' || processingState === 'redirecting') && !error) {
