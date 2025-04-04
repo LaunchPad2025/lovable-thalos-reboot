@@ -8,9 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 import { safeLog } from "@/utils/environmentUtils";
 
 export default function LovableSignup() {
-  const { processingState, error, selectedPlan, retryConnection, connectionAttempts } = useSignupFlow();
+  const { processingState, error, selectedPlan, retryConnection, connectionAttempts, timerExpired } = useSignupFlow();
   const { toast } = useToast();
   const [hasShownInitialToast, setHasShownInitialToast] = useState(false);
+  const [hasShownRetryToast, setHasShownRetryToast] = useState(false);
   
   // Display connection attempt info on first load
   useEffect(() => {
@@ -20,24 +21,43 @@ export default function LovableSignup() {
         description: "This might take a moment if the service is waking up...",
       });
       setHasShownInitialToast(true);
+      safeLog('Initial connection attempt started');
     }
   }, [toast, hasShownInitialToast]);
   
   // Display connection attempt info
   useEffect(() => {
     if (connectionAttempts > 0) {
-      const description = connectionAttempts === 1
-        ? "Trying to connect to subscription service..."
-        : `Retry attempt ${connectionAttempts}: Connecting to subscription service...`;
+      if (!hasShownRetryToast || connectionAttempts > 1) {
+        const description = connectionAttempts === 1
+          ? "Trying to connect to subscription service..."
+          : `Retry attempt ${connectionAttempts}: Connecting to subscription service...`;
+          
+        toast({
+          title: `Connection attempt ${connectionAttempts}`,
+          description: description,
+        });
         
-      toast({
-        title: `Connection attempt ${connectionAttempts}`,
-        description: description,
-      });
-      
-      safeLog(`Subscription connection attempt: ${connectionAttempts}`);
+        safeLog(`Subscription connection attempt: ${connectionAttempts}`);
+        
+        if (!hasShownRetryToast) {
+          setHasShownRetryToast(true);
+        }
+      }
     }
-  }, [connectionAttempts, toast]);
+  }, [connectionAttempts, toast, hasShownRetryToast]);
+  
+  // Show timeout toast
+  useEffect(() => {
+    if (timerExpired) {
+      toast({
+        title: "Connection taking longer than expected",
+        description: "The subscription service might be waking up or experiencing high traffic.",
+        variant: "destructive",
+      });
+      safeLog('Connection timeout detected');
+    }
+  }, [timerExpired, toast]);
 
   // Show loading state while processing
   if ((processingState === 'validating' || processingState === 'redirecting') && !error) {

@@ -35,14 +35,23 @@ export const validateReturnUrl = (url: string | null): boolean => {
       'lovable-website.com',
       'thalostech.io',
       'thalostech.replit.app',
-      'lovable.app'
+      'replit.app', // Allow all replit subdomains
+      'repl.co',    // Allow all replit.co domains
+      'repl.run',   // Allow all repl.run domains
+      'lovable.app',
+      'lovableproject.com' // Allow Lovable preview domains
     ];
     
     // Check if the hostname is a direct match or a subdomain of an allowed domain
-    const isDomainAllowed = allowedDomains.some(domain => 
-      parsedUrl.hostname === domain || 
-      parsedUrl.hostname.endsWith(`.${domain}`)
-    );
+    const isDomainAllowed = allowedDomains.some(domain => {
+      // Direct match
+      if (parsedUrl.hostname === domain) return true;
+      
+      // Check for subdomains
+      if (parsedUrl.hostname.endsWith(`.${domain}`)) return true;
+      
+      return false;
+    });
     
     if (!isDomainAllowed) {
       console.warn('Domain not in allowed list:', parsedUrl.hostname);

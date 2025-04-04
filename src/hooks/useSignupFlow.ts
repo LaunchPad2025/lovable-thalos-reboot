@@ -14,13 +14,20 @@ export function useSignupFlow() {
   const [error, setError] = useState<string | null>(null);
   const [connectionAttempts, setConnectionAttempts] = useState(0);
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [timerExpired, setTimerExpired] = useState(false);
   
   // Track if component is mounted to prevent state updates after unmount
   const isMounted = useRef(true);
+  // Store timeout IDs for cleanup
+  const timeoutRef = useRef<number | null>(null);
   
   useEffect(() => {
     return () => {
       isMounted.current = false;
+      // Clear any pending timeouts on unmount
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
     };
   }, []);
   
@@ -48,15 +55,22 @@ export function useSignupFlow() {
     // Don't update state if component is unmounted
     if (!isMounted.current) return;
     
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+    
     setError(null);
     setProcessingState('validating');
     setConnectionAttempts(newAttempt);
     setIsRedirecting(false);
+    setTimerExpired(false);
     
     // Show toast when retrying
     toast({
       title: "Retrying connection",
-      description: "Attempting to reconnect to subscription service...",
+      description: `Attempting to reconnect to subscription service (attempt ${newAttempt})...`,
     });
   }, [connectionAttempts, toast]);
   
@@ -86,6 +100,7 @@ export function useSignupFlow() {
         if (!isMounted.current) return;
         setProcessingState('redirecting');
         setIsRedirecting(true);
+        setTimerExpired(false);
           
         // If enterprise plan, redirect to contact page
         if (planId === 'enterprise') {
@@ -105,17 +120,49 @@ export function useSignupFlow() {
         
         // Setup timeout for detecting connection issues - adaptive timeout
         // For first attempt set shorter timeout, for retry attempts increase the timeout
-        const timeoutMs = connectionAttempts === 0 ? 15000 : 25000;
+        // Exponential backoff strategy with max cap
+        const baseTimeout = 15000; // 15 seconds base
+        const maxTimeout = 45000;  // 45 seconds max
+        const timeoutMs = Math.min(
+          baseTimeout * Math.pow(1.5, connectionAttempts), 
+          maxTimeout
+        );
         
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error('Connection timed out')), timeoutMs);
-        });
+        safeLog(`Setting connection timeout to ${timeoutMs}ms for attempt ${connectionAttempts}`);
+        
+        // Set timeout to detect connection issues
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+        
+        timeoutRef.current = window.setTimeout(() => {
+          if (isMounted.current) {
+            setTimerExpired(true);
+            
+            // Customize error message based on connection attempts
+            let errorMessage = "";
+            if (connectionAttempts >= 3) {
+              errorMessage = 'Multiple connection attempts failed. The subscription service may be temporarily unavailable. Please try again later.';
+            } else if (connectionAttempts >= 1) {
+              errorMessage = 'Connection issue detected. Replit services may be starting up. Please try again.';
+            } else {
+              errorMessage = 'Unable to connect to the subscription service. This might be temporary.';
+            }
+            
+            setError(errorMessage);
+            setProcessingState('error');
+            setIsRedirecting(false);
+            
+            toast({
+              title: "Connection Error",
+              description: "Failed to connect to subscription service. Please try again.",
+              variant: "destructive",
+            });
+          }
+        }, timeoutMs);
         
         // Add a small delay to ensure the user sees the loading state
-        await Promise.race([
-          new Promise(resolve => setTimeout(resolve, 300)),
-          timeoutPromise
-        ]);
+        await new Promise(resolve => setTimeout(resolve, 500));
         
         // Log the redirect URL for debugging
         safeLog("Redirecting to:", subscriptionUrl);
@@ -159,6 +206,7 @@ export function useSignupFlow() {
     error,
     selectedPlan,
     retryConnection,
-    connectionAttempts
+    connectionAttempts,
+    timerExpired
   };
 }

@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from "react";
-import { Loader2, Check, WifiOff, WifiHigh, Clock } from "lucide-react";
+import { Loader2, Check, WifiOff, WifiHigh, Clock, RotateCw } from "lucide-react";
 import { Card, CardHeader, CardContent, CardTitle, CardFooter } from "@/components/ui/card";
 import { PlanData } from "@/data/subscriptionPlans";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import useMobile from "@/hooks/useMobile";
+import { safeLog } from "@/utils/environmentUtils";
 
 interface LoadingCardProps {
   processingState: 'validating' | 'redirecting';
@@ -23,12 +24,23 @@ const LoadingCard: React.FC<LoadingCardProps> = ({
   const [loadingTime, setLoadingTime] = useState(0);
   const [showNetworkHelp, setShowNetworkHelp] = useState(false);
   const [showTimeout, setShowTimeout] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<'connecting' | 'slow' | 'timeout'>('connecting');
 
   // Count loading time to show appropriate feedback
   useEffect(() => {
     const timer = setInterval(() => {
       setLoadingTime(prev => {
         const newTime = prev + 1;
+        
+        // Update connection status based on loading time
+        if (newTime >= 20 && connectionStatus !== 'timeout') {
+          setConnectionStatus('timeout');
+          safeLog('Loading timeout reached');
+        } else if (newTime >= 8 && connectionStatus !== 'slow') {
+          setConnectionStatus('slow');
+          safeLog('Loading slow connection detected');
+        }
+        
         if (newTime >= 8 && !showNetworkHelp) {
           setShowNetworkHelp(true);
         }
@@ -40,7 +52,13 @@ const LoadingCard: React.FC<LoadingCardProps> = ({
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [showNetworkHelp, showTimeout]);
+  }, [showNetworkHelp, showTimeout, connectionStatus]);
+
+  // Handle retry
+  const handleRetry = () => {
+    safeLog('User initiated retry');
+    window.location.reload();
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14] p-4">
@@ -61,8 +79,10 @@ const LoadingCard: React.FC<LoadingCardProps> = ({
               )}
               {processingState === 'redirecting' && (
                 <div className="absolute bottom-0 right-0">
-                  {loadingTime < 8 ? (
+                  {connectionStatus === 'connecting' ? (
                     <WifiHigh className="h-5 w-5 text-green-500" />
+                  ) : connectionStatus === 'slow' ? (
+                    <WifiOff className="h-5 w-5 text-yellow-500 animate-pulse" />
                   ) : (
                     <WifiOff className="h-5 w-5 text-amber-500 animate-pulse" />
                   )}
@@ -82,13 +102,22 @@ const LoadingCard: React.FC<LoadingCardProps> = ({
             )}
             
             {showNetworkHelp && (
-              <div className={`mt-4 bg-blue-900/20 p-3 rounded-md text-xs sm:text-sm text-gray-300 ${isMobile ? 'w-full' : 'max-w-xs mx-auto'}`}>
-                <p className="font-medium mb-1">Taking longer than expected?</p>
+              <div className={`mt-4 bg-blue-900/20 p-4 rounded-md text-xs sm:text-sm text-gray-300 ${isMobile ? 'w-full' : 'max-w-xs mx-auto'}`}>
+                <p className="font-medium mb-2">Taking longer than expected?</p>
                 <p>This might be due to Replit wake-up time or network connectivity. Please wait a moment...</p>
-                {showTimeout && (
+                
+                {connectionStatus === 'timeout' && (
                   <p className="mt-2 text-amber-400">
-                    The connection is taking unusually long. You may want to try again in a moment.
+                    The connection is taking unusually long. The Replit service might be starting up or experiencing high traffic.
                   </p>
+                )}
+                
+                {connectionStatus === 'slow' && loadingTime >= 15 && (
+                  <div className="mt-3 flex justify-center">
+                    <div className="w-full bg-gray-700 rounded-full h-1.5 mb-2 dark:bg-gray-700">
+                      <div className="bg-blue-600 h-1.5 rounded-full animate-pulse" style={{ width: '70%' }}></div>
+                    </div>
+                  </div>
                 )}
               </div>
             )}
@@ -99,14 +128,15 @@ const LoadingCard: React.FC<LoadingCardProps> = ({
             <div className={`flex ${isMobile ? 'flex-col w-full' : 'flex-row'} gap-2`}>
               <Button 
                 variant="outline" 
-                className="text-xs"
-                onClick={() => window.location.reload()}
+                className={`${isMobile ? 'w-full' : ''} flex items-center justify-center`}
+                onClick={handleRetry}
               >
-                Retry
+                <RotateCw className="mr-2 h-4 w-4" />
+                Retry Connection
               </Button>
               <Button 
                 variant="outline" 
-                className="text-xs"
+                className={`${isMobile ? 'w-full' : ''} flex items-center justify-center`}
                 onClick={() => navigate('/')}
               >
                 Return Home

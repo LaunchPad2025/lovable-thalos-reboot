@@ -5,6 +5,7 @@ import { ExternalLink, LogIn, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
+import { safeLog } from '@/utils/environmentUtils';
 
 function Home() {
     const [loading, setLoading] = useState(false);
@@ -17,14 +18,23 @@ function Home() {
           title: "Redirecting to signup",
           description: "Please wait while we connect to the subscription service...",
         });
+        safeLog("User clicked subscribe button, redirecting to signup");
+        
         // Direct link to pro monthly plan
         window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
     };
     
     return (
         <div className="flex flex-col justify-center items-center min-h-[200px] gap-4 px-4 py-8 md:py-16">
-            <Button className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md text-base md:text-lg font-medium w-full sm:w-auto transition-all duration-200 shadow-md hover:shadow-lg">
-                <Link to="/demo" className="text-white no-underline w-full h-full inline-flex items-center justify-center">
+            <Button 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md 
+                           text-base md:text-lg font-medium w-full sm:w-auto transition-all 
+                           duration-200 shadow-md hover:shadow-lg"
+            >
+                <Link 
+                    to="/demo" 
+                    className="text-white no-underline w-full h-full inline-flex items-center justify-center"
+                >
                     Try Interactive Demo
                     <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
@@ -33,12 +43,15 @@ function Home() {
             <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 mt-4 w-full sm:w-auto max-w-md`}>
                 <Button 
                     variant="outline" 
-                    className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md w-full transition-all duration-200 flex items-center justify-center"
+                    className="border-blue-600 text-blue-600 hover:bg-blue-100 px-4 py-2 
+                               rounded-md w-full transition-all duration-200 
+                               flex items-center justify-center"
                 >
                     <a 
                         href="https://thalostech.replit.app/api/auth" 
                         className="no-underline w-full h-full inline-flex items-center justify-center"
                         rel="noopener noreferrer"
+                        onClick={() => safeLog("User clicked login button")}
                     >
                         <LogIn className="mr-2 h-4 w-4" />
                         Log In
@@ -48,7 +61,9 @@ function Home() {
                 <Button 
                     onClick={handleSubscribe}
                     disabled={loading}
-                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-md w-full transition-all duration-200 shadow-md hover:shadow-lg flex items-center justify-center"
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 
+                               rounded-md w-full transition-all duration-200 
+                               shadow-md hover:shadow-lg flex items-center justify-center"
                 >
                     <ExternalLink className="mr-2 h-4 w-4" />
                     {loading ? 'Connecting...' : 'Sign Up'}
