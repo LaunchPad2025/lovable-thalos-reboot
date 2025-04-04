@@ -2,17 +2,18 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Calendar } from 'lucide-react';
 
 const RecommendedFeaturesSection = () => {
-  const handleUpgrade = () => {
-    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   return (
     <Card className="bg-[#0d1117] border-gray-800 mb-6">
       <CardContent className="p-6">
         <h3 className="font-medium text-white mb-2">Recommended Features</h3>
-        <p className="text-gray-400 text-sm mb-6">Upgrade to access these powerful safety compliance tools</p>
+        <p className="text-gray-400 text-sm mb-6">Book a setup call to access these powerful safety compliance tools</p>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           <div className="bg-[#131820] border border-gray-800 rounded-lg p-4">
@@ -40,8 +41,12 @@ const RecommendedFeaturesSection = () => {
           </div>
         </div>
         
-        <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white" onClick={handleUpgrade}>
-          Upgrade Your Plan
+        <Button 
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center" 
+          onClick={handleScheduleCall}
+        >
+          <Calendar className="mr-2 h-4 w-4" />
+          Book a 30-Minute Setup Call
         </Button>
       </CardContent>
     </Card>

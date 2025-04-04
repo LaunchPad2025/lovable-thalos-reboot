@@ -1,10 +1,8 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import { plans } from '@/data/subscriptionPlans';
-import { useAuth } from '@/context/auth';
-import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import PricingToggle from '@/components/pricing/PricingToggle';
 import PricingCard from '@/components/pricing/PricingCard';
@@ -13,32 +11,17 @@ import PricingDiscounts from '@/components/pricing/PricingDiscounts';
 import PricingCta from '@/components/pricing/PricingCta';
 
 const Pricing = () => {
-  const navigate = useNavigate();
-  const { user } = useAuth();
   const { toast } = useToast();
-  const [billingCycle, setBillingCycle] = useState<'monthly' | 'annual'>('monthly');
+  const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('monthly');
   
-  const handleSubscribe = (planId: string) => {
-    if (!user) {
-      toast({
-        title: "Login required",
-        description: "Please log in to subscribe to a plan",
-        variant: "destructive",
-      });
-      navigate('/auth');
-      return;
-    }
-    
-    if (planId === 'enterprise') {
-      window.location.href = "https://cal.com/annieeser/30min";
-      return;
-    }
-    
-    window.location.href = `https://thalostech.replit.app/subscription?plan=${planId}&cycle=${billingCycle}`;
-  };
-
   const handleContactSales = () => {
-    window.location.href = "https://cal.com/annieeser/30min";
+    toast({
+      title: "Opening scheduling page",
+      description: "You're being redirected to our calendar booking system...",
+      duration: 3000,
+    });
+    
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
 
   return (
@@ -46,7 +29,7 @@ const Pricing = () => {
       <div className="max-w-6xl mx-auto">
         <PageTitle 
           title="Flexible Pricing for Every Business" 
-          subtitle="Choose the plan that suits your organization's safety management needs"
+          subtitle="Book a 30-minute setup call with our team to get started with a plan that suits your organization's needs"
           className="mb-8 text-center"
         />
 
@@ -56,18 +39,18 @@ const Pricing = () => {
           <PricingCard 
             plan={plans[0]} 
             billingCycle={billingCycle}
-            onSubscribe={handleSubscribe}
+            onSubscribe={handleContactSales}
           />
           <PricingCard 
             plan={plans[1]} 
             billingCycle={billingCycle}
             isPopular
-            onSubscribe={handleSubscribe}
+            onSubscribe={handleContactSales}
           />
           <PricingCard 
             plan={plans[2]} 
             billingCycle={billingCycle}
-            onSubscribe={handleSubscribe}
+            onSubscribe={handleContactSales}
           />
           <PricingCard 
             plan={plans[3]} 

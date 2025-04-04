@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, ChevronRight, Construction, Factory } from 'lucide-react';
+import { LogIn, Calendar, Construction, Factory } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Oil } from '@/components/ui/icons/Oil';
 import { Pickaxe } from '@/components/ui/icons/Pickaxe';
@@ -19,8 +19,8 @@ const industryIcons: Record<string, React.ReactNode> = {
 };
 
 const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
-  const handleGetStarted = () => {
-    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   if (!isMenuOpen) return null;
@@ -57,9 +57,9 @@ const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
         </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 justify-center w-full"
-          onClick={handleGetStarted}
+          onClick={handleScheduleCall}
         >
-          Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          <Calendar className="mr-2 h-4 w-4" aria-hidden="true" /> Book a Setup Call
         </Button>
       </div>
     </div>

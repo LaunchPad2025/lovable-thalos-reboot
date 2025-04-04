@@ -2,6 +2,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { Calendar } from 'lucide-react';
 import { Industry } from './types';
 
 interface IndustryHeroProps {
@@ -9,6 +10,10 @@ interface IndustryHeroProps {
 }
 
 const IndustryHero: React.FC<IndustryHeroProps> = ({ industry }) => {
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+  };
+  
   return (
     <div className="relative overflow-hidden rounded-xl">
       <div className="bg-gradient-to-r from-blue-900/90 to-blue-900/70 p-8 md:p-12 rounded-xl relative z-10">
@@ -20,10 +25,13 @@ const IndustryHero: React.FC<IndustryHeroProps> = ({ industry }) => {
             {industry.heroDescription}
           </p>
           <div className="flex flex-col sm:flex-row gap-4">
-            <Button size="lg" asChild className="bg-white text-blue-900 hover:bg-gray-100">
-              <a href="https://cal.com/annieeser/30min" target="_blank" rel="noopener noreferrer">
-                Schedule a Demo
-              </a>
+            <Button 
+              size="lg" 
+              className="bg-white text-blue-900 hover:bg-gray-100 flex items-center"
+              onClick={handleScheduleCall}
+            >
+              <Calendar className="mr-2 h-5 w-5" />
+              Schedule a Setup Call
             </Button>
             <Button variant="outline" size="lg" className="bg-transparent border-white text-white hover:bg-white/10">
               <Link to="/documentation/pricing">

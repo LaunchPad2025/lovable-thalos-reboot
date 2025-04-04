@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Shield } from 'lucide-react';
+import { ChevronRight, Shield, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -9,9 +9,8 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const isMobile = useMobile();
   
-  const handleGetStarted = () => {
-    // Redirect to the Replit subscription endpoint with default plan
-    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   return (
@@ -49,10 +48,10 @@ const HeroSection = () => {
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10 md:mb-16">
           <Button 
-            onClick={handleGetStarted} 
+            onClick={handleScheduleCall} 
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md flex items-center justify-center text-base sm:text-lg shadow-lg shadow-blue-900/30 group transition-all duration-300"
           >
-            Get Started <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <Calendar className="mr-2 h-5 w-5" /> Book a 30-Minute Setup Call <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
           <Button 

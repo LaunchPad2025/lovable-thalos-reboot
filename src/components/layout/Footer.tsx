@@ -1,9 +1,14 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield } from 'lucide-react';
+import { Shield, Calendar } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const Footer = () => {
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+  };
+  
   return (
     <footer className="bg-[#0d1117] border-t border-gray-800 py-8 md:py-12 text-gray-400 mt-auto relative z-10">
       <div className="container mx-auto px-6">
@@ -18,6 +23,14 @@ const Footer = () => {
             <p className="text-sm mb-6">
               Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
             </p>
+            <Button 
+              onClick={handleScheduleCall} 
+              className="bg-blue-600 hover:bg-blue-700 text-white mb-6"
+              size="sm"
+            >
+              <Calendar className="mr-2 h-4 w-4" />
+              Book a Setup Call
+            </Button>
           </div>
           
           <div>

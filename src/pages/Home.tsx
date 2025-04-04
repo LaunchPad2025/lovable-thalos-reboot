@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { ExternalLink, LogIn, ArrowRight, Loader2 } from 'lucide-react';
+import { LogIn, Calendar, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
@@ -12,27 +12,27 @@ function Home() {
     const isMobile = useMobile();
     const { toast } = useToast();
     
-    const handleSubscribe = () => {
+    const handleScheduleCall = () => {
         setLoading(true);
         toast({
-          title: "Redirecting to signup",
-          description: "Please wait while we connect to the subscription service...",
-          duration: 8000,
+            title: "Opening scheduling page",
+            description: "You're being redirected to our calendar booking system...",
+            duration: 3000,
         });
-        safeLog("User clicked subscribe button, redirecting to signup");
+        safeLog("User clicked schedule call button");
         
         try {
-            // Use lovable-signup route instead of direct Replit API call for better error handling
-            window.location.href = "/lovable-signup?plan=pro";
+            window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+            setLoading(false);
         } catch (err) {
             setLoading(false);
             toast({
-                title: "Connection Error",
-                description: "Failed to redirect to signup. Please try again later.",
+                title: "Error",
+                description: "Failed to open booking page. Please try again.",
                 variant: "destructive",
                 duration: 5000,
             });
-            safeLog("Redirect error:", err);
+            safeLog("Calendar redirect error:", err);
         }
     };
     
@@ -48,7 +48,6 @@ function Home() {
                     className="text-white no-underline w-full h-full inline-flex items-center justify-center"
                 >
                     Try Interactive Demo
-                    <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
             </Button>
             
@@ -71,7 +70,7 @@ function Home() {
                 </Button>
                 
                 <Button 
-                    onClick={handleSubscribe}
+                    onClick={handleScheduleCall}
                     disabled={loading}
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 
                                rounded-md w-full transition-all duration-200 
@@ -80,19 +79,19 @@ function Home() {
                     {loading ? (
                         <>
                             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Connecting...
+                            Opening...
                         </>
                     ) : (
                         <>
-                            <ExternalLink className="mr-2 h-4 w-4" />
-                            Sign Up
+                            <Calendar className="mr-2 h-4 w-4" />
+                            Book a Setup Call
                         </>
                     )}
                 </Button>
             </div>
             
             <p className="text-xs text-gray-500 mt-4 text-center max-w-md px-2">
-                Our subscription service is hosted on Replit. First connection may take a few seconds if the service is idle.
+                Get personalized onboarding assistance by scheduling a 30-minute setup call with our team.
             </p>
         </div>
     );

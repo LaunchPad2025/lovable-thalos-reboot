@@ -1,20 +1,14 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
+import { Calendar, ArrowRight } from 'lucide-react';
 
 const CTASection = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
   
-  const handleContactSales = () => {
-    window.location.href = "https://cal.com/annieeser/30min";
-  };
-  
-  const handleSignUp = () => {
-    setLoading(true);
-    // Redirect to the Replit subscription endpoint with default plan
-    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   return (
@@ -27,19 +21,12 @@ const CTASection = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
-              onClick={handleContactSales} 
+              onClick={handleScheduleCall} 
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md text-base sm:text-lg"
             >
-              Contact Sales
-            </Button>
-            <Button 
-              onClick={handleSignUp}
-              disabled={loading}
-              size="lg"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md text-base sm:text-lg"
-            >
-              {loading ? 'Redirecting...' : 'Sign Up Now'}
+              <Calendar className="mr-2 h-5 w-5" />
+              Book a 30-Minute Setup Call
             </Button>
             <Button 
               onClick={() => navigate('/demo')} 

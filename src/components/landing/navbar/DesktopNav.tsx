@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { 
   NavigationMenu,
@@ -14,8 +14,8 @@ import IndustriesMenuList from '../IndustriesMenuList';
 import { DesktopNavProps } from './types';
 
 const DesktopNav = ({ isActive }: DesktopNavProps) => {
-  const handleGetStarted = () => {
-    window.location.href = "https://thalostech.replit.app/api/subscribe?planId=pro_monthly";
+  const handleScheduleCall = () => {
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   return (
@@ -68,10 +68,11 @@ const DesktopNav = ({ isActive }: DesktopNavProps) => {
         </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 items-center"
-          aria-label="Get started with Thalos"
-          onClick={handleGetStarted}
+          aria-label="Book a 30-Minute Setup Call"
+          onClick={handleScheduleCall}
         >
-          Get Started <ChevronRight className="ml-1 h-4 w-4" aria-hidden="true" />
+          <Calendar className="mr-2 h-4 w-4" />
+          Book a Setup Call
         </Button>
       </div>
     </div>
