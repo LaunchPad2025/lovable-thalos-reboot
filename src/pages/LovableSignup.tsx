@@ -209,5 +209,5 @@ export default function LovableSignup() {
   }
 
   // Default view (should rarely be shown as user will be redirected)
-  return <DefaultCard selectedPlan={selectedPlan} />;
+  return <DefaultCard />;
 }
