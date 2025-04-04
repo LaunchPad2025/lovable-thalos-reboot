@@ -38,7 +38,7 @@ export function useSignupFlow() {
           return;
         }
         
-        if (!isValidReturnUrl) {
+        if (returnUrl && !isValidReturnUrl) {
           setError(`Invalid return URL. For security reasons, only approved domains are allowed.`);
           return;
         }
