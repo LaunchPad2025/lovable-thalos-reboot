@@ -21,8 +21,13 @@ export const validateReturnUrl = (url: string | null): boolean => {
   
   try {
     const parsedUrl = new URL(url);
-    return allowedDomains.some(domain => parsedUrl.hostname.includes(domain));
+    // Check if the hostname is a direct match or a subdomain of an allowed domain
+    return allowedDomains.some(domain => 
+      parsedUrl.hostname === domain || 
+      parsedUrl.hostname.endsWith(`.${domain}`)
+    );
   } catch (e) {
+    console.error('URL validation error:', e);
     return false;
   }
 };

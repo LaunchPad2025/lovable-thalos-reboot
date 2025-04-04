@@ -26,7 +26,7 @@ export function useSignupFlow() {
   const selectedPlan = plans.find(p => p.id === planId) || plans[1]; // Default to Pro plan if invalid
   
   // Validate return URL
-  const isValidReturnUrl = validateReturnUrl(returnUrl);
+  const isValidReturnUrl = returnUrl ? validateReturnUrl(returnUrl) : true;
   
   // Handle the signup and subscription process
   useEffect(() => {
@@ -52,19 +52,29 @@ export function useSignupFlow() {
         }
         
         // Redirect to the Replit subscription URL with plan ID
-        window.location.href = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${email ? `&email=${encodeURIComponent(email)}` : ''}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
+        const subscriptionUrl = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${email ? `&email=${encodeURIComponent(email)}` : ''}${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
+        
+        // Add a small delay to ensure the user sees the loading state
+        setTimeout(() => {
+          window.location.href = subscriptionUrl;
+        }, 300);
         
       } catch (err) {
         console.error('Error processing signup flow:', err);
         setError('An unexpected error occurred. Please try again.');
         setProcessingState('done');
+        toast({
+          title: "Error",
+          description: "Failed to process signup request. Please try again.",
+          variant: "destructive",
+        });
       }
     };
     
     if (processingState === 'validating') {
       processSignupFlow();
     }
-  }, [planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, email]);
+  }, [planId, returnUrl, isValidPlan, isValidReturnUrl, processingState, email, toast]);
 
   return {
     processingState,

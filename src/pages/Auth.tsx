@@ -11,6 +11,7 @@ export default function Auth() {
   const isSignup = searchParams.get('signup') === 'true';
   const [error, setError] = useState<string | null>(null);
   const [isTimedOut, setIsTimedOut] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
   
   // Get Lovable integration parameters
   const selectedPlan = searchParams.get('plan') || null;
@@ -69,7 +70,8 @@ export default function Auth() {
         }
       } catch (err) {
         console.error('Auth redirect error:', err);
-        setError('Failed to connect to authentication service');
+        const errorMessage = err instanceof Error ? err.message : 'Failed to connect to authentication service';
+        setError(errorMessage);
         toast.error('Authentication service unavailable');
       }
     };
@@ -88,7 +90,14 @@ export default function Auth() {
       clearTimeout(timer);
       clearTimeout(timeoutTimer);
     };
-  }, [isSignup, searchParams, navigate, selectedPlan, returnUrlParam]);
+  }, [isSignup, searchParams, navigate, selectedPlan, returnUrlParam, retryCount]);
+
+  // Handle the retry action
+  const handleRetry = () => {
+    setError(null);
+    setIsTimedOut(false);
+    setRetryCount(prevCount => prevCount + 1);
+  };
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#0b0f14]">
@@ -116,7 +125,7 @@ export default function Auth() {
               )}
               <div className="mt-6 flex flex-col sm:flex-row justify-center gap-3">
                 <button
-                  onClick={() => window.location.reload()}
+                  onClick={handleRetry}
                   className="rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700"
                 >
                   Try Again
