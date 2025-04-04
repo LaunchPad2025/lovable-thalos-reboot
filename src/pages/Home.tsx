@@ -38,7 +38,7 @@ function Home() {
     
     const handleTalkToSales = () => {
         safeLog("User clicked talk to sales button");
-        window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
+        window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
     };
     
     return (

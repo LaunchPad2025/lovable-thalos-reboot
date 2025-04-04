@@ -13,7 +13,7 @@ const DefaultCard: React.FC = () => {
   };
   
   const handleTalkToSales = () => {
-    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
   };
   
   return (
