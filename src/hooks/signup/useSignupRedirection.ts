@@ -27,31 +27,16 @@ export function useSignupRedirection() {
     safeLog("Redirecting to signup, plan:", planId);
     setIsRedirecting(true);
     
-    // If enterprise plan, redirect to contact page
-    if (planId === 'enterprise') {
-      window.location.href = "https://cal.com/annieeser/30min";
-      return;
-    }
-    
-    // Build the subscription URL with all parameters
-    const subscriptionUrl = `https://thalostech.replit.app/api/subscribe?planId=${planId}_monthly${
-      email ? `&email=${encodeURIComponent(email)}` : ''
-    }${returnUrl ? `&return_url=${encodeURIComponent(returnUrl)}` : ''}`;
+    // For all plans, redirect to the booking page
+    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
     
     // Show the redirect toast
     toast({
-      title: "Redirecting to subscription service",
-      description: `Setting up ${selectedPlan.name} plan...`,
+      title: "Opening scheduling page",
+      description: "You're being redirected to our calendar booking system...",
     });
     
-    // Add a small delay to ensure the user sees the loading state
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    // Log the redirect URL for debugging
-    safeLog("Redirecting to:", subscriptionUrl);
-    
-    // Redirect to subscription URL
-    window.location.href = subscriptionUrl;
+    return;
   };
   
   return {
