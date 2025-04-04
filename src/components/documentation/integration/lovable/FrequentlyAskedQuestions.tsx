@@ -35,6 +35,18 @@ const FrequentlyAskedQuestions = () => {
             after which it will be automatically deactivated.
           </AccordionContent>
         </AccordionItem>
+        
+        <AccordionItem value="item-4">
+          <AccordionTrigger className="text-gray-100">Has the API format changed recently?</AccordionTrigger>
+          <AccordionContent className="text-gray-300">
+            Yes, we've simplified our API format. The direct subscription endpoint now accepts a streamlined 
+            JSON payload with <code className="bg-gray-800 px-1 mx-1 rounded text-xs">email</code>, 
+            <code className="bg-gray-800 px-1 mx-1 rounded text-xs">name</code>, 
+            <code className="bg-gray-800 px-1 mx-1 rounded text-xs">plan</code>, and 
+            <code className="bg-gray-800 px-1 mx-1 rounded text-xs">interval</code> fields instead 
+            of the previously more detailed format.
+          </AccordionContent>
+        </AccordionItem>
       </Accordion>
     </div>
   );

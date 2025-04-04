@@ -10,7 +10,7 @@ const ImplementationSteps = () => {
           <strong>Update Purchase Flow:</strong>
           <ul className="list-disc ml-6 mt-1">
             <li>Add Thalos subscription buttons to your marketing pages</li>
-            <li>Implement a form to collect user information (email, password, first name, last name, company)</li>
+            <li>Implement a form to collect user information (email, name)</li>
             <li>Add subscription plan selection</li>
           </ul>
         </li>
@@ -34,11 +34,9 @@ async function subscribeToPlatform(userData) {
     },
     body: JSON.stringify({
       email: userData.email,
-      password: userData.password,
-      firstName: userData.firstName,
-      lastName: userData.lastName,
-      company: userData.company,
-      planId: userData.planId  // e.g., "basic-monthly"
+      name: userData.name,
+      plan: userData.plan,  // e.g., "basic"
+      interval: userData.interval  // e.g., "monthly"
     })
   });
   const data = await response.json();
@@ -57,16 +55,11 @@ async function subscribeToPlatform(userData) {
           </pre>
         </li>
         <li>
-          <strong>Update Subscription Plan IDs:</strong>
+          <strong>Supported Plan Types:</strong>
           <ul className="list-disc ml-6 mt-1">
-            <li>basic-monthly</li>
-            <li>basic-yearly</li>
-            <li>pro-monthly</li>
-            <li>pro-yearly</li>
-            <li>premium-monthly</li>
-            <li>premium-yearly</li>
-            <li>enterprise-monthly</li>
-            <li>enterprise-yearly</li>
+            <li>Plans: basic, pro, premium, enterprise</li>
+            <li>Intervals: monthly, yearly</li>
+            <li>Note: Enterprise plan will redirect to contact page</li>
           </ul>
         </li>
       </ol>

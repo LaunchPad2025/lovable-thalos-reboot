@@ -21,12 +21,10 @@ const DirectApiIntegration = () => {
               <p><strong>Body:</strong></p>
               <pre className="bg-[#131720] p-3 rounded my-2 overflow-x-auto">
                 {`{
-  "email": "[customer_email]",
-  "password": "[customer_password]",
-  "firstName": "[customer_first_name]",
-  "lastName": "[customer_last_name]",
-  "company": "[company_name]",
-  "planId": "[basic-monthly|basic-yearly|pro-monthly|pro-yearly|premium-monthly|premium-yearly|enterprise-monthly|enterprise-yearly]"
+  "email": "user@example.com",
+  "name": "John Doe",
+  "plan": "basic",
+  "interval": "monthly"
 }`}
               </pre>
               <p><strong>Success Response:</strong></p>
