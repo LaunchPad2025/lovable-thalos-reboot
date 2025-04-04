@@ -1,17 +1,45 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Calendar } from 'lucide-react';
+import { Shield, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const Footer = () => {
-  const handleScheduleCall = () => {
-    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+  const handleStartFree = () => {
+    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+  };
+  
+  const handleTalkToSales = () => {
+    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
   };
   
   return (
     <footer className="bg-[#0d1117] border-t border-gray-800 py-8 md:py-12 text-gray-400 mt-auto relative z-10">
       <div className="container mx-auto px-6">
+        {/* New Start Free Today section */}
+        <div className="border-b border-gray-800 pb-8 mb-8">
+          <div className="max-w-4xl mx-auto text-center">
+            <h3 className="text-xl font-bold text-white mb-3">🚀 Start Free Today</h3>
+            <p className="text-gray-300 mb-4">Run 15 AI-powered safety analyses, no credit card required.</p>
+            <div className="flex flex-col sm:flex-row justify-center gap-3">
+              <Button 
+                onClick={handleStartFree} 
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                Start Free
+                <ArrowRight className="ml-1 h-4 w-4" />
+              </Button>
+              <Button 
+                onClick={handleTalkToSales} 
+                variant="outline"
+                className="border-blue-600/50 text-gray-200 hover:bg-blue-900/20"
+              >
+                Talk to Sales
+              </Button>
+            </div>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="md:col-span-1">
             <div className="flex items-center space-x-2 mb-4">
@@ -23,14 +51,6 @@ const Footer = () => {
             <p className="text-sm mb-6">
               Streamlined safety management powered by AI to keep your workplace compliant and your workers safe.
             </p>
-            <Button 
-              onClick={handleScheduleCall} 
-              className="bg-blue-600 hover:bg-blue-700 text-white mb-6"
-              size="sm"
-            >
-              <Calendar className="mr-2 h-4 w-4" />
-              Book a Setup Call
-            </Button>
           </div>
           
           <div>
@@ -46,6 +66,7 @@ const Footer = () => {
             <h4 className="text-white font-medium mb-4">Resources</h4>
             <ul className="space-y-2 text-sm">
               <li><Link to="/documentation/help-center" className="hover:text-white transition-colors">Help Center</Link></li>
+              <li><a href="#faq" className="hover:text-white transition-colors">FAQs</a></li>
             </ul>
           </div>
           

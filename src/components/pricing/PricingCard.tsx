@@ -51,7 +51,7 @@ const PricingCard = ({ plan, billingCycle, isPopular, onSubscribe }: PricingCard
           onClick={() => onSubscribe(plan.id)} 
           className={`w-full ${isPopular ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
           variant={plan.id === 'enterprise' ? 'outline' : 'default'}>
-          Contact Sales
+          {plan.id === 'basic' ? 'Start Free' : 'Talk to Sales'}
         </Button>
       </CardFooter>
     </Card>

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronRight, Shield, Calendar } from 'lucide-react';
+import { ChevronRight, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMobile } from '@/hooks/useMobile';
 
@@ -9,8 +9,12 @@ const HeroSection = () => {
   const navigate = useNavigate();
   const isMobile = useMobile();
   
-  const handleScheduleCall = () => {
-    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+  const handleStartFree = () => {
+    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+  };
+  
+  const handleTalkToSales = () => {
+    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
   };
   
   return (
@@ -28,15 +32,15 @@ const HeroSection = () => {
         <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">
           {isMobile ? (
             <>
-              Safe Workplaces,
+              Smarter Safety 
               <br />
-              Smarter Compliance
+              Starts Free
             </>
           ) : (
             <>
-              Safe Workplaces,
+              Smarter Safety Starts Free –
               <br />
-              Smarter Compliance
+              Run 15 AI Safety Analyses Instantly
             </>
           )}
         </h1>
@@ -48,18 +52,18 @@ const HeroSection = () => {
         
         <div className="flex flex-col sm:flex-row justify-center gap-4 mb-10 md:mb-16">
           <Button 
-            onClick={handleScheduleCall} 
+            onClick={handleStartFree} 
             className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md flex items-center justify-center text-base sm:text-lg shadow-lg shadow-blue-900/30 group transition-all duration-300"
           >
-            <Calendar className="mr-2 h-5 w-5" /> Book a 30-Minute Setup Call <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            Start Free <ChevronRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
           
           <Button 
-            onClick={() => navigate('/documentation/features')}
+            onClick={handleTalkToSales}
             variant="outline" 
             className="border-blue-700/50 text-white hover:bg-blue-900/30 px-6 sm:px-8 py-4 sm:py-6 rounded-md flex items-center justify-center text-base sm:text-lg"
           >
-            <Shield className="mr-2 h-5 w-5" /> Explore Features
+            <Shield className="mr-2 h-5 w-5" /> Talk to Sales
           </Button>
         </div>
         

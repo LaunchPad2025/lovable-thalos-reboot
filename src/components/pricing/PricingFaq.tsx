@@ -8,9 +8,22 @@ const PricingFaq = () => {
       <h2 className="text-2xl font-bold mb-8 text-center">Frequently Asked Questions</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         <PricingFaqItem
+          question="Is Thalos free to try?"
+          answer="Yes! Every user gets 15 free AI-powered safety analyses — no credit card required. 
+                You can start instantly and upgrade whenever you need more capabilities."
+        />
+        
+        <PricingFaqItem
+          question="How do I upgrade?"
+          answer="Reach out anytime via Cal.com to talk with our team about higher-tier plans for your 
+                organization. We'll help you find the perfect solution for your specific needs."
+        />
+        
+        <PricingFaqItem
           question="How many safety analyses can I run?"
-          answer="Each plan includes a set number of monthly analyses: Basic (50), Pro (100), and Premium (250). 
-                Need more? Contact our sales team for additional analysis packs or custom volume pricing."
+          answer="The free tier includes 15 analyses. Each paid plan includes additional monthly analyses: 
+                Basic (50), Pro (100), and Premium (250). Need more? Contact our sales team for 
+                additional analysis packs or custom volume pricing."
         />
         
         <PricingFaqItem

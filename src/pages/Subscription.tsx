@@ -3,18 +3,23 @@ import React from 'react';
 import PageContainer from '@/components/layout/PageContainer';
 import PageTitle from '@/components/ui/PageTitle';
 import { Button } from '@/components/ui/button';
+import { ArrowRight } from 'lucide-react';
 
 const Subscription = () => {
-  const handleContactSales = () => {
-    window.location.href = "https://cal.com/annieeser/30min";
+  const handleStartFree = () => {
+    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+  };
+
+  const handleTalkToSales = () => {
+    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
   };
 
   return (
     <PageContainer>
       <div className="w-full max-w-7xl mx-auto">
         <PageTitle 
-          title="Talk to Our Sales Team"
-          subtitle="Let us help you find the perfect safety compliance solution for your business."
+          title="Start Free Today"
+          subtitle="Try Thalos with 15 free AI safety analyses. Need more? Talk to our sales team."
           className="text-center mb-12"
         />
         
@@ -30,6 +35,33 @@ const Subscription = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
                 <circle cx="12" cy="12" r="10" />
                 <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-medium text-foreground">Get Started for Free</h3>
+              <p className="text-muted-foreground mt-1">
+                Start with 15 free AI-powered safety analyses. No credit card required.
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex justify-end mt-4">
+            <Button 
+              className="bg-blue-600 hover:bg-blue-700 text-white"
+              onClick={handleStartFree}
+            >
+              Start Free
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        
+        <div className="bg-card border border-border rounded-lg p-6 mb-8">
+          <div className="flex items-center gap-4">
+            <div className="bg-blue-900/20 p-3 rounded-full">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-400">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+                <circle cx="12" cy="10" r="3" />
               </svg>
             </div>
             <div>
@@ -69,16 +101,16 @@ const Subscription = () => {
         </div>
         
         <div className="text-center mt-12 mb-12">
-          <h2 className="text-2xl font-bold mb-4">Ready to learn more about Thalos?</h2>
+          <h2 className="text-2xl font-bold mb-4">Need more than 15 analyses?</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
             Our sales team is ready to answer your questions and provide a personalized demo
             of our safety compliance platform.
           </p>
           <Button 
             className="bg-primary hover:bg-primary/90 px-8 py-2 text-lg"
-            onClick={handleContactSales}
+            onClick={handleTalkToSales}
           >
-            Schedule a Call with Sales
+            Talk to Sales
           </Button>
         </div>
         
@@ -129,7 +161,7 @@ const Subscription = () => {
               </div>
               
               <div className="mt-6">
-                <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10" onClick={handleContactSales}>
+                <Button variant="outline" className="text-teal-500 border-teal-500 hover:bg-teal-500/10" onClick={handleTalkToSales}>
                   Contact Sales for Custom Quote
                 </Button>
               </div>
@@ -139,7 +171,7 @@ const Subscription = () => {
         
         <div className="text-center mt-8 text-muted-foreground text-sm">
           <p>Start your safety compliance journey today.</p>
-          <p>Our team is ready to help you find the perfect solution.</p>
+          <p>Join hundreds of companies already using Thalos to improve workplace safety.</p>
         </div>
       </div>
     </PageContainer>

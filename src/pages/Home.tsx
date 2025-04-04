@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogIn, Calendar, Loader2 } from 'lucide-react';
+import { LogIn, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
@@ -12,43 +12,51 @@ function Home() {
     const isMobile = useMobile();
     const { toast } = useToast();
     
-    const handleScheduleCall = () => {
+    const handleStartFree = () => {
         setLoading(true);
         toast({
-            title: "Opening scheduling page",
-            description: "You're being redirected to our calendar booking system...",
+            title: "Opening signup page",
+            description: "You're being redirected to our signup page...",
             duration: 3000,
         });
-        safeLog("User clicked schedule call button");
+        safeLog("User clicked start free button");
         
         try {
-            window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+            window.open("https://thalostech.replit.app/", "_blank", "noopener");
             setLoading(false);
         } catch (err) {
             setLoading(false);
             toast({
                 title: "Error",
-                description: "Failed to open booking page. Please try again.",
+                description: "Failed to open signup page. Please try again.",
                 variant: "destructive",
                 duration: 5000,
             });
-            safeLog("Calendar redirect error:", err);
+            safeLog("Signup redirect error:", err);
         }
+    };
+    
+    const handleTalkToSales = () => {
+        safeLog("User clicked talk to sales button");
+        window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
     };
     
     return (
         <div className="flex flex-col justify-center items-center min-h-[200px] gap-4 px-4 py-8 md:py-16">
             <Button 
+                onClick={handleStartFree}
                 className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md 
                            text-base md:text-lg font-medium w-full sm:w-auto transition-all 
                            duration-200 shadow-md hover:shadow-lg"
             >
-                <Link 
-                    to="/demo" 
-                    className="text-white no-underline w-full h-full inline-flex items-center justify-center"
-                >
-                    Try Interactive Demo
-                </Link>
+                {loading ? (
+                    <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Opening...
+                    </>
+                ) : (
+                    "Start Free"
+                )}
             </Button>
             
             <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 mt-4 w-full sm:w-auto max-w-md`}>
@@ -70,28 +78,18 @@ function Home() {
                 </Button>
                 
                 <Button 
-                    onClick={handleScheduleCall}
-                    disabled={loading}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 
+                    onClick={handleTalkToSales}
+                    variant="outline"
+                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 px-4 py-2 
                                rounded-md w-full transition-all duration-200 
-                               shadow-md hover:shadow-lg flex items-center justify-center"
+                               flex items-center justify-center"
                 >
-                    {loading ? (
-                        <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                            Opening...
-                        </>
-                    ) : (
-                        <>
-                            <Calendar className="mr-2 h-4 w-4" />
-                            Contact Sales
-                        </>
-                    )}
+                    Talk to Sales
                 </Button>
             </div>
             
             <p className="text-xs text-gray-500 mt-4 text-center max-w-md px-2">
-                Get personalized onboarding assistance by scheduling a call with our sales team.
+                Start with 15 free AI-powered safety analyses — no credit card required.
             </p>
         </div>
     );

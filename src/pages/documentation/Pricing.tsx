@@ -14,6 +14,10 @@ const Pricing = () => {
   const { toast } = useToast();
   const [billingCycle, setBillingCycle] = React.useState<'monthly' | 'annual'>('monthly');
   
+  const handleStartFree = () => {
+    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+  };
+  
   const handleContactSales = () => {
     toast({
       title: "Opening scheduling page",
@@ -21,15 +25,15 @@ const Pricing = () => {
       duration: 3000,
     });
     
-    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
   };
 
   return (
     <PageContainer>
       <div className="max-w-6xl mx-auto">
         <PageTitle 
-          title="Flexible Pricing for Every Business" 
-          subtitle="Book a 30-minute setup call with our team to get started with a plan that suits your organization's needs"
+          title="Start Free Today – Includes 15 Safety Analyses" 
+          subtitle="Need more? Talk to Sales to explore upgrade options."
           className="mb-8 text-center"
         />
 
@@ -39,7 +43,7 @@ const Pricing = () => {
           <PricingCard 
             plan={plans[0]} 
             billingCycle={billingCycle}
-            onSubscribe={handleContactSales}
+            onSubscribe={handleStartFree}
           />
           <PricingCard 
             plan={plans[1]} 
@@ -63,7 +67,7 @@ const Pricing = () => {
         
         <PricingFaq />
         
-        <PricingCta onContactSales={handleContactSales} />
+        <PricingCta onContactSales={handleStartFree} />
       </div>
     </PageContainer>
   );

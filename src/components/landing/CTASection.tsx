@@ -2,13 +2,17 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const CTASection = () => {
   const navigate = useNavigate();
   
-  const handleScheduleCall = () => {
-    window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+  const handleStartFree = () => {
+    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+  };
+  
+  const handleTalkToSales = () => {
+    window.open("https://cal.com/annie-eser/thalos", "_blank", "noopener");
   };
   
   return (
@@ -21,20 +25,20 @@ const CTASection = () => {
           </p>
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Button 
-              onClick={handleScheduleCall} 
+              onClick={handleStartFree} 
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 sm:px-8 py-4 sm:py-6 rounded-md text-base sm:text-lg"
             >
-              <Calendar className="mr-2 h-5 w-5" />
-              Book a 30-Minute Setup Call
+              Start Free
+              <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             <Button 
-              onClick={() => navigate('/demo')} 
+              onClick={handleTalkToSales} 
               size="lg"
               variant="outline"
               className="border-blue-700/50 text-white hover:bg-blue-900/30 px-6 sm:px-8 py-4 sm:py-6 rounded-md text-base sm:text-lg"
             >
-              View Demo
+              Talk to Sales
             </Button>
           </div>
         </div>
