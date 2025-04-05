@@ -125,8 +125,8 @@ serve(async (req) => {
 // Validate URL format
 function isValidUrl(url: string): boolean {
   try {
-    new URL(url);
-    return true;
+    const parsedUrl = new URL(url);
+    return parsedUrl.protocol === 'http:' || parsedUrl.protocol === 'https:';
   } catch {
     return false;
   }
