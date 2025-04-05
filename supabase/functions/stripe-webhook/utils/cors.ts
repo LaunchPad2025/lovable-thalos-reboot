@@ -1,6 +1,3 @@
 
-// CORS headers to allow cross-origin requests
-export const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+// Import shared CORS headers
+export { corsHeaders } from "../../_shared/cors.ts";

@@ -1,6 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { corsHeaders } from "../stripe-webhook/utils/cors.ts";
+import { corsHeaders } from "../_shared/cors.ts";
 import { Resend } from "npm:resend@2.0.0";
 
 // Initialize Resend with API key from environment variables
