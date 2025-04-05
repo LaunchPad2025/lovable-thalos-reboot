@@ -1,55 +1,11 @@
 
 project_id = "qascjdhzyipxtqbxcdhg"
 
-[api]
-port = 54321
-schemas = []
-extra_search_path = ["extensions"]
-max_rows = 1000
-
-[db]
-port = 54322
-shadow_port = 54320
-major_version = 15
-
-[studio]
-port = 54323
-
-[inbucket]
-port = 54324
-smtp_port = 54325
-pop3_port = 54326
-
-[storage]
-file_size_limit = "50MiB"
-
-[auth]
-site_url = "http://localhost:3000"
-additional_redirect_urls = ["https://localhost:3000", "https://thalostech.replit.app", "https://thalostech.io", "https://lovable-website.com"]
-jwt_expiry = 3600
-enable_refresh_token_rotation = true
-refresh_token_reuse_interval = 10
-
-[functions.lovable-find-user]
+[functions.lovable-simplified-direct-subscription]
 verify_jwt = false
 
-[functions.create-checkout]
+[functions.lovable-simplified-direct-subscription-test]
 verify_jwt = false
 
-[functions.stripe-webhook]
-verify_jwt = false
-
-[functions.create-storage-buckets]
-verify_jwt = false
-
-[functions.analyze-violation]
-verify_jwt = true
-
-[functions.send-contact-email]
-verify_jwt = false
-
-[functions.send-invitation]
-verify_jwt = true
-
-[functions.cancel-subscription]
+[functions.register-webhook]
 verify_jwt = true
