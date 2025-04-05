@@ -9,7 +9,7 @@ const DefaultCard: React.FC = () => {
   const navigate = useNavigate();
   
   const handleStartFree = () => {
-    window.open("https://thalostech.replit.app/", "_blank", "noopener");
+    window.location.href = "https://thalostech.replit.app/";
   };
   
   const handleTalkToSales = () => {

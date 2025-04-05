@@ -22,7 +22,7 @@ function Home() {
         safeLog("User clicked start free button");
         
         try {
-            window.open("https://thalostech.replit.app/", "_blank", "noopener");
+            window.location.href = "https://thalostech.replit.app/";
             setLoading(false);
         } catch (err) {
             setLoading(false);
@@ -65,16 +65,10 @@ function Home() {
                     className="border-blue-600/50 text-blue-600 hover:bg-blue-100 px-4 py-2 
                                rounded-md w-full transition-all duration-200 
                                flex items-center justify-center"
+                    onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
                 >
-                    <a 
-                        href="https://thalostech.replit.app/api/auth" 
-                        className="no-underline w-full h-full inline-flex items-center justify-center"
-                        rel="noopener noreferrer"
-                        onClick={() => safeLog("User clicked login button")}
-                    >
-                        <LogIn className="mr-2 h-4 w-4" />
-                        Log In
-                    </a>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Log In
                 </Button>
                 
                 <Button 
