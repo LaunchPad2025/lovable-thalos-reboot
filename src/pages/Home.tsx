@@ -1,7 +1,7 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogIn, Loader2 } from 'lucide-react';
+import { LogIn, Loader2, ArrowRight } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
@@ -42,27 +42,38 @@ function Home() {
     };
     
     return (
-        <div className="flex flex-col justify-center items-center min-h-[200px] gap-4 px-4 py-8 md:py-16">
+        <div className="flex flex-col justify-center items-center min-h-[300px] gap-6 px-4 py-12 md:py-24 bg-gradient-to-b from-blue-50 to-white dark:from-[#0D1424] dark:to-[#090D13]">
+            <h1 className="text-3xl md:text-5xl font-bold text-center mb-2">
+                AI-Powered Safety Compliance
+            </h1>
+            <p className="text-lg text-gray-600 dark:text-gray-300 text-center mb-6 max-w-2xl">
+                Start with 15 free AI-powered safety analyses — no credit card required.
+            </p>
+            
             <Button 
                 onClick={handleStartFree}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-md 
-                           text-base md:text-lg font-medium w-full sm:w-auto transition-all 
+                className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-md 
+                           text-lg font-medium w-full sm:w-auto transition-all 
                            duration-200 shadow-md hover:shadow-lg"
+                size="lg"
             >
                 {loading ? (
                     <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                         Opening...
                     </>
                 ) : (
-                    "Start Free"
+                    <>
+                        Start Free
+                        <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
                 )}
             </Button>
             
-            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-3 mt-4 w-full sm:w-auto max-w-md`}>
+            <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} gap-4 mt-2 w-full sm:w-auto max-w-md`}>
                 <Button 
                     variant="outline" 
-                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 px-4 py-2 
+                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 px-4 py-2 
                                rounded-md w-full transition-all duration-200 
                                flex items-center justify-center"
                     onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
@@ -74,7 +85,7 @@ function Home() {
                 <Button 
                     onClick={handleTalkToSales}
                     variant="outline"
-                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 px-4 py-2 
+                    className="border-blue-600/50 text-blue-600 hover:bg-blue-100 dark:hover:bg-blue-900/30 px-4 py-2 
                                rounded-md w-full transition-all duration-200 
                                flex items-center justify-center"
                 >
@@ -82,9 +93,26 @@ function Home() {
                 </Button>
             </div>
             
-            <p className="text-xs text-gray-500 mt-4 text-center max-w-md px-2">
-                Start with 15 free AI-powered safety analyses — no credit card required.
-            </p>
+            <div className="flex flex-wrap justify-center gap-4 md:gap-8 text-xs sm:text-sm text-gray-500 mt-8">
+                <div className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                    </svg>
+                    <span>OSHA Compliant</span>
+                </div>
+                <div className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                    </svg>
+                    <span>24/7 Support</span>
+                </div>
+                <div className="flex items-center">
+                    <svg className="h-5 w-5 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                    </svg>
+                    <span>Secure Data</span>
+                </div>
+            </div>
         </div>
     );
 }
