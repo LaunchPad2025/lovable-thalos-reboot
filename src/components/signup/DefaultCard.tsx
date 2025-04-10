@@ -9,7 +9,8 @@ const DefaultCard: React.FC = () => {
   const navigate = useNavigate();
   
   const handleStartFree = () => {
-    window.location.href = "https://thalostech.replit.app/";
+    // Directly navigate to dashboard instead of authentication
+    navigate('/dashboard');
   };
   
   const handleTalkToSales = () => {

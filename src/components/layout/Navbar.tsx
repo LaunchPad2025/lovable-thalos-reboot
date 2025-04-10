@@ -1,9 +1,8 @@
 
 import React from 'react';
-import { Bell, Search, Info, LogOut, Settings, SunMoon } from 'lucide-react';
+import { Bell, Search, Info, Settings, SunMoon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { useAuth } from '@/context/auth';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from '@/providers/ThemeProvider';
 import { useThemeStyles } from '@/hooks/useThemeStyles';
@@ -16,15 +15,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 
 const Navbar = () => {
-  const { user, signOut } = useAuth();
   const { mode, setMode } = useTheme();
   const { isDark } = useThemeStyles();
   const navigate = useNavigate();
-
-  const handleSignOut = async () => {
-    await signOut();
-    navigate('/auth');
-  };
 
   const toggleTheme = () => {
     setMode(isDark ? 'light' : 'dark');
@@ -84,15 +77,15 @@ const Navbar = () => {
                 aria-label="User menu"
               >
                 <span className="font-medium text-sm">
-                  {user?.email?.charAt(0).toUpperCase() || 'A'}
+                  T
                 </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
               <div className="flex items-center justify-start p-2">
                 <div className="flex flex-col space-y-0.5">
-                  <p className="text-sm font-medium">{user?.user_metadata?.name || 'User'}</p>
-                  <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
+                  <p className="text-sm font-medium">Test User</p>
+                  <p className="text-xs text-muted-foreground truncate">demo@example.com</p>
                 </div>
               </div>
               <DropdownMenuSeparator />
@@ -109,13 +102,6 @@ const Navbar = () => {
               >
                 <Info className="mr-2 h-4 w-4" />
                 <span>Legal & Privacy</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem 
-                className="cursor-pointer"
-                onClick={handleSignOut}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>Sign out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

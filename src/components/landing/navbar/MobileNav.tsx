@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LogIn, Calendar, Construction, Factory } from 'lucide-react';
+import { Calendar, Construction, Factory } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Oil } from '@/components/ui/icons/Oil';
 import { Pickaxe } from '@/components/ui/icons/Pickaxe';
@@ -47,14 +47,8 @@ const MobileNav = ({ isMenuOpen }: MobileNavProps) => {
       <Link to="/documentation/features" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Features</Link>
       <Link to="/documentation/pricing" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Pricing</Link>
       <Link to="/documentation/contact" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Contact</Link>
+      <Link to="/dashboard" className="text-gray-300 hover:text-white py-2 border-b border-blue-900/20">Dashboard</Link>
       <div className="flex flex-col space-y-2 pt-2">
-        <Button 
-          variant="outline" 
-          className="justify-center w-full"
-          onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
-        >
-          <LogIn className="mr-2 h-4 w-4" aria-hidden="true" /> Sign in
-        </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 justify-center w-full"
           onClick={handleScheduleCall}

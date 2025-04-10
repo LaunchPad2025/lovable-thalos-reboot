@@ -54,18 +54,18 @@ const DesktopNav = ({ isActive }: DesktopNavProps) => {
               Contact
             </Link>
           </NavigationMenuItem>
+          <NavigationMenuItem>
+            <Link 
+              to="/dashboard" 
+              className={`block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground ${isActive('/dashboard') ? 'text-blue-400' : 'text-gray-300'} hover:text-white`}
+            >
+              Dashboard
+            </Link>
+          </NavigationMenuItem>
         </NavigationMenuList>
       </NavigationMenu>
       
       <div className="flex items-center gap-2">
-        <Button 
-          variant="ghost" 
-          className="text-gray-300 hover:text-white"
-          aria-label="Sign in to your account"
-          onClick={() => window.location.href = "https://thalostech.replit.app/api/auth"}
-        >
-          Sign in
-        </Button>
         <Button 
           className="bg-blue-600 hover:bg-blue-700 items-center"
           aria-label="Book a 30-Minute Setup Call"

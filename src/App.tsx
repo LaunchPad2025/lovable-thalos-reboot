@@ -2,10 +2,8 @@
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { AuthProvider, useAuth } from "@/context/auth";
-import ProtectedRoute from "@/components/auth/ProtectedRoute";
 import { ThemeProvider } from "@/providers/ThemeProvider";
 import DemoDashboard from './components/DemoDashboard';
 
@@ -18,11 +16,9 @@ import Subscription from "./pages/Subscription";
 import ComingSoon from "./pages/ComingSoon";
 import NotFound from "./pages/NotFound";
 import Settings from "./pages/Settings";
-import Auth from "./pages/Auth";
-import Onboarding from "./pages/Onboarding";
+import Legal from "./pages/Legal";
 import Regulations from "./pages/Regulations";
 import Models from "./pages/Models";
-import Legal from "./pages/Legal";
 import SidebarExamples from "./pages/SidebarExamples";
 import RiskAssessment from "./pages/RiskAssessment";
 import Documents from "./pages/Documents";
@@ -54,20 +50,6 @@ import AppLayout from "./layouts/AppLayout";
 
 const queryClient = new QueryClient();
 
-// Onboarding check wrapper
-const OnboardingCheck = ({ children }: { children: React.ReactNode }) => {
-  const { user, loading } = useAuth();
-
-  if (loading) return null;
-
-  // Fix for metadata property
-  if (user && user.user_metadata && !user.user_metadata.onboarded) {
-    return <Navigate to="/onboarding" replace />;
-  }
-
-  return <>{children}</>;
-};
-
 function App() {
   console.log("Thalos app rendering");
   const [appReady, setAppReady] = useState(false);
@@ -90,69 +72,52 @@ function App() {
     <div className="app">
       <QueryClientProvider client={queryClient}>
         <ThemeProvider>
-          <AuthProvider>
-            <TooltipProvider>
-              <Toaster />
-              <BrowserRouter>
-                <Routes>
-                  {/* Public routes - ensure these are at the top */}
-                  <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/legal" element={<Legal />} />
-                  <Route path="/onboarding" element={<Onboarding />} />
-                  <Route path="/demo" element={<DemoDashboard />} />
-                  
-                  {/* Industry pages */}
-                  <Route path="/industries" element={<Industries />} />
-                  <Route path="/industries/:industry" element={<IndustryLayout />} />
-                  
-                  {/* Documentation routes */}
-                  <Route path="/documentation/features" element={<Features />} />
-                  <Route path="/documentation/pricing" element={<Pricing />} />
-                  <Route path="/documentation/integration" element={<Integration />} />
-                  <Route path="/documentation/integrations" element={<Integration />} /> {/* Redirect to singular version */}
-                  <Route path="/documentation/updates" element={<Updates />} />
-                  <Route path="/documentation/help-center" element={<HelpCenter />} />
-                  <Route path="/documentation/guides" element={<Guides />} />
-                  <Route path="/documentation/about-us" element={<AboutUs />} />
-                  <Route path="/documentation/careers" element={<Careers />} />
-                  <Route path="/documentation/contact" element={<Contact />} />
-                  <Route path="/documentation/legal" element={<LegalDocs />} />
+          <TooltipProvider>
+            <Toaster />
+            <BrowserRouter>
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Index />} />
+                <Route path="/legal" element={<Legal />} />
+                <Route path="/demo" element={<DemoDashboard />} />
+                
+                {/* Industry pages */}
+                <Route path="/industries" element={<Industries />} />
+                <Route path="/industries/:industry" element={<IndustryLayout />} />
+                
+                {/* Documentation routes */}
+                <Route path="/documentation/features" element={<Features />} />
+                <Route path="/documentation/pricing" element={<Pricing />} />
+                <Route path="/documentation/integration" element={<Integration />} />
+                <Route path="/documentation/integrations" element={<Integration />} /> {/* Redirect to singular version */}
+                <Route path="/documentation/updates" element={<Updates />} />
+                <Route path="/documentation/help-center" element={<HelpCenter />} />
+                <Route path="/documentation/guides" element={<Guides />} />
+                <Route path="/documentation/about-us" element={<AboutUs />} />
+                <Route path="/documentation/careers" element={<Careers />} />
+                <Route path="/documentation/contact" element={<Contact />} />
+                <Route path="/documentation/legal" element={<LegalDocs />} />
 
-                  {/* Protected routes with layout */}
-                  <Route element={<ProtectedRoute />}>
-                    <Route
-                      path="/*"
-                      element={
-                        <OnboardingCheck>
-                          <AppLayout>
-                            <Routes>
-                              <Route path="/dashboard" element={<Dashboard />} />
-                              <Route path="/violations/*" element={<Violations />} />
-                              <Route path="/tasks" element={<Tasks />} />
-                              <Route path="/chatbot" element={<Chatbot />} />
-                              <Route path="/subscription" element={<Subscription />} />
-                              <Route path="/settings/*" element={<Settings />} />
-                              <Route path="/regulations" element={<Regulations />} />
-                              <Route path="/models" element={<Models />} />
-                              <Route path="/sidebar-examples" element={<SidebarExamples />} />
-                              <Route path="/risk-assessment/*" element={<RiskAssessment />} />
-                              <Route path="/documents" element={<Documents />} />
-                              <Route path="/notifications" element={<Notifications />} />
-                              <Route path="/training/*" element={<Training />} />
-                              <Route path="/audits/*" element={<Audits />} />
-                              <Route path="/admin/*" element={<Admin />} />
-                              <Route path="*" element={<NotFound />} />
-                            </Routes>
-                          </AppLayout>
-                        </OnboardingCheck>
-                      }
-                    />
-                  </Route>
-                </Routes>
-              </BrowserRouter>
-            </TooltipProvider>
-          </AuthProvider>
+                {/* Application routes - now accessible without authentication */}
+                <Route path="/dashboard" element={<AppLayout><Dashboard /></AppLayout>} />
+                <Route path="/violations/*" element={<AppLayout><Violations /></AppLayout>} />
+                <Route path="/tasks" element={<AppLayout><Tasks /></AppLayout>} />
+                <Route path="/chatbot" element={<AppLayout><Chatbot /></AppLayout>} />
+                <Route path="/subscription" element={<AppLayout><Subscription /></AppLayout>} />
+                <Route path="/settings/*" element={<AppLayout><Settings /></AppLayout>} />
+                <Route path="/regulations" element={<AppLayout><Regulations /></AppLayout>} />
+                <Route path="/models" element={<AppLayout><Models /></AppLayout>} />
+                <Route path="/sidebar-examples" element={<AppLayout><SidebarExamples /></AppLayout>} />
+                <Route path="/risk-assessment/*" element={<AppLayout><RiskAssessment /></AppLayout>} />
+                <Route path="/documents" element={<AppLayout><Documents /></AppLayout>} />
+                <Route path="/notifications" element={<AppLayout><Notifications /></AppLayout>} />
+                <Route path="/training/*" element={<AppLayout><Training /></AppLayout>} />
+                <Route path="/audits/*" element={<AppLayout><Audits /></AppLayout>} />
+                <Route path="/admin/*" element={<AppLayout><Admin /></AppLayout>} />
+                <Route path="*" element={<AppLayout><NotFound /></AppLayout>} />
+              </Routes>
+            </BrowserRouter>
+          </TooltipProvider>
         </ThemeProvider>
       </QueryClientProvider>
     </div>
