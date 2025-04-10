@@ -50,7 +50,8 @@ export async function verifyEndpoints(): Promise<EndpointStatus[]> {
 
   // Check Supabase connection
   try {
-    const { data, error } = await supabase.from('health_check').select('*').limit(1);
+    // Using the "profiles" table instead of "health_check" as it's an existing table
+    const { data, error } = await supabase.from('profiles').select('id').limit(1);
     
     if (error) {
       addResult('Supabase', 'error', `Supabase error: ${error.message}`);
