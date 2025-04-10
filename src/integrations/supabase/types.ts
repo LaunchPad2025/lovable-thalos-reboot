@@ -9,6 +9,39 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          analysis_data: Json
+          created_at: string | null
+          file_name: string | null
+          file_size: number | null
+          file_type: string | null
+          id: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          analysis_data: Json
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          analysis_data?: Json
+          created_at?: string | null
+          file_name?: string | null
+          file_size?: number | null
+          file_type?: string | null
+          id?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       documents: {
         Row: {
           category: string | null
@@ -302,6 +335,45 @@ export type Database = {
           },
         ]
       }
+      plan_limits: {
+        Row: {
+          ai_checks_remaining: number
+          ai_checks_total: number
+          created_at: string
+          id: string
+          paulie_messages_remaining: number
+          paulie_messages_total: number
+          plan_name: string
+          reset_date: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_checks_remaining?: number
+          ai_checks_total?: number
+          created_at?: string
+          id?: string
+          paulie_messages_remaining?: number
+          paulie_messages_total?: number
+          plan_name?: string
+          reset_date?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_checks_remaining?: number
+          ai_checks_total?: number
+          created_at?: string
+          id?: string
+          paulie_messages_remaining?: number
+          paulie_messages_total?: number
+          plan_name?: string
+          reset_date?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company: string | null
@@ -311,7 +383,10 @@ export type Database = {
           id: string
           industry: string | null
           name: string | null
+          remaining_questions: number | null
+          remaining_uploads: number | null
           role: string
+          subscription_tier: string | null
           updated_at: string
           website_url: string | null
         }
@@ -323,7 +398,10 @@ export type Database = {
           id: string
           industry?: string | null
           name?: string | null
+          remaining_questions?: number | null
+          remaining_uploads?: number | null
           role?: string
+          subscription_tier?: string | null
           updated_at?: string
           website_url?: string | null
         }
@@ -335,7 +413,10 @@ export type Database = {
           id?: string
           industry?: string | null
           name?: string | null
+          remaining_questions?: number | null
+          remaining_uploads?: number | null
           role?: string
+          subscription_tier?: string | null
           updated_at?: string
           website_url?: string | null
         }
@@ -711,6 +792,33 @@ export type Database = {
           },
         ]
       }
+      usage_events: {
+        Row: {
+          id: string
+          metadata: Json | null
+          status: string
+          timestamp: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          metadata?: Json | null
+          status: string
+          timestamp?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          id?: string
+          metadata?: Json | null
+          status?: string
+          timestamp?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_invitations: {
         Row: {
           created_at: string
@@ -757,6 +865,39 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_usage: {
+        Row: {
+          id: string
+          last_updated: string
+          questions_limit: number
+          questions_used: number
+          reset_date: string
+          uploads_limit: number
+          uploads_used: number
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          last_updated?: string
+          questions_limit?: number
+          questions_used?: number
+          reset_date?: string
+          uploads_limit?: number
+          uploads_used?: number
+          user_id: string
+        }
+        Update: {
+          id?: string
+          last_updated?: string
+          questions_limit?: number
+          questions_used?: number
+          reset_date?: string
+          uploads_limit?: number
+          uploads_used?: number
+          user_id?: string
+        }
+        Relationships: []
       }
       violation_regulations: {
         Row: {
@@ -930,6 +1071,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_remaining_usage: {
+        Args: { p_user_id: string }
+        Returns: Json
+      }
+      deduct_usage: {
+        Args: { p_user_id: string; p_usage_type: string }
+        Returns: boolean
+      }
       get_org_user_role_safe: {
         Args: { org_id: string }
         Returns: string
@@ -976,6 +1125,26 @@ export type Database = {
       }
       is_organization_member: {
         Args: { org_id: string }
+        Returns: boolean
+      }
+      reset_monthly_usage: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
+      update_plan_limits_by_tier: {
+        Args: { p_user_id: string; p_plan_name: string }
+        Returns: boolean
+      }
+      update_usage_limits: {
+        Args: { p_user_id: string; p_subscription_tier: string }
+        Returns: boolean
+      }
+      update_user_usage: {
+        Args: {
+          p_user_id: string
+          p_uploads_used?: number
+          p_questions_used?: number
+        }
         Returns: boolean
       }
     }

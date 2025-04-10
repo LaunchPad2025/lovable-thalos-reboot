@@ -1,14 +1,18 @@
 
 import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { LogIn, Loader2, ArrowRight } from 'lucide-react';
+import { LogIn, Loader2, ArrowRight, Activity } from 'lucide-react';
 import { useState } from 'react';
 import useMobile from '@/hooks/useMobile';
 import { useToast } from '@/hooks/use-toast';
 import { safeLog } from '@/utils/environmentUtils';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import EndpointStatus from '@/components/debug/EndpointStatus';
+import { runEndpointVerification } from '@/utils/endpointVerification';
 
 function Home() {
     const [loading, setLoading] = useState(false);
+    const [showEndpointStatus, setShowEndpointStatus] = useState(false);
     const isMobile = useMobile();
     const { toast } = useToast();
     
@@ -39,6 +43,11 @@ function Home() {
     const handleTalkToSales = () => {
         safeLog("User clicked talk to sales button");
         window.open("https://cal.com/annieeser/30min", "_blank", "noopener");
+    };
+    
+    const handleVerifyEndpoints = async () => {
+        await runEndpointVerification();
+        setShowEndpointStatus(true);
     };
     
     return (
@@ -113,6 +122,23 @@ function Home() {
                     <span>Secure Data</span>
                 </div>
             </div>
+            
+            {/* Endpoint Verification Button for admins/developers */}
+            <Button 
+                variant="ghost" 
+                size="sm" 
+                className="absolute bottom-2 right-2 text-xs opacity-70 hover:opacity-100 flex items-center"
+                onClick={handleVerifyEndpoints}
+            >
+                <Activity className="h-3 w-3 mr-1" />
+                Verify Endpoints
+            </Button>
+            
+            <Dialog open={showEndpointStatus} onOpenChange={setShowEndpointStatus}>
+                <DialogContent className="sm:max-w-3xl">
+                    <EndpointStatus onClose={() => setShowEndpointStatus(false)} />
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }
